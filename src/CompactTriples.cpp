@@ -68,12 +68,12 @@ CompactTriples::console()
 	
 	while (true){
 		format="ntriples";
-		output="salida.rdf";
+		output="output.rdf";
 		
 		cout <<"  Available Operations: " << endl;
 		cout <<"        serialize                      Serialize HDT to RDF (ntriples by default). " << endl;
 		cout <<"            -f format                         Output format: ntriples (default), rdfxml, turtle, rdfxml-abbrev, rdfxml-xmp, atom, json-triples, json, dot"<< endl;	
-	    cout <<"            -o --output <file>                Serialize output (salida.rdf by default)"<< endl;	
+	    cout <<"            -o --output <file>                Serialize output (output.rdf by default)"<< endl;	
 		cout <<"        help                           Show this help"<< endl;	
 		cout <<"        exit                           Exit console mode"<< endl;	
 	

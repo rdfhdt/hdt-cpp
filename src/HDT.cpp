@@ -128,7 +128,7 @@ main(int argc, char* argv[])
 				
 				if (argc>=4){
 					string format="ntriples";
-					string output="salida.rdf";
+					string output="output.rdf";
 					bool transform=false;
 					int i=0;
 					for (i=3;i<argc;)

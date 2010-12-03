@@ -135,7 +135,7 @@ void static printCredits()
 	cout<< "\n *** HDT IT! prototype v.0.7 2010. All rights reserved.***";
 	cout<< "\n    University of Valladolid (Spain)";
 	cout<< "\n\n    This is an experimental prototype. Contacting the authors:";
-	cout<< "\n    Javier D. Fernández & Miguel A. Martínez-Prieto";
+	cout<< "\n    Javier D. Fernandez & Miguel A. Martinez-Prieto";
 	cout<< "\n    ETIyT. Departamento de Informatica.";
 	cout<< "\n    Camino del Cementerio s/n";
 	cout<< "\n    47011 Valladolid (Spain)";
@@ -148,7 +148,7 @@ void static printHelp(char *exe)
 	cout<<"        -p --parse <config_file>              Parse data set within the given <config_file>\n";	
 	cout<<"        -l --load <file>             	      Load HDT structure into memory. Access triples console if serialize command is not given\n";	
 	cout<<"            -s --serialize [format]           Serialize the loaded HDT representation to a given format: ntriples (default), rdfxml, turtle, rdfxml-abbrev, rdfxml-xmp, atom, json-triples, json, dot\n";	
-	cout<<"            -o --output <file>           	 Serialize output (salida.rdf by default)\n";	
+	cout<<"            -o --output <file>           	 Serialize output (output.rdf by default)\n";	
 	cout<<"        -h --help                             Show this help\n";	
 	cout<<"        -c --console                          Entering console mode\n";	
 }
