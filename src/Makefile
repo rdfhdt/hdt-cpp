@@ -20,7 +20,7 @@ libcdsMake:
 
 hdt:	$(OBJECTS)	
 	@echo " [HDT] Linking HDT"
-	@$(CPP) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) ${LIB} -o hdt $(OBJECTS) 
+	@$(CPP) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) -o hdt $(OBJECTS) ${LIB} 
 
 clean:
 	@echo " [MSG] Cleaning libcds"
