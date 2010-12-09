@@ -76,6 +76,9 @@ public:
 	/** Serialize HDT to a given format*/
 	virtual bool serialize(char *output, char *format) = 0;
 
+	/** Calculate degrees */
+	void calculateDegrees(string path);
+
 protected:
 	Dictionary *dictionary;
 
@@ -122,6 +125,9 @@ protected:
 
 		return true;
 	}
+
+	void calculateDegree(string path);
+	void SPOtoOPS();
 };
 
 #include "PlainTriples.h"

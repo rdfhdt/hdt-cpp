@@ -2,7 +2,7 @@
 #CPPFLAGS=-g3 -Wall -O0
 CPPFLAGS=-O9 -Wall -DNDEBUG 
 
-all: clean libcompact
+all: libcompact
 
 doc:
 	@echo " [DOC] Generating documentation"

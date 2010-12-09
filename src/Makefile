@@ -1,33 +1,30 @@
 CPP=g++
-FLAGS=-O9 -I libcds/includes/ 
+CPPFLAGS=
+FLAGS=-O9 -I libcds/includes/ -I /usr/local/include
 LDFLAGS=-lstdc++
-#LIB=libcds.a
-LIB=-lraptor libcds/lib/libcds.a -L/usr/local/lib
+LIB=-lraptor libcds/lib/libcds.a -L/usr/local/lib 
 
-OBJECTS=RDFSyntaxMediator.o HDTLoader.o RDFParser.o MiniHashTable.o HashTable.o Header.o Dictionary.o PlainDictionary.o Triples.o PlainTriples.o CompactTriples.o BitmapTriples.o HDT.o
-
-
-all: clean libcdsMake build
-
-libcdsMake:
-	@echo " [MSG] Entering directory libcds"
-	@cd libcds;make;cd ..
-	@echo " [HDT] Building HDT"
-		
+OBJECTS=$(patsubst %.cpp,%.o,$(wildcard *.cpp))
+HEADERS=*.h
 BIN=hdt
 
-%.o: %.cpp
+all: libcdsMake hdt 
+
+libcdsMake:
+	@echo " [MSG] Building libcds"
+	@make -C libcds/
+		
+%.o: %.cpp $(HEADERS)
 	@echo " [HDT] Compiling $<"
-	@$(CPP) $(CPPFLAGS) $(LDFLAGS) $(FLAGS) -c $< -o $@
+	@$(CPP) $(CPPFLAGS) $(FLAGS) -c $< -o $@
 
-build: 	$(OBJECTS) $(BIN)
-
-hdt:	
-	$(CPP) $(CPPFLAGS) $(LDFLAGS) $(FLAGS) -o hdt $(OBJECTS) ${LIB}
+hdt:	$(OBJECTS)	
+	@echo " [HDT] Linking HDT"
+	@$(CPP) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) ${LIB} -o hdt $(OBJECTS) 
 
 clean:
-	@echo " [MSG] Entering directory libcds"
-	@cd libcds;make clean;cd ..
+	@echo " [MSG] Cleaning libcds"
+	@make -C libcds/ clean
 	@echo " [CLN] Removing object files"
 	@rm -f $(OBJECTS) $(BIN) *~
 

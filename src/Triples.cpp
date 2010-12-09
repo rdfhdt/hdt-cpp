@@ -26,6 +26,7 @@
 
 
 #include "Triples.h"
+#include "Histogram.h"
 
 void 
 Triples::insert(unsigned int subject, unsigned int predicate, unsigned int object)
@@ -408,4 +409,124 @@ Triples::gnuplotHeader(unsigned int firstP, unsigned int sizeP, string predicate
 	}
 	
 	fclose(header);
+}
+
+
+
+void
+Triples::SPOtoOPS() {
+	int tmp;
+	
+	if(parsing==SPO) {
+		for (int i=0; i<ntriples; i++) {
+			tmp = graph[i].x;
+			graph[i].x = graph[i].z;
+			graph[i].z = tmp;
+		}
+		parsing=OPS;
+		graphSort();
+	}
+}
+
+void 
+Triples::calculateDegree(string path) {
+	const int maxval = 50000;
+	const int nbins = 50000;
+	
+	Histogram hDegree(0, maxval, nbins);
+	Histogram hDegreePartial(0, maxval, nbins);
+	Histogram hDegreeLabeled(0, maxval, nbins);
+	
+	int xcount=1,ycount=1,ychanged=1;
+	
+	int x=graph[0].x;
+	int y=graph[0].y;
+	int z=graph[0].z;	
+	
+	//cout << graph[0].x << " " << graph[0].y << " " << graph[0].z << endl;	
+	
+	for (int i=1; i<ntriples; i++) {
+		
+		// Ignore duplicate triples
+		if( (x==graph[i].x) && (y==graph[i].y) && (z==graph[i].z) ) {
+			continue;
+		}
+		
+		if (x != graph[i].x) {
+			//cout << "\tdegree: " << xcount <<endl;
+			hDegree.Add(xcount);
+			
+			//cout << "\tpartial degree: " << ycount << endl;
+			hDegreePartial.Add(ycount);
+			
+			//cout << "\tlabeled degree: " << ychanged << endl;
+			hDegreeLabeled.Add(ychanged);
+			
+			xcount=ycount=1;
+			ychanged=1;
+		} else {
+			xcount++;
+			
+			if (y != graph[i].y) {
+				ychanged++;
+				
+				//cout << "\tpartial degree: " << ycount << endl;
+				hDegreePartial.Add(ycount);;
+				
+				ycount=1;
+			} else {
+				ycount++;
+			}
+		}
+		
+		//cout << graph[i].x << " " << graph[i].y << " " << graph[i].z << endl;
+		
+		x = graph[i].x;
+		y = graph[i].y;
+		z = graph[i].z;
+	}	
+	
+	hDegree.end();
+	hDegreePartial.end();	
+	hDegreeLabeled.end();
+	
+	ofstream out;
+	string direcc = (parsing==SPO) ? "out" : "in";
+	
+	//	cout << endl << "Degree" << endl;
+	out.open((path+"_"+direcc).c_str(), ios::out);
+	out << "# " << direcc << " degree" << endl;
+	hDegree.dumpStr(out);
+	out.close();
+	
+	//cout << endl << "Partial degree" << endl;
+	out.open((path+"_p"+direcc).c_str(), ios::out);
+	out << "# Partial " << direcc << " degree" << endl;
+	hDegreePartial.dumpStr(out);
+	out.close();
+	
+	//cout << endl << "Labeled degree" << endl;
+	out.open((path+"_l"+direcc).c_str(), ios::out);
+	out << "# Labeled" << direcc << " degree" << endl;
+	hDegreeLabeled.dumpStr(out);
+	out.close();
+	
+}
+
+void
+Triples::calculateDegrees(string path) {
+
+	if(parsing != SPO) {
+		cout << "Degree must be calculated from SPO parsing style" << endl;
+		return;
+	}
+	
+	cout << "Calculate OUT Degree" << endl;
+	calculateDegree(path);
+	
+	SPOtoOPS();
+	
+	cout << "Calculate IN Degree" << endl;
+	calculateDegree(path);
+		
 }

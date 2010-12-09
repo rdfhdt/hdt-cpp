@@ -62,7 +62,7 @@ public:
 	~RDFParser();
 			
 protected:
-	ifstream input;
+	istream *input;
 	ifstream config;
 	map<string,string> properties;
 

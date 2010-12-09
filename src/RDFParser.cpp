@@ -26,8 +26,16 @@
  */
 
 #include "RDFParser.h"
+#include "fdstream.hpp"
+
 RDFParser::RDFParser()
 {
+}
+
+bool
+hasEnding (std::string const &full, std::string const &ending)
+{
+    return (full.length() > ending.length()) && (!full.compare (full.length() - ending.length(), ending.length(), ending));
 }
 
 bool 
@@ -38,13 +46,23 @@ RDFParser::parse(char *pathFile)
 	cout.precision(4);
 	
 	// Parsing the config file
-	cout << "[" << showpoint << t1.user - t1.user << "]  Parsing config file" << endl;
+	cout << "[" << showpoint << t1.user - t1.user << "]  Parsing config file: " << pathFile << endl;
 	bool parsed = parseConfig(pathFile);
 	
 	map<string,string>::iterator it;
 	string line;
 	int ntriples = 0;
 	
+	// Input File/Pipe management
+	FILE *filePipe;
+	std::string pipeCommand;
+	ifstream *fileStream = NULL; 
+	boost::fdistream *pipeStream = NULL;
+	
+	// RDF Parser
+	RDFSyntaxMediator rdfmediator;
+	DictionaryTriples dictionaryTriples;
+
 	if (parsed)
 	{
 		// Performing HDT on the set of properties
@@ -52,10 +70,28 @@ RDFParser::parse(char *pathFile)
 		
 		// 1) Opening the dataset
 		it = properties.find(DATASET);
-		input.open(it->second.c_str(), ifstream::in);
-		if (!input.good())
+		string &datasetName = it->second;
+
+		if(hasEnding(datasetName, ".gz")) {
+			pipeCommand = "gunzip -c ";
+		} else if(hasEnding(datasetName, ".bz2")) {
+			pipeCommand = "bunzip2 -c ";
+		} 
+
+		if(pipeCommand.length()>0) {
+			pipeCommand.append(datasetName);
+
+			if ((filePipe=popen(pipeCommand.c_str(),"r")) == NULL) {
+				throw "popen() failed";
+			}
+
+			input = pipeStream = new boost::fdistream(fileno(filePipe));
+		} else {		
+			input = fileStream = new ifstream(datasetName.c_str());
+		}
+		if (!input->good())
 		{
-			cout << "   <ERROR> Checks the dataset in " << it->second << endl;
+			cout << "   <ERROR> Please check the dataset in " << it->second << endl;
 			return false;
 		}
 		
@@ -109,17 +145,30 @@ RDFParser::parse(char *pathFile)
 	
 		//@javi
 		// Checks RDF syntax; only n3 is currently supported.
-		it = properties.find(DATASET);
-		RDFSyntaxMediator rdfmediator;
-		DictionaryTriples dictionaryTriples;
-		dictionaryTriples.dictionary = dictionary;
-		dictionaryTriples.triples = NULL;
-		dictionaryTriples.ntriples= new int();
-		*dictionaryTriples.ntriples=0;
-		rdfmediator.parsing(const_cast<char*> (it->second.c_str()),dictionaryTriples);
-		ntriples = *dictionaryTriples.ntriples;
 		
-		//dictionary->checkTriple(node);
+		it = properties.find(RDF_PARSER);
+		if ((it != properties.end()) && (it->second).compare(RDF_PARSER_OWN) == 0)
+		{
+			node = new string[3];
+			
+			while (getline(*input,line))
+			{
+				//cout << "> " << line << endl;
+				ntriples++;
+				parseTripleN3(line);
+				dictionary->checkTriple(node);
+			}
+		} else {
+			it = properties.find(DATASET);
+			
+			dictionaryTriples.dictionary = dictionary;
+			dictionaryTriples.triples = NULL;
+			dictionaryTriples.ntriples= new int();
+			*dictionaryTriples.ntriples=0;
+			rdfmediator.parsing(const_cast<char*> (it->second.c_str()),dictionaryTriples);
+			ntriples = *dictionaryTriples.ntriples;
+		}
+
 		dictionary->split();
 		
 		// 3) Sorting Dictionary (LEXICOGRAPHIC)
@@ -150,8 +199,24 @@ RDFParser::parse(char *pathFile)
 		//    resultant structure is finally sorted on parsing choice.
 		getTime(&t2);
 		cout << "[" << showpoint << t2.user - t1.user << "]  Building Triples" << endl;
-		input.clear();
-		input.seekg (0, ios::beg);
+
+		// Needed?
+		if(pipeCommand.length()>0) { // Cannot seek on pipes
+			// Close old pipe
+			delete pipeStream;
+			pclose(filePipe);
+	
+			// Create new one from the begining
+			if ((filePipe=popen(pipeCommand.c_str(),"r")) == NULL) {
+				throw "popen() failed";
+			}
+
+			input = pipeStream = new boost::fdistream(fileno(filePipe));
+
+		} else {
+			input->clear();
+			input->seekg (0, ios::beg);
+		}
 
 		it = properties.find(PARSING);
 		if ((it->second).compare(VPARSING_SPO) == 0)
@@ -241,22 +306,29 @@ RDFParser::parse(char *pathFile)
 		
 		//@javi
 		// Checks RDF syntax; only n3 is currently supported.
-		it = properties.find(DATASET);
-		rdfmediator;
-		dictionaryTriples.triples = triples;
-		rdfmediator.parsing(const_cast<char*> (it->second.c_str()),dictionaryTriples);
 		
 		
-		/*while (getline(input,line)) 
+		it = properties.find(RDF_PARSER);
+		if ((it != properties.end()) && (it->second).compare(RDF_PARSER_OWN) == 0)
 		{
-			parseTripleN3(line);
+			while (getline(*input,line)) 
+			{
+				parseTripleN3(line);
+				
+				subject = dictionary->retrieveID(node[0], VOC_SUBJECT);
+				predicate = dictionary->retrieveID(node[1], VOC_PREDICATE);
+				object = dictionary->retrieveID(node[2], VOC_OBJECT);
+				
+				triples->insert(subject, predicate, object);
+			}	
+		} else {
+			it = properties.find(DATASET);
+			rdfmediator;
+			dictionaryTriples.triples = triples;
+			rdfmediator.parsing(const_cast<char*> (it->second.c_str()),dictionaryTriples);
 			
-			subject = dictionary->retrieveID(node[0], VOC_SUBJECT);
-			predicate = dictionary->retrieveID(node[1], VOC_PREDICATE);
-			object = dictionary->retrieveID(node[2], VOC_OBJECT);
+		}
 
-			triples->insert(subject, predicate, object);
-		}*/		
 		
 		triples->graphSort();
 		
@@ -370,6 +442,19 @@ RDFParser::parse(char *pathFile)
 				triples->gnuplot(npredicates, predicates, max, (it->second).c_str());
 			}
 		}
+
+		// 10) In and Out Degree
+		it = properties.find(DEGREE_PATH);
+		if(it != properties.end() && (parsing==SPO)) {
+			getTime(&t2);
+			cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Degree Metrics" << endl;
+		
+			triples->calculateDegrees(it->second);
+		}
+		
+		// All done
+		getTime(&t2);
+		cout << "[" << showpoint << t2.user - t1.user << "]  All done" << endl;
 	}
 	else
 	{
@@ -377,9 +462,18 @@ RDFParser::parse(char *pathFile)
 		return false;
 	}
 	
-	if (input.good()) input.close();
+	if(pipeCommand.length()>0) {
+		delete pipeStream;
+		input = NULL;
+		pclose(filePipe);
+	} else {
+		fileStream->close();
+		delete fileStream;
+		input = NULL;	
+	}
+
 	delete [] node;
-	
+
 	return true;
 }
  
