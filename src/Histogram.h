@@ -11,6 +11,13 @@ using namespace std;
 // a bad_alloc exception.
 class Histogram
 {
+private:
+	double Start,nBins_by_interval;
+	unsigned int nBins;
+	unsigned int number;
+	unsigned int* freq;
+	double minValue, maxValue, average, deviation, total;
+
 public:
 	// Construct a histogram that can count
 	// within a range of values.
@@ -86,7 +93,7 @@ public:
 	}
 	
 	void end() {
-      	average = average / number;
+		average = average / number;
 		deviation = deviation/number - average * average;
 		deviation = sqrt(deviation);
 	}
@@ -132,10 +139,4 @@ public:
             c += freq[i];
 		return c;
 	}
-private:
-	double Start,nBins_by_interval;
-	unsigned int nBins;
-	unsigned int number;
-	unsigned int* freq;
-	double minValue, maxValue, average, deviation, total;
 };

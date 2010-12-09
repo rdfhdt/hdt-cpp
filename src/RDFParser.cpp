@@ -27,15 +27,10 @@
 
 #include "RDFParser.h"
 #include "fdstream.hpp"
+#include "Utils.h"
 
 RDFParser::RDFParser()
 {
-}
-
-bool
-hasEnding (std::string const &full, std::string const &ending)
-{
-    return (full.length() > ending.length()) && (!full.compare (full.length() - ending.length(), ending.length(), ending));
 }
 
 bool 
@@ -72,9 +67,9 @@ RDFParser::parse(char *pathFile)
 		it = properties.find(DATASET);
 		string &datasetName = it->second;
 
-		if(hasEnding(datasetName, ".gz")) {
+		if(stringHasEnding(datasetName, ".gz")) {
 			pipeCommand = "gunzip -c ";
-		} else if(hasEnding(datasetName, ".bz2")) {
+		} else if(stringHasEnding(datasetName, ".bz2")) {
 			pipeCommand = "bunzip2 -c ";
 		} 
 
@@ -364,6 +359,7 @@ RDFParser::parse(char *pathFile)
 			cout << "   <WARNING> Not found output information -> HDT results stored in current location" << endl;
 			outputPath = "./default";
 		}
+		mkpathfile(outputPath.c_str(),0744);
 		
 		it = properties.find(D_SEPARATOR);
 		if (it != properties.end())
@@ -449,6 +445,7 @@ RDFParser::parse(char *pathFile)
 			getTime(&t2);
 			cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Degree Metrics" << endl;
 		
+			mkpathfile((it->second).c_str(), 0744);
 			triples->calculateDegrees(it->second);
 		}
 		
