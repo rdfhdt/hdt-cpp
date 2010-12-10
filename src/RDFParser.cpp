@@ -86,7 +86,7 @@ RDFParser::parse(char *pathFile)
 		}
 		if (!input->good())
 		{
-			cout << "   <ERROR> Please check the dataset in " << it->second << endl;
+			cout << "   <ERROR> Please check the dataset in " << datasetName << endl;
 			return false;
 		}
 		
@@ -95,7 +95,7 @@ RDFParser::parse(char *pathFile)
 		//    First, the ordering parameter is retrieved and next the
 		//    chosen dictionary class is instantiated.
 		getTime(&t2);
-		cout << "[" << showpoint << t2.user - t1.user << "]  Building Dictionary" << endl;
+		cout << "[" << showpoint << t2.user - t1.user << "]  Building Dictionary from " << datasetName << endl;
 		
 		it = properties.find(D_ORDERING);
 		
@@ -423,8 +423,11 @@ RDFParser::parse(char *pathFile)
 			it = properties.find(GNUPLOT_PATH);
 			if (it != properties.end())
 			{
+				string &gnuplotPath = it->second;
+				mkpathfile(gnuplotPath.c_str(), 0744);
+				
 				getTime(&t2);
-				cout << "[" << showpoint << t2.user - t1.user << "]  Processing Gnuplot" << endl;
+				cout << "[" << showpoint << t2.user - t1.user << "]  Generating Gnuplot on " << gnuplotPath << endl;
 
 				int max = dictionary->getMaxID();
 				int npredicates = dictionary->getNpredicates();
@@ -435,15 +438,15 @@ RDFParser::parse(char *pathFile)
 					string p = dictionary->retrieveString(i, VOC_PREDICATE);
 					predicates[i] = p;
 				}
-				triples->gnuplot(npredicates, predicates, max, (it->second).c_str());
+				triples->gnuplot(npredicates, predicates, max, gnuplotPath.c_str());
 			}
 		}
 
 		// 10) In and Out Degree
 		it = properties.find(DEGREE_PATH);
-		if(it != properties.end() && (parsing==SPO)) {
+		if(it != properties.end() && ((parsing==SPO)||(parsing==PSO))) {
 			getTime(&t2);
-			cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Degree Metrics" << endl;
+			cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Degree Metrics on " << it->second <<endl;
 		
 			mkpathfile((it->second).c_str(), 0744);
 			triples->calculateDegrees(it->second);

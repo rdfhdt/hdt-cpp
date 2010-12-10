@@ -415,7 +415,7 @@ Triples::gnuplotHeader(unsigned int firstP, unsigned int sizeP, string predicate
 
 void
 Triples::SPOtoOPS() {
-	int tmp;
+	register int tmp;
 	
 	if(parsing==SPO) {
 		for (int i=0; i<ntriples; i++) {
@@ -424,6 +424,21 @@ Triples::SPOtoOPS() {
 			graph[i].z = tmp;
 		}
 		parsing=OPS;
+		graphSort();
+	}
+}
+
+void
+Triples::PSOtoSPO() {
+	register int tmp;
+	
+	if(parsing==PSO) {
+		for (int i=0; i<ntriples; i++) {
+			tmp = graph[i].x;
+			graph[i].x = graph[i].y;
+			graph[i].y = tmp;
+		}
+		parsing=SPO;
 		graphSort();
 	}
 }
@@ -516,9 +531,13 @@ Triples::calculateDegree(string path) {
 void
 Triples::calculateDegrees(string path) {
 
-	if(parsing != SPO) {
-		cout << "Degree must be calculated from SPO parsing style" << endl;
+	if(parsing != SPO && parsing != PSO) {
+		cout << "Degree must be calculated from PSO or SPO parsing style" << endl;
 		return;
+	}
+	
+	if(parsing==PSO) {
+		PSOtoSPO();
 	}
 	
 	cout << "Calculate OUT Degree" << endl;

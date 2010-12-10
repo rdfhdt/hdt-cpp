@@ -128,6 +128,7 @@ protected:
 
 	void calculateDegree(string path);
 	void SPOtoOPS();
+	void PSOtoSPO();
 };
 
 #include "PlainTriples.h"
