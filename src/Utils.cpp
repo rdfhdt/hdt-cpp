@@ -39,13 +39,13 @@ mkpath(const char *s, mode_t mode){
 		
 		mkpath(base, mode);
 		
-		printf("Creating %s\n", s);
+		//printf("Creating %s\n", s);
 		mkdir(s, mode);
 		
 		free(copy);
 		free(base);
 	} else {
-		printf("Creating %s\n", s);
+		//printf("Creating %s\n", s);
 		mkdir(s, mode);
 	}
 	
