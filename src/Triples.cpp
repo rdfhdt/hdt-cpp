@@ -376,10 +376,10 @@ Triples::gnuplotHeader(unsigned int firstP, unsigned int sizeP, string predicate
 {	
 	FILE *header = fopen(filename.c_str(), "w");
 	
-	fprintf(header, "set terminal jpeg\n");
+	fprintf(header, "set terminal png\n");
 	fprintf(header, "set pointsize 0.35\n");
 	fprintf(header, "#set logscale\n");
-	fprintf(header, "set output \"%s.jpg\"\n", filename.c_str());
+	fprintf(header, "set output \"%s.png\"\n", filename.c_str());
 	fprintf(header, "set xlabel \"Objects\"\n");
 	fprintf(header, "set ylabel \"Subjects\"\n");
 	

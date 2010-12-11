@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <libgen.h>
 #include <string.h>
+#include <stdlib.h>
 #include <string>
 
 int mkpath(const char *s, mode_t mode);
