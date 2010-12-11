@@ -81,7 +81,7 @@ Dictionary::dumpStats(string file)
 	out<<"Objects: "<<nobjects<<endl;
 	out<<"Predicates: "<<npredicates << endl;
 	out<<"Shared: "<<ssubobj<<endl;
-
+	out<<"Entries: "<<getMaxID()<<endl;
 	
 	out.close();
 }
