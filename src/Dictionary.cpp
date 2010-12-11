@@ -71,6 +71,12 @@ Dictionary::getSsubobj()
 	return ssubobj;
 }
 
+unsigned int 
+Dictionary::getNLiterals()
+{
+	return nliterals;
+}
+
 void
 Dictionary::dumpStats(string file) 
 {
@@ -82,6 +88,8 @@ Dictionary::dumpStats(string file)
 	out<<"Predicates: "<<npredicates << endl;
 	out<<"Shared: "<<ssubobj<<endl;
 	out<<"Entries: "<<getMaxID()<<endl;
+	out<<"URIs: "<<getMaxID()-nliterals<<endl;
+	out<<"Literals: "<<nliterals<<endl;
 	
 	out.close();
 }

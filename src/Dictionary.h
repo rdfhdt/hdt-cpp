@@ -82,6 +82,9 @@ public:
 	/** Returns the number of shared subjects/objects in the Dictionary */
 	unsigned int getSsubobj();
 	
+	/** Returns the number of Literals in the Dictionary */
+	unsigned int getNLiterals();
+	
 	void dumpStats(string file);
 
 protected:
@@ -95,6 +98,8 @@ protected:
 	unsigned int nobjects;
 	/** Shared subjects+objects */
 	unsigned int ssubobj;
+	/** Total Literals */
+	unsigned int nliterals;
 
 	/** Initialize and configures structures for dictionary building */
 	virtual void initialize() = 0;

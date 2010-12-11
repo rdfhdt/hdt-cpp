@@ -98,12 +98,18 @@ PlainDictionary::split()
 		}
 	}
 		
+	nliterals = 0;
+	
 	//split shared subjects-objects from objects	
 	for (i=0;i<hashObject.TSIZE;i++)
 	{
 		objectRetrieve = hashObject.get(i);
+	
 		if (objectRetrieve!=NULL)
 		{
+			if(objectRetrieve->word[0]=='"') 
+				nliterals++;
+
 			if (objectRetrieve->shared==false)
 				objects_not_shared.push_back(objectRetrieve);
 			
@@ -111,6 +117,8 @@ PlainDictionary::split()
 			while (objectRetrieve->next!=NULL)
 			{
 				objectRetrieve = objectRetrieve->next;
+				if(objectRetrieve->word[0]=='"') 
+					nliterals++;
 				
 				if (objectRetrieve->shared==false)
 					objects_not_shared.push_back(objectRetrieve);
