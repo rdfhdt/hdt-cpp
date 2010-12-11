@@ -188,6 +188,13 @@ RDFParser::parse(char *pathFile)
 
 		dictionary->lexicographicSort(mapping);
 		
+		it = properties.find(DICTIONARY_PATH); 
+		{
+			if(it != properties.end()) {
+				dictionary->dumpStats(it->second);
+			}
+		}
+		
 		// 4) Testing triples options: it is built on a second pass.
 		//    The graph parsing is retrieved and the object is 
 		//    instantiated by according with the encoding choice. The
@@ -519,7 +526,7 @@ RDFParser::parseConfig(char* pathFile)
 	}
 	else
 	{
-		cout << "   <ERROR> Checks the config file in " << pathFile << endl;
+		cout << "   <ERROR> Check the config file in " << pathFile << endl;
 		parsed = false;
 	}
 

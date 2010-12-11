@@ -78,6 +78,7 @@ static const string VYES="yes";
 static const string HASH_SIZE="hash_size";
 static const string GNUPLOT_PATH="gnuplot_path";
 static const string DEGREE_PATH="degree_path";
+static const string DICTIONARY_PATH="dictionary_path";
 static const string RDF_PARSER="rdf_parser";
 static const string RDF_PARSER_OWN="own";
 

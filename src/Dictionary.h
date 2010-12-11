@@ -81,6 +81,8 @@ public:
 	unsigned int getNobjects();
 	/** Returns the number of shared subjects/objects in the Dictionary */
 	unsigned int getSsubobj();
+	
+	void dumpStats(string file);
 
 protected:
 	/** ID-mapping: MAPPING1 ('single'), MAPPING2 ('shared') */

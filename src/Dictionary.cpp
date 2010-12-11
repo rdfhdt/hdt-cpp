@@ -70,3 +70,18 @@ Dictionary::getSsubobj()
 {
 	return ssubobj;
 }
+
+void
+Dictionary::dumpStats(string file) 
+{
+	ofstream out;
+	
+	out.open(file.c_str(), ios::out);
+	out<<"Subjects: "<<nsubjects<<endl;
+	out<<"Objects: "<<nobjects<<endl;
+	out<<"Predicates: "<<npredicates << endl;
+	out<<"Shared: "<<ssubobj<<endl;
+
+	
+	out.close();
+}
