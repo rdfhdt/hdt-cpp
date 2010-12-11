@@ -549,3 +549,13 @@ Triples::calculateDegrees(string path) {
 	calculateDegree(path);
 		
 }
+
+void
+Triples::dumpStats(string file) 
+{
+	ofstream out;
+	
+	out.open(file.c_str(), ios::out);
+	out<<"Triples: "<<ntriples<<endl;
+	out.close();
+}

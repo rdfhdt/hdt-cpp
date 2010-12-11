@@ -330,10 +330,16 @@ RDFParser::parse(char *pathFile)
 			dictionaryTriples.triples = triples;
 			rdfmediator.parsing(const_cast<char*> (it->second.c_str()),dictionaryTriples);
 			
-		}
-
-		
+		}		
 		triples->graphSort();
+		
+		it = properties.find(TRIPLES_PATH); 
+		{
+			if(it != properties.end()) {
+				mkpathfile((it->second).c_str(), 0744);
+				triples->dumpStats(it->second);
+			}
+		}
 		
 		// 5) Clustering is only available for parsing 'pso'.
 		if (parsing == PSO)
