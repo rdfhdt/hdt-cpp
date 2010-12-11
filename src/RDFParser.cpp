@@ -191,6 +191,7 @@ RDFParser::parse(char *pathFile)
 		it = properties.find(DICTIONARY_PATH); 
 		{
 			if(it != properties.end()) {
+				mkpathfile((it->second).c_str(), 0744);
 				dictionary->dumpStats(it->second);
 			}
 		}
