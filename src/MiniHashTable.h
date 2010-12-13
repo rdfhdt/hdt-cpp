@@ -60,14 +60,18 @@ public:
 
 	MiniHashTable();
 	int TSIZE;
-    	int globalId;
+    int globalId;
+	bool useAsCount;
 	void inithashtable();
-    	void inithashtable(int size);
+    void inithashtable(int size);
+    void inithashtable(int size,bool count); //use as count (assign the same first id)
 	MINIHASHREC ** get();
 	MINIHASHREC * get(unsigned pos);
 	MINIHASHREC * hashsearch(char *w);
+	MINIHASHREC * hashupdate(char *w);
 	void delete_key(char *w);
 	MINIHASHREC * hashinsert(char *w);
+	MINIHASHREC * hashinsert(char *w, unsigned int id);
 	void dump();
 
 	unsigned int bitwisehash(char *word, int tsize, unsigned int seed);

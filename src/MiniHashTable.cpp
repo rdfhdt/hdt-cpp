@@ -76,6 +76,24 @@ MiniHashTable::inithashtable(int size)
 
     for( i=0 ; i<TSIZE ; i++ )
 	hash[i] = (MINIHASHREC *) NULL;
+	
+	useAsCount=false;
+}
+
+/* Create hash table with a given size, initialise ptrs to NULL */
+void
+MiniHashTable::inithashtable(int size, bool count)
+{
+    int		i;
+    TSIZE = size;
+    
+    numNodes = 0;
+    hash = (MINIHASHREC **) malloc( sizeof(MINIHASHREC *) * TSIZE );
+
+    for( i=0 ; i<TSIZE ; i++ )
+	hash[i] = (MINIHASHREC *) NULL;
+	
+	useAsCount = count;
 }
 
 void
@@ -126,7 +144,6 @@ MiniHashTable::hashsearch(char *w)
 }
 
 /* Search hash table for given string, insert if not found 
- * update information if found
  */
 
 MINIHASHREC*
@@ -158,7 +175,130 @@ MiniHashTable::hashinsert(char *w)
 		
 		
 		htmp->id = globalId;
-		globalId++;
+		if (useAsCount==false){
+			globalId++;
+		}
+	
+    	numNodes++;
+    	htmp->next = NULL;
+    	    
+    	if( hprv==NULL )
+    	    hash[hval] = htmp;
+    	else
+    	    hprv->next = htmp;
+    
+    	/* new records are not moved to front */
+    }
+    else
+    {
+		
+    	if( hprv!=NULL ) /* move to front on access */
+    	{
+    	    hprv->next = htmp->next;
+    	    htmp->next = hash[hval];
+    	    hash[hval] = htmp;
+    	}
+    	
+    }
+  
+    return htmp;
+}
+
+/* Search hash table for given string, insert with the given id if not found 
+ */
+
+MINIHASHREC*
+MiniHashTable::hashinsert(char *w, unsigned int id)
+{
+    MINIHASHREC	*htmp, *hprv;
+    
+    
+    
+    unsigned int hval = HASHFN(w, TSIZE, SEED);
+
+    for( hprv = NULL, htmp=hash[hval]
+	    ; htmp != NULL && scmp(htmp->word, w) != 0
+	    ; hprv = htmp, htmp = htmp->next )
+    {
+	;
+    }
+
+    if( htmp==NULL )
+    {
+		
+
+    	
+    	htmp = (MINIHASHREC *) malloc( sizeof(MINIHASHREC) );
+    	
+    	
+    	htmp->word = (char *) malloc( strlen(w) + 1 );
+		strcpy(htmp->word, w); //copy the value
+		
+		
+		htmp->id = id;
+		
+	
+    	numNodes++;
+    	htmp->next = NULL;
+    	    
+    	if( hprv==NULL )
+    	    hash[hval] = htmp;
+    	else
+    	    hprv->next = htmp;
+    
+    	/* new records are not moved to front */
+    }
+    else
+    {
+		
+    	if( hprv!=NULL ) /* move to front on access */
+    	{
+    	    hprv->next = htmp->next;
+    	    htmp->next = hash[hval];
+    	    hash[hval] = htmp;
+    	}
+    	
+    }
+  
+    return htmp;
+}
+
+/* Search hash table for given string, insert if not found 
+ * increase id if found
+ */
+
+MINIHASHREC*
+MiniHashTable::hashupdate(char *w)
+{
+    MINIHASHREC	*htmp, *hprv;
+    
+    
+    
+    unsigned int hval = HASHFN(w, TSIZE, SEED);
+
+    for( hprv = NULL, htmp=hash[hval]
+	    ; htmp != NULL && scmp(htmp->word, w) != 0
+	    ; hprv = htmp, htmp = htmp->next )
+    {
+	;
+    }
+
+    if( htmp==NULL )
+    {
+		
+
+    	
+    	htmp = (MINIHASHREC *) malloc( sizeof(MINIHASHREC) );
+    	
+    	
+    	htmp->word = (char *) malloc( strlen(w) + 1 );
+		strcpy(htmp->word, w); //copy the value
+		
+		
+		htmp->id = globalId;
+		if (useAsCount==false){
+			globalId++;
+		}
 		
     	numNodes++;
     	htmp->next = NULL;
@@ -172,6 +312,7 @@ MiniHashTable::hashinsert(char *w)
     }
     else
     {
+		htmp->id = htmp->id + 1;
 		
     	if( hprv!=NULL ) /* move to front on access */
     	{

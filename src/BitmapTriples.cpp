@@ -112,6 +112,7 @@ BitmapTriples::console()
 	    cout <<"            -o --output <file>                construct output (salida.rdf by default)"<< endl;
 	    */
 		cout <<"        select <BGP>                   SPARQL select operation over a given Basic Graph Pattern"<< endl;
+	    cout <<"        vocab                          Show vocabulary stats (RDFS,OWL)"<< endl;	
 	    cout <<"        help                           Show this help"<< endl;	
 		cout <<"        exit                           Exit console mode"<< endl;		
 		cout <<"   -----------" << endl;
@@ -260,6 +261,9 @@ BitmapTriples::console()
 			}else if (subcommand[0]=="exit"){ 
 				exit(0);
 				}
+			else if (subcommand[0]=="vocab"){
+				vocabStats();
+			}
 			else if (subcommand[0]=="help"){
 				//nothing to do
 			}
@@ -903,6 +907,305 @@ BitmapTriples::serialize(char *output, char *format)
 	return true;	
 }
 	
+void
+BitmapTriples::vocabStats()
+{	
+	unsigned int x = 1, y, z;
+	size_t read_y = 0, read_z = 0;
+	string subject, predicate, object;
+	TripleID triple;
+	
+	string rdfs="http://www.w3.org/2000/01/rdf-schema#";
+	string rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	string owl="http://www.w3.org/2002/07/owl#";
+	
+	string rdf_type = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+	
+	string subClass="<http://www.w3.org/2000/01/rdf-schema#subClassOf>";
+	string subProp="<http://www.w3.org/2000/01/rdf-schema#subPropertyOf>";
+	
+	vector<MINIPAIR> triplesSubClass;
+	vector<MINIPAIR> triplesSubProp;
+	
+	MiniHashTable countVocab;
+	countVocab.inithashtable((ntriples/10)+1,true);//ten per cent of number of triples(1 minimum)
+	
+	int pos_separator,i;
+	string substring="";
+	
+		
+	// Variable for traversing the bitmaps
+	unsigned int xL=0, xR=0, yL=0, yR=0;	
+	unsigned int yy=1, zz=1, cy, cz;
+	
+	while (zz <= ntriples)
+	{
+		unsigned int begin = yy;
+		
+		// Processing a new X:
+		xR = bitmapY->select1(x+1);
+		cy = xR-xL-1;
+		
+		unsigned int *Vy = new unsigned int[cy];
+		read_y += fread(Vy, INT32, cy, fileY);
+		yy += cy;
+		
+		// Processing the set of Ys in X:
+		yR = bitmapZ->select1(yy);
+		cz = yR-yL-cy;
+		
+		unsigned int *Vz = new unsigned int[cz];
+		read_z += fread(Vz, INT32, cz, fileZ);
+		zz += cz;
+		
+		// Read values for all pairs (x,y)
+		unsigned int travL;
+		unsigned int travR = yL;		
+		unsigned int count = 0;
+		
+		for (int i=0; i<cy; i++)
+		{
+			travL = travR;
+			travR = bitmapZ->select1(begin+i+1);
+			
+			for (unsigned int j=0; j<travR-travL-1; j++)
+			{
+				triple = retrieveTriple(x,Vy[i],Vz[count+j]);
+			
+				//subject = dictionary->retrieveString(triple.x, VOC_SUBJECT);
+				predicate = dictionary->retrieveString(triple.y, VOC_PREDICATE);
+				//object = dictionary->retrieveString(triple.z, VOC_OBJECT);
+			
+				
+				pos_separator = predicate.find(rdf);
+				
+				if (pos_separator>0)
+				{
+					countVocab.hashupdate((char*)predicate.c_str()); //update or insert
+				}
+				else{
+					pos_separator = predicate.find(rdfs);
+					if (pos_separator>0)
+					{
+						countVocab.hashupdate((char*)predicate.c_str()); //update or insert
+						
+						//check for subclass, suproperty
+						if (predicate==subClass){
+							MINIPAIR pairFind;
+							pairFind.source = triple.x;
+							pairFind.target = triple.z;
+							triplesSubClass.push_back(pairFind);
+						}
+						else if (predicate == subProp){
+							MINIPAIR pairFind;
+							pairFind.source = triple.x;
+							pairFind.target = triple.z;
+							triplesSubProp.push_back(pairFind);
+						}
+					}
+					else{
+						pos_separator = predicate.find(owl);
+						if (pos_separator>0)
+						{
+							countVocab.hashupdate((char*)predicate.c_str()); //update or insert
+						}
+					}
+				}
+				
+			}
+			
+			count += travR-travL-1;
+		}
+		
+		x++;
+		xL = xR;
+		yL = yR;
+		
+		delete [] Vy;
+		delete [] Vz;
+	}
+	
+	//iterate over hash and print results
+	
+	cout<<"    +List of Vocab Predicates:\n";
+	MINIHASHREC* predicateRetrieve;
+	int countRDF=0, countRDFS=0,countOWL=0, countRDF_type=0;
+	for (i=0;i<countVocab.TSIZE;i++)
+	{
+		predicateRetrieve = countVocab.get(i);
+		if (predicateRetrieve!=NULL){
+			cout<<"       " << predicateRetrieve->word<<" ; " << predicateRetrieve->id <<"\n"; 
+			predicate = predicateRetrieve->word;
+			pos_separator = predicate.find(rdf);
+			if (pos_separator>0)
+			{
+				countRDF+= predicateRetrieve->id ;
+				if (predicate==rdf_type){
+					countRDF_type+= predicateRetrieve->id ;
+				}
+			}
+			else{
+				pos_separator = predicate.find(rdfs);
+				if (pos_separator>0)
+				{
+					countRDFS+= predicateRetrieve->id ;
+				}
+				else{
+					pos_separator = predicate.find(owl);
+					if (pos_separator>0)
+					{
+						countOWL+= predicateRetrieve->id ;
+					}
+				}
+			}
+			
+			//verify next
+			while (predicateRetrieve->next!=NULL)
+			{
+				predicateRetrieve = predicateRetrieve->next;
+				cout<<"       " << predicateRetrieve->word<<" ; " << predicateRetrieve->id <<"\n"; 
+				predicate = predicateRetrieve->word;
+				pos_separator = predicate.find(rdf);
+				if (pos_separator>0)
+				{
+					countRDF+= predicateRetrieve->id ;
+					if (predicate==rdf_type){
+						countRDF_type+= predicateRetrieve->id ;
+					}
+				}
+				else{
+					pos_separator = predicate.find(rdfs);
+					if (pos_separator>0)
+					{
+						countRDFS+= predicateRetrieve->id ;
+					}
+					else{
+						pos_separator = predicate.find(owl);
+						if (pos_separator>0)
+						{
+							countOWL+= predicateRetrieve->id ;
+						}
+					}
+				}
+			}	
+		}
+	}
+	
+	cout<<"    +Count of Vocab Predicates:\n";
+	cout<<"       +RDF (not type):"<<countRDF-countRDF_type<<"\n";
+	cout<<"          -ratio(rdf/ntriples):"<<(float)(countRDF-countRDF_type)/ntriples<<"\n";
+	cout<<"       +RDF:type:"<<countRDF_type<<"\n";
+	cout<<"          -ratio(rdf:type/ntriples):"<<(float)countRDF_type/ntriples<<" (rdftype/ntriples"<<countRDF_type<<" of them are rdf:type)\n";
+	cout<<"       +RDFS:"<<countRDFS<<"\n";
+	cout<<"          -ratio(rdfs/ntriples):"<<(float)countRDFS/ntriples<<"\n";
+	cout<<"       +OWL:"<<countOWL<<"\n";
+	cout<<"          -ratio(owl/ntriples):"<<(float)countOWL/ntriples<<"\n";
+	cout<<"    +Total triples: "<<ntriples<<"\n";
+	cout<<"    +Different Predicates: "<<dictionary->getNpredicates()<<"\n\n\n";
+	
+	//check subprop and subclass
+	cout<<"    +Count of Subclass Predicates (would crash with cycles):\n";
+	
+	if (triplesSubClass.size()>0){
+		sort(triplesSubClass.begin(),triplesSubClass.end(), BitmapTriples::pairSort);
+	
+		
+		
+		MiniHashTable subclassLengths;
+		subclassLengths.inithashtable(triplesSubClass.size());
+		int length=0, maxlength=0, totallength=0, minlength=500000,numelements=0; 
+		
+				
+		for (i=0;i< triplesSubClass.size();i++){
+			if (i ==0){			
+				length = getLength(&triplesSubClass,triplesSubClass[i].source,&subclassLengths);
+				//cout<<triplesSubClass[i].source <<" length:"<< length<<endl;	
+				numelements++;		
+			}else if (triplesSubClass[i].source!=triplesSubClass[i-1].source){
+				length = getLength(&triplesSubClass,triplesSubClass[i].source,&subclassLengths);
+				//cout<<triplesSubClass[i].source <<" length:"<< length<<endl;			
+				numelements++;
+			}
+			if (length>maxlength)
+				maxlength=length;
+			if (length<minlength)
+				minlength=length;
+			totallength += length;
+		}
+		cout<<"       -Max length:"<<maxlength<<"\n";
+		cout<<"       -Min length:"<<minlength<<"\n";
+		cout<<"       -Mean length:"<<(float)totallength/numelements<<"\n";
+
+		
+	}
+	cout<<"    +Count of SubProp Predicates (would crash with cycles):\n";
+	if (triplesSubProp.size()>0){
+		sort(triplesSubProp.begin(),triplesSubProp.end(), BitmapTriples::pairSort);
+		int length=0, maxlength=0, totallength=0, minlength=500000,numelements=0; 
+		MiniHashTable subpropLengths;
+		subpropLengths.inithashtable(triplesSubProp.size());
+		for (i=0;i< triplesSubProp.size();i++){
+			if (i ==0){			
+				length = getLength(&triplesSubProp,triplesSubProp[i].source,&subpropLengths);
+				//cout<<triplesSubClass[i].source <<" length:"<< length<<endl;	
+				numelements++;		
+			}else if (triplesSubProp[i].source!=triplesSubProp[i-1].source){
+				length = getLength(&triplesSubProp,triplesSubProp[i].source,&subpropLengths);
+				//cout<<triplesSubClass[i].source <<" length:"<< length<<endl;			
+				numelements++;
+			}
+			if (length>maxlength)
+				maxlength=length;
+			if (length<minlength)
+				minlength=length;
+			totallength += length;
+		}
+		cout<<"       -Max length:"<<maxlength<<"\n";
+		cout<<"       -Min length:"<<minlength<<"\n";
+		cout<<"       -Mean length:"<<(float)totallength/numelements<<"\n";
+	}
+	
+	
+}	
+
+int 
+BitmapTriples::getLength(vector<minipair> * triplesSub,int current, MiniHashTable *subLengths){
+
+	//cout<<"Entering getlength for:"<<current<<endl;
+	//fflush(stdout);
+	unsigned int first=0;
+	unsigned int next = 0;
+	string firstString="",nextString="";
+	int pos = FindTransition(*triplesSub,current); 	//binary search
+	int maxlength=0, length=0 ;
+	MINIHASHREC *recordRetrieve;
+	if (pos<0) 
+		return 0; //no transition
+	while (pos<triplesSub->size()){
+		first = triplesSub->at(pos).source;
+		if (first!=current)
+			break;
+		next = triplesSub->at(pos).target;
+		//cout<<"next:"<<next<<endl;
+		//fflush(stdout);
+		sprintf((char*)firstString.c_str(),"%d",first) ;
+		sprintf((char*)nextString.c_str(),"%d",next) ;
+		recordRetrieve = subLengths->hashsearch((char*)nextString.c_str());
+		if (recordRetrieve!=NULL){
+			length = recordRetrieve->id;
+		}
+		else{
+			length = getLength(triplesSub,next,subLengths)+1;
+		}
+		if (length>maxlength){
+			subLengths->hashinsert((char*)firstString.c_str(),length);
+			maxlength = length;
+		}
+		pos++;
+	}
+	return maxlength;
+}
+	
 unsigned int 
 BitmapTriples::write(string path)
 {	
@@ -1027,3 +1330,4 @@ BitmapTriples::~BitmapTriples()
 	delete bitmapY;
 	delete bitmapZ;
 }
+	

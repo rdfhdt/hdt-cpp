@@ -28,6 +28,8 @@
 #define BITMAPTRIPLES_H
 
 #include <vector>
+#include <iostream>
+#include <algorithm>
 
 #include <libcdsBasics.h>
 #include <BitSequenceRG.h>
@@ -35,12 +37,21 @@
 
 #include "Basics.h"
 #include "Triples.h"
+#include "HashTable.h"
 
 using namespace cds_utils;
 using namespace cds_static;
 using namespace std;
 
 static const int ZPLAIN = 1;
+
+
+typedef struct minipair
+{
+	unsigned int source;
+	unsigned int target;
+} MINIPAIR;
+
 
 /** BitmapTriples
  *   It implements the abstract class Triples with bitmap structures.
@@ -62,6 +73,9 @@ public:
 	unsigned int write(string path);
 	/** Serialize HDT to a given format*/
 	bool serialize(char *output, char *format);
+	
+	/** Show Vocabulary stats */
+	void vocabStats();
 	
 	/** Destructor */
 	~BitmapTriples();
@@ -91,6 +105,54 @@ protected:
 
 	/** Builds a bitstring vector 'v' with 'elems' elements. */
 	void buildBitString(BitString **bs, vector<uint> *v, uint elems);
+
+	/** Util for vocab stats */	
+	int getLength(vector<minipair> * triplesSubClass,int current, MiniHashTable *subclassLengths);
+
+	/** sort minipair */
+	bool static pairSort(const struct minipair c1, const struct minipair c2)
+	{
+		if ((c1.source) < (c2.source)) return true;
+		else
+		{
+			if ((c1.source) > (c2.source)) return false;
+			else
+			{
+				if ((c1.target) < (c2.target)) return true;
+				else
+				{
+					if ((c1.target) > (c2.target)) return false;
+						else return false;
+					
+				}
+			}
+		}
+
+		return true;
+	}
+	// Returns the position of the element or -1 if not found
+	int static
+	FindTransition(const vector<minipair> vocabularies, const int id)
+	{         
+	  int pos=-1;//to indicate not found
+	  int l = 0, r = vocabularies.size()-1, c = (l+r)/2;
+
+	  while (l<=r)  
+	  {     
+	    if (vocabularies[c].source == id)
+	    { 
+	      pos = c; 
+	      break;
+	    }
+	    if (vocabularies[c].source < id) 
+	       l = c+1;
+	    else r = c-1;
+	       c = (l+r)/2;
+	  }
+	  return pos;
+	}
+	
 };
 
 #endif  /* _BITMAPTRIPLES_H */
+	 
