@@ -188,14 +188,6 @@ RDFParser::parse(char *pathFile)
 
 		dictionary->lexicographicSort(mapping);
 		
-		it = properties.find(DICTIONARY_PATH); 
-		{
-			if(it != properties.end()) {
-				mkpathfile((it->second).c_str(), 0744);
-				dictionary->dumpStats(it->second);
-			}
-		}
-		
 		// 4) Testing triples options: it is built on a second pass.
 		//    The graph parsing is retrieved and the object is 
 		//    instantiated by according with the encoding choice. The
@@ -333,14 +325,6 @@ RDFParser::parse(char *pathFile)
 		}		
 		triples->graphSort();
 		
-		it = properties.find(TRIPLES_PATH); 
-		{
-			if(it != properties.end()) {
-				mkpathfile((it->second).c_str(), 0744);
-				triples->dumpStats(it->second);
-			}
-		}
-		
 		// 5) Clustering is only available for parsing 'pso'.
 		if (parsing == PSO)
 		{
@@ -426,9 +410,13 @@ RDFParser::parse(char *pathFile)
 
 		
 		// 8) Writing Header
-		header = new Header();
-		header->write(outputPath, parsing, mapping, d_separator, t_encoding, 
-					  dictionary->getNsubjects(), dictionary->getNpredicates(), dictionary->getNobjects(), dictionary->getSsubobj(), ntriples);
+		header = new Header(parsing, mapping, d_separator, t_encoding, 
+							dictionary->getNsubjects(), dictionary->getNpredicates(), dictionary->getNobjects(), dictionary->getSsubobj(),
+							ntriples, dictionary->getMaxID());
+		header->write(outputPath);
+		
+		//header->write(outputPath, parsing, mapping, d_separator, t_encoding, 
+		//			  dictionary->getNsubjects(), dictionary->getNpredicates(), dictionary->getNobjects(), dictionary->getSsubobj(), ntriples);
 					  
 		// 9) Checking optional gnuplot generation (only for parsings 
 		//    'pso' and 'pos')

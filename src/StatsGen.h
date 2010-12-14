@@ -1,8 +1,8 @@
-/* Dictionary.h
+/* StatsGen.h
  * Copyright (C) 2010, Javier D. Fernandez & Miguel A, Martinez-Prieto
  * all rights reserved.
  *
- * Implementation of the Header component
+ * HDT Statistics generator.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,70 +22,48 @@
  * Contacting the authors:
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
- */
- 
-#ifndef HEADER_H
-#define HEADER_H
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-
-#include "Basics.h"
-
-using namespace std;
-
-/** Header
- *   It implements the class representing the features of the Header component.
- *   See the format description for more details.
  *
- *  @author Javier D. Fernandez
  */
-class Header
+#include "Basics.h"
+#include "Literals.h"
+#include "Header.h"
+#include "Dictionary.h"
+#include "Triples.h"
+#include "RDFSyntaxMediator.h"
+
+class StatsGen
 {
-public:		
-	Header();
-	Header(int pars, int map, int sep, int enc, int nsub, int npred, int nobj, int nsh, int nlit, int nent);
-
-	void write(string path);
-	void read(string path);
-
-	int getParsing();
-	int getMapping();
-	int getD_separator();
-	int getT_encoding();
-
-	int getNsubjects();
-	int getNpredicates();
-	int getNobjects(); 
-	int getSsubobj();
-	int getNtriples();
-	int getNliterals();
-	int getNentries();
-
-	~Header();
-
+public:
+	/** Generic constructor */
+	StatsGen();
+	
+	/** Parses the RDF dataset by following the features file */
+	bool process(char* pathFile, char *output);
+	
+	/** Destructor */
+	~StatsGen();
+	
 protected:
+	istream *input;
+	ifstream config;
+	map<string,string> properties;
+	
+	Header *header;
+	Dictionary *dictionary;
+	Triples *triples;
+	
+	string *node;
+	
 	/** Graph parsing: SPO ('spo'), SOP ('sop'), PSO ('pso'), POS ('pos'), OSP ('osp'), OPS ('ops') */
-	int parsing; 
+	unsigned int parsing;
 	/** ID mapping: MAPPING1 ('single'), MAPPING2 ('shared') */
-	int mapping; 
-	/** Dictionary separator character */
-	int d_separator;
+	unsigned int mapping;
 	/** Dictionary encoding: PLAIN ('plain'), COMPACT ('compact'), BITMAP ('bitmap'), K2TREE ('k2tree') */
-	int t_encoding; 
+	unsigned int t_encoding; 
 	
-	/** Dictionary statistics */
-	int nsubjects;
-	int npredicates;
-	int nobjects; 
-	int ssubobj;
-	int nliterals;
-	int nentries;
 	
-	/** Graph size in number of different triples */
-    int ntriples;
+	/** Parse the config file */
+	bool parseConfig(char* pathFile);
+	/** Parse a single triple from a new line read from the dataset */
+	void parseTripleN3(string t);
 };
-
-#endif  /* _HEADER_H */

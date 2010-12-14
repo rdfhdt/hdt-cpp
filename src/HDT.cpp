@@ -29,6 +29,7 @@
 
 #include "HDTLoader.h" 
 #include "RDFParser.h"
+#include "StatsGen.h"
 
 using namespace std;
  
@@ -190,8 +191,11 @@ main(int argc, char* argv[])
 				
 				delete loader;
 				
-			}
-			else
+			} else if ((argc==4) && (strcmp(argv[1],"-s")==0 || strcmp(argv[1],"--stats")==0)) {
+				StatsGen *stats= new StatsGen();
+				stats->process(argv[2], argv[3]);
+				delete stats;
+			} else
 			{
 				// Bad option
 				cout << "   <ERROR> '" << argv[1][0] << "' is not a valid execution option\n\nFor help, type: hdt -h" << endl;

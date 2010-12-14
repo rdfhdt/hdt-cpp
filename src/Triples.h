@@ -79,8 +79,6 @@ public:
 	/** Calculate degrees */
 	void calculateDegrees(string path);
 	
-	void dumpStats(string file);
-
 protected:
 	Dictionary *dictionary;
 

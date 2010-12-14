@@ -28,9 +28,14 @@
 #include "Triples.h"
 #include "Histogram.h"
 
+
 void 
 Triples::insert(unsigned int subject, unsigned int predicate, unsigned int object)
 {	
+	if( (subject==-1) || (predicate==-1) || (object==-1) ) {
+		return;
+	}
+	
 	if (parsing <= SOP)
 	{
 		graph[ntriples].x = subject;
@@ -257,11 +262,13 @@ void
 Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned int max, string path)
 {
 	char *xstring = new char[16];
-	string filename = path;	
+
 	FILE *data = NULL;
 	
 	// All Predicates
+	string filename(path);	
 	filename.append("all.gnu");
+
 	gnuplotHeader(1, npredicates, predicates[0], 1, max, 1, max, filename);
 	
 	unsigned int ymin = max, ymax = 0, zmin = max, zmax = 0;
@@ -361,6 +368,7 @@ Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned 
 void 
 Triples::graphSort()
 {
+	graph.resize(ntriples);
 	sort(graph.begin(),graph.end(), Triples::sortXYZ);
 }
 
@@ -548,14 +556,4 @@ Triples::calculateDegrees(string path) {
 	cout << "Calculate IN Degree" << endl;
 	calculateDegree(path);
 		
-}
-
-void
-Triples::dumpStats(string file) 
-{
-	ofstream out;
-	
-	out.open(file.c_str(), ios::out);
-	out<<"Triples: "<<ntriples<<endl;
-	out.close();
 }

@@ -25,17 +25,36 @@
  */
 
 #include "Header.h"
+#include <iostream>
+#include <fstream>
+
+#define BINARY_HEADER 1
 
 Header::Header()
 {
 }
 
-void 
-Header::write(string path, int parsing, int mapping, int d_separator, int t_encoding,
-			  int nsubjects, int npredicates, int nobjects, int ssubobj,int ntriples)
+Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred, int nobj, int nsh, int nlit, int nent)
+{
+	parsing = pars;
+	mapping = mapp;
+	d_separator = sep;
+	t_encoding = enc;
+	nsubjects = nsub;
+	npredicates = npred;
+	nobjects = nobj;
+	ssubobj = nsh;
+	nliterals = nlit;
+	nentries = nent;
+}
 
+
+void 
+Header::write(string path)
 {
 	string output = path;
+	
+#if BINARY_HEADER
 	FILE *header = fopen((output.append(".hdt.header")).c_str(), "w+");
 	
 	// Graph parsing
@@ -57,15 +76,33 @@ Header::write(string path, int parsing, int mapping, int d_separator, int t_enco
 	fwrite(&ntriples,INT32,1,header);
 	
 	fclose(header);
+#else
+	ofstream headerfile( (output.append(".hdt.header")).c_str());
+	
+	headerfile
+	<< "Parsing: " << parsing << endl
+	<< "Mapping: " << mapping << endl
+	<< "Separator: " << d_separator << endl
+	<< "Encoding: " << t_encoding << endl
+	<< "NSubjects: " << nsubjects << endl
+	<< "NPredicates: " << npredicates << endl
+	<< "NObjects: " << nobjects << endl
+	<< "NShared: " << ssubobj << endl
+	<< "Triples: " << ntriples << endl
+	<< "NLiterals: " << nliterals << endl
+	<< "Nentries: " << nentries << endl;
+	
+	headerfile.close();
+#endif
 }
 
 void 
 Header::read(string path)
 {
 	string output = path;
-	FILE *header;
 	
-	header = fopen((output.append(".hdt.header")).c_str(), "r");
+#if BINARY_HEADER
+	FILE *header = fopen((output.append(".hdt.header")).c_str(), "r");
 	
 	if (header==NULL) {
       cout << "Exception while reading Header in "<<output<<".\n";
@@ -101,6 +138,56 @@ Header::read(string path)
 	}
 	
 	fclose(header);
+#else
+	try
+	{
+		ifstream headerfile( (output.append(".hdt.header")).c_str());
+		
+		if(headerfile.good()) {
+			string line;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> parsing;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> mapping;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> d_separator;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> t_encoding;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> nsubjects;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> npredicates;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> nobjects;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> ssubobj;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> ntriples;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> nliterals;
+			
+			getline(headerfile, line, ' ');
+			headerfile >> nentries;
+		}
+		
+		headerfile.close();
+	}
+	catch(const ios::failure &problem)
+	{
+		// Something really went wrong here
+		cout << "Error reading header " << problem.what();
+	}
+#endif
 }
 
 int 
@@ -155,6 +242,18 @@ int
 Header::getNtriples()
 {
         return ntriples;
+}
+
+int
+Header::getNliterals() 
+{
+	return nliterals;
+}
+
+int
+Header::getNentries()
+{
+	return nentries;
 }
 
 Header::~Header()

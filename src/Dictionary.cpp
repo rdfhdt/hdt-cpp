@@ -76,20 +76,3 @@ Dictionary::getNLiterals()
 {
 	return nliterals;
 }
-
-void
-Dictionary::dumpStats(string file) 
-{
-	ofstream out;
-	
-	out.open(file.c_str(), ios::out);
-	out<<"Subjects: "<<nsubjects<<endl;
-	out<<"Objects: "<<nobjects<<endl;
-	out<<"Predicates: "<<npredicates << endl;
-	out<<"Shared: "<<ssubobj<<endl;
-	out<<"Entries: "<<getMaxID()<<endl;
-	out<<"URIs: "<<getMaxID()-nliterals<<endl;
-	out<<"Literals: "<<nliterals<<endl;
-	
-	out.close();
-}
