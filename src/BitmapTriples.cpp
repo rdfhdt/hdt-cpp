@@ -1325,6 +1325,12 @@ BitmapTriples::buildBitString(BitString **bs, vector<uint> *v, uint elems)
 	}
 }
 
+bool
+BitmapTriples::loadGraphMemory(){
+	cout << "BitmapTriples::loadGraphMemory() not implemented" <<endl;
+	return false;
+}
+
 BitmapTriples::~BitmapTriples()
 {
 	delete bitmapY;

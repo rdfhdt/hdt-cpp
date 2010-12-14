@@ -74,6 +74,9 @@ public:
 	/** Serialize HDT to a given format*/
 	bool serialize(char *output, char *format);
 	
+	/** Load the full graph to main memory */
+	bool loadGraphMemory();
+	
 	/** Show Vocabulary stats */
 	void vocabStats();
 	

@@ -193,7 +193,13 @@ main(int argc, char* argv[])
 				
 			} else if ((argc==4) && (strcmp(argv[1],"-s")==0 || strcmp(argv[1],"--stats")==0)) {
 				StatsGen *stats= new StatsGen();
-				stats->process(argv[2], argv[3]);
+				stats->readFromDataset(argv[2], argv[3]);
+				stats->process(argv[3]);
+				delete stats;
+			} else if ((argc==4) && (strcmp(argv[1],"-S")==0 || strcmp(argv[1],"--Stats")==0)) {
+				StatsGen *stats= new StatsGen();
+				stats->readFromHDT(argv[2], argv[3]);
+				stats->process(argv[3]);
 				delete stats;
 			} else
 			{

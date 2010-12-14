@@ -35,10 +35,10 @@ public:
 	}
 	// Construct a histogram by copying another one.
 	Histogram(const Histogram& other):
-	Start(other.Start),
-	nBins_by_interval(other.nBins_by_interval),
-	nBins(other.nBins),
-	freq( new unsigned int[nBins] )
+		Start(other.Start),
+		nBins_by_interval(other.nBins_by_interval),
+		nBins(other.nBins),
+		freq( new unsigned int[nBins] )
 	{
 		for(unsigned int i(0); i < nBins; ++i)
             freq[i] = other.freq[i];
@@ -99,8 +99,10 @@ public:
 	}
 	
 	void dumpStr(ostream &outfile) {
-		for(unsigned int i(0); i<nBins & i<=maxValue;i++) {
+		int maxfreq=0;
+		for(unsigned int i=0; i<nBins && i<=maxValue;i++) {
 			outfile << i << "  " << freq[i] << endl;
+			maxfreq = freq[i]>maxfreq ? freq[i] : maxfreq;
 		}
 		
 		outfile << "# Number: "<<number <<endl;
@@ -109,12 +111,14 @@ public:
 		outfile << "# Min: "<<minValue<<endl;
 		outfile << "# Max: "<<maxValue<<endl;
 		
-		for(unsigned int i=maxValue<nBins?maxValue:nBins; i>=50; i--) {
-			if(freq[i]>1) {
-				outfile << "# Latest: "<<i<<endl;
+		unsigned int max=15;
+		for(unsigned int i=maxValue<nBins?maxValue:nBins; i>15; i--) {
+			if(freq[i]>maxfreq/10000) {
+				max = i;
 				break;
 			}
 		}
+		outfile << "# Latest: "<<max<<endl;
 	}
 	
 	void dump(char * name, char *suffix) {

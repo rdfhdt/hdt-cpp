@@ -412,7 +412,7 @@ RDFParser::parse(char *pathFile)
 		// 8) Writing Header
 		header = new Header(parsing, mapping, d_separator, t_encoding, 
 							dictionary->getNsubjects(), dictionary->getNpredicates(), dictionary->getNobjects(), dictionary->getSsubobj(),
-							ntriples, dictionary->getMaxID());
+							ntriples, dictionary->getNLiterals(), dictionary->getMaxID());
 		header->write(outputPath);
 		
 		//header->write(outputPath, parsing, mapping, d_separator, t_encoding, 

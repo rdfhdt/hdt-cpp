@@ -344,6 +344,13 @@ CompactTriples::write(string path)
 }
 
 
+bool
+CompactTriples::loadGraphMemory(){
+	cout << "CompactTriples::loadGraphMemory() not implemented" <<endl;
+	return false;
+}
+
+
 CompactTriples::~CompactTriples()
 {
 }

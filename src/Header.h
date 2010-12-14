@@ -46,7 +46,7 @@ class Header
 {
 public:		
 	Header();
-	Header(int pars, int map, int sep, int enc, int nsub, int npred, int nobj, int nsh, int nlit, int nent);
+	Header(int pars, int map, int sep, int enc, int nsub, int npred, int nobj, int nsh, int ntrip, int nlit, int nent);
 
 	void write(string path);
 	void read(string path);

@@ -73,6 +73,9 @@ public:
 	/** Write the triples structure; returns the number of triples effectively writen */
 	virtual unsigned int write(string path) = 0;
 	
+	/** Load the full graph to main memory */
+	virtual bool loadGraphMemory()=0;
+	
 	/** Serialize HDT to a given format*/
 	virtual bool serialize(char *output, char *format) = 0;
 

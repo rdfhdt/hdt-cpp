@@ -45,19 +45,20 @@ StatsGen::StatsGen()
 {
 }
 
-bool 
-StatsGen::process(char *dataset, char *output)
+bool
+StatsGen::readFromDataset(char *dataset, char *output)
 {
-	DataTime t1, t2;
+	
 	getTime(&t1);
 	cout.precision(4);
-
+	
 	string line;
 	int ntriples=0;
 	
 	// Input File/Pipe management
 	FILE *filePipe;
 	std::string pipeCommand;
+	istream *input;
 	ifstream *fileStream = NULL; 
 	boost::fdistream *pipeStream = NULL;
 	
@@ -141,9 +142,9 @@ StatsGen::process(char *dataset, char *output)
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  Sorting Dictionary" << endl;
 	
-
+	
 	dictionary->lexicographicSort(mapping);
-
+	
 	
 	// 4) Testing triples options: it is built on a second pass.
 	//    The graph parsing is retrieved and the object is 
@@ -172,7 +173,7 @@ StatsGen::process(char *dataset, char *output)
 	
 	// PLAIN triples
 	triples = new PlainTriples(dictionary, ntriples, parsing);
-
+	
 	
 	// COMPACT triples	
 	//triples = new CompactTriples(dictionary, ntriples, parsing);
@@ -196,8 +197,8 @@ StatsGen::process(char *dataset, char *output)
 			object = dictionary->retrieveID(node[2], VOC_OBJECT);
 			
 			triples->insert(subject, predicate, object);
-						
-//			cout << subject << "," << predicate << "," << object <<endl;
+			
+			//			cout << subject << "," << predicate << "," << object <<endl;
 		}	
 	} else {
 		rdfmediator;
@@ -206,17 +207,17 @@ StatsGen::process(char *dataset, char *output)
 		
 	}
 	ntriples = triples->size();
-
+	
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  Sort triples" << endl;
-
+	
 	triples->graphSort();
 	
 	// 6) Writing Dictionary
 	getTime(&t2);
 	int separator = '\n';
 	string dictPath(output);
-	dictPath.append("/dictionary_nocluster");
+	dictPath.append("/hdt");
 	cout << "[" << showpoint << t2.user - t1.user << "]  Writing Dictionary to: " << dictPath << endl;
 	
 	mkpathfile(dictPath.c_str(),0744);
@@ -227,21 +228,92 @@ StatsGen::process(char *dataset, char *output)
 	//    that the original dataset can contain repeated triples)
 	getTime(&t2);
 	string triplePath(output);
-	triplePath.append("/triples_nocluster");
+	triplePath.append("/hdt");
 	cout << "[" << showpoint << t2.user - t1.user << "]  Writing Triples to " << triplePath << endl;
 	ntriples = triples->write(triplePath);
 	
 	// 8) Writing Header
 	getTime(&t2);
 	string headerPath(output);
-	headerPath.append("/header_nocluster");
+	headerPath.append("/hdt");
 	cout << "[" << showpoint << t2.user - t1.user << "]  Writing Header to " << headerPath << endl;
-
+	
 	header = new Header(parsing, mapping, separator, t_encoding, 
 						dictionary->getNsubjects(), dictionary->getNpredicates(), dictionary->getNobjects(), dictionary->getSsubobj(),
-						ntriples, dictionary->getMaxID());
+						ntriples, dictionary->getNLiterals(), dictionary->getMaxID());
 	header->write(headerPath);
+		
+	// Close
+	if(pipeCommand.length()>0) {
+		delete pipeStream;
+		input = NULL;
+		pclose(filePipe);
+	} else {
+		fileStream->close();
+		delete fileStream;
+		input = NULL;	
+	}
 	
+	delete [] node;
+	
+	return true;
+}
+
+bool
+StatsGen::readFromHDT(char *hdt, char*output)
+{
+	DataTime t1, t2;
+	getTime(&t1);
+	cout.precision(4);
+	
+	cout << "[" << showpoint << t1.user - t1.user << "]  Loading HDT" << endl;
+	
+	getTime(&t2);
+	cout << "[" << showpoint << t2.user - t1.user << "]  Reading Header from: " << hdt << endl;
+	header = new Header();
+	header->read(hdt);
+	
+	getTime(&t2);
+	cout << "[" << showpoint << t2.user - t1.user << "]  Loading Dictionary from: " << hdt << endl;
+	
+	int mapping = header->getMapping();
+	
+	dictionary = new PlainDictionary(hdt, mapping, header->getD_separator(), header->getNsubjects(), header->getNpredicates(), header->getNobjects(), header->getSsubobj());
+	
+	getTime(&t2);
+	cout << "[" << showpoint << t2.user - t1.user << "]  Loading Triples from: " << hdt << endl;
+	switch(header->getT_encoding())
+	{
+		case PLAIN:
+			triples = new PlainTriples(dictionary, header->getNtriples(), header->getParsing(), hdt);
+			break;
+		case COMPACT:
+			triples = new CompactTriples(dictionary, header->getNtriples(), header->getParsing(), hdt);
+			break;
+		case BITMAP:
+			triples = new BitmapTriples(dictionary, header->getNtriples(), header->getParsing(), hdt);
+			break;
+		case K2TREE:
+			cout << "   <WARNING> K2-tree Triples encoding is not currently supported" << endl;
+			return false;
+			break;
+		default:
+			cout << "   <ERROR> Current triples encoding  is not supported" << endl;
+			return false;
+	}
+	
+	triples->loadGraphMemory();
+	
+	getTime(&t2);
+	cout << "[" << showpoint << t2.user - t1.user << "] HDT Succesfully loaded" << endl;
+	
+	return true;
+}
+
+bool 
+StatsGen::process(char *output)
+{
+		
 	// 9) Checking optional gnuplot generation (only for parsings 
 	//    'pso' and 'pos')
 	
@@ -249,7 +321,6 @@ StatsGen::process(char *dataset, char *output)
 	gnuplotPath.append("/nocluster/");
 	mkpathfile(gnuplotPath.c_str(), 0744);
 	
-
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  Generating Gnuplot on " << gnuplotPath << endl;
 	
@@ -273,24 +344,24 @@ StatsGen::process(char *dataset, char *output)
 	
 	// 12) Writing Dictionary
 	getTime(&t2);
-	dictPath = output;
-	dictPath.append("/dictionary_cluster");
+	string dictPath = output;
+	dictPath.append("/hdt_cluster");
 	cout << "[" << showpoint << t2.user - t1.user << "]  Writing Clustered Dictionary to: " << dictPath << endl;
-	dictionary->write(dictPath, separator);
+	dictionary->write(dictPath, header->getD_separator());
 	
 	// 13) Writing Triples
 	//    Returns the number of triples effectively writen (note
 	//    that the original dataset can contain repeated triples)
 	getTime(&t2);
-	triplePath = output;
-	triplePath.append("/triples_cluster");
+	string triplePath = output;
+	triplePath.append("/hdt_cluster");
 	cout << "[" << showpoint << t2.user - t1.user << "]  Writing Clustered Triples to " << triplePath << endl;
-	ntriples = triples->write(triplePath);
+	int ntriples = triples->write(triplePath);
 	
 	// 14) Writing Header
 	getTime(&t2);
-	headerPath = output;
-	headerPath.append("/header_cluster");
+	string headerPath = output;
+	headerPath.append("/hdt_cluster");
 	cout << "[" << showpoint << t2.user - t1.user << "]  Writing Clustered Header to " << headerPath << endl;
 	
 /*	header = new Header(parsing, mapping, separator, t_encoding, 
@@ -329,18 +400,6 @@ StatsGen::process(char *dataset, char *output)
 	// All done
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  All done" << endl;
-
-	if(pipeCommand.length()>0) {
-		delete pipeStream;
-		input = NULL;
-		pclose(filePipe);
-	} else {
-		fileStream->close();
-		delete fileStream;
-		input = NULL;	
-	}
-	
-	delete [] node;
 	
 	return true;
 }

@@ -155,6 +155,47 @@ PlainTriples::console()
 }
 
 bool
+PlainTriples::loadGraphMemory(){
+	
+	unsigned int x, y, z;
+	
+	size_t read_x = 0, read_y = 0, read_z = 0;
+	
+	string input = path;
+	FILE *triples = fopen((input.append(".hdt.triples")).c_str(), "r");
+	
+	if (triples==NULL){
+		cout << "Exception while reading Triples in "<<input<<".\n";
+		exit(1);
+	}
+	
+	graph.resize(ntriples);
+	
+	for (unsigned int i=0; i<ntriples; i++)
+	{
+		read_x += fread(&x,INT32,1,triples);
+		read_y += fread(&y,INT32,1,triples);
+		read_z += fread(&z,INT32,1,triples);
+		
+		graph[i].x = x;
+		graph[i].y = y;
+		graph[i].z = z;
+	}
+	
+	fclose(triples);	
+	
+	if (read_z == ntriples)
+	{
+		return true;
+	}
+	else
+	{
+		cout << endl << "   <ERROR> The number of read triples does not match up with the expected one" << endl;
+		return false;
+	}
+}
+
+bool
 PlainTriples::transformToN3()
 {
 	unsigned int x, y, z;

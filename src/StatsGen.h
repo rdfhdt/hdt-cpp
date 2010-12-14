@@ -38,16 +38,14 @@ public:
 	StatsGen();
 	
 	/** Parses the RDF dataset by following the features file */
-	bool process(char* pathFile, char *output);
+	bool process(char *output);
+	bool readFromDataset(char *dataset, char *output);
+	bool readFromHDT(char *hdt, char*output);
 	
 	/** Destructor */
 	~StatsGen();
 	
 protected:
-	istream *input;
-	ifstream config;
-	map<string,string> properties;
-	
 	Header *header;
 	Dictionary *dictionary;
 	Triples *triples;
@@ -56,14 +54,16 @@ protected:
 	
 	/** Graph parsing: SPO ('spo'), SOP ('sop'), PSO ('pso'), POS ('pos'), OSP ('osp'), OPS ('ops') */
 	unsigned int parsing;
+	
 	/** ID mapping: MAPPING1 ('single'), MAPPING2 ('shared') */
 	unsigned int mapping;
+	
 	/** Dictionary encoding: PLAIN ('plain'), COMPACT ('compact'), BITMAP ('bitmap'), K2TREE ('k2tree') */
 	unsigned int t_encoding; 
 	
+	DataTime t1, t2;
 	
-	/** Parse the config file */
-	bool parseConfig(char* pathFile);
 	/** Parse a single triple from a new line read from the dataset */
 	void parseTripleN3(string t);
+
 };

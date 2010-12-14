@@ -34,7 +34,7 @@ Header::Header()
 {
 }
 
-Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred, int nobj, int nsh, int nlit, int nent)
+Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred, int nobj, int nsh, int ntrip, int nlit, int nent)
 {
 	parsing = pars;
 	mapping = mapp;
@@ -44,6 +44,7 @@ Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred, int no
 	npredicates = npred;
 	nobjects = nobj;
 	ssubobj = nsh;
+	ntriples = ntrip;
 	nliterals = nlit;
 	nentries = nent;
 }
