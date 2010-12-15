@@ -84,6 +84,8 @@ public:
 	
 	/** Returns the number of Literals in the Dictionary */
 	unsigned int getNLiterals();
+	
+	virtual void dumpStats(string &output) = 0;
 
 protected:
 	/** ID-mapping: MAPPING1 ('single'), MAPPING2 ('shared') */

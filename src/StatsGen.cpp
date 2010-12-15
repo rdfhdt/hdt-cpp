@@ -313,7 +313,8 @@ StatsGen::readFromHDT(char *hdt, char*output)
 bool 
 StatsGen::process(char *output)
 {
-		
+
+#if 0
 	// 9) Checking optional gnuplot generation (only for parsings 
 	//    'pso' and 'pos')
 	
@@ -388,7 +389,18 @@ StatsGen::process(char *output)
 		}
 		triples->gnuplot(npredicates, predicates, max, gnuplotPath.c_str());
 	}
+#endif
 	
+	// Dictionary stats
+	// 10) In and Out Degree
+	getTime(&t2);
+	string dictStats(output);
+	dictStats.append("/dictstats");
+	cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Dictionary Statistics on " << dictStats <<endl;
+	mkpathfile((dictStats).c_str(), 0744);
+	dictionary->dumpStats(dictStats);
+	
+#if 0
 	// 10) In and Out Degree
 	getTime(&t2);
 	string degreePath(output);
@@ -396,6 +408,7 @@ StatsGen::process(char *output)
 	cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Degree Metrics on " << degreePath <<endl;
 	mkpathfile((degreePath).c_str(), 0744);
 	triples->calculateDegrees(degreePath);
+#endif
 	
 	// All done
 	getTime(&t2);

@@ -25,6 +25,7 @@
  */
  
 #include "PlainDictionary.h"
+#include "Histogram.h"
 
 PlainDictionary::PlainDictionary()
 {
@@ -782,6 +783,82 @@ PlainDictionary::write(string path, unsigned int marker)
 	if (outFile.good()) outFile.close();
 }
 
+void 
+PlainDictionary::dumpStats(string &output)
+{
+	unsigned int i=0;
+
+	const int maxval = 50000;
+	const int nbins = 50000;
+	
+	Histogram histoURI(0, maxval, nbins);
+	Histogram histoLiteral(0, maxval, nbins);
+	
+	string tmp;
+	//shared subjects-objects from subjects
+	for (i=0;i<subjects_shared.size();i++)
+	{
+		tmp.clear();
+	
+		if (subjects_shared[i]->prefix!=NULL)
+		{
+			tmp.append(subjects_shared[i]->prefix->word);
+		}
+		tmp.append(subjects_shared[i]->word);
+		
+		histoURI.Add(tmp.length());
+	}
+	
+	//not shared subjects
+	for (i=0;i<subjects_not_shared.size();i++)
+	{
+		tmp.clear();
+		if (subjects_not_shared[i]->prefix!=NULL)
+		{
+			tmp.append(subjects_not_shared[i]->prefix->word);
+		}
+		tmp.append(subjects_not_shared[i]->word);
+
+		histoURI.Add(tmp.length());
+	}
+	
+	//not shared objects
+	for (i=0;i<objects_not_shared.size();i++)
+	{
+		tmp.clear();
+		if (objects_not_shared[i]->prefix!=NULL)
+		{
+			tmp.append(objects_not_shared[i]->prefix->word);
+		}
+		tmp.append(objects_not_shared[i]->word);
+		if(tmp[0]=='<') {
+			histoURI.Add(tmp.length());
+		} else if(tmp[0]=='"') {
+			histoLiteral.Add(tmp.length()); 
+		} else {
+			cout << "String not URI/Lit?: " << tmp << endl;
+		}
+	}
+	
+	//predicates
+	for (i=0;i<predicates.size();i++)
+	{
+		tmp.clear();
+		if (predicates[i]->prefix!=NULL)
+		{
+			tmp.append(predicates[i]->prefix->word);
+		}
+		tmp.append(predicates[i]->word);
+		
+		histoURI.Add(tmp.length());
+	}
+	
+	histoURI.end();
+	histoURI.dump(output.c_str(), "URI");
+	
+	histoLiteral.end();
+	histoLiteral.dump(output.c_str(), "Literal");
+}
 
 PlainDictionary::~PlainDictionary()
 {

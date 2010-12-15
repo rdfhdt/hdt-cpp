@@ -68,6 +68,9 @@ public:
 	void split();
 	void write(string path, unsigned int separator);
 
+	void dumpStats(string &path);
+
+	
 	/** Destructor */
 	~PlainDictionary();
 

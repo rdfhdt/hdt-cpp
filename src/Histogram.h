@@ -74,22 +74,27 @@ public:
 		}
 		return *this;
 	}
-	// Increase the count for the bin that holds a
-	// value that is in range for this histogram.
-	void Add(const double& x)
-	{
-		number++;
-		total+=x;
-		average+=x;
-		deviation+= x * x;
+	
+	void Add(const double& x, int ntimes) {
+		number+=ntimes;
+		total+=(x*ntimes);
+		average+=(x*ntimes);
+		deviation+= (x * x)*ntimes;
 		minValue = min(minValue, x);
 		maxValue = max(maxValue, x);
 		
 		const unsigned int i( static_cast<unsigned int>( (x-Start)*nBins_by_interval) );
 		
 		if( i < nBins ) {
-			freq[i]++;
+			freq[i]+=ntimes;
 		}
+	}
+	
+	// Increase the count for the bin that holds a
+	// value that is in range for this histogram.
+	void Add(const double& x)
+	{
+		Add(x,1);
 	}
 	
 	void end() {
@@ -121,7 +126,7 @@ public:
 		outfile << "# Latest: "<<max<<endl;
 	}
 	
-	void dump(char * name, char *suffix) {
+	void dump(const char * name, const char *suffix) {
 		string fileName(name);
 		fileName.append(suffix);
 		ofstream outfile;
