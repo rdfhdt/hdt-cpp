@@ -55,6 +55,8 @@ public:
 
 	/** Load the full graph to main memory */
 	bool loadGraphMemory();
+	
+	static unsigned int write(vector<TripleID> &graph, string path);
 
 	/** Destructor */
 	~PlainTriples();

@@ -49,6 +49,13 @@ CompactTriples::CompactTriples(Dictionary *dictionary, unsigned int ntriples, un
 	this->path = path;
 }
 
+CompactTriples::CompactTriples(Triples *other)
+{
+	this->dictionary = other->getDictionary();
+	this->parsing = other->getParsing();
+	this->ntriples = other->size();
+}
+
 void
 CompactTriples::console()
 {
@@ -276,10 +283,10 @@ CompactTriples::serialize(char *output, char *format)
 		
 	return true;
 }
-	
+
 unsigned int 
-CompactTriples::write(string path)
-{	
+CompactTriples::write(vector<TripleID> &graph, string path)
+{
 	string output = path;
 	FILE *fileY = fopen((output.append(".hdt.triples.Y")).c_str(), "w+");
 	
@@ -291,7 +298,7 @@ CompactTriples::write(string path)
 	
 	fwrite(&y,INT32,1,fileY);
 
-	for (unsigned int i=0; i<ntriples; i++)
+	for (unsigned int i=0; i<graph.size(); i++)
 	{
 		if (x == graph[i].x)
 		{
@@ -333,14 +340,20 @@ CompactTriples::write(string path)
 			fwrite(&z,INT32,1,fileZ);
 		}
 	}
-
+	
 	x = 0; fwrite(&x,INT32,1,fileY);
 	y = 0; fwrite(&y,INT32,1,fileZ);
-
+	
 	fclose(fileY);
 	fclose(fileZ);
 	
-	return ntriples-repeated;
+	return graph.size()-repeated;
+}	
+
+unsigned int 
+CompactTriples::write(string path)
+{	
+	return CompactTriples::write(this->graph, path);
 }
 
 

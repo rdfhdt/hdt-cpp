@@ -43,6 +43,17 @@ using namespace std;
 #define ERROR -1
 
 // Graph parsing constant
+enum ParsingType {
+	SPO = 1,
+	SOP,
+	PSO,
+	POS,
+	OSP,
+	OPS
+};
+
+static const char *parsingTypeStr[] = { "", "SPO","SOP","PSO","POS","OSP","OPS" }; 
+
 #define SPO 1
 #define SOP 2
 #define PSO 3

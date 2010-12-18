@@ -309,10 +309,8 @@ PlainTriples::serialize(char *output, char *format){
 	}
 }
 
-	
 unsigned int 
-PlainTriples::write(string path)
-{	
+PlainTriples::write(vector<TripleID> &graph, string path) {
 	string output = path;
 	FILE *triples = fopen((output.append(".hdt.triples")).c_str(), "w+");
 	
@@ -320,12 +318,12 @@ PlainTriples::write(string path)
 	unsigned int x = graph[0].x, y = 0, z = 0;
 	
 	/*output = path;
-	output.append(".pepe");
-	ofstream outFile(output.c_str()); 
+	 output.append(".pepe");
+	 ofstream outFile(output.c_str()); 
+	 
+	 string subject, predicate, object;*/
 	
-	string subject, predicate, object;*/
-	
-	for (unsigned int i=0; i<ntriples; i++)
+	for (unsigned int i=0; i<graph.size(); i++)
 	{
 		if (!((x == graph[i].x) && (y == graph[i].y) && (z == graph[i].z)))
 		{
@@ -336,10 +334,10 @@ PlainTriples::write(string path)
 			fwrite(&z,INT32,1,triples);		
 			
 			/*subject = dictionary->retrieveString(y, VOC_SUBJECT);
-			predicate = dictionary->retrieveString(x, VOC_PREDICATE);
-			object = dictionary->retrieveString(z, VOC_OBJECT);
-			
-			outFile<< subject << " " << predicate << " " << object << " ." << endl;*/
+			 predicate = dictionary->retrieveString(x, VOC_PREDICATE);
+			 object = dictionary->retrieveString(z, VOC_OBJECT);
+			 
+			 outFile<< subject << " " << predicate << " " << object << " ." << endl;*/
 		}
 		else
 		{
@@ -350,7 +348,14 @@ PlainTriples::write(string path)
 	/*outFile.close();*/
 	fclose(triples);
 	
-	return ntriples-repeated;
+	return graph.size()-repeated;
+}
+
+	
+unsigned int 
+PlainTriples::write(string path)
+{	
+	return PlainTriples::write(this->graph, path);
 }
 
 

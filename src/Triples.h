@@ -82,6 +82,22 @@ public:
 	/** Calculate degrees */
 	void calculateDegrees(string path);
 	
+	Dictionary *getDictionary() {
+		return dictionary;
+	}
+	
+	int getParsing() {
+		return parsing;
+	}
+	
+	vector<TripleID> &getGraph() {
+		return graph;
+	}
+	
+	void convertParsing(unsigned int to);
+
+	void calculateDegree(string path);
+	
 protected:
 	Dictionary *dictionary;
 
@@ -128,10 +144,6 @@ protected:
 
 		return true;
 	}
-
-	void calculateDegree(string path);
-	void SPOtoOPS();
-	void PSOtoSPO();
 };
 
 #include "PlainTriples.h"

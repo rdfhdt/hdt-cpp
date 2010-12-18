@@ -76,6 +76,9 @@ public:
 	
 	/** Load the full graph to main memory */
 	bool loadGraphMemory();
+		
+	static unsigned int write(vector<TripleID> &graph, string path);
+	
 	
 	/** Show Vocabulary stats */
 	void vocabStats();
@@ -107,7 +110,7 @@ protected:
 	int select(string q, vector<TripleString> **triples);
 
 	/** Builds a bitstring vector 'v' with 'elems' elements. */
-	void buildBitString(BitString **bs, vector<uint> *v, uint elems);
+	static void buildBitString(BitString **bs, vector<uint> *v, uint elems);
 
 	/** Util for vocab stats */	
 	int getLength(vector<minipair> * triplesSubClass,int current, MiniHashTable *subclassLengths);

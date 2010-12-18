@@ -28,7 +28,6 @@
 #include "Triples.h"
 #include "Histogram.h"
 
-
 void 
 Triples::insert(unsigned int subject, unsigned int predicate, unsigned int object)
 {	
@@ -258,6 +257,15 @@ Triples::clustering()
 	dictionary->endClustering();
 }
 
+#if 0
+#define findDest(data, max1, max2) ( ((((double)data)*max1)/max2) )
+//#define findDest(data, max1, max2) (data)
+
+#define setMax(x,y) ( x = (x>y) ? (x) : (y) )
+#define setMin(x,y) ( x = (x<y) ? (x) : (y) )
+
+#define MAX_ITEMS 1000
+
 void
 Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned int max, string path)
 {
@@ -273,15 +281,11 @@ Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned 
 	
 	unsigned int ymin = max, ymax = 0, zmin = max, zmax = 0;
 	unsigned int x = 0, y = 0, z = 0;
-	bool repeated = false;
+	unsigned int added=0,discarded=0;
 	
 	for (unsigned int i=0; i<ntriples; i++)
 	{		
-		if (x == graph[i].x)
-		{
-			if ((y == graph[i].y) && (z == graph[i].z)) repeated = true;
-		}
-		else
+		if (x != graph[i].x)
 		{
 			if (x != 0)
 			{
@@ -304,7 +308,8 @@ Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned 
 			
 			// Processing a new predicate
 			ymin = max, ymax = 0, zmin = max, zmax = 0;
-			x = graph[i].x, y = graph[i].y, z = graph[i].z;
+			
+			x = graph[i].x;
 			
 			// Opening data file for this predicate
 			filename = path;
@@ -314,40 +319,36 @@ Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned 
 			data = fopen(filename.c_str(), "w");
 		}
 		
-		if (!repeated)
-		{
-			y = graph[i].y;
-			z = graph[i].z;
+		unsigned int newy = findDest(graph[i].y, MAX_ITEMS, max);
+		unsigned int newz = findDest(graph[i].z, MAX_ITEMS, max);
+		
+		if( (newy!=y) || (newz!=z) ) {
+			added++;
+			//cout << "Subject: " << graph[i].y << " => " << newy << endl;
+			//cout << "Object: " << graph[i].z << " => " << newz << endl;
 			
+			y = newy;
+			z = newz;
 			
 			if (parsing == PSO)
-				fprintf(data, "%d %d\n", z, y);
+				fprintf(data, "%d %d\n", graph[i].z, graph[i].y);
 			else
-				fprintf(data, "%d %d\n", y, z);
+				fprintf(data, "%d %d\n", graph[i].y, graph[i].z);
 
-			if (ymin > y)
-			{
-				ymin = y; 
-			}
-			else
-			{
-				if (ymax < y) ymax = y; 
-			}
-			
-			if (zmin > z) 
-			{
-				zmin = z; 
-			}
-			else
-			{
-				if (zmax < z) zmax = z; 
-			}
-		}
-		else
+			setMin(ymin, graph[i].y);
+			setMax(ymax, graph[i].y);
+			setMin(zmin, graph[i].z);
+			setMax(zmax, graph[i].z);
+		} else
 		{
-			repeated = false;
+			discarded++;
+			//cout << "\tSubject: " << graph[i].y << " => " << newy << endl;
+			//cout << "\tObject: " << graph[i].z << " => " << newz << endl;
 		}
 	}
+	
+	cout << "Added: "<< added << endl;
+	cout << "Discarded: "<< discarded << endl;
 	
 	// Last predicate
 	fclose(data);
@@ -364,6 +365,121 @@ Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned 
 	
 	delete[] xstring;
 }
+
+#else
+
+#define findDest(data, max1, max2) ( ((((double)data)*max1)/max2) )
+//#define findDest(data, max1, max2) (data)
+
+#define findSrc(data,max1,max2) (unsigned int)((((double)data)*max2)/max1)
+
+#define setMax(x,y) ( x = (x>y) ? (x) : (y) )
+#define setMin(x,y) ( x = (x<y) ? (x) : (y) )
+
+#define MAX_ITEM 1000
+
+void
+Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned int max, string path)
+{
+	//std::vector<std::vector<std::vector<unsigned int> > > data;
+	cout << "max: " << max << endl;
+
+	char *xstring = new char[16];
+	
+	FILE *data = NULL;
+	
+	// All Predicates
+	string filename(path);	
+	filename.append("all.gnu");
+	
+	gnuplotHeader(1, npredicates, predicates[0], 1, max, 1, max, filename);
+	
+	unsigned int size = MAX_ITEM*MAX_ITEM;
+	unsigned char *dataMatrix = new unsigned char[size];
+	
+	unsigned int x=0;
+	unsigned int ymin = max, ymax = 0, zmin = max, zmax = 0;
+		
+	for(int i=0;i<size;i++) {
+		dataMatrix[i]=0;
+	}
+	
+	for (unsigned int i=0; i<ntriples; i++)
+	{				
+		if(x!=graph[i].x) {
+			if(x!=0) {
+				//cout << "End predicate" << endl;
+				
+				// Opening data file for this predicate
+				filename = path;
+				sprintf(xstring,"%d",x);
+				filename.append(xstring);
+				filename.append(".dat");
+				data = fopen(filename.c_str(), "w");
+				
+				for(int i=0;i<MAX_ITEM;i++) {
+					for(int j=0;j<MAX_ITEM;j++) {
+						unsigned char item = dataMatrix[(i*MAX_ITEM)+j];
+//						cout << item << " ";
+						
+						if(item>0) {
+							int y = findSrc(i, MAX_ITEM, max);
+							int z = findSrc(j, MAX_ITEM, max);
+							
+							if (parsing == PSO)
+								fprintf(data, "%d %d\n", z, y);
+							else
+								fprintf(data, "%d %d\n", y, z);
+						}
+						
+						dataMatrix[(i*MAX_ITEM)+j] = 0;
+					}
+//					cout << endl;
+				}
+				
+				// Predicate finished
+				fclose(data);
+				
+				// Creating GnuPlot
+				filename = path;
+				sprintf(xstring,"%d", x);
+				filename.append(xstring);
+				filename.append(".gnu");
+				
+				// Print Gnuplot Header for the global-squared matrix
+				gnuplotHeader(x, 1, predicates[x], 1, max, 1, max, (char*)filename.c_str());
+				
+				// Print Gnuplot Header for the local-adjusted matrix
+				filename.replace(path.length(), filename.length(), xstring);
+				filename.append("b.gnu"); 
+				gnuplotHeader(x, 1, predicates[x], ymin-2, ymax+2, zmin-2, zmax+2, (char*)filename.c_str());
+			}
+			
+			x = graph[i].x;
+			
+			//cout << "New predicate: " << x << endl;
+			
+			// Processing a new predicate
+			ymin = max, ymax = 0, zmin = max, zmax = 0;
+		}
+
+		unsigned int newy = findDest(graph[i].y, MAX_ITEM, max);
+		unsigned int newz = findDest(graph[i].z, MAX_ITEM, max);
+
+		//cout << "Subject: " << graph[i].y << " => " << newy << " => " << findSrc(newy, MAX_ITEM, max)<< endl;
+		//cout << "Object: " << graph[i].z << " => " << newz << " => " << findSrc(newz, MAX_ITEM, max)<< endl;
+		
+		dataMatrix[(newy*MAX_ITEM)+newz]=1;
+		
+		setMin(ymin, graph[i].y);
+		setMax(ymax, graph[i].y);
+		setMin(zmin, graph[i].z);
+		setMax(zmax, graph[i].z);
+	}
+	
+	cout << "End predicate " << endl;
+}
+#endif
 
 void 
 Triples::graphSort()
@@ -384,7 +500,7 @@ Triples::gnuplotHeader(unsigned int firstP, unsigned int sizeP, string predicate
 {	
 	FILE *header = fopen(filename.c_str(), "w");
 	
-	fprintf(header, "set terminal png\n");
+	fprintf(header, "set terminal png size 1024,768\n");
 	fprintf(header, "set pointsize 0.35\n");
 	fprintf(header, "#set logscale\n");
 	fprintf(header, "set output \"%s.png\"\n", filename.c_str());
@@ -419,36 +535,117 @@ Triples::gnuplotHeader(unsigned int firstP, unsigned int sizeP, string predicate
 	fclose(header);
 }
 
-
-
-void
-Triples::SPOtoOPS() {
-	register int tmp;
+inline void swap(char &a, char &b) {
+	unsigned int tmp;
 	
-	if(parsing==SPO) {
-		for (int i=0; i<ntriples; i++) {
-			tmp = graph[i].x;
-			graph[i].x = graph[i].z;
-			graph[i].z = tmp;
-		}
-		parsing=OPS;
-		graphSort();
-	}
+	tmp = a;
+	a = b;
+	b = tmp;
 }
 
-void
-Triples::PSOtoSPO() {
-	register int tmp;
+inline void swap(unsigned int &a, unsigned int &b) {
+	unsigned int tmp;
 	
-	if(parsing==PSO) {
-		for (int i=0; i<ntriples; i++) {
-			tmp = graph[i].x;
-			graph[i].x = graph[i].y;
-			graph[i].y = tmp;
-		}
-		parsing=SPO;
-		graphSort();
+	tmp = a;
+	a = b;
+	b = tmp;
+}
+
+/*
+ SRC
+ v
+      SPO  SOP  PSO  POS  OSP  OPS   <DEST
+ SPO       yz   xy   xyz2 xyz1 xz
+ SOP  yz        xyz1 xz   xy   xyz2
+ PSO  xy   xyz2      yz   xz   xyz1
+ POS  xyz1 xz   yz        xyz2
+ OSP  xyz2 xy   xz   xyz1      yz	
+ OPS  xz   xyz1 xyz2 xy   yz
+ 
+ SWAP:
+ xy   12
+ xz   13
+ yz   23
+ xyz1 12 13
+ xyz2 12 23
+ */
+
+// swap 1-2 
+//xy xyz1 xyz2
+bool swap1tab[6][6] = {	{ 0, 0, 1, 1, 1, 0 }, 
+						{ 0, 0, 1, 0, 1, 1 },
+						{ 1, 1, 0, 0, 0, 1 },
+						{ 1, 0, 0, 0, 1, 0 },
+						{ 1, 1, 0, 1, 0, 0 },
+						{ 0, 1, 1, 1, 0, 0 }};
+
+// swap 1-3
+// xz xyz1
+bool swap2tab[6][6] = {	{ 0, 0, 0, 0, 1, 1 },
+						{ 0, 0, 1, 1, 0, 0 },
+						{ 0, 0, 0, 0, 1, 1 },
+						{ 1, 1, 0, 0, 0, 0 },
+						{ 0, 0, 1, 1, 0, 0 },
+						{ 1, 1, 0, 0, 0, 0 }};
+
+// swap 2-3
+// yz xyz2
+bool swap3tab[6][6] = { { 0, 1, 0, 1, 0, 0},
+						{ 1, 0, 0, 0, 0, 1},
+						{ 0, 1, 0, 1, 0, 0},
+						{ 0, 0, 1, 0, 1, 0},
+						{ 1, 0, 0, 0, 0, 1},
+						{ 0, 0, 1, 0, 1, 0}};			
+
+
+void
+Triples::convertParsing(unsigned int to) {
+	
+	if(parsing==to) 
+		return;
+	
+	bool swap1 = swap1tab[parsing-1][to-1];
+	bool swap2 = swap2tab[parsing-1][to-1];
+	bool swap3 = swap3tab[parsing-1][to-1];
+	
+#if 0
+	char str[4];
+	strcpy(str, parsingTypeStr[parsing]);
+	
+	cout << "Convert from " << parsingTypeStr[parsing] << " to " << parsingTypeStr[to] << endl;
+	
+	if(swap1) {
+		swap(str[0], str[1]);
+		cout << "\tSwap x y" << endl;
 	}
+	
+	if(swap2) {
+		swap(str[0], str[2]);
+		cout << "\tSwap x z" << endl;
+	}
+	
+	if(swap3) {
+		swap(str[1], str[2]);
+		cout << "\tSwap y z" << endl;
+	}
+	cout << "Result: "<< str << endl;
+#endif	
+
+	for(int i=0; i<ntriples;i++) {
+		if(swap1){
+			swap(graph[i].x, graph[i].y);
+		}
+		
+		if(swap2) {
+			swap(graph[i].x, graph[i].z);
+		}
+		
+		if(swap3){
+			swap(graph[i].y, graph[i].z);
+		}
+	}
+	parsing = to;
+	graphSort();
 }
 
 void 
@@ -539,21 +736,12 @@ Triples::calculateDegree(string path) {
 void
 Triples::calculateDegrees(string path) {
 
-	if(parsing != SPO && parsing != PSO) {
-		cout << "Degree must be calculated from PSO or SPO parsing style" << endl;
-		return;
-	}
-	
-	if(parsing==PSO) {
-		PSOtoSPO();
-	}
-	
 	cout << "Calculate OUT Degree" << endl;
+	convertParsing(SPO);
 	calculateDegree(path);
 	
-	SPOtoOPS();
 	
 	cout << "Calculate IN Degree" << endl;
+	convertParsing(OPS);
 	calculateDegree(path);
-		
 }

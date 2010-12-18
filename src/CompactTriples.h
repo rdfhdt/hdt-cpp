@@ -46,6 +46,11 @@ public:
 	/** Constructor for loading*/
 	CompactTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path);
 
+	/** Constructor for copying*/
+	CompactTriples(Triples *other);
+
+	unsigned int write(string path, vector<TripleID> &graph);
+	
 	void console();
 	bool transformToN3();
 	unsigned int write(string path);
@@ -55,6 +60,9 @@ public:
 	/** Load the full graph to main memory */
 	bool loadGraphMemory();
 
+	static unsigned int write(vector<TripleID> &graph, string path);
+	
+	
 	/** Destructor */
 	~CompactTriples();
 };

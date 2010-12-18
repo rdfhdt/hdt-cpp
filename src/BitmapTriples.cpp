@@ -1206,14 +1206,14 @@ BitmapTriples::getLength(vector<minipair> * triplesSub,int current, MiniHashTabl
 	return maxlength;
 }
 	
-unsigned int 
-BitmapTriples::write(string path)
-{	
+unsigned int
+BitmapTriples::write(vector<TripleID> &graph, string path)
+{
 	string output = path;
-	fileY = fopen((output.append(".hdt.triples.Y")).c_str(), "w+");
+	FILE *fileY = fopen((output.append(".hdt.triples.Y")).c_str(), "w+");
 	
 	output = path;
-	fileZ = fopen((output.append(".hdt.triples.Z")).c_str(), "w+");
+	FILE *fileZ = fopen((output.append(".hdt.triples.Z")).c_str(), "w+");
 	
 	unsigned int repeated = 0;
 	unsigned int x = graph[0].x, y = graph[0].y, z = 0;
@@ -1223,8 +1223,8 @@ BitmapTriples::write(string path)
 	vector<unsigned int> v_ys, v_zs;
 	
 	fwrite(&y,INT32,1,fileY);
-
-	for (unsigned int i=0; i<ntriples; i++)
+	
+	for (unsigned int i=0; i<graph.size(); i++)
 	{
 		if (x == graph[i].x)
 		{
@@ -1233,7 +1233,7 @@ BitmapTriples::write(string path)
 				if (z != graph[i].z)
 				{
 					z = graph[i].z;				
-						
+					
 					fwrite(&z,INT32,1,fileZ);
 					zs++;
 				}
@@ -1269,22 +1269,22 @@ BitmapTriples::write(string path)
 			tzs += zs; zs = 1;
 		}
 	}
-
+	
 	v_ys.push_back(ys); tys += ys; 
 	v_zs.push_back(zs); tzs += zs;
 	
 	fclose(fileY);
 	fclose(fileZ);
-
+	
 	BitString *bsy = new BitString(tys+v_ys.size()+1);
 	buildBitString(&bsy, &v_ys, v_ys.size());
-
+	
 	BitString *bsz = new BitString(tzs+v_zs.size()+1);
 	buildBitString(&bsz, &v_zs, v_zs.size());
 	
 	// Building bitsequences
-	bitmapY = new BitSequenceRG(*bsy, 20);
-	bitmapZ = new BitSequenceRG(*bsz, 20);
+	BitSequence *bitmapY = new BitSequenceRG(*bsy, 20);
+	BitSequence *bitmapZ = new BitSequenceRG(*bsz, 20);
 	
 	delete bsy; delete bsz;
 	
@@ -1295,21 +1295,26 @@ BitmapTriples::write(string path)
 	output = path;
 	output.append(".hdt.triples.BZ");
 	ofstream fp2(output.c_str());
-
+	
 	if (fp1.good())
 	{
 		bitmapY->save(fp1);		
 		fp1.close();
 	}
-
+	
 	if (fp2.good())
 	{
 		bitmapZ->save(fp2);
 		fp2.close();
 	}
 	
-	return ntriples-repeated;
+	return graph.size()-repeated;
+}
 
+unsigned int 
+BitmapTriples::write(string path)
+{	
+	return BitmapTriples::write(this->graph, path);
 }
 
 void 

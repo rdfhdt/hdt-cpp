@@ -314,10 +314,36 @@ bool
 StatsGen::process(char *output)
 {
 
-#if 0
-	// 9) Checking optional gnuplot generation (only for parsings 
-	//    'pso' and 'pos')
-	
+	for(int pars=1;pars<=6;pars++) {
+		triples->convertParsing(pars);
+		
+		getTime(&t2);
+		string plainPath(output);
+		plainPath.append("/hdt_");
+		plainPath.append(parsingTypeStr[pars]);
+		plainPath.append("_plain");
+		cout << "[" << showpoint << t2.user - t1.user << "]  Saving PlainTriples on " << plainPath << endl;
+		PlainTriples::write(triples->getGraph(), plainPath);
+		
+		getTime(&t2);
+		string compactPath(output);
+		compactPath.append("/hdt_");
+		compactPath.append(parsingTypeStr[pars]);
+		compactPath.append("_compact");
+		cout << "[" << showpoint << t2.user - t1.user << "]  Saving CompactTriples on " << compactPath << endl;
+		CompactTriples::write(triples->getGraph(), compactPath);
+		
+		getTime(&t2);
+		string bitmapPath(output);
+		bitmapPath.append("/hdt_");
+		bitmapPath.append(parsingTypeStr[pars]);
+		bitmapPath.append("_bitmap");
+		cout << "[" << showpoint << t2.user - t1.user << "]  Saving BitmapTriples on " << bitmapPath << endl;
+		BitmapTriples::write(triples->getGraph(), bitmapPath);
+	}
+		
+	// 9) Checking optional gnuplot generation
+	triples->convertParsing(PSO);
 	string gnuplotPath(output);
 	gnuplotPath.append("/nocluster/");
 	mkpathfile(gnuplotPath.c_str(), 0744);
@@ -325,20 +351,19 @@ StatsGen::process(char *output)
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  Generating Gnuplot on " << gnuplotPath << endl;
 	
-	if(parsing==PSO || parsing==POS) {
-		int max = dictionary->getMaxID();
-		int npredicates = dictionary->getNpredicates();
-		vector <string> predicates(npredicates+1);
-		
-		for (int i = 1; i<=npredicates; i++)
-		{
-			string p = dictionary->retrieveString(i, VOC_PREDICATE);
-			predicates[i] = p;
-		}
-		triples->gnuplot(npredicates, predicates, max, gnuplotPath.c_str());
+	int max = dictionary->getMaxID();
+	int npredicates = dictionary->getNpredicates();
+	vector <string> predicates(npredicates+1);
+	
+	for (int i = 1; i<=npredicates; i++)
+	{
+		string p = dictionary->retrieveString(i, VOC_PREDICATE);
+		predicates[i] = p;
 	}
+	triples->gnuplot(npredicates, predicates, max, gnuplotPath.c_str());
 	
 	// 11) Cluster
+	triples->convertParsing(PSO);
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  Clustering" << endl;
 	triples->clustering();
@@ -377,7 +402,7 @@ StatsGen::process(char *output)
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  Generating Clustered Gnuplot on " << gnuplotPath << endl;
 	
-	if(parsing==PSO || parsing==POS) {
+	if(1){
 		int max = dictionary->getMaxID();
 		int npredicates = dictionary->getNpredicates();
 		vector <string> predicates(npredicates+1);
@@ -389,26 +414,22 @@ StatsGen::process(char *output)
 		}
 		triples->gnuplot(npredicates, predicates, max, gnuplotPath.c_str());
 	}
-#endif
-	
+
 	// Dictionary stats
-	// 10) In and Out Degree
 	getTime(&t2);
 	string dictStats(output);
 	dictStats.append("/dictstats");
 	cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Dictionary Statistics on " << dictStats <<endl;
 	mkpathfile((dictStats).c_str(), 0744);
 	dictionary->dumpStats(dictStats);
-	
-#if 0
-	// 10) In and Out Degree
+
+	// 10) Degree
 	getTime(&t2);
 	string degreePath(output);
 	degreePath.append("/degree");
 	cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Degree Metrics on " << degreePath <<endl;
 	mkpathfile((degreePath).c_str(), 0744);
 	triples->calculateDegrees(degreePath);
-#endif
 	
 	// All done
 	getTime(&t2);
