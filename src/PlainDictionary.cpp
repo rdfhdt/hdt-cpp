@@ -793,6 +793,7 @@ PlainDictionary::dumpStats(string &output)
 	
 	Histogram histoURI(0, maxval, nbins);
 	Histogram histoLiteral(0, maxval, nbins);
+	Histogram histoBlank(0, maxval, nbins);
 	
 	string tmp;
 	//shared subjects-objects from subjects
@@ -806,7 +807,15 @@ PlainDictionary::dumpStats(string &output)
 		}
 		tmp.append(subjects_shared[i]->word);
 		
-		histoURI.Add(tmp.length());
+		if(tmp[0]=='<') {
+			histoURI.Add(tmp.length());
+		} else if(tmp[0]=='"') {
+			histoLiteral.Add(tmp.length()); 
+		} else if(tmp[0]=='_') {
+			histoBlank.Add(tmp.length());
+		} else {
+			cout << "String not URI/Lit?: " << tmp << endl;
+		}
 	}
 	
 	//not shared subjects
@@ -819,7 +828,15 @@ PlainDictionary::dumpStats(string &output)
 		}
 		tmp.append(subjects_not_shared[i]->word);
 
-		histoURI.Add(tmp.length());
+		if(tmp[0]=='<') {
+			histoURI.Add(tmp.length());
+		} else if(tmp[0]=='"') {
+			histoLiteral.Add(tmp.length()); 
+		} else if(tmp[0]=='_') {
+			histoBlank.Add(tmp.length());
+		} else {
+			cout << "String not URI/Lit?: " << tmp << endl;
+		}
 	}
 	
 	//not shared objects
@@ -835,6 +852,8 @@ PlainDictionary::dumpStats(string &output)
 			histoURI.Add(tmp.length());
 		} else if(tmp[0]=='"') {
 			histoLiteral.Add(tmp.length()); 
+		} else if(tmp[0]=='_') {
+			histoBlank.Add(tmp.length());
 		} else {
 			cout << "String not URI/Lit?: " << tmp << endl;
 		}
@@ -849,8 +868,15 @@ PlainDictionary::dumpStats(string &output)
 			tmp.append(predicates[i]->prefix->word);
 		}
 		tmp.append(predicates[i]->word);
-		
-		histoURI.Add(tmp.length());
+		if(tmp[0]=='<') {
+			histoURI.Add(tmp.length());
+		} else if(tmp[0]=='"') {
+			histoLiteral.Add(tmp.length()); 
+		} else if(tmp[0]=='_') {
+			histoBlank.Add(tmp.length());
+		} else {
+			cout << "String not URI/Lit?: " << tmp << endl;
+		}
 	}
 	
 	histoURI.end();
@@ -858,6 +884,9 @@ PlainDictionary::dumpStats(string &output)
 	
 	histoLiteral.end();
 	histoLiteral.dump(output.c_str(), "Literal");
+	
+	histoBlank.end();
+	histoBlank.dump(output.c_str(), "Blank");
 }
 
 PlainDictionary::~PlainDictionary()
