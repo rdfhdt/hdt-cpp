@@ -97,6 +97,7 @@ public:
 	void convertParsing(unsigned int to);
 
 	void calculateDegree(string path);
+	void calculatePredicateHistogram(string path);
 	
 protected:
 	Dictionary *dictionary;

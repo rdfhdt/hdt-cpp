@@ -313,7 +313,7 @@ StatsGen::readFromHDT(char *hdt, char*output)
 bool 
 StatsGen::process(char *output)
 {
-
+	// Save parsings
 	for(int pars=1;pars<=6;pars++) {
 		triples->convertParsing(pars);
 		
@@ -430,6 +430,15 @@ StatsGen::process(char *output)
 	cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Degree Metrics on " << degreePath <<endl;
 	mkpathfile((degreePath).c_str(), 0744);
 	triples->calculateDegrees(degreePath);
+	
+	getTime(&t2);
+	string predPath(output);
+	predPath.append("/predicateHistogram");
+	cout << "[" << showpoint << t2.user - t1.user << "]  Calculate Predicate Histogram on " << predPath <<endl;
+	mkpathfile((predPath).c_str(), 0744);
+	triples->convertParsing(PSO);
+	triples->calculatePredicateHistogram(predPath);
+	
 	
 	// All done
 	getTime(&t2);

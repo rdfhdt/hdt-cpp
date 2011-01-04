@@ -734,6 +734,21 @@ Triples::calculateDegree(string path) {
 }
 
 void
+Triples::calculatePredicateHistogram(string path) {
+	int npred = dictionary->getNpredicates();
+	Histogram hPred(0, npred, npred);
+	
+	for(unsigned int i=0;i<graph.size();i++) {
+		hPred.Add(graph[i].x);
+	}
+
+	ofstream out;
+	out.open((path).c_str(), ios::out);
+	hPred.dumpStr(out);
+	out.close();
+}
+
+void
 Triples::calculateDegrees(string path) {
 
 	cout << "Calculate OUT Degree" << endl;
