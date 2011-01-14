@@ -16,7 +16,7 @@ private:
 	unsigned int nBins;
 	unsigned int number;
 	unsigned int* freq;
-	double minValue, maxValue, average, deviation, total;
+	double minValue, maxValue, mean, deviation, total;
 
 public:
 	// Construct a histogram that can count
@@ -47,7 +47,7 @@ public:
 	void reset() {
 		for(unsigned int i(0); i < nBins; ++i)
             freq[i] = 0U;
-      	number=total=average=deviation=0;
+      	number=total=mean=deviation=0;
 		minValue = std::numeric_limits<double>::max();
 		maxValue = std::numeric_limits<double>::min();
 		
@@ -78,7 +78,7 @@ public:
 	void Add(const double& x, int ntimes) {
 		number+=ntimes;
 		total+=(x*ntimes);
-		average+=(x*ntimes);
+		mean+=(x*ntimes);
 		deviation+= (x * x)*ntimes;
 		minValue = min(minValue, x);
 		maxValue = max(maxValue, x);
@@ -98,8 +98,8 @@ public:
 	}
 	
 	void end() {
-		average = average / number;
-		deviation = deviation/number - average * average;
+		mean = mean / number;
+		deviation = deviation/number - mean * mean;
 		deviation = sqrt(deviation);
 	}
 	
@@ -111,11 +111,11 @@ public:
 		}
 		
 		outfile << "# Number: "<<number <<endl;
-		outfile << "# Average: "<<average<<endl;
+		outfile << "# Mean: "<<mean<<endl;
 		outfile << "# Deviation: "<<deviation<<endl;
 		outfile << "# Min: "<<minValue<<endl;
 		outfile << "# Max: "<<maxValue<<endl;
-		
+
 		unsigned int max=15;
 		for(unsigned int i=maxValue<nBins?maxValue:nBins; i>15; i--) {
 			if(freq[i]>maxfreq/10000) {

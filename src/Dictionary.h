@@ -100,6 +100,11 @@ protected:
 	unsigned int ssubobj;
 	/** Total Literals */
 	unsigned int nliterals;
+	/** Total URIs */
+	unsigned int nuris;
+	/** Total Blanks */
+	unsigned int nblanks;
+	
 
 	/** Initialize and configures structures for dictionary building */
 	virtual void initialize() = 0;

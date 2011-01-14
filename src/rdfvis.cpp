@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <string>
+#include <stdint.h>
 
 #ifdef __APPLE__
  #include <OpenGL/OpenGL.h>
@@ -29,11 +30,35 @@
 #include "CompactTriples.h"
 #include "BitmapTriples.h"
 
+
+#define RDFVIS_FONT GLUT_BITMAP_HELVETICA_12
 #define TIMER_DELAY 50
-#define WIDTH 1800
-#define HEIGHT 1100
+#define WIDTH 1024 
+#define HEIGHT 768
 #define POSX 9
 #define POSY 30
+#define RENDER_NUM_POINTS 200000
+#define BUF_SIZE 250
+
+#define SCREEN
+
+#ifndef SCREEN
+#define TEXT_COLOR 0.0, 0.0, 0.0, 1.0
+#define TEXT_BACKGROUND_COLOR 1.0, 1.0, 1.0, 0.9
+#define BACKGROUND_COLOR 1, 1, 1, 1
+#define SHARED_AREA_COLOR 0.9, 0.9, 0.9, 1.0
+#define SHARED_AREA_BORDER_COLOR 0.1, 0.1, 0.1, 1.0
+#define AXIS_COLOR 0.1, 0.1, 0.1, 1.0
+#define GRID_COLOR 0.3, 0.3, 0.3, 1.0
+#else
+#define TEXT_COLOR 1.0, 1.0, 1.0, 1.0
+#define TEXT_BACKGROUND_COLOR 0.0, 0.0, 0.0, 0.7
+#define BACKGROUND_COLOR 0, 0, 0, 1
+#define SHARED_AREA_COLOR 0.1, 0.1, 0.1, 1.0
+#define SHARED_AREA_BORDER_COLOR 0.2, 0.2, 0.2, 1.0
+#define AXIS_COLOR 0.8, 0.8, 0.8, 1.0
+#define GRID_COLOR 0.2, 0.2, 0.2, 1.0
+#endif
 
 // Color
 typedef struct {
@@ -50,12 +75,18 @@ double rotx = 0, roty=0;
 int mousex=0,mousey=0;
 int lastx = 0;
 int lasty = 0;
+int lastclickx = 0;
+int lastclicky = 0;
 int button = 0;
 int fps = 0;
+int fullscreen = 0;
 char fps_str[10]="";
-char mouse_str[2048]="";
-char dataset_str[2048]="";
-char currPredicateStr[2048]="";
+
+char mouse_str_suj[BUF_SIZE]="";
+char mouse_str_pred[BUF_SIZE]="";
+char mouse_str_obj[BUF_SIZE]="";
+char dataset_str[BUF_SIZE]="";
+char currPredicateStr[BUF_SIZE]="";
 
 bool clustering = false;
 
@@ -68,18 +99,26 @@ vector<char *> datasets;
 int currentFile=0;
 
 int currpredicate=0;
-unsigned int currFrame=0;
+unsigned int currFrame=UINT_MAX;
 int increment=1;
 
 TripleID *foundTriple=NULL;
 
 void setPredicate() {
+	int count=0;
+	vector<TripleID> graph = triples->getGraph();
+	for(unsigned int i=0;i<graph.size();i++) {
+		if(graph[i].x==currpredicate) {
+			count++;
+		}
+	}
+	
 	printf("Currpredicate: %d\n", currpredicate);
 	if(currpredicate>0) {
 		string pred = dictionary->retrieveString(currpredicate, VOC_PREDICATE);
-		sprintf(currPredicateStr, "Predicate (%d/%d): %s", currpredicate, dictionary->getNpredicates(), pred.c_str());
+		snprintf(currPredicateStr, BUF_SIZE, "Predicate (%d/%d): %s (%d Triples)", currpredicate, dictionary->getNpredicates(), pred.c_str(), count);
 	} else {
-		sprintf(currPredicateStr, "Predicate (ALL/%d)", dictionary->getNpredicates());
+		snprintf(currPredicateStr, BUF_SIZE, "Predicate (ALL/%d)", dictionary->getNpredicates());
 	}
 }
 
@@ -135,14 +174,13 @@ bool loadHDT(char *hdt) {
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "] HDT Succesfully loaded" << endl;
 	
-	increment = triples->size()/400000;
+	increment = triples->size()/RENDER_NUM_POINTS;
 	increment = increment<1 ? 1 : increment;
 	
-	sprintf(dataset_str, "%s (%u Triples)", datasets[currentFile], triples->size());
+	snprintf(dataset_str, BUF_SIZE, "%s (%u Triples)", datasets[currentFile], triples->size());
 	
 	clustering = 0;
-	
-	currFrame= 0;
+
 	
 	setPredicate();
 	
@@ -166,8 +204,10 @@ void unloadHDT() {
 
 /* executed when a regular key is pressed */
 void keyboardDown(unsigned char key, int x, int y) {
-	printf("Key: %d\n", key);
-	mouse_str[0]='\0';
+	printf("KeyDown: %d\n", key);
+	mouse_str_suj[0]='\0';
+	mouse_str_pred[0]='\0';
+	mouse_str_obj[0]='\0';
 	
 	switch(key) {
 		case 'r':
@@ -192,6 +232,7 @@ void keyboardDown(unsigned char key, int x, int y) {
 			break;
 		case 'n':
 			unloadHDT();
+			currpredicate = 0;
 			
 			currentFile++;
 			if(currentFile>=datasets.size()) {
@@ -199,7 +240,28 @@ void keyboardDown(unsigned char key, int x, int y) {
 			}
 			
 			loadHDT(datasets[currentFile]);
-
+		
+			break;
+		case 'b':
+			unloadHDT();
+			currpredicate = 0;
+			
+			currentFile--;
+			if(currentFile<0) {
+				currentFile = datasets.size()-1;
+			}
+			
+			loadHDT(datasets[currentFile]);
+			
+			break;
+		case 'm':
+			unloadHDT();
+			currpredicate = 0;
+			
+			currentFile=random() % datasets.size();
+			
+			loadHDT(datasets[currentFile]);
+			
 			break;
 		case '0':
 			zoom =0.7;
@@ -231,6 +293,15 @@ void keyboardDown(unsigned char key, int x, int y) {
 			if(increment<1) increment = 1;
 			printf("Increment: %d\n",increment);
 			break;
+		case 'f':
+			if(!fullscreen) {
+				glutFullScreen();
+				fullscreen=1;
+			} else {
+				glutReshapeWindow(WIDTH,HEIGHT);
+				fullscreen=0;
+			}
+			break;
 		case  27:   // ESC
 			unloadHDT();
 			exit(0);
@@ -248,7 +319,10 @@ void keyboardSpecialUp(int k, int x, int y) {
 
 void keyboardSpecialDown(int k, int x, int y) {
 	printf("SpecialDown %d, %d, %d\n", k, x, y);
-	mouse_str[0]='\0';
+	mouse_str_suj[0]='\0';
+	mouse_str_pred[0]='\0';
+	mouse_str_obj[0]='\0';
+	
 	switch (k) {
 		case GLUT_KEY_RIGHT:
 			offx -=20/zoom;
@@ -286,10 +360,21 @@ void mouseClick(int btn, int state, int x, int y) {
 	//printf("Click %d, %d, %d, %d\n", button, state, x, y);
 	
 	if(state==GLUT_DOWN) {
-		lastx=x;
-		lasty=y;
+		lastclickx=lastx=x;
+		lastclicky=lasty=y;
 	}
 	button = btn;
+	
+	if(state==GLUT_UP && (lastclickx==x) && (lastclicky==y)) {
+		printf("CLICK\n");
+		if( button==GLUT_LEFT_BUTTON && foundTriple!=NULL) {
+			currpredicate = foundTriple->x;
+		} else if( button==GLUT_RIGHT_BUTTON ) {
+			currpredicate = 0;
+		}
+		setPredicate();
+	}
+	
 	glutPostRedisplay();
 }
 
@@ -315,22 +400,29 @@ void mouseMotion(int x, int y) {
 		zoom = zoom<0 ? 0.01 : zoom;
 	}
 	
-	mouse_str[0]='\0';
+	mouse_str_suj[0]='\0';
+	mouse_str_pred[0]='\0';
+	mouse_str_obj[0]='\0';
 	
 	glutPostRedisplay();
 }
 
-TripleID *findTriple(vector<TripleID> &graph, unsigned int x, unsigned int y, unsigned int z) {
-	unsigned int min=0;
-	unsigned int max = graph.size()-1;
-	unsigned int mid;
+
+unsigned long long inline DIST(unsigned long long x1, unsigned long long x2, unsigned long long y1, unsigned long long y2) {
+	return (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
+}
+
+TripleID *findTripleBinSearch(vector<TripleID> &graph, unsigned int x, unsigned int y, unsigned int z) {
+	long long min=0;
+	long long max = graph.size()-1;
+	long long mid;
 	unsigned int jumps = 0;
 
-	printf("\nSearch: %u, %u, %u\n", x, y, z);
+	//printf("\nSearch: %u, %u, %u\n", x, y, z);
 	
-	// BinarySearch the triple in the graph.
-	
+	// BinarySearch the triple in the graph.	
 	do {
+//		printf("%u / %u\n", min, max); fflush(stdout);
 		mid = min + (max-min)/2;
 		if( x > graph[mid].x) {
 			min = mid+1;
@@ -350,11 +442,32 @@ TripleID *findTriple(vector<TripleID> &graph, unsigned int x, unsigned int y, un
 			}
 		}
 		jumps++;
-	} while((min<max) && ((graph[mid].x!=x) || (graph[mid].y!=y) || (graph[mid].z!=z)));
+	} while( (min<max) && ((graph[mid].x!=x) || (graph[mid].y!=y) || (graph[mid].z!=z)));
 			
-	printf("Found: %u, %u, %u in %u jumps\n", graph[mid].x, graph[mid].y, graph[mid].z, jumps);
-	
+	//printf("Found: %u, %u, %u in %u jumps\n", graph[mid].x, graph[mid].y, graph[mid].z, jumps);
 	return &graph[mid];
+}
+
+TripleID *findTripleSeq(vector<TripleID> &graph, unsigned int x, unsigned int y, unsigned int z) {
+	TripleID *best= &graph[0];
+	unsigned int bestpos=0;
+	unsigned long long bestdist = DIST(graph[0].y, y, graph[0].z, z);
+	
+	for(unsigned int i=0; i<graph.size(); i+=increment) {
+		if((x==0) || (x==graph[i].x)) {
+			unsigned long long dist = DIST(graph[i].y, y, graph[i].z, z);
+			
+			if(dist<bestdist) {
+				best = &graph[i];
+				bestdist = dist;
+				bestpos = i;
+				//printf("1New %u, %u, %u, Dist: %u Pos: %u\n", best->x, best->y, best->z, bestdist, bestpos);
+			}
+		}
+	}
+	
+	//printf("Found: %u, %u, %u, Dist: %llu\n", best->x, best->y, best->z, bestdist);	
+	return best;
 }
 
 void mousePassiveMotion(int x, int y) {
@@ -364,12 +477,9 @@ void mousePassiveMotion(int x, int y) {
 	
 	// HDT
 	unsigned int nsubjects = dictionary->getNsubjects();
-	unsigned int nobjects = dictionary->getNobjects();
+	unsigned int nobjects = dictionary->getMaxID();
 	unsigned int npredicates = dictionary->getNpredicates();
-	cout << "NSubjects: "<< nsubjects<<endl;
-	cout << "Nobjects:" << nobjects<<endl;
-	cout << "NPredicates: "<< npredicates<<endl;
-	cout << "NShared: "<< dictionary->getSsubobj()<<endl;
+	unsigned int nshared = dictionary->getSsubobj();
 	
 	// ModelView
 	glMatrixMode(GL_MODELVIEW);
@@ -386,7 +496,6 @@ void mousePassiveMotion(int x, int y) {
 	glRotatef(roty, 0, 1, 0);
 	glTranslatef(-0.5, -0.5, -0.5);
 	
-	//glScalef(1.0f/(float)maxVal,1.0f/(float)maxVal, 1.0f/(float)npredicates);
 	glScalef(1.0f/(float)nobjects,1.0f/(float)nsubjects, 1.0f/(float)npredicates);
 	
 	// UnProject
@@ -405,30 +514,32 @@ void mousePassiveMotion(int x, int y) {
 	glReadPixels(x,y,1,1,GL_DEPTH_COMPONENT,GL_FLOAT,&wz);
 	//printf("Read z: %f\n", wz);
 	gluUnProject(wx,wy,currpredicate,modelview,projection,viewport,&ox,&oy,&oz);
-	printf("Orig: %f %f %f\n", ox, oy, oz);
+	//printf("Orig: %f %f %f\n", ox, oy, oz);
 	
 	// Fetch Dictionary
 	unsigned int subject = (unsigned int) oy;
 	unsigned int object = (unsigned int) ox;
 	unsigned int predicate = currpredicate;
 	
-	if(currpredicate!=0) {
-		foundTriple = findTriple(triples->getGraph(), currpredicate, subject, object);
-		predicate = foundTriple->x;
-		subject = foundTriple->y;
-		object = foundTriple->z;
-	} else {
-		foundTriple =NULL;
-	}
+	foundTriple = findTripleSeq(triples->getGraph(), currpredicate, subject, object);
+	predicate = foundTriple->x;
+	subject = foundTriple->y;
+	object = foundTriple->z;
 	
-	if( (subject>0 && subject<nsubjects) && (object>0 && object<nobjects)) {
+	if( (subject>0 && subject<nsubjects) && (object>0 && object<=nobjects)) {
 		string subjStr = dictionary->retrieveString(subject, VOC_SUBJECT);
+		string predStr = dictionary->retrieveString(predicate, VOC_PREDICATE);
+		//object = object>nshared ? object-(subject-nshared) : object;
 		string objStr = dictionary->retrieveString(object, VOC_OBJECT);
 
-		sprintf(mouse_str, "%u / %u (%s, %s)", subject, object, subjStr.c_str(), objStr.c_str());
+		snprintf(mouse_str_suj,  BUF_SIZE, "S: %6u / %s", subject, subjStr.c_str());
+		snprintf(mouse_str_pred, BUF_SIZE, "P: %6u / %s", predicate, predStr.c_str());
+		snprintf(mouse_str_obj,  BUF_SIZE, "O: %6u / %s", object, objStr.c_str());
 
 	} else {
-		mouse_str[0]='\0';
+		mouse_str_suj[0]='\0';
+		mouse_str_pred[0]='\0';
+		mouse_str_obj[0]='\0';
 	}
 
 	glutPostRedisplay();
@@ -440,9 +551,11 @@ void reshape(int w, int h) {
 	screenHeight = h;
 	
 	printf("Reshape: %d/%d\n",w,h);
+
+	glViewport (0, 0, (GLsizei) w, (GLsizei) h);
 	
 	/*	GLfloat fieldOfView = 90.0f;
-	 glViewport (0, 0, (GLsizei) width, (GLsizei) height);
+
 	 
 	 glMatrixMode (GL_PROJECTION);
 	 glLoadIdentity();
@@ -461,24 +574,54 @@ void reshape(int w, int h) {
 
 void texto( char *cadena, float x, float y, float z)
 {
-	char *c;
-	
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
-	glColor4f(1,1,1,1);
+	glColor4f(TEXT_COLOR);
 	glRasterPos3f(x, y, z);
-	for (c = cadena; *c; c++)
+	for (char *c = cadena; *c; c++)
 	{
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+		glutBitmapCharacter(RDFVIS_FONT, *c);
 	}
 	//glEnable(GL_LIGHTING);
 	glEnable(GL_DEPTH_TEST);
 }
 
+int textSize(char *cadena) {
+	int sz = 0;
+	
+	for(char *c = cadena; *c; c++) {
+		sz += glutBitmapWidth(RDFVIS_FONT, *c);
+		//sz += glutStrokeWidth(GLUT_STROKE_ROMAN, *c);
+	}
+	
+	return sz;
+}
 
-void timer(int valor) {
-	glutPostRedisplay();
-	glutTimerFunc( TIMER_DELAY, timer, 1);
+void textoBox( char *cadena, float x, float y, float z)
+{
+	if(!*cadena) return;
+	
+	int siz = textSize(cadena);
+	
+	//printf("printBox (%d%) %s\n", siz, cadena);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glColor4f(TEXT_BACKGROUND_COLOR);
+	glBegin(GL_QUAD_STRIP);
+	glVertex3f(x-5, y-6, 0);
+	glVertex3f(x-5, y+14, 0);
+	glVertex3f(x+siz+5, y-6, 0);
+	glVertex3f(x+siz+5, y+14, 0);
+	glEnd();
+	glDisable(GL_BLEND);
+	
+	texto(cadena,x,y,z);
+}
+
+void invertColor(COLOR *c) {
+	c->r = 1-c->r;
+	c->g = 1-c->g;
+	c->b = 1-c->b;
 }
 
 void getColor(double v,double vmin,double vmax, COLOR *c)
@@ -509,6 +652,51 @@ void getColor(double v,double vmin,double vmax, COLOR *c)
 	}
 }
 
+#define RETURN_RGB(red, green, blue) {c->r = red; c->g = green; c->b = blue;}
+
+void HSV_to_RGB( double h, double s, double v, COLOR *c ) {
+	// H is given on [0, 6] or UNDEFINED. S and V are given on [0, 1].
+	// RGB are each returned on [0, 1].
+	float m, n, f;
+	int i;
+	
+	if (h == -1) {
+		RETURN_RGB(v, v, v);
+		return;
+	}
+	
+	i = floor(h);
+	f = h - i;
+	if ( !(i&1) ) f = 1 - f; // if i is even
+	m = v * (1 - s);
+	n = v * (1 - s * f);
+	switch (i) {
+		case 6:
+		case 0: RETURN_RGB(v, n, m); break;
+		case 1: RETURN_RGB(n, v, m); break;
+		case 2: RETURN_RGB(m, v, n); break;
+		case 3: RETURN_RGB(m, n, v); break;
+		case 4: RETURN_RGB(n, m, v); break;
+		case 5: RETURN_RGB(v, m, n); break;
+	}
+} 
+
+void getColor2(double val,double vmin,double vmax, COLOR *c)
+{
+	double h,s,v;
+	double dv = vmax-vmin;
+	double prop = (vmin+val/dv); 
+#ifdef SCREEN
+	HSV_to_RGB( fmod(prop*100,6), 1.0, 0.5+0.5*prop, c);
+	invertColor(c);
+#else
+	HSV_to_RGB( fmod(prop*100,6), 1.0, 0.3+0.7*prop, c);
+//	invertColor(c);
+#endif
+//	printf("(%.1f, %.1f, %.1f) %.1f\n", val, vmin, vmax, prop);
+	
+}
+
 /* render the scene */
 void draw() {
 	static int lastime=0;
@@ -527,10 +715,11 @@ void draw() {
 	
 	// Get vars
 	vector<TripleID> &graph = triples->getGraph();
-	unsigned int maxVal = dictionary->getMaxID();
 	unsigned int nsubjects = dictionary->getNsubjects();
-	unsigned int nobjects = dictionary->getNobjects();
+	unsigned int nobjects = dictionary->getMaxID(); //dictionary->getNobjects();
 	unsigned int npredicates = dictionary->getNpredicates();
+	unsigned int nshared = dictionary->getSsubobj();
+	unsigned int maxVal = dictionary->getMaxID();
 	unsigned int maxAxis = nsubjects;
 	
 	glScaled(zoom, zoom, 1.0);
@@ -547,17 +736,37 @@ void draw() {
 //	glScalef(1.0f/(float)maxVal,1.0f/(float)maxVal, -1.0f/(float)npredicates);
 	glScalef(1.0f/(float)nobjects,1.0f/(float)nsubjects, 1.0f/(float)npredicates);	
 	
-	glColor4f(1.0, 1.0, 1.0, 1.0);
 	
+	// Draw shared area
+	glColor4f(SHARED_AREA_COLOR);
+	glBegin(GL_QUADS);
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, nshared, 0);
+	glVertex3f(nshared, nshared, 0);
+	glVertex3f(nshared, 0, 0);
+	glEnd();
+
+	glColor4f(SHARED_AREA_BORDER_COLOR);
+	glBegin(GL_LINE_STRIP);
+	glVertex3f(0, nshared, 0);
+	glVertex3f(nshared, nshared, 0);
+	glVertex3f(nshared, 0, 0);
+	glEnd();
+
 	// Draw subject scale
+	glColor4f(1.0, 1.0, 1.0, 1.0);
 	for(unsigned int i=0;i<=nsubjects;i+=nsubjects/20) {
-		char str[1024];
-		sprintf(str," %uK", i/1000);
+		char str[BUF_SIZE];
+		if(nsubjects>20000){
+			snprintf(str,BUF_SIZE, " %uK", i/1000);
+		} else {
+			snprintf(str,BUF_SIZE, " %u", i);
+		}
 		texto(str, 0, i+nsubjects*0.01, 0);
-		glColor3f(0.2, 0.2, 0.2);
+		glColor4f(GRID_COLOR);
 		glBegin(GL_LINES);
 		glVertex3f(0, i, 0);
-		glVertex3f(maxVal, i, 0);
+		glVertex3f(nobjects, i, 0);
 		glVertex3f(0, i, 0);
 		glVertex3f(0, i, npredicates);
 		glEnd();
@@ -565,14 +774,18 @@ void draw() {
 	
 	// Draw object scale
 	for(unsigned int i=0;i<=nobjects;i+=nobjects/20) {
-		char str[1024];
-		sprintf(str," %uK", i/1000);
+		char str[BUF_SIZE];
+		if(nobjects>20000) {
+			snprintf(str, BUF_SIZE," %uK", i/1000);
+		} else {
+			snprintf(str, BUF_SIZE," %u", i);
+		}
 		texto(str, i, nsubjects*0.01, 0);
 		
-		glColor3f(0.2, 0.2, 0.2);
+		glColor4f(GRID_COLOR);
 		glBegin(GL_LINES);
 		glVertex3f(i, 0, 0);
-		glVertex3f(i, maxAxis, 0);
+		glVertex3f(i, nsubjects, 0);
 		glVertex3f(i, 0, 0);
 		glVertex3f(i, 0, npredicates);
 		glEnd();
@@ -581,21 +794,21 @@ void draw() {
 	
 	// Draw predicate scale
 	for(unsigned int i=0;i<=npredicates;i+=npredicates/10) {
-		char str[1024];
-		sprintf(str," %u", i);
+		char str[BUF_SIZE];
+		snprintf(str, BUF_SIZE," %u", i);
 		texto(str, 0, 0, i);
 		
-		glColor3f(0.2, 0.2, 0.2);		
+		glColor4f(GRID_COLOR);		
 		glBegin(GL_LINES);
 		glVertex3f(0, 0, i);
-		glVertex3f(maxVal,0,  i);
+		glVertex3f(nobjects,0,  i);
 		glVertex3f(0, 0, i);
-		glVertex3f(0, maxAxis,  i);
+		glVertex3f(0, nsubjects,  i);
 		glEnd();
 	}
 	
 	// Draw outter axis
-	glColor3f(0.8, 0.8, 0.8);
+	glColor4f(AXIS_COLOR);
 	glBegin(GL_LINES);
 	glVertex3f(0, 0, 0);
 	glVertex3f(0, maxAxis, 0);
@@ -624,30 +837,31 @@ void draw() {
 	glEnd();
 	
 	// Draw labels
-	texto((char *)"Subjects", 0, nsubjects*1.02, 0);
-	texto((char *)"Objects", nobjects*1.07, 0, 0);
+	texto((char *)"Subjects", 0, nsubjects*1.04, 0);
+	texto((char *)"Objects", nobjects*1.05, 0, 0);
 	//texto("Predicates", -nsubjects*1.01, 0, npredicates*1.05);
 	
-	// Draw points
+	// Draw vertices
+#ifdef SCREEN
 	glPointSize(1.5);
+#else 
+	glPointSize(3);
+#endif
 	glBegin(GL_POINTS);
 	COLOR c;
 
-	unsigned int maxy = 0;
 	for(int i=0; (i<graph.size()) && (i<currFrame);i+=increment) {
 		//printf("Triple: %u, %u, %u\n", graph[i].x, graph[i].y, graph[i].z );
 		
 		if( currpredicate==0 || currpredicate==graph[i].x) {
-			getColor(graph[i].x, 0, dictionary->getNpredicates(), &c);
+			getColor2(graph[i].x, 0, dictionary->getNpredicates(), &c);
 			glColor4f(c.r, c.g, c.b, 0.8);
 			glVertex3f( ((float)graph[i].z), ((float)graph[i].y), ((float)graph[i].x));
-			maxy = maxy>graph[i].z ? maxy : graph[i].z;
 		}
 	}
 	glEnd();
-	
-	//cout << "Maxy: " << maxy << endl;
-	
+		
+	// Draw found triple
 	if(foundTriple!=NULL) {
 		glPointSize(5);
 		glBegin(GL_POINTS);
@@ -656,7 +870,7 @@ void draw() {
 		glVertex3f( foundTriple->z, foundTriple->y, foundTriple->x);
 		glEnd();
 		
-		glColor4f(1.0,1.0,1.0,1.0);
+		glColor4f(TEXT_COLOR);
 		glBegin(GL_LINES);
 		GLfloat sizex = nobjects/100;
 		GLfloat sizey = nsubjects/100;
@@ -667,15 +881,27 @@ void draw() {
 		glEnd();
 	}
 
-	currFrame+=graph.size()/100;
-
 	glPopMatrix();
 	
 	// Draw onscreen labels
-	texto(mouse_str, -screenWidth*0.5+mousex, 0.5*screenHeight-mousey+10, 0);
+	//int xpos = -screenWidth*0.5+mousex - 0.5*textSize(mouse_str_obj);
+	int xpos = -screenWidth*0.5+mousex -100; // - 0.5*textSize(mouse_str_obj);
+	if(xpos< -screenWidth*0.5+10) {
+		xpos = -screenWidth*0.5+10;
+	}
+	textoBox(mouse_str_suj, xpos, 0.5*screenHeight-mousey+40, 0);
+	textoBox(mouse_str_pred, xpos, 0.5*screenHeight-mousey+25, 0);	
+	textoBox(mouse_str_obj, xpos, 0.5*screenHeight-mousey+10, 0);
+	
 	texto(fps_str, -screenWidth*0.5, -screenHeight*0.5, 0);
 	texto(dataset_str, -screenWidth*0.5+5, +screenHeight*0.5-14, 0);
 	texto(currPredicateStr, -screenWidth*0.5+5, +screenHeight*0.5-30, 0);
+	
+	// Animate
+	if(currFrame+graph.size()/500<UINT_MAX) {
+		currFrame+=graph.size()/500;
+		glutPostRedisplay();
+	}
 	
 	//	glFlush();
 	glutSwapBuffers();
@@ -685,11 +911,16 @@ void idle() {
 	glutPostRedisplay();
 }
 
+void timer(int valor) {
+	glutPostRedisplay();
+	glutTimerFunc( TIMER_DELAY, timer, 1);
+}
+
 void initGL(int width, int height) {
 	
 	reshape(width, height);
 	
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(BACKGROUND_COLOR);
 	glClearDepth(1.0f);
 	
 	glEnable(GL_DEPTH_TEST);
@@ -728,7 +959,7 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(draw);  
 	//glutIdleFunc(idle);
 	
-	glutTimerFunc( TIMER_DELAY, timer, 1);
+	//glutTimerFunc( TIMER_DELAY, timer, 1);
 	
 	initGL(WIDTH, HEIGHT);
 	

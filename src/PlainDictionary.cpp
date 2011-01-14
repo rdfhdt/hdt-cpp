@@ -641,8 +641,15 @@ PlainDictionary::retrieveString(unsigned int id, unsigned int vocabulary)
 			{
 				unsigned int pos;
 				
-				if (mapping == MAPPING1) pos = id-subjects_shared.size()-1;
-				else pos = id-nsubjects-1;
+				if (mapping == MAPPING2) {
+					pos = id-subjects_shared.size()-1;
+				} else {
+					pos = id-nsubjects-1;
+				}
+				
+				if(objects_not_shared.size()<=pos) {
+					return "";
+				}
 				
 				if (objects_not_shared[pos]->prefix==NULL)
 				{

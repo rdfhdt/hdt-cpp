@@ -28,7 +28,7 @@
 #include <iostream>
 #include <fstream>
 
-#define BINARY_HEADER 1
+#define BINARY_HEADER 0
 
 Header::Header()
 {

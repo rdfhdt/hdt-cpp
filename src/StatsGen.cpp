@@ -312,7 +312,7 @@ StatsGen::readFromHDT(char *hdt, char*output)
 
 bool 
 StatsGen::process(char *output)
-{
+{	
 	// Save parsings
 	for(int pars=1;pars<=6;pars++) {
 		triples->convertParsing(pars);
