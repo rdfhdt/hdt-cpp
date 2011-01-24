@@ -1,8 +1,9 @@
 CPP=g++
 CPPFLAGS=
 FLAGS=-O9 -I libcds/includes/ -I /usr/local/include
-LDFLAGS=-lstdc++ -lGL -lGLU -lglut
-LIB=-lraptor libcds/lib/libcds.a -L/usr/local/lib 
+LDFLAGS=-lstdc++ -lGL -lGLU -lglut -lraptor 
+
+LIB=libcds/lib/libcds.a -L/usr/local/lib
 
 # Flags for compiler and linker
 ifeq (Darwin,$(shell uname -s))
@@ -23,6 +24,9 @@ libcdsMake:
 %.o: %.cpp $(HEADERS)
 	@echo " [HDT] Compiling $<"
 	@$(CPP) $(CPPFLAGS) $(FLAGS) -c $< -o $@
+
+libhdt: $(OBJECTS)
+	ar rcs  libhdt.a $(OBJECTS)
 
 hdt:	$(OBJECTS) HDT.o
 	@echo " [HDT] Linking HDT"
