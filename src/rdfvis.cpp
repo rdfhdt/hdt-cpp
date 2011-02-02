@@ -10,6 +10,8 @@
 #include <sys/time.h>
 #include <string>
 #include <stdint.h>
+#include <iostream>
+#include <limits>
 
 #ifdef __APPLE__
  #include <OpenGL/OpenGL.h>
@@ -37,7 +39,7 @@
 #define HEIGHT 768
 #define POSX 9
 #define POSY 30
-#define RENDER_NUM_POINTS 200000
+#define RENDER_NUM_POINTS 100000
 #define BUF_SIZE 250
 
 #define SCREEN
@@ -99,7 +101,7 @@ vector<char *> datasets;
 int currentFile=0;
 
 int currpredicate=0;
-unsigned int currFrame=UINT_MAX;
+unsigned int currFrame=-1;//std::numeric_limits<unsigned int>::max()-1;
 int increment=1;
 
 TripleID *foundTriple=NULL;
@@ -898,7 +900,7 @@ void draw() {
 	texto(currPredicateStr, -screenWidth*0.5+5, +screenHeight*0.5-30, 0);
 	
 	// Animate
-	if(currFrame+graph.size()/500<UINT_MAX) {
+	if(currFrame+graph.size()/500<std::numeric_limits<unsigned int>::max()) {
 		currFrame+=graph.size()/500;
 		glutPostRedisplay();
 	}
