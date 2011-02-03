@@ -15,7 +15,7 @@ OBJECTS=$(patsubst %.cpp,%.o,$(filter-out HDT.cpp rdfvis.cpp, $(wildcard *.cpp))
 HEADERS=*.h
 BIN=hdt rdfvis
 
-all: libcdsMake hdt rdfvis
+all: libcdsMake hdt rdfvis doc
 
 libcdsMake:
 	@echo " [MSG] Building libcds"
@@ -34,7 +34,11 @@ hdt:	$(OBJECTS) HDT.o
 
 rdfvis:	$(OBJECTS) rdfvis.o
 	@echo " [HDT] Linking rdfvis"
-	@$(CPP) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) -o rdfvis $(OBJECTS) rdfvis.o ${LIB} 
+	@$(CPP) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) -o rdfvis $(OBJECTS) rdfvis.o ${LIB}
+	
+doc:	
+	@echo " [HDT] Generating documentation"
+	doxygen
 
 clean:
 	@echo " [MSG] Cleaning libcds"
