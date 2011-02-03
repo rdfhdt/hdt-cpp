@@ -1,7 +1,8 @@
 CPP=g++
 CPPFLAGS=
 FLAGS=-O9 -I libcds/includes/ -I /usr/local/include
-LDFLAGS=-lstdc++ -lGL -lGLU -lglut -lraptor 
+LDFLAGS=-lstdc++ -lGL -lGLU -lglut -lraptor
+DOXYGEN=doxygen
 
 LIB=libcds/lib/libcds.a -L/usr/local/lib
 
@@ -15,7 +16,7 @@ OBJECTS=$(patsubst %.cpp,%.o,$(filter-out HDT.cpp rdfvis.cpp, $(wildcard *.cpp))
 HEADERS=*.h
 BIN=hdt rdfvis
 
-all: libcdsMake hdt rdfvis
+all: libcdsMake hdt rdfvis doc
 
 libcdsMake:
 	@echo " [MSG] Building libcds"
@@ -34,8 +35,12 @@ hdt:	$(OBJECTS) HDT.o
 
 rdfvis:	$(OBJECTS) rdfvis.o
 	@echo " [HDT] Linking rdfvis"
-	@$(CPP) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) -o rdfvis $(OBJECTS) rdfvis.o ${LIB} 
-
+	@$(CPP) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) -o rdfvis $(OBJECTS) rdfvis.o ${LIB}
+	
+doc:	
+	@echo " [HDT] Generating documentation"
+	@cd ..; $(DOXYGEN)
+	
 clean:
 	@echo " [MSG] Cleaning libcds"
 	@make -C libcds/ clean

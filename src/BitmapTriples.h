@@ -53,8 +53,7 @@ typedef struct minipair
 } MINIPAIR;
 
 
-/** BitmapTriples
- *   It implements the abstract class Triples with bitmap structures.
+/** BitmapTriples implements the abstract class Triples with bitmap structures.
  *
  *  @author Miguel A. Martinez-Prieto
  */
@@ -63,15 +62,15 @@ class BitmapTriples : public Triples
 public:	
 	/** Generic constructor */
 	BitmapTriples();
-	/** Constructor for parsing*/
+	/** Constructor for parsing */
 	BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing);
-	/** Constructor for loading*/
+	/** Constructor for loading */
 	BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path);
 
 	void console();
 	bool transformToN3();
 	unsigned int write(string path);
-	/** Serialize HDT to a given format*/
+	/** Serialize HDT to a given format */
 	bool serialize(char *output, char *format);
 	
 	/** Load the full graph to main memory */
@@ -100,13 +99,13 @@ protected:
  	    represented as negative numbers */
 	Query parseQ(string q);
 
-	/** ASK SPARQL-query implementation on Check&Find algorithm for HDT*/
+	/** ASK SPARQL-query implementation on Check&Find algorithm for HDT */
 	bool ask(string q);
 
-	/** CONSTRUCT SPARQL-query implementation on Check&Find algorithm for HDT*/
+	/** CONSTRUCT SPARQL-query implementation on Check&Find algorithm for HDT */
 	int construct(string q);
 
-	/** SELECT SPARQL-query implementation on Check&Find algorithm for HDT*/
+	/** SELECT SPARQL-query implementation on Check&Find algorithm for HDT */
 	int select(string q, vector<TripleString> **triples);
 
 	/** Builds a bitstring vector 'v' with 'elems' elements. */
@@ -136,7 +135,7 @@ protected:
 
 		return true;
 	}
-	// Returns the position of the element or -1 if not found
+	/** Returns the position of the element or -1 if not found */
 	int static
 	FindTransition(const vector<minipair> vocabularies, const int id)
 	{         

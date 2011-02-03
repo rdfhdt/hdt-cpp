@@ -25,20 +25,23 @@
  */
  
  
-// DEBERIAMOS HACE 6 IMPLEMENTACIONES DIFERENTES DE ESTA CLASE, UNA PARA
-// CADA TIPO DE PARSING. CON ESO NOS EVITARÍAMOS TODAS LAS COMPARACIONES
-// QUE TENEMOS QUE HACER SIEMPRE Y QUE EN UN ENTORNO REAL DE PRUEBA
-// DEGRADARÍA NUESTRA EFICIENCIA. AHORA LO DEJO ASÍ PARA QUE SEA MÁS
-// SENCILLO DE VER, PERO HAY QUE CAMBIARLO!
+/** TODO
+ DEBERIAMOS HACER 6 IMPLEMENTACIONES DIFERENTES DE ESTA CLASE, UNA PARA
+ CADA TIPO DE PARSING. CON ESO NOS EVITARÍAMOS TODAS LAS COMPARACIONES
+ QUE TENEMOS QUE HACER SIEMPRE Y QUE EN UN ENTORNO REAL DE PRUEBA
+ DEGRADARÍA NUESTRA EFICIENCIA. AHORA LO DEJO ASÍ PARA QUE SEA MÁS
+ SENCILLO DE VER, PERO HAY QUE CAMBIARLO! */
  
 #include "BitmapTriples.h"
 
 using namespace std;
 
+/** Basic constructor */
 BitmapTriples::BitmapTriples()
 {
 }
 
+/** Constructor */
 BitmapTriples::BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing)
 {
 	this->dictionary = dictionary;
@@ -48,6 +51,7 @@ BitmapTriples::BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsi
 	graph.resize(ntriples);
 }
 
+/** Constructor */
 BitmapTriples::BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path)
 {
 	this->dictionary = dictionary;
@@ -80,6 +84,7 @@ BitmapTriples::BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsi
 	}
 }
 
+/** Implementation of the console */
 void
 BitmapTriples::console()
 {
@@ -308,6 +313,7 @@ BitmapTriples::console()
 	* */
 }
 
+/** Parse a query */
 Query
 BitmapTriples::parseQ(string q)
 {
@@ -524,6 +530,7 @@ BitmapTriples::parseQ(string q)
 	return qid;
 }
 
+/** Ask a query */
 bool 
 BitmapTriples::ask(string q)
 {	
@@ -606,23 +613,24 @@ BitmapTriples::ask(string q)
 	return checkf;
 }
 
+/** Construct */
 int 
 BitmapTriples::construct(string q)
 {
-	// Esto hay que hacerlo de tal manera que no devuelva un resultado
-	// plano sino un grafo en HDT (Proyecto de Alberto San Martin)
-	// Ahora mismo la función "checkAndFindConstruct" no está resuelta
-	// utilizo SELECT para dar la sensación de resultado :D
-	// Igualmente SELECT ahora saca por pantalla el resultado, pero
-	// tendríamos que devolverlo en alguna estructura de datos más o 
-	// menos eficiente.
+	/** TODO
+	Esto hay que hacerlo de tal manera que no devuelva un resultado
+	plano sino un grafo en HDT (Proyecto de Alberto San Martin)
+	Ahora mismo la función "checkAndFindConstruct" no está resuelta
+	utilizo SELECT para dar la sensación de resultado :D
+	Igualmente SELECT ahora saca por pantalla el resultado, pero
+	tendríamos que devolverlo en alguna estructura de datos más o
+	menos eficiente. */
 	vector<TripleString> *triples;
 	
 	select(q,&triples);
 }
 
-	
-	
+/** Select */
 int
 BitmapTriples::select(string q, vector<TripleString> **triples)
 {	
@@ -743,6 +751,7 @@ BitmapTriples::select(string q, vector<TripleString> **triples)
 	return results;
 }
 
+/** Transforms to N3 */
 bool
 BitmapTriples::transformToN3()
 {	
@@ -814,6 +823,7 @@ BitmapTriples::transformToN3()
 	return true;	
 }
 
+/** Serializes */
 bool
 BitmapTriples::serialize(char *output, char *format)
 {	
@@ -907,6 +917,7 @@ BitmapTriples::serialize(char *output, char *format)
 	return true;	
 }
 	
+/** Stats for the vocabulary */
 void
 BitmapTriples::vocabStats()
 {	
@@ -1168,6 +1179,7 @@ BitmapTriples::vocabStats()
 	
 }	
 
+/** Gets the length */
 int 
 BitmapTriples::getLength(vector<minipair> * triplesSub,int current, MiniHashTable *subLengths){
 
@@ -1206,6 +1218,7 @@ BitmapTriples::getLength(vector<minipair> * triplesSub,int current, MiniHashTabl
 	return maxlength;
 }
 	
+/** Write */
 unsigned int
 BitmapTriples::write(vector<TripleID> &graph, string path)
 {
@@ -1311,12 +1324,14 @@ BitmapTriples::write(vector<TripleID> &graph, string path)
 	return graph.size()-repeated;
 }
 
+/** Write */
 unsigned int 
 BitmapTriples::write(string path)
 {	
 	return BitmapTriples::write(this->graph, path);
 }
 
+/** Build bit string */
 void 
 BitmapTriples::buildBitString(BitString **bs, vector<uint> *v, uint elems)
 {
@@ -1330,12 +1345,14 @@ BitmapTriples::buildBitString(BitString **bs, vector<uint> *v, uint elems)
 	}
 }
 
+/** Load graph memory */
 bool
 BitmapTriples::loadGraphMemory(){
 	cout << "BitmapTriples::loadGraphMemory() not implemented" <<endl;
 	return false;
 }
 
+/** Destructor */
 BitmapTriples::~BitmapTriples()
 {
 	delete bitmapY;
