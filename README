@@ -28,7 +28,7 @@ Basic Installation
 Execution
 =================
 
-./hdt[Options]
+./hdt [Options]
         -p --parse <config_file>              Parse data set within the given <config_file>
         -l --load <file>                      Load HDT structure into memory. Access triples console if serialize command is not given
             -s --serialize [format]           Serialize the loaded HDT representation to a given format: ntriples (default), rdfxml, turtle, rdfxml-abbrev, rdfxml-xmp, atom, json-triples, json, dot
