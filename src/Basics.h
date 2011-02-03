@@ -103,6 +103,9 @@ struct TripleString
     string z;
 };
 
+/** Parses a Query
+/*
+/*/
 TripleString
 static parseQuery(string q)
 {
@@ -127,6 +130,9 @@ static parseQuery(string q)
 	return qstring;
 }
 
+/** Get the time
+/*
+/*/
 void 
 static getTime(DataTime *t)
 {
@@ -141,6 +147,9 @@ static getTime(DataTime *t)
 	t->total = (double) tp.tv_sec + 1.0e-6 * tp.tv_usec;
 }
 
+/** Print the credits
+/*
+/*/
 void static printCredits()
 {
 	cout<< "\n *** HDT IT! prototype v.0.7 2010. All rights reserved.***";
@@ -153,6 +162,10 @@ void static printCredits()
 	cout<< "\n\n    jfergar@infor.uva.es;migumar2@infor.uva.es";
 	cout<< "\n\n";
 }
+
+/** Prints the help
+/*
+/*/
 void static printHelp(char *exe)
 {
 	cout<<"\n"<<exe<<"[Options]\n";
@@ -163,6 +176,10 @@ void static printHelp(char *exe)
 	cout<<"        -h --help                             Show this help\n";	
 	cout<<"        -c --console                          Entering console mode\n";	
 }
+
+/** Prints the help of the console
+/*
+/*/
 void static printHelpConsole()
 {
 	cout<<"        parse <config_file>            Parse data set within the given <config_file>\n";	
@@ -170,6 +187,10 @@ void static printHelpConsole()
 	cout<<"        help                           Show this help\n";	
 	cout<<"        exit                           Exit console mode\n";	
 }
+
+/** Splits a string with an specific separator
+/*
+/*/
 void static stringExplode(string str, string separator, vector<string>* results){
 	
     int found;
