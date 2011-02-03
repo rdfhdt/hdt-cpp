@@ -1,7 +1,8 @@
 CPP=g++
 CPPFLAGS=
 FLAGS=-O9 -I libcds/includes/ -I /usr/local/include
-LDFLAGS=-lstdc++ -lGL -lGLU -lglut -lraptor 
+LDFLAGS=-lstdc++ -lGL -lGLU -lglut -lraptor
+DOXYGEN=doxygen
 
 LIB=libcds/lib/libcds.a -L/usr/local/lib
 
@@ -38,8 +39,8 @@ rdfvis:	$(OBJECTS) rdfvis.o
 	
 doc:	
 	@echo " [HDT] Generating documentation"
-	doxygen
-
+	@cd ..; $(DOXYGEN)
+	
 clean:
 	@echo " [MSG] Cleaning libcds"
 	@make -C libcds/ clean
