@@ -31,24 +31,42 @@
 
 #include "HashTable.h"
 
+/** HashTable
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 HashTable::HashTable()
 {	
 }
 
+/** Get
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 HASHREC** 
 HashTable::get()
 {
 	return hash;
 }
 
-//get rec at position i
+/** get rec at position i
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 HASHREC*
 HashTable::get(unsigned pos)
 {
 	return hash[pos];
 }
 
-/* Create hash table, initialise ptrs to NULL */
+/* Create hash table, initialise ptrs to NULL
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 HashTable::inithashtable(bool countOrder)
 {
@@ -62,7 +80,11 @@ HashTable::inithashtable(bool countOrder)
 	hash[i] = (HASHREC *) NULL;
 }
 
-/* Create hash table with a given size, initialise ptrs to NULL */
+/* Create hash table with a given size, initialise ptrs to NULL
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 HashTable::inithashtable(unsigned int size,bool countOrder)
 {
@@ -76,6 +98,11 @@ HashTable::inithashtable(unsigned int size,bool countOrder)
 	hash[i] = (HASHREC *) NULL;
 }
 
+/** Delete Key
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 HashTable::delete_key(char *w)
 {	
@@ -99,7 +126,11 @@ HashTable::delete_key(char *w)
 }
 
 
-/* Search hash table for given string, return record if found, else NULL */
+/* Search hash table for given string, return record if found, else NULL
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 HASHREC *
 HashTable::hashsearch(char *w)
 {	
@@ -123,7 +154,11 @@ HashTable::hashsearch(char *w)
     return(htmp);
 }
 
-/* Search hash table for given rec to get another equivalent, return record if found, else NULL */
+/* Search hash table for given rec to get another equivalent, return record if found, else NULL
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 HASHREC *
 HashTable::hashsearch(HASHREC *rec)
 {	
@@ -164,10 +199,11 @@ HashTable::hashsearch(HASHREC *rec)
     return(htmp);
 }
 
-/* Search hash table for given string, insert if not found 
- * update information if found
+/* Search hash table for given string, insert if not found, update information if found
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
  */
-
 HASHREC*
 HashTable::hashinsert(HASHREC* shared, unsigned int &globalId)
 {
@@ -244,12 +280,12 @@ HashTable::hashinsert(HASHREC* shared, unsigned int &globalId)
     return htmp;
 }
 
-/* Search hash table for given string, insert if not found 
- * update information if found
- * 
- * Insert not shared, prefix or not
+/* Search hash table for given string, insert if not found, update information if found
+ * Insert not shared, prefix or not.
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
  */
-
 HASHREC*
 HashTable::hashinsert(char *w, unsigned int &globalId,MINIHASHREC* prefix)
 {
@@ -319,7 +355,11 @@ HashTable::hashinsert(char *w, unsigned int &globalId,MINIHASHREC* prefix)
     return htmp;
 }
 
-
+/** Dump
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 HashTable::dump()
 {
@@ -336,7 +376,11 @@ HashTable::dump()
   }
 }
 
-/* Bitwise hash function.  Note that tsize does not have to be prime. */
+/* Bitwise hash function.  Note that tsize does not have to be prime.
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int
 HashTable::bitwisehash(char *word, unsigned int tsize, unsigned int seed)
 {
@@ -351,6 +395,11 @@ HashTable::bitwisehash(char *word, unsigned int tsize, unsigned int seed)
     return((unsigned int)((h&0x7fffffff) % tsize));
 }
 
+/* SCMP
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 HashTable::scmp( HASHREC* htmp, char *s2 )
 {
@@ -398,6 +447,7 @@ HashTable::scmp( HASHREC* htmp, char *s2 )
 	}
 }
 
+/** Destructor for HashTable */
 HashTable::~HashTable()
 {	
       for(int i=0 ; i<TSIZE ; i++ )
@@ -417,6 +467,12 @@ HashTable::~HashTable()
 
       free(hash);
 }
+
+/** Size
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int
 HashTable::size()
 {

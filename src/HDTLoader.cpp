@@ -26,10 +26,20 @@
  
 #include "HDTLoader.h"
 
+/** HDT Loader
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 HDTLoader::HDTLoader()
 {
 }
 
+/** Load
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 HDTLoader::load(char* location)
 {
@@ -80,18 +90,29 @@ HDTLoader::load(char* location)
 	return true;
 }
 
+/** Console
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 HDTLoader::console()
 {
 	triples->console();
 }
 
+/** Serialize
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 HDTLoader::serialize(char *output, char *format)
 {
 	triples->serialize(output,format);
 }
 
+/** Destructor for HDTLoader */
 HDTLoader::~HDTLoader()
 {
 	delete header;

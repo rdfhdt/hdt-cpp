@@ -26,6 +26,11 @@
 
 #include "Dictionary.h"
 
+/** Get Max Id
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 Dictionary::getMaxID()
 {
@@ -41,36 +46,66 @@ Dictionary::getMaxID()
 	else return o;
 }
 
+/** Get Mapping
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int
 Dictionary::getMapping()
 {
 	return mapping;
 }
 
+/** Get N Subjects
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 Dictionary::getNsubjects()
 {
 	return nsubjects;
 }
 
+/** Get N Predicates
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 Dictionary::getNpredicates()
 {
 	return npredicates;
 }
 
+/** Get N Objects
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 Dictionary::getNobjects()
 {
 	return nobjects;
 }
 
+/** Get S Subobj
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 Dictionary::getSsubobj()
 {
 	return ssubobj;
 }
 
+/** Get N Literals
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 Dictionary::getNLiterals()
 {

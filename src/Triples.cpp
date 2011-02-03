@@ -28,6 +28,11 @@
 #include "Triples.h"
 #include "Histogram.h"
 
+/** Insert
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 Triples::insert(unsigned int subject, unsigned int predicate, unsigned int object)
 {	
@@ -77,6 +82,11 @@ Triples::insert(unsigned int subject, unsigned int predicate, unsigned int objec
 	ntriples++;
 }
 
+/** Retrieve Triple
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 TripleID
 Triples::retrieveTriple(unsigned int x, unsigned int y, unsigned int z)
 {
@@ -124,6 +134,11 @@ Triples::retrieveTriple(unsigned int x, unsigned int y, unsigned int z)
 	return triple;
 }
 
+/** Clustering
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 Triples::clustering()
 {
@@ -257,6 +272,7 @@ Triples::clustering()
 	dictionary->endClustering();
 }
 
+// TODO: What is this?
 #if 0
 #define findDest(data, max1, max2) ( ((((double)data)*max1)/max2) )
 //#define findDest(data, max1, max2) (data)
@@ -481,6 +497,11 @@ Triples::gnuplot(unsigned int npredicates, vector <string> predicates, unsigned 
 }
 #endif
 
+/** Graph Sort
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 Triples::graphSort()
 {
@@ -488,12 +509,22 @@ Triples::graphSort()
 	sort(graph.begin(),graph.end(), Triples::sortXYZ);
 }
 
+/** Size
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 Triples::size()
 {
 	return ntriples;
 }
 
+/** Gnuplot Header
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 Triples::gnuplotHeader(unsigned int firstP, unsigned int sizeP, string predicate, 
 					   unsigned int xmin, unsigned int xmax, unsigned int ymin, unsigned int ymax, string filename)
@@ -535,6 +566,11 @@ Triples::gnuplotHeader(unsigned int firstP, unsigned int sizeP, string predicate
 	fclose(header);
 }
 
+/** Swap
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 inline void swap(char &a, char &b) {
 	unsigned int tmp;
 	
@@ -543,6 +579,11 @@ inline void swap(char &a, char &b) {
 	b = tmp;
 }
 
+/** Swap
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 inline void swap(unsigned int &a, unsigned int &b) {
 	unsigned int tmp;
 	
@@ -597,7 +638,11 @@ bool swap3tab[6][6] = { { 0, 1, 0, 1, 0, 0},
 						{ 1, 0, 0, 0, 0, 1},
 						{ 0, 0, 1, 0, 1, 0}};			
 
-
+/** Convert Parsing
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 Triples::convertParsing(unsigned int to) {
 	
@@ -608,6 +653,7 @@ Triples::convertParsing(unsigned int to) {
 	bool swap2 = swap2tab[parsing-1][to-1];
 	bool swap3 = swap3tab[parsing-1][to-1];
 	
+//TODO: What is this?
 #if 0
 	char str[4];
 	strcpy(str, parsingTypeStr[parsing]);
@@ -648,6 +694,11 @@ Triples::convertParsing(unsigned int to) {
 	graphSort();
 }
 
+/** Calculate Degree
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 Triples::calculateDegree(string path) {
 	const int maxval = 50000;
@@ -733,6 +784,11 @@ Triples::calculateDegree(string path) {
 	
 }
 
+/** Calculate Predicate Histogram
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 Triples::calculatePredicateHistogram(string path) {
 	int npred = dictionary->getNpredicates();
@@ -748,6 +804,11 @@ Triples::calculatePredicateHistogram(string path) {
 	out.close();
 }
 
+/** Calculate Degrees
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 Triples::calculateDegrees(string path) {
 

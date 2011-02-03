@@ -28,10 +28,20 @@
 
 using namespace std;
 
+/** PlainTriples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 PlainTriples::PlainTriples()
 {
 }
 
+/** PlainTriples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 PlainTriples::PlainTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing)
 {
 	// ntriples parameter is used to resize the graph. In turn, the 
@@ -45,6 +55,11 @@ PlainTriples::PlainTriples(Dictionary *dictionary, unsigned int ntriples, unsign
 	graph.resize(ntriples);
 }
 
+/** PlainTriples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 PlainTriples::PlainTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path)
 {
 	// The class property ntriples is initialished with the ntriples
@@ -55,6 +70,11 @@ PlainTriples::PlainTriples(Dictionary *dictionary, unsigned int ntriples, unsign
 	this->path = path;
 }
 
+/** Console
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 PlainTriples::console()
 {
@@ -154,6 +174,11 @@ PlainTriples::console()
 	}
 }
 
+/** Load Graph Memory
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 PlainTriples::loadGraphMemory(){
 	
@@ -195,6 +220,11 @@ PlainTriples::loadGraphMemory(){
 	}
 }
 
+/** Transform To N3
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 PlainTriples::transformToN3()
 {
@@ -239,7 +269,11 @@ PlainTriples::transformToN3()
 	}
 }
 
-
+/** Serialize
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 PlainTriples::serialize(char *output, char *format){
 	
@@ -309,6 +343,11 @@ PlainTriples::serialize(char *output, char *format){
 	}
 }
 
+/** Write
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 PlainTriples::write(vector<TripleID> &graph, string path) {
 	string output = path;
@@ -351,14 +390,18 @@ PlainTriples::write(vector<TripleID> &graph, string path) {
 	return graph.size()-repeated;
 }
 
-	
+/** Write
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 PlainTriples::write(string path)
 {	
 	return PlainTriples::write(this->graph, path);
 }
 
-
+/** Destructor for PlainTriples */
 PlainTriples::~PlainTriples()
 {
 }

@@ -29,10 +29,20 @@
 #include "fdstream.hpp"
 #include "Utils.h"
 
+/** RDF Parser
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 RDFParser::RDFParser()
 {
 }
 
+/** Parse
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 RDFParser::parse(char *pathFile)
 {
@@ -479,6 +489,11 @@ RDFParser::parse(char *pathFile)
 	return true;
 }
  
+/** Parse Config
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 RDFParser::parseConfig(char* pathFile)
 {
@@ -528,6 +543,11 @@ RDFParser::parseConfig(char* pathFile)
 	return parsed;
 }
 
+/** Parse Triple N3
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 RDFParser::parseTripleN3(string t)
 {
@@ -669,7 +689,7 @@ RDFParser::parseTripleN3(string t)
 	}
 }
 
-
+/** Destructor for RDFParser */
 RDFParser::~RDFParser()
 {
 	delete header;

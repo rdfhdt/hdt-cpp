@@ -106,6 +106,11 @@ int increment=1;
 
 TripleID *foundTriple=NULL;
 
+/** Set Predicate
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void setPredicate() {
 	int count=0;
 	vector<TripleID> graph = triples->getGraph();
@@ -124,7 +129,11 @@ void setPredicate() {
 	}
 }
 
-
+/** Load HDT
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool loadHDT(char *hdt) {
 	DataTime t1, t2;
 	getTime(&t1);
@@ -182,13 +191,17 @@ bool loadHDT(char *hdt) {
 	snprintf(dataset_str, BUF_SIZE, "%s (%u Triples)", datasets[currentFile], triples->size());
 	
 	clustering = 0;
-
 	
 	setPredicate();
 	
 	return true;
 }
 
+/** Unload HDT
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void unloadHDT() {
 	if(dictionary!=NULL) {
 		delete dictionary;
@@ -204,6 +217,11 @@ void unloadHDT() {
 	}
 }
 
+/** Keyboard Down
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 /* executed when a regular key is pressed */
 void keyboardDown(unsigned char key, int x, int y) {
 	printf("KeyDown: %d\n", key);
@@ -311,14 +329,29 @@ void keyboardDown(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
+/** Keyboard Up
+* @param param_a Description of the param.
+* @param param_b Description of the param.
+* @return The expected result
+*/
 void keyboardUp(unsigned char key, int x, int y) {
 	
 }
 
+/** Keyboard Special Up
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void keyboardSpecialUp(int k, int x, int y) {
 	printf("SpecialUp %d, %d, %d\n", k, x, y);
 }
 
+/** Keyboard Special Down
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void keyboardSpecialDown(int k, int x, int y) {
 	printf("SpecialDown %d, %d, %d\n", k, x, y);
 	mouse_str_suj[0]='\0';
@@ -358,6 +391,11 @@ void keyboardSpecialDown(int k, int x, int y) {
 	glutPostRedisplay();
 }
 
+/** Mouse Click
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void mouseClick(int btn, int state, int x, int y) {
 	//printf("Click %d, %d, %d, %d\n", button, state, x, y);
 	
@@ -380,6 +418,11 @@ void mouseClick(int btn, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+/** Mouse Motion
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void mouseMotion(int x, int y) {
 	int diffx=0, diffy=0;
 	
@@ -409,11 +452,20 @@ void mouseMotion(int x, int y) {
 	glutPostRedisplay();
 }
 
-
+/** Dist
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned long long inline DIST(unsigned long long x1, unsigned long long x2, unsigned long long y1, unsigned long long y2) {
 	return (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
 }
 
+/** Find Triple Bin Search
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 TripleID *findTripleBinSearch(vector<TripleID> &graph, unsigned int x, unsigned int y, unsigned int z) {
 	long long min=0;
 	long long max = graph.size()-1;
@@ -450,6 +502,11 @@ TripleID *findTripleBinSearch(vector<TripleID> &graph, unsigned int x, unsigned 
 	return &graph[mid];
 }
 
+/** Find Triple Seq
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 TripleID *findTripleSeq(vector<TripleID> &graph, unsigned int x, unsigned int y, unsigned int z) {
 	TripleID *best= &graph[0];
 	unsigned int bestpos=0;
@@ -472,6 +529,11 @@ TripleID *findTripleSeq(vector<TripleID> &graph, unsigned int x, unsigned int y,
 	return best;
 }
 
+/** Mouse Passive Motion
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void mousePassiveMotion(int x, int y) {
 	//printf("%d %d\n", x, y);
 	mousex = x;
@@ -547,6 +609,11 @@ void mousePassiveMotion(int x, int y) {
 	glutPostRedisplay();
 }
 
+/** Reshape
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 /* reshaped window */
 void reshape(int w, int h) {
 	screenWidth = w;
@@ -574,6 +641,11 @@ void reshape(int w, int h) {
 	glLoadIdentity();
 }
 
+/** Texto
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void texto( char *cadena, float x, float y, float z)
 {
 	glDisable(GL_DEPTH_TEST);
@@ -588,6 +660,11 @@ void texto( char *cadena, float x, float y, float z)
 	glEnable(GL_DEPTH_TEST);
 }
 
+/** Text Size
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int textSize(char *cadena) {
 	int sz = 0;
 	
@@ -599,6 +676,11 @@ int textSize(char *cadena) {
 	return sz;
 }
 
+/** Texto Box
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void textoBox( char *cadena, float x, float y, float z)
 {
 	if(!*cadena) return;
@@ -620,12 +702,22 @@ void textoBox( char *cadena, float x, float y, float z)
 	texto(cadena,x,y,z);
 }
 
+/** Invert Color
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void invertColor(COLOR *c) {
 	c->r = 1-c->r;
 	c->g = 1-c->g;
 	c->b = 1-c->b;
 }
 
+/** Get Color
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void getColor(double v,double vmin,double vmax, COLOR *c)
 {
 	c->r = 1.0;
@@ -656,6 +748,11 @@ void getColor(double v,double vmin,double vmax, COLOR *c)
 
 #define RETURN_RGB(red, green, blue) {c->r = red; c->g = green; c->b = blue;}
 
+/** HSV to RGB
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void HSV_to_RGB( double h, double s, double v, COLOR *c ) {
 	// H is given on [0, 6] or UNDEFINED. S and V are given on [0, 1].
 	// RGB are each returned on [0, 1].
@@ -683,6 +780,11 @@ void HSV_to_RGB( double h, double s, double v, COLOR *c ) {
 	}
 } 
 
+/**Get Color 2
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void getColor2(double val,double vmin,double vmax, COLOR *c)
 {
 	double h,s,v;
@@ -699,6 +801,11 @@ void getColor2(double val,double vmin,double vmax, COLOR *c)
 	
 }
 
+/** Draw
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 /* render the scene */
 void draw() {
 	static int lastime=0;
@@ -909,15 +1016,30 @@ void draw() {
 	glutSwapBuffers();
 }
 
+/** Idle
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void idle() { 
 	glutPostRedisplay();
 }
 
+/** Timer
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void timer(int valor) {
 	glutPostRedisplay();
 	glutTimerFunc( TIMER_DELAY, timer, 1);
 }
 
+/** Init GL
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void initGL(int width, int height) {
 	
 	reshape(width, height);
@@ -929,6 +1051,11 @@ void initGL(int width, int height) {
 	glDepthFunc(GL_LEQUAL);
 }
 
+/** Main
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int main(int argc, char** argv) {
 	
 	if(argc<2) {

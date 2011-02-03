@@ -29,366 +29,368 @@
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
 
-
 #include "MiniHashTable.h"
 
-MiniHashTable::MiniHashTable()
-{	
-	globalId=1; //initialize globalId
+/** Mini Hash Table
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
+MiniHashTable::MiniHashTable() {
+	globalId = 1; //initialize globalId
 }
 
-MINIHASHREC** 
-MiniHashTable::get()
-{
+/** Get
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
+MINIHASHREC**
+MiniHashTable::get() {
 	return hash;
 }
 
+/** Get
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 //get rec at position i
 MINIHASHREC*
-MiniHashTable::get(unsigned pos)
-{
+MiniHashTable::get(unsigned pos) {
 	return hash[pos];
 }
 
+/** Init Hash Table
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 /* Create hash table, initialise ptrs to NULL */
-void
-MiniHashTable::inithashtable()
-{
-    int		i;
-    TSIZE = INITIAL_SIZE;
-    
-    numNodes = 0;
-    hash = (MINIHASHREC **) malloc( sizeof(MINIHASHREC *) * TSIZE );
+void MiniHashTable::inithashtable() {
+	int i;
+	TSIZE = INITIAL_SIZE;
 
-    for( i=0 ; i<TSIZE ; i++ )
-	hash[i] = (MINIHASHREC *) NULL;
+	numNodes = 0;
+	hash = (MINIHASHREC **) malloc(sizeof(MINIHASHREC *) * TSIZE);
+
+	for (i = 0; i < TSIZE; i++)
+		hash[i] = (MINIHASHREC *) NULL;
 }
 
+/** Init Hash Table
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 /* Create hash table with a given size, initialise ptrs to NULL */
-void
-MiniHashTable::inithashtable(int size)
-{
-    int		i;
-    TSIZE = size;
-    
-    numNodes = 0;
-    hash = (MINIHASHREC **) malloc( sizeof(MINIHASHREC *) * TSIZE );
+void MiniHashTable::inithashtable(int size) {
+	int i;
+	TSIZE = size;
 
-    for( i=0 ; i<TSIZE ; i++ )
-	hash[i] = (MINIHASHREC *) NULL;
-	
-	useAsCount=false;
+	numNodes = 0;
+	hash = (MINIHASHREC **) malloc(sizeof(MINIHASHREC *) * TSIZE);
+
+	for (i = 0; i < TSIZE; i++)
+		hash[i] = (MINIHASHREC *) NULL;
+
+	useAsCount = false;
 }
 
+/** Init Hash Table
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 /* Create hash table with a given size, initialise ptrs to NULL */
-void
-MiniHashTable::inithashtable(int size, bool count)
-{
-    int		i;
-    TSIZE = size;
-    
-    numNodes = 0;
-    hash = (MINIHASHREC **) malloc( sizeof(MINIHASHREC *) * TSIZE );
+void MiniHashTable::inithashtable(int size, bool count) {
+	int i;
+	TSIZE = size;
 
-    for( i=0 ; i<TSIZE ; i++ )
-	hash[i] = (MINIHASHREC *) NULL;
-	
+	numNodes = 0;
+	hash = (MINIHASHREC **) malloc(sizeof(MINIHASHREC *) * TSIZE);
+
+	for (i = 0; i < TSIZE; i++)
+		hash[i] = (MINIHASHREC *) NULL;
+
 	useAsCount = count;
 }
 
-void
-MiniHashTable::delete_key(char *w)
-{	
-    MINIHASHREC	*htmp, *hprv;
-    unsigned int hval = HASHFN(w, TSIZE, SEED);	
+/** Detele Key
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
+void MiniHashTable::delete_key(char *w) {
+	MINIHASHREC *htmp, *hprv;
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
 
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp->word, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
-    
-    if(hprv == NULL)hash[hval] = htmp->next;
-    else hprv->next = htmp->next;
-    
-    free(htmp->word);
-    numNodes--;
-//    free(htmp);
-    htmp = NULL;
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp->word, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
+
+	if (hprv == NULL)
+		hash[hval] = htmp->next;
+	else
+		hprv->next = htmp->next;
+
+	free(htmp->word);
+	numNodes--;
+	//    free(htmp);
+	htmp = NULL;
 }
 
-
+/** Hash Search
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 /* Search hash table for given string, return record if found, else NULL */
 MINIHASHREC *
-MiniHashTable::hashsearch(char *w)
-{	
-    MINIHASHREC	*htmp, *hprv;
-    unsigned int hval = HASHFN(w, TSIZE, SEED);
+MiniHashTable::hashsearch(char *w) {
+	MINIHASHREC *htmp, *hprv;
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
 
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp->word, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp->word, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
 
-    if( hprv!=NULL && htmp!=NULL ) /* move to front on access */
-    {
-	hprv->next = htmp->next;
-	htmp->next = hash[hval];
-	hash[hval] = htmp;
-    }
+	if (hprv != NULL && htmp != NULL) /* move to front on access */
+	{
+		hprv->next = htmp->next;
+		htmp->next = hash[hval];
+		hash[hval] = htmp;
+	}
 
-    return(htmp);
+	return (htmp);
 }
 
-/* Search hash table for given string, insert if not found 
+/* Search hash table for given string, insert if not found
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
  */
-
 MINIHASHREC*
-MiniHashTable::hashinsert(char *w)
-{
-    MINIHASHREC	*htmp, *hprv;
-    
-    
-    
-    unsigned int hval = HASHFN(w, TSIZE, SEED);
+MiniHashTable::hashinsert(char *w) {
+	MINIHASHREC *htmp, *hprv;
 
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp->word, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
 
-    if( htmp==NULL )
-    {
-		
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp->word, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
 
-    	
-    	htmp = (MINIHASHREC *) malloc( sizeof(MINIHASHREC) );
-    	
-    	
-    	htmp->word = (char *) malloc( strlen(w) + 1 );
+	if (htmp == NULL) {
+
+		htmp = (MINIHASHREC *) malloc(sizeof(MINIHASHREC));
+
+		htmp->word = (char *) malloc(strlen(w) + 1);
 		strcpy(htmp->word, w); //copy the value
-		
-		
+
+
 		htmp->id = globalId;
-		if (useAsCount==false){
+		if (useAsCount == false) {
 			globalId++;
 		}
-	
-    	numNodes++;
-    	htmp->next = NULL;
-    	    
-    	if( hprv==NULL )
-    	    hash[hval] = htmp;
-    	else
-    	    hprv->next = htmp;
-    
-    	/* new records are not moved to front */
-    }
-    else
-    {
-		
-    	if( hprv!=NULL ) /* move to front on access */
-    	{
-    	    hprv->next = htmp->next;
-    	    htmp->next = hash[hval];
-    	    hash[hval] = htmp;
-    	}
-    	
-    }
-  
-    return htmp;
+
+		numNodes++;
+		htmp->next = NULL;
+
+		if (hprv == NULL)
+			hash[hval] = htmp;
+		else
+			hprv->next = htmp;
+
+		/* new records are not moved to front */
+	} else {
+
+		if (hprv != NULL) /* move to front on access */
+		{
+			hprv->next = htmp->next;
+			htmp->next = hash[hval];
+			hash[hval] = htmp;
+		}
+
+	}
+
+	return htmp;
 }
 
-/* Search hash table for given string, insert with the given id if not found 
+/** Search hash table for given string, insert with the given id if not found
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
  */
-
 MINIHASHREC*
-MiniHashTable::hashinsert(char *w, unsigned int id)
-{
-    MINIHASHREC	*htmp, *hprv;
-    
-    
-    
-    unsigned int hval = HASHFN(w, TSIZE, SEED);
+MiniHashTable::hashinsert(char *w, unsigned int id) {
+	MINIHASHREC *htmp, *hprv;
 
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp->word, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
 
-    if( htmp==NULL )
-    {
-		
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp->word, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
 
-    	
-    	htmp = (MINIHASHREC *) malloc( sizeof(MINIHASHREC) );
-    	
-    	
-    	htmp->word = (char *) malloc( strlen(w) + 1 );
+	if (htmp == NULL) {
+
+		htmp = (MINIHASHREC *) malloc(sizeof(MINIHASHREC));
+
+		htmp->word = (char *) malloc(strlen(w) + 1);
 		strcpy(htmp->word, w); //copy the value
-		
-		
+
+
 		htmp->id = id;
-		
-	
-    	numNodes++;
-    	htmp->next = NULL;
-    	    
-    	if( hprv==NULL )
-    	    hash[hval] = htmp;
-    	else
-    	    hprv->next = htmp;
-    
-    	/* new records are not moved to front */
-    }
-    else
-    {
-		
-    	if( hprv!=NULL ) /* move to front on access */
-    	{
-    	    hprv->next = htmp->next;
-    	    htmp->next = hash[hval];
-    	    hash[hval] = htmp;
-    	}
-    	
-    }
-  
-    return htmp;
+
+		numNodes++;
+		htmp->next = NULL;
+
+		if (hprv == NULL)
+			hash[hval] = htmp;
+		else
+			hprv->next = htmp;
+
+		/* new records are not moved to front */
+	} else {
+
+		if (hprv != NULL) /* move to front on access */
+		{
+			hprv->next = htmp->next;
+			htmp->next = hash[hval];
+			hash[hval] = htmp;
+		}
+
+	}
+
+	return htmp;
 }
 
-/* Search hash table for given string, insert if not found 
- * increase id if found
+/* Search hash table for given string, insert if not found, increase id if found.
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
  */
-
 MINIHASHREC*
-MiniHashTable::hashupdate(char *w)
-{
-    MINIHASHREC	*htmp, *hprv;
-    
-    
-    
-    unsigned int hval = HASHFN(w, TSIZE, SEED);
+MiniHashTable::hashupdate(char *w) {
+	MINIHASHREC *htmp, *hprv;
 
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp->word, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
 
-    if( htmp==NULL )
-    {
-		
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp->word, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
 
-    	
-    	htmp = (MINIHASHREC *) malloc( sizeof(MINIHASHREC) );
-    	
-    	
-    	htmp->word = (char *) malloc( strlen(w) + 1 );
+	if (htmp == NULL) {
+
+		htmp = (MINIHASHREC *) malloc(sizeof(MINIHASHREC));
+
+		htmp->word = (char *) malloc(strlen(w) + 1);
 		strcpy(htmp->word, w); //copy the value
-		
-		
+
+
 		htmp->id = globalId;
-		if (useAsCount==false){
+		if (useAsCount == false) {
 			globalId++;
 		}
-		
-    	numNodes++;
-    	htmp->next = NULL;
-    	    
-    	if( hprv==NULL )
-    	    hash[hval] = htmp;
-    	else
-    	    hprv->next = htmp;
-    
-    	/* new records are not moved to front */
-    }
-    else
-    {
+
+		numNodes++;
+		htmp->next = NULL;
+
+		if (hprv == NULL)
+			hash[hval] = htmp;
+		else
+			hprv->next = htmp;
+
+		/* new records are not moved to front */
+	} else {
 		htmp->id = htmp->id + 1;
-		
-    	if( hprv!=NULL ) /* move to front on access */
-    	{
-    	    hprv->next = htmp->next;
-    	    htmp->next = hash[hval];
-    	    hash[hval] = htmp;
-    	}
-    	
-    }
-  
-    return htmp;
+
+		if (hprv != NULL) /* move to front on access */
+		{
+			hprv->next = htmp->next;
+			htmp->next = hash[hval];
+			hash[hval] = htmp;
+		}
+
+	}
+
+	return htmp;
 }
 
-void
-MiniHashTable::dump()
-{
-  int i;
-  MINIHASHREC *ptr;
+/** Dump
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
+void MiniHashTable::dump() {
+	int i;
+	MINIHASHREC *ptr;
 
-  for( i=0; i<TSIZE; i++ )
-  {
-      for( ptr=hash[i]; ptr!=NULL; ptr=ptr->next )
-      {
-          // ptr stores current element in the iteration 
+	for (i = 0; i < TSIZE; i++) {
+		for (ptr = hash[i]; ptr != NULL; ptr = ptr->next) {
+			// ptr stores current element in the iteration
 
-      }
-  }
+		}
+	}
 }
 
-/* Bitwise hash function.  Note that tsize does not have to be prime. */
-unsigned int
-MiniHashTable::bitwisehash(char *word, int tsize, unsigned int seed)
-{
-    char	c;
-    unsigned int h;
+/* Bitwise hash function.  Note that tsize does not have to be prime.
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
+unsigned int MiniHashTable::bitwisehash(char *word, int tsize,
+		unsigned int seed) {
+	char c;
+	unsigned int h;
 
-    h = seed;
-    for( ; ( c=*word )!='\0' ; word++ )
-    {
-	h ^= ( (h << 5) + c + (h >> 2) );
-    }
-    return((unsigned int)((h&0x7fffffff) % tsize));
+	h = seed;
+	for (; (c = *word) != '\0'; word++) {
+		h ^= ((h << 5) + c + (h >> 2));
+	}
+	return ((unsigned int) ((h & 0x7fffffff) % tsize));
 }
 
-int
-MiniHashTable::scmp( char *s1, char *s2 )
-{
-    while( *s1 != '\0' && *s1 == *s2 )
-    {
-	s1++;
-	s2++;
-    }
-    return( *s1-*s2 );
+/** SCMP
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
+int MiniHashTable::scmp(char *s1, char *s2) {
+	while (*s1 != '\0' && *s1 == *s2) {
+		s1++;
+		s2++;
+	}
+	return (*s1 - *s2);
 }
 
-MiniHashTable::~MiniHashTable()
-{	
-      for(int i=0 ; i<TSIZE ; i++ )
-      {
-          MINIHASHREC* ptr;
-          while (hash[i] != NULL)
-          {
-              ptr = hash[i]->next;
-              
-			  free(hash[i]->word);
-			  
-			  //if (hash[i]->from != NULL) free(hash[i]->from);
-              free(hash[i]);
-              hash[i] = ptr;   
-          }
-      }
+/** Destructor for MiniHashTable */
+MiniHashTable::~MiniHashTable() {
+	for (int i = 0; i < TSIZE; i++) {
+		MINIHASHREC* ptr;
+		while (hash[i] != NULL) {
+			ptr = hash[i]->next;
 
-      free(hash);
+			free(hash[i]->word);
+
+			//if (hash[i]->from != NULL) free(hash[i]->from);
+			free( hash[i]);
+			hash[i] = ptr;
+		}
+	}
+
+	free( hash);
 }
-int
-MiniHashTable::size()
-{
-return numNodes;                 
+
+/** Size
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
+int MiniHashTable::size() {
+	return numNodes;
 }

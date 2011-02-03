@@ -28,10 +28,20 @@
 
 using namespace std;
 
+/** CompactTriples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 CompactTriples::CompactTriples()
 {
 }
 
+/* Compact Triples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 CompactTriples::CompactTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing)
 {
 	this->dictionary = dictionary;
@@ -41,6 +51,11 @@ CompactTriples::CompactTriples(Dictionary *dictionary, unsigned int ntriples, un
 	graph.resize(ntriples);
 }
 
+/** Compact Triples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 CompactTriples::CompactTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path)
 {
 	this->dictionary = dictionary;
@@ -49,6 +64,11 @@ CompactTriples::CompactTriples(Dictionary *dictionary, unsigned int ntriples, un
 	this->path = path;
 }
 
+/** Compact Triples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 CompactTriples::CompactTriples(Triples *other)
 {
 	this->dictionary = other->getDictionary();
@@ -56,6 +76,11 @@ CompactTriples::CompactTriples(Triples *other)
 	this->ntriples = other->size();
 }
 
+/** Console
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 CompactTriples::console()
 {
@@ -155,6 +180,11 @@ CompactTriples::console()
 	}
 }
 
+/** Transform To N3
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 CompactTriples::transformToN3()
 {
@@ -209,6 +239,11 @@ CompactTriples::transformToN3()
 	return true;
 }
 
+/** Serialize
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 CompactTriples::serialize(char *output, char *format)
 {
@@ -284,6 +319,11 @@ CompactTriples::serialize(char *output, char *format)
 	return true;
 }
 
+/** Write
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 CompactTriples::write(vector<TripleID> &graph, string path)
 {
@@ -350,20 +390,29 @@ CompactTriples::write(vector<TripleID> &graph, string path)
 	return graph.size()-repeated;
 }	
 
+/** Write
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 CompactTriples::write(string path)
 {	
 	return CompactTriples::write(this->graph, path);
 }
 
-
+/** Load Graph Memory
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 CompactTriples::loadGraphMemory(){
 	cout << "CompactTriples::loadGraphMemory() not implemented" <<endl;
 	return false;
 }
 
-
+/** Destructor for Compact Triples */
 CompactTriples::~CompactTriples()
 {
 }

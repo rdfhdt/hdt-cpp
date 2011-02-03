@@ -27,18 +27,33 @@
 #include "PlainDictionary.h"
 #include "Histogram.h"
 
+/** PlainDictionary
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 PlainDictionary::PlainDictionary()
 {
 	this->sizeHash = 0;
 	initialize();
 }
 
+/** PlainDictionary
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 PlainDictionary::PlainDictionary(unsigned int sizeHash)
 {
 	this->sizeHash = sizeHash;
 	initialize();
 }
 
+/** Initialize
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 PlainDictionary::initialize()
 {	
@@ -63,6 +78,11 @@ PlainDictionary::initialize()
     }
 }
 
+/** Split
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 PlainDictionary::split()
 {
@@ -156,6 +176,11 @@ PlainDictionary::split()
 	cout<<"\t total predicates:"<<npredicates<<" ]\n\n";
 }
 
+/** Lexicographic Sort
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 PlainDictionary::lexicographicSort(unsigned int mapping)
 {
@@ -174,6 +199,11 @@ PlainDictionary::lexicographicSort(unsigned int mapping)
 	map(this->mapping);
 }
 
+/** Map
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 PlainDictionary::map(unsigned int mapping)
 {
@@ -217,6 +247,11 @@ PlainDictionary::map(unsigned int mapping)
 	}
 }
 
+/** Check Triple
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 PlainDictionary::checkTriple(string *node)
 {
@@ -313,6 +348,11 @@ PlainDictionary::checkTriple(string *node)
 	}
 }
 
+/** Plain Dictionary
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 PlainDictionary::PlainDictionary(string path, unsigned int mapping, unsigned int separator, 
 	unsigned int nsubjects, unsigned int npredicates, unsigned int nobjects, unsigned int ssubobj)
 {
@@ -490,6 +530,11 @@ PlainDictionary::PlainDictionary(string path, unsigned int mapping, unsigned int
 	//return true;
 }
 
+/** Retrieve ID
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 PlainDictionary::retrieveID(string key, unsigned int vocabulary)
 {
@@ -520,6 +565,11 @@ PlainDictionary::retrieveID(string key, unsigned int vocabulary)
 	return id;
 }
 
+/** Update ID
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 PlainDictionary::updateID(unsigned int id, unsigned int new_id, unsigned int vocabulary)
 {
@@ -570,6 +620,11 @@ PlainDictionary::updateID(unsigned int id, unsigned int new_id, unsigned int voc
 	}
 }
 
+/** Retrieve String
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 string
 PlainDictionary::retrieveString(unsigned int id, unsigned int vocabulary)
 {	
@@ -671,6 +726,11 @@ PlainDictionary::retrieveString(unsigned int id, unsigned int vocabulary)
 	}
 }
 
+/** Begin Clustering
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 PlainDictionary::beginClustering()
 {
@@ -679,6 +739,11 @@ PlainDictionary::beginClustering()
 	cluster_objects_not_shared.resize(objects_not_shared.size());
 }
 
+/** End Clustering
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 PlainDictionary::endClustering()
 {
@@ -691,6 +756,11 @@ PlainDictionary::endClustering()
 	cluster_objects_not_shared.~vector();
 }
 
+/** Is Clusterized
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int
 PlainDictionary::isClusterized(unsigned int id, unsigned int vocabulary)
 {
@@ -728,6 +798,11 @@ PlainDictionary::isClusterized(unsigned int id, unsigned int vocabulary)
 	return id;
 }
 
+/** Write
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 PlainDictionary::write(string path, unsigned int marker)
 {
@@ -790,6 +865,11 @@ PlainDictionary::write(string path, unsigned int marker)
 	if (outFile.good()) outFile.close();
 }
 
+/** Dump Stats
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 PlainDictionary::dumpStats(string &output)
 {
@@ -896,6 +976,7 @@ PlainDictionary::dumpStats(string &output)
 	histoBlank.dump(output.c_str(), "Blank");
 }
 
+/** Destructor for PlainDictionary */
 PlainDictionary::~PlainDictionary()
 {
         hashSubject.~HashTable();

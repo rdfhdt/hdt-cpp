@@ -33,7 +33,11 @@
 
 using namespace std;
  
- 
+/** Console
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void console(){
 	string command;
 	//use as a console
@@ -102,6 +106,11 @@ void console(){
 	}	
 }
 
+/** Main
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int 
 main(int argc, char* argv[])
 {
@@ -227,5 +236,3 @@ main(int argc, char* argv[])
 		cout << "   <ERROR> Wrong number of parameters.\nFor help, type: hdt -h" << endl;
 	}
 }
-
-

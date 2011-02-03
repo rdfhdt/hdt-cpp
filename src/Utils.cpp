@@ -27,7 +27,11 @@
 
 #include "Utils.h"
 
-/* Function with behaviour like `mkdir -p'  */
+/* Function with behaviour like `mkdir -p'
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 mkpath(const char *s, mode_t mode){
 	if (strcmp(s, ".") == 0 || strcmp(s, "/") == 0)
@@ -52,7 +56,11 @@ mkpath(const char *s, mode_t mode){
 	return 0;	
 }
 
-/* Create full path except for the last one, which is considered a file */
+/* Create full path except for the last one, which is considered a file
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int mkpathfile(const char *s, mode_t mode){
 	int len = strlen(s);
 	
@@ -69,6 +77,11 @@ int mkpathfile(const char *s, mode_t mode){
 	}
 }
 
+/** String Has Ending
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 stringHasEnding (std::string const &full, std::string const &ending)
 {

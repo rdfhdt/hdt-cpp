@@ -26,12 +26,23 @@
  */
 
 #include "RDFSyntaxMediator.h"
+
+/** RDFSyntaxMediator
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 RDFSyntaxMediator::RDFSyntaxMediator()
 {
 }
 
 string *node= new string[3];
 
+/** RDF Triple Handle
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void RDFTripleHandle(void* dictionaryTriples, const raptor_statement* triple){
 	
 	char *returned_subject;
@@ -55,6 +66,11 @@ void RDFTripleHandle(void* dictionaryTriples, const raptor_statement* triple){
 	
 }
 
+/** RDF Full Triple Handle
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void RDFFullTripleHandle(void* dictionaryTriples, const raptor_statement* triple){
 	
 	char *returned_subject;
@@ -82,23 +98,36 @@ void RDFFullTripleHandle(void* dictionaryTriples, const raptor_statement* triple
 	
 }
 
+/** Serialize Triple
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 serialize_triple(void* rdf_serializer, const raptor_statement* triple) 
 {
   raptor_serialize_statement((raptor_serializer*)rdf_serializer, triple);
 }
 
+/** Relay Namespaces
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 //save namespaces for serializing
 void relay_namespaces(void* namespacesData, raptor_namespace *nspace)
   {
    ((vector<raptor_namespace*>*)namespacesData)->push_back(nspace);
   }
   
+/** Parsing
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 RDFSyntaxMediator::parsing(char *pathFile,DictionaryTriples dictionaryTriples)
 {
-	
-
 	unsigned char *uri_string;
 	raptor_uri *uri, *base_uri;
 
@@ -132,6 +161,11 @@ RDFSyntaxMediator::parsing(char *pathFile,DictionaryTriples dictionaryTriples)
 return true;
 }
 
+/** Init Serialize
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 RDFSyntaxMediator::init_serialize(char *pathFile, char *format){
 	
@@ -167,6 +201,11 @@ RDFSyntaxMediator::init_serialize(char *pathFile, char *format){
 	return true;
 }
 
+/** Serialize Statement
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 RDFSyntaxMediator::serialize_statement(string subject,string predicate,string object){
 	
@@ -203,6 +242,11 @@ RDFSyntaxMediator::serialize_statement(string subject,string predicate,string ob
 	
 }
 
+/** End Serialize
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 RDFSyntaxMediator::end_serialize(){
 	raptor_parse_chunk(rdf_parser, NULL, 0, 1); /* no data and is_end = 1 */
@@ -213,7 +257,7 @@ RDFSyntaxMediator::end_serialize(){
 	return true;
 }
 
- 
+/** Destructor for RDFSyntaxMediator */
 RDFSyntaxMediator::~RDFSyntaxMediator()
 {
 }

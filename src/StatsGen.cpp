@@ -41,10 +41,20 @@
 #include "fdstream.hpp"
 #include "Utils.h"
 
+/** Stats Gen
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 StatsGen::StatsGen()
 {
 }
 
+/** Read From Dataset
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 StatsGen::readFromDataset(char *dataset, char *output)
 {
@@ -153,7 +163,7 @@ StatsGen::readFromDataset(char *dataset, char *output)
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  Building Triples" << endl;
 	
-	// Needed?
+	// FIXME: Needed?
 	if(pipeCommand.length()>0) { // Cannot seek on pipes
 		// Close old pipe
 		delete pipeStream;
@@ -174,7 +184,7 @@ StatsGen::readFromDataset(char *dataset, char *output)
 	// PLAIN triples
 	triples = new PlainTriples(dictionary, ntriples, parsing);
 	
-	
+	//FIXME
 	// COMPACT triples	
 	//triples = new CompactTriples(dictionary, ntriples, parsing);
 	//t_encoding = COMPACT;
@@ -259,6 +269,11 @@ StatsGen::readFromDataset(char *dataset, char *output)
 	return true;
 }
 
+/** Read From HDT
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 StatsGen::readFromHDT(char *hdt, char*output)
 {
@@ -310,6 +325,11 @@ StatsGen::readFromHDT(char *hdt, char*output)
 	return true;
 }
 
+/** Process
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 StatsGen::process(char *output)
 {	
@@ -447,6 +467,11 @@ StatsGen::process(char *output)
 	return true;
 }
 
+/** Parse Triple N3
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 StatsGen::parseTripleN3(string t)
 {
@@ -588,7 +613,7 @@ StatsGen::parseTripleN3(string t)
 	}
 }
 
-
+/** Destructor for StatsGen */
 StatsGen::~StatsGen()
 {
 	delete header;

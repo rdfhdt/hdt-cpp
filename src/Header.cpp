@@ -30,10 +30,20 @@
 
 #define BINARY_HEADER 0
 
+/** Header
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 Header::Header()
 {
 }
 
+/** Header
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred, int nobj, int nsh, int ntrip, int nlit, int nent)
 {
 	parsing = pars;
@@ -49,7 +59,11 @@ Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred, int no
 	nentries = nent;
 }
 
-
+/** Write
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 Header::write(string path)
 {
@@ -97,6 +111,11 @@ Header::write(string path)
 #endif
 }
 
+/** Read
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void 
 Header::read(string path)
 {
@@ -191,72 +210,127 @@ Header::read(string path)
 #endif
 }
 
+/** Get Parsing
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int 
 Header::getParsing()
 {
 	return parsing;
 }
 
+/** Get Mapping
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getMapping()
 {
 	return mapping;
 }
 
+/** Get D Separator
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getD_separator()
 {
 	return d_separator;
 }
 
+/** Get T Encoding
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getT_encoding()
 {
 	return t_encoding;
 }
 
+/** Get N Subjects
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getNsubjects()
 {
 	return nsubjects;
 }
 
+/** Get N Predicates
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getNpredicates()
 {
 	return npredicates;
 }
 
+/** Get N Objects
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getNobjects()
 {
 	return nobjects;
 }
 
+/** Get S Subobj
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int 
 Header::getSsubobj()
 {
 	return ssubobj;
 }
 
+/** Get N Triples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getNtriples()
 {
         return ntriples;
 }
 
+/** Get N Literals
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getNliterals() 
 {
 	return nliterals;
 }
 
+/** Get N Entries
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 Header::getNentries()
 {
 	return nentries;
-}
 
+}/** Destructor for Header */
 Header::~Header()
 {
 }

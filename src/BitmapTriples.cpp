@@ -36,12 +36,20 @@
 
 using namespace std;
 
-/** Basic constructor */
+/** Bitmap Triples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 BitmapTriples::BitmapTriples()
 {
 }
 
-/** Constructor */
+/** Bitmap Triples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 BitmapTriples::BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing)
 {
 	this->dictionary = dictionary;
@@ -51,7 +59,11 @@ BitmapTriples::BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsi
 	graph.resize(ntriples);
 }
 
-/** Constructor */
+/** Bitmap Triples
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 BitmapTriples::BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path)
 {
 	this->dictionary = dictionary;
@@ -84,7 +96,11 @@ BitmapTriples::BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsi
 	}
 }
 
-/** Implementation of the console */
+/** Implementation of the console
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 BitmapTriples::console()
 {
@@ -278,13 +294,7 @@ BitmapTriples::console()
 		}
 		subcommand.clear();
 	}
-	
-	
-	
-	
-	
-
-	
+//FIXME
 	/*
 	
 	
@@ -313,7 +323,11 @@ BitmapTriples::console()
 	* */
 }
 
-/** Parse a query */
+/** Parse a query
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 Query
 BitmapTriples::parseQ(string q)
 {
@@ -530,7 +544,11 @@ BitmapTriples::parseQ(string q)
 	return qid;
 }
 
-/** Ask a query */
+/** Ask a query
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool 
 BitmapTriples::ask(string q)
 {	
@@ -613,7 +631,11 @@ BitmapTriples::ask(string q)
 	return checkf;
 }
 
-/** Construct */
+/** Construct
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int 
 BitmapTriples::construct(string q)
 {
@@ -630,7 +652,11 @@ BitmapTriples::construct(string q)
 	select(q,&triples);
 }
 
-/** Select */
+/** Select
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int
 BitmapTriples::select(string q, vector<TripleString> **triples)
 {	
@@ -751,7 +777,11 @@ BitmapTriples::select(string q, vector<TripleString> **triples)
 	return results;
 }
 
-/** Transforms to N3 */
+/** Transforms to N3
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 BitmapTriples::transformToN3()
 {	
@@ -823,7 +853,11 @@ BitmapTriples::transformToN3()
 	return true;	
 }
 
-/** Serializes */
+/** Serializes
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 BitmapTriples::serialize(char *output, char *format)
 {	
@@ -917,7 +951,11 @@ BitmapTriples::serialize(char *output, char *format)
 	return true;	
 }
 	
-/** Stats for the vocabulary */
+/** Stats for the vocabulary
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 void
 BitmapTriples::vocabStats()
 {	
@@ -1179,7 +1217,11 @@ BitmapTriples::vocabStats()
 	
 }	
 
-/** Gets the length */
+/** Gets the length
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 int 
 BitmapTriples::getLength(vector<minipair> * triplesSub,int current, MiniHashTable *subLengths){
 
@@ -1218,7 +1260,11 @@ BitmapTriples::getLength(vector<minipair> * triplesSub,int current, MiniHashTabl
 	return maxlength;
 }
 	
-/** Write */
+/** Write
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int
 BitmapTriples::write(vector<TripleID> &graph, string path)
 {
@@ -1324,7 +1370,11 @@ BitmapTriples::write(vector<TripleID> &graph, string path)
 	return graph.size()-repeated;
 }
 
-/** Write */
+/** Write
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 unsigned int 
 BitmapTriples::write(string path)
 {	
@@ -1345,14 +1395,18 @@ BitmapTriples::buildBitString(BitString **bs, vector<uint> *v, uint elems)
 	}
 }
 
-/** Load graph memory */
+/** Load graph memory
+ * @param param_a Description of the param.
+ * @param param_b Description of the param.
+ * @return The expected result
+ */
 bool
 BitmapTriples::loadGraphMemory(){
 	cout << "BitmapTriples::loadGraphMemory() not implemented" <<endl;
 	return false;
 }
 
-/** Destructor */
+/** Destructor for BitmapTriples */
 BitmapTriples::~BitmapTriples()
 {
 	delete bitmapY;
