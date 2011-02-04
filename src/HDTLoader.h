@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef HDTLOADER_H
 #define HDTLOADER_H
 
@@ -34,32 +34,13 @@
 
 using namespace std;
 
-/** HDT Loader
- *
- *   It parses a dataset from a known RDF syntax to HDT.  
- *   All parsing options are given in a properties file used as input.
- *
- *  @author Miguel A. Martinez-Prieto
- */
-class HDTLoader
-{
+class HDTLoader {
 public:
-	/** Generic constructor */
 	HDTLoader();
-	
-	/** Implements a console application to interact with HDT through
-	    the Triples component */
 	void console();
-	
-	/** Implements a serialization from HDT to another RDF format */
 	void serialize(char* location, char* format);
-
-	/** Loads the HDT representation from the location */
 	bool load(char* location);
-
-	/** Destructor */
 	~HDTLoader();
-			
 protected:
 	Header *header;
 	Dictionary *dictionary;

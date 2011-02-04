@@ -43,29 +43,23 @@
 
 #define HASHFN  bitwisehash
 
-typedef struct hashrec
-{
+typedef struct hashrec {
 	char *word; //or suffix
 	int count;
 	bool shared;
 	unsigned int id;
-	unsigned int new_id;  
+	unsigned int new_id;
 	MINIHASHREC* prefix;
-	struct hashrec *next;        
+	struct hashrec *next;
 } HASHREC;
 
-/** HashTable
- *
- *  @author Javier D. Fernandez
- */
-class HashTable
-{
+class HashTable {
 public:
 	HashTable();
-    	unsigned int TSIZE;
-    	bool countOriginalOrder;
+	unsigned int TSIZE;
+	bool countOriginalOrder;
 	void inithashtable(bool countOrder);
-    	void inithashtable(unsigned int size, bool countOrder);
+	void inithashtable(unsigned int size, bool countOrder);
 	HASHREC ** get();
 	HASHREC * get(unsigned pos);
 	HASHREC * hashsearch(char *w);
@@ -74,19 +68,13 @@ public:
 	HASHREC * hashinsert(char *w, unsigned int &globalId, MINIHASHREC* prefix); //insert not shared, prefix or not
 	HASHREC * hashinsert(HASHREC* shared, unsigned int &globalId); //insert shared
 	void dump();
-
 	unsigned int bitwisehash(char *word, unsigned int tsize, unsigned int seed);
-	int scmp( HASHREC* rec, char *s2 );
-	
+	int scmp(HASHREC* rec, char *s2);
 	~HashTable();
-	
 	unsigned int size();
-
 private:
 	HASHREC **hash;
 	int numNodes;
 };
 
-
-        
 #endif /*HASHTABLE_H_*/

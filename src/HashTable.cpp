@@ -31,450 +31,386 @@
 
 #include "HashTable.h"
 
-/** HashTable
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
- */
-HashTable::HashTable()
-{	
+/** Base constructor */
+HashTable::HashTable() {
 }
 
 /** Get
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-HASHREC** 
-HashTable::get()
-{
+HASHREC**
+HashTable::get() {
 	return hash;
 }
 
 /** get rec at position i
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param pos Description of the param.
  * @return The expected result
  */
 HASHREC*
-HashTable::get(unsigned pos)
-{
+HashTable::get(unsigned pos) {
 	return hash[pos];
 }
 
 /* Create hash table, initialise ptrs to NULL
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @param countOrder Description of the param.
+ * @return void
  */
-void
-HashTable::inithashtable(bool countOrder)
-{
-    int		i;
-    TSIZE = INITIAL_SIZE;
-    numNodes = 0;
-    countOriginalOrder= countOrder;
-    hash = (HASHREC **) malloc( sizeof(HASHREC *) * TSIZE );
+void HashTable::inithashtable(bool countOrder) {
+	int i;
+	TSIZE = INITIAL_SIZE;
+	numNodes = 0;
+	countOriginalOrder = countOrder;
+	hash = (HASHREC **) malloc(sizeof(HASHREC *) * TSIZE);
 
-    for( i=0 ; i<TSIZE ; i++ )
-	hash[i] = (HASHREC *) NULL;
+	for (i = 0; i < TSIZE; i++)
+		hash[i] = (HASHREC *) NULL;
 }
 
 /* Create hash table with a given size, initialise ptrs to NULL
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @param size Description of the param.
+ * @param countOrder Description of the param.
+ * @return void
  */
-void
-HashTable::inithashtable(unsigned int size,bool countOrder)
-{
-    int		i;
-    TSIZE = size;
-    numNodes = 0;
-    countOriginalOrder= countOrder;
-    hash = (HASHREC **) malloc( sizeof(HASHREC *) * TSIZE );
+void HashTable::inithashtable(unsigned int size, bool countOrder) {
+	int i;
+	TSIZE = size;
+	numNodes = 0;
+	countOriginalOrder = countOrder;
+	hash = (HASHREC **) malloc(sizeof(HASHREC *) * TSIZE);
 
-    for( i=0 ; i<TSIZE ; i++ )
-	hash[i] = (HASHREC *) NULL;
+	for (i = 0; i < TSIZE; i++)
+		hash[i] = (HASHREC *) NULL;
 }
 
 /** Delete Key
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @param w Description of the param.
+ * @return void
  */
-void
-HashTable::delete_key(char *w)
-{	
-    HASHREC	*htmp, *hprv;
-    unsigned int hval = HASHFN(w, TSIZE, SEED);	
+void HashTable::delete_key(char *w) {
+	HASHREC *htmp, *hprv;
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
 
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
-    
-    if(hprv == NULL)hash[hval] = htmp->next;
-    else hprv->next = htmp->next;
-    
-    free(htmp->word);
-    numNodes--;
-//    free(htmp);
-    htmp = NULL;
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
+
+	if (hprv == NULL)
+		hash[hval] = htmp->next;
+	else
+		hprv->next = htmp->next;
+
+	free(htmp->word);
+	numNodes--;
+	//    free(htmp);
+	htmp = NULL;
 }
 
-
 /* Search hash table for given string, return record if found, else NULL
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param w Description of the param.
  * @return The expected result
  */
 HASHREC *
-HashTable::hashsearch(char *w)
-{	
-    HASHREC	*htmp, *hprv;
-    unsigned int hval = HASHFN(w, TSIZE, SEED);
-	
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
+HashTable::hashsearch(char *w) {
+	HASHREC *htmp, *hprv;
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
 
-    if( hprv!=NULL && htmp!=NULL ) /* move to front on access */
-    {
-	hprv->next = htmp->next;
-	htmp->next = hash[hval];
-	hash[hval] = htmp;
-    }
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
 
-    return(htmp);
+	if (hprv != NULL && htmp != NULL) /* move to front on access */
+	{
+		hprv->next = htmp->next;
+		htmp->next = hash[hval];
+		hash[hval] = htmp;
+	}
+
+	return (htmp);
 }
 
 /* Search hash table for given rec to get another equivalent, return record if found, else NULL
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param rec Description of the param.
  * @return The expected result
  */
 HASHREC *
-HashTable::hashsearch(HASHREC *rec)
-{	
-    HASHREC	*htmp, *hprv;
-    
-     char *w;
-    
-    if (rec->prefix==NULL){
-		w= rec->word;
-	}
-	else{ //concat prefix and suffix in w
-		w = (char *)malloc (strlen(rec->prefix->word)+strlen(rec->word)+1);
-		strcpy(w,rec->prefix->word);
-		strcat(w,rec->word);
-	}
-	
-    unsigned int hval = HASHFN(w, TSIZE, SEED);
-	
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
+HashTable::hashsearch(HASHREC *rec) {
+	HASHREC *htmp, *hprv;
 
-    if( hprv!=NULL && htmp!=NULL ) /* move to front on access */
-    {
-	hprv->next = htmp->next;
-	htmp->next = hash[hval];
-	hash[hval] = htmp;
-    }
-    
-    if (rec->prefix!=NULL){
+	char *w;
+
+	if (rec->prefix == NULL) {
+		w = rec->word;
+	} else { //concat prefix and suffix in w
+		w = (char *) malloc(strlen(rec->prefix->word) + strlen(rec->word) + 1);
+		strcpy(w, rec->prefix->word);
+		strcat(w, rec->word);
+	}
+
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
+
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
+
+	if (hprv != NULL && htmp != NULL) /* move to front on access */
+	{
+		hprv->next = htmp->next;
+		htmp->next = hash[hval];
+		hash[hval] = htmp;
+	}
+
+	if (rec->prefix != NULL) {
 		free(w);
 	}
-    
 
-    return(htmp);
+	return (htmp);
 }
 
 /* Search hash table for given string, insert if not found, update information if found
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param shared Description of the param.
+ * @param globalId Description of the param.
  * @return The expected result
  */
 HASHREC*
-HashTable::hashinsert(HASHREC* shared, unsigned int &globalId)
-{
-    HASHREC	*htmp, *hprv;
-    char *w;
-    
-    if (shared->prefix==NULL){
-		w= shared->word;
-	}
-	else{ //concat prefix and suffix in w
-		w = (char *)malloc (strlen(shared->prefix->word)+strlen(shared->word)+1);
-		strcpy(w,shared->prefix->word);
-		strcat(w,shared->word);
-	}
-    unsigned int hval = HASHFN(w, TSIZE, SEED);
+HashTable::hashinsert(HASHREC* shared, unsigned int &globalId) {
+	HASHREC *htmp, *hprv;
+	char *w;
 
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
+	if (shared->prefix == NULL) {
+		w = shared->word;
+	} else { //concat prefix and suffix in w
+		w = (char *) malloc(strlen(shared->prefix->word) + strlen(shared->word)
+				+ 1);
+		strcpy(w, shared->prefix->word);
+		strcat(w, shared->word);
+	}
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
 
-    if( htmp==NULL )
-    {	
-   
-    	htmp = (HASHREC *) malloc( sizeof(HASHREC) );
-    	
-    	htmp->shared=true;
-    	
-		if (shared->prefix==NULL){
-			htmp->word=w; //get the same reference
-			htmp->prefix=NULL;
-		}
-		else{
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
+
+	if (htmp == NULL) {
+
+		htmp = (HASHREC *) malloc(sizeof(HASHREC));
+
+		htmp->shared = true;
+
+		if (shared->prefix == NULL) {
+			htmp->word = w; //get the same reference
+			htmp->prefix = NULL;
+		} else {
 			htmp->word = shared->word;
 			htmp->prefix = shared->prefix;
 		}
-    	
-        if (countOriginalOrder==false)                  
+
+		if (countOriginalOrder == false)
 			htmp->id = 0; //initialize to 0, asigned after the final sort
-		else{
+		else {
 			htmp->id = globalId;
 			globalId++;
 		}
-		htmp->new_id=0;
-    	htmp->count=1;
-    	numNodes++;
-    	htmp->next = NULL;
-    	    
-    	if( hprv==NULL )
-    	    hash[hval] = htmp;
-    	else
-    	    hprv->next = htmp;
-    
-    	/* new records are not moved to front */
-    }
-    else
-    {
-		htmp->count=htmp->count+1;
+		htmp->new_id = 0;
+		htmp->count = 1;
+		numNodes++;
+		htmp->next = NULL;
+
+		if (hprv == NULL)
+			hash[hval] = htmp;
+		else
+			hprv->next = htmp;
+
+		/* new records are not moved to front */
+	} else {
+		htmp->count = htmp->count + 1;
 		htmp->shared = true;
-    	if( hprv!=NULL ) /* move to front on access */
-    	{
-    	    hprv->next = htmp->next;
-    	    htmp->next = hash[hval];
-    	    hash[hval] = htmp;
-    	}
-    	
-    }
-    
-    if (shared->prefix!=NULL)
+		if (hprv != NULL) /* move to front on access */
+		{
+			hprv->next = htmp->next;
+			htmp->next = hash[hval];
+			hash[hval] = htmp;
+		}
+
+	}
+
+	if (shared->prefix != NULL)
 		free(w);
-   
-    return htmp;
+
+	return htmp;
 }
 
 /* Search hash table for given string, insert if not found, update information if found
  * Insert not shared, prefix or not.
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param w Description of the param.
+ * @param globalId Description of the param.
+ * @param prefix Description of the param.
  * @return The expected result
  */
 HASHREC*
-HashTable::hashinsert(char *w, unsigned int &globalId,MINIHASHREC* prefix)
-{
-    HASHREC	*htmp, *hprv;
-    unsigned int hval = HASHFN(w, TSIZE, SEED);
-	
-	
-    for( hprv = NULL, htmp=hash[hval]
-	    ; htmp != NULL && scmp(htmp, w) != 0
-	    ; hprv = htmp, htmp = htmp->next )
-    {
-	;
-    }
-   
-    if( htmp==NULL )
-    {
-	
-    	
-    	htmp = (HASHREC *) malloc( sizeof(HASHREC) );
-    	
-    	htmp->shared=false;
-    	
-    	if (prefix!=NULL){
+HashTable::hashinsert(char *w, unsigned int &globalId, MINIHASHREC* prefix) {
+	HASHREC *htmp, *hprv;
+	unsigned int hval = HASHFN(w, TSIZE, SEED);
+
+	for (hprv = NULL, htmp = hash[hval]
+	; htmp != NULL && scmp(htmp, w) != 0; hprv = htmp, htmp = htmp->next) {
+		;
+	}
+
+	if (htmp == NULL) {
+
+		htmp = (HASHREC *) malloc(sizeof(HASHREC));
+
+		htmp->shared = false;
+
+		if (prefix != NULL) {
 			htmp->prefix = prefix;
-			htmp->word = (char *) malloc( strlen(w) - strlen(prefix->word) + 1 );
-			strcpy(htmp->word, w+strlen(prefix->word)); //copy the suffix value
-			
-		}
-		else{
-			htmp->prefix=NULL;
-			htmp->word = (char *) malloc( strlen(w) + 1 );
+			htmp->word = (char *) malloc(strlen(w) - strlen(prefix->word) + 1);
+			strcpy(htmp->word, w + strlen(prefix->word)); //copy the suffix value
+
+		} else {
+			htmp->prefix = NULL;
+			htmp->word = (char *) malloc(strlen(w) + 1);
 			strcpy(htmp->word, w); //copy the value
 		}
-    	
-        if (countOriginalOrder==false)                  
+
+		if (countOriginalOrder == false)
 			htmp->id = 0; //initialize to 0, asigned after the final sort
-		else{
+		else {
 			htmp->id = globalId;
 			globalId++;
 		}
-		htmp->new_id=0;
-    	htmp->count=1;
-    	numNodes++;
-    	htmp->next = NULL;
-    	    
-    	if( hprv==NULL )
-    	    hash[hval] = htmp;
-    	else
-    	    hprv->next = htmp;
-    
-    	/* new records are not moved to front */
-    }
-    else
-    {
-		
-		htmp->count=htmp->count+1;
+		htmp->new_id = 0;
+		htmp->count = 1;
+		numNodes++;
+		htmp->next = NULL;
+
+		if (hprv == NULL)
+			hash[hval] = htmp;
+		else
+			hprv->next = htmp;
+
+		/* new records are not moved to front */
+	} else {
+
+		htmp->count = htmp->count + 1;
 		htmp->shared = false;
-    	if( hprv!=NULL ) /* move to front on access */
-    	{
-    	    hprv->next = htmp->next;
-    	    htmp->next = hash[hval];
-    	    hash[hval] = htmp;
-    	}
-    	
-    }
-   
-    return htmp;
+		if (hprv != NULL) /* move to front on access */
+		{
+			hprv->next = htmp->next;
+			htmp->next = hash[hval];
+			hash[hval] = htmp;
+		}
+
+	}
+
+	return htmp;
 }
 
 /** Dump
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @return void
  */
-void
-HashTable::dump()
-{
-  int i;
-  HASHREC *ptr;
+void HashTable::dump() {
+	int i;
+	HASHREC *ptr;
 
-  for( i=0; i<TSIZE; i++ )
-  {
-      for( ptr=hash[i]; ptr!=NULL; ptr=ptr->next )
-      {
-          // ptr stores current element in the iteration 
+	for (i = 0; i < TSIZE; i++) {
+		for (ptr = hash[i]; ptr != NULL; ptr = ptr->next) {
+			// ptr stores current element in the iteration
 
-      }
-  }
+		}
+	}
 }
 
 /* Bitwise hash function.  Note that tsize does not have to be prime.
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param word Description of the param.
+ * @param tsize Description of the param.
+ * @param seed Description of the param.
  * @return The expected result
  */
-unsigned int
-HashTable::bitwisehash(char *word, unsigned int tsize, unsigned int seed)
-{
-    char	c;
-    unsigned int h;
+unsigned int HashTable::bitwisehash(char *word, unsigned int tsize,
+		unsigned int seed) {
+	char c;
+	unsigned int h;
 
-    h = seed;
-    for( ; ( c=*word )!='\0' ; word++ )
-    {
-	h ^= ( (h << 5) + c + (h >> 2) );
-    }
-    return((unsigned int)((h&0x7fffffff) % tsize));
+	h = seed;
+	for (; (c = *word) != '\0'; word++) {
+		h ^= ((h << 5) + c + (h >> 2));
+	}
+	return ((unsigned int) ((h & 0x7fffffff) % tsize));
 }
 
 /* SCMP
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param htmp Description of the param.
+ * @param s2 Description of the param.
  * @return The expected result
  */
-int
-HashTable::scmp( HASHREC* htmp, char *s2 )
-{
+int HashTable::scmp(HASHREC* htmp, char *s2) {
 	char* it;
-	
-	if (htmp->prefix==NULL){
-		
+
+	if (htmp->prefix == NULL) {
+
 		it = htmp->word;
-		
-		while( *it != '\0' && *it == *s2 )
-		{
-		it++;
-		s2++;
+
+		while (*it != '\0' && *it == *s2) {
+			it++;
+			s2++;
 		}
-		return( *it-*s2 );
-	}	
-	
-	else{
+		return (*it - *s2);
+	}
+
+	else {
 		it = htmp->prefix->word;
-		
+
 		// compare with prefix and suffix. 
-		while(  it!= '\0' && *it== *s2)
-		{
+		while (it != '\0' && *it == *s2) {
 			it++;
 			s2++;
 		}
-		if (*it != '\0'){
+		if (*it != '\0') {
 			//not match
-			return( *it-*s2 );
-		}
-		else{
+			return (*it - *s2);
+		} else {
 			//match prefix, test suffix (from the last pointer of s2)
-			
-			
+
+
 			it = htmp->word;
-			while( *it != '\0' && *it == *s2 )
-			{
-			it++;
-			s2++;
+			while (*it != '\0' && *it == *s2) {
+				it++;
+				s2++;
 			}
-			
-			return( *it-*s2 );
-			
+
+			return (*it - *s2);
+
 		}
 	}
 }
 
 /** Destructor for HashTable */
-HashTable::~HashTable()
-{	
-      for(int i=0 ; i<TSIZE ; i++ )
-      {
-          HASHREC* ptr;
-          while (hash[i] != NULL)
-          {
-              ptr = hash[i]->next;
-              // MIRARLO EN ALGÚN MOMENTO!!!
-	      //	if (hash[i]->word != NULL)
-	      //		free(hash[i]->word);
+HashTable::~HashTable() {
+	for (int i = 0; i < TSIZE; i++) {
+		HASHREC* ptr;
+		while (hash[i] != NULL) {
+			ptr = hash[i]->next;
+			// MIRARLO EN ALGÚN MOMENTO!!!
+			//	if (hash[i]->word != NULL)
+			//		free(hash[i]->word);
 
-              free(hash[i]);
-              hash[i] = ptr;   
-          }
-      }
+			free( hash[i]);
+			hash[i] = ptr;
+		}
+	}
 
-      free(hash);
+	free( hash);
 }
 
 /** Size
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-unsigned int
-HashTable::size()
-{
-return numNodes;                 
+unsigned int HashTable::size() {
+	return numNodes;
 }

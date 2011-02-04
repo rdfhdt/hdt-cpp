@@ -27,87 +27,61 @@
 #include "Dictionary.h"
 
 /** Get Max Id
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-unsigned int 
-Dictionary::getMaxID()
-{
+unsigned int Dictionary::getMaxID() {
 	int s = nsubjects;
 	int o;
-	
+
 	if (mapping == MAPPING1)
 		o = nsubjects + nobjects - ssubobj;
 	else
 		o = nobjects;
-		
-	if (s > o) return s;
-	else return o;
+
+	if (s > o)
+		return s;
+	else
+		return o;
 }
 
 /** Get Mapping
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-unsigned int
-Dictionary::getMapping()
-{
+unsigned int Dictionary::getMapping() {
 	return mapping;
 }
 
 /** Get N Subjects
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-unsigned int 
-Dictionary::getNsubjects()
-{
+unsigned int Dictionary::getNsubjects() {
 	return nsubjects;
 }
 
 /** Get N Predicates
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-unsigned int 
-Dictionary::getNpredicates()
-{
+unsigned int Dictionary::getNpredicates() {
 	return npredicates;
 }
 
 /** Get N Objects
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-unsigned int 
-Dictionary::getNobjects()
-{
+unsigned int Dictionary::getNobjects() {
 	return nobjects;
 }
 
 /** Get S Subobj
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-unsigned int 
-Dictionary::getSsubobj()
-{
+unsigned int Dictionary::getSsubobj() {
 	return ssubobj;
 }
 
 /** Get N Literals
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-unsigned int 
-Dictionary::getNLiterals()
-{
+unsigned int Dictionary::getNLiterals() {
 	return nliterals;
 }

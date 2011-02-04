@@ -23,97 +23,92 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #include "HDTLoader.h"
 
-/** HDT Loader
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
- */
-HDTLoader::HDTLoader()
-{
+/** Base constructor */
+HDTLoader::HDTLoader() {
 }
 
 /** Load
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param location Description of the param.
  * @return The expected result
  */
-bool 
-HDTLoader::load(char* location)
-{
+bool HDTLoader::load(char* location) {
 	DataTime t1, t2;
 	getTime(&t1);
 
 	cout.precision(4);
-	
+
 	cout << "[" << showpoint << t1.user - t1.user << "]  Loading HDT" << endl;
-	
+
 	getTime(&t2);
-	cout << "[" << showpoint << t2.user - t1.user << "]  Reading Header" << endl;
+	cout << "[" << showpoint << t2.user - t1.user << "]  Reading Header"
+			<< endl;
 	header = new Header();
 	header->read(location);
-	
-	getTime(&t2);
-	cout << "[" << showpoint << t2.user - t1.user << "]  Loading Dictionary" << endl;
-	
-	int mapping = header->getMapping();
-	
-	if ((mapping != MAPPING1) && (mapping != MAPPING2))
-			cout << "   <ERROR> Mapping " << mapping << " is not supported" << endl;
 
-	dictionary = new PlainDictionary(location, mapping, header->getD_separator(), header->getNsubjects(), header->getNpredicates(), header->getNobjects(), header->getSsubobj());
-	
 	getTime(&t2);
-	cout << "[" << showpoint << t2.user - t1.user << "]  Loading Console" << endl;
-	switch(header->getT_encoding())
-	{
-		case PLAIN:
-			triples = new PlainTriples(dictionary, header->getNtriples(), header->getParsing(), location);
-			break;
-		case COMPACT:
-			triples = new CompactTriples(dictionary, header->getNtriples(), header->getParsing(), location);
-			break;
-		case BITMAP:
-			triples = new BitmapTriples(dictionary, header->getNtriples(), header->getParsing(), location);
-			break;
-		case K2TREE:
-			cout << "   <WARNING> K2-tree Triples encoding is not currently supported" << endl;
-			return false;
-			break;
-		default:
-			cout << "   <ERROR> Current triples encoding  is not supported" << endl;
-			return false;
+	cout << "[" << showpoint << t2.user - t1.user << "]  Loading Dictionary"
+			<< endl;
+
+	int mapping = header->getMapping();
+
+	if ((mapping != MAPPING1) && (mapping != MAPPING2))
+		cout << "   <ERROR> Mapping " << mapping << " is not supported" << endl;
+
+	dictionary = new PlainDictionary(location, mapping,
+			header->getD_separator(), header->getNsubjects(),
+			header->getNpredicates(), header->getNobjects(),
+			header->getSsubobj());
+
+	getTime(&t2);
+	cout << "[" << showpoint << t2.user - t1.user << "]  Loading Console"
+			<< endl;
+	switch (header->getT_encoding()) {
+	case PLAIN:
+		triples = new PlainTriples(dictionary, header->getNtriples(),
+				header->getParsing(), location);
+		break;
+	case COMPACT:
+		triples = new CompactTriples(dictionary, header->getNtriples(),
+				header->getParsing(), location);
+		break;
+	case BITMAP:
+		triples = new BitmapTriples(dictionary, header->getNtriples(),
+				header->getParsing(), location);
+		break;
+	case K2TREE:
+		cout
+				<< "   <WARNING> K2-tree Triples encoding is not currently supported"
+				<< endl;
+		return false;
+		break;
+	default:
+		cout << "   <ERROR> Current triples encoding  is not supported" << endl;
+		return false;
 	}
-	
+
 	return true;
 }
 
 /** Console
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @return void
  */
-void
-HDTLoader::console()
-{
+void HDTLoader::console() {
 	triples->console();
 }
 
 /** Serialize
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @param output Description of the param.
+ * @param format Description of the param.
+ * @return void
  */
-void
-HDTLoader::serialize(char *output, char *format)
-{
-	triples->serialize(output,format);
+void HDTLoader::serialize(char *output, char *format) {
+	triples->serialize(output, format);
 }
 
 /** Destructor for HDTLoader */
-HDTLoader::~HDTLoader()
-{
+HDTLoader::~HDTLoader() {
 	delete header;
 }
