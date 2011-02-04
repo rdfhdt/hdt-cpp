@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef BITMAPTRIPLES_H
 #define BITMAPTRIPLES_H
 
@@ -45,119 +45,78 @@ using namespace std;
 
 static const int ZPLAIN = 1;
 
-
-typedef struct minipair
-{
+typedef struct minipair {
 	unsigned int source;
 	unsigned int target;
 } MINIPAIR;
 
-
-/** BitmapTriples implements the abstract class Triples with bitmap structures.
- *
- *  @author Miguel A. Martinez-Prieto
- */
-class BitmapTriples : public Triples
-{
-public:	
-	/** Generic constructor */
+class BitmapTriples: public Triples {
+public:
 	BitmapTriples();
-	/** Constructor for parsing */
-	BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing);
-	/** Constructor for loading */
-	BitmapTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path);
-
+	BitmapTriples(Dictionary *dictionary, unsigned int ntriples,
+			unsigned int parsing);
+	BitmapTriples(Dictionary *dictionary, unsigned int ntriples,
+			unsigned int parsing, string path);
 	void console();
 	bool transformToN3();
 	unsigned int write(string path);
-	/** Serialize HDT to a given format */
 	bool serialize(char *output, char *format);
-	
-	/** Load the full graph to main memory */
 	bool loadGraphMemory();
-		
 	static unsigned int write(vector<TripleID> &graph, string path);
-	
-	
-	/** Show Vocabulary stats */
 	void vocabStats();
-	
-	/** Destructor */
 	~BitmapTriples();
 
 protected:
-	/** Bitmap representations of the graph structure */
 	BitSequence *bitmapY;
 	BitSequence *bitmapZ;
-
 	FILE *fileY, *fileZ;
-	//FILE *filebY, *filebZ;
-
 	bool load;
-
-	/** Simple query parser, returns a TripleID value with variables
- 	    represented as negative numbers */
 	Query parseQ(string q);
-
-	/** ASK SPARQL-query implementation on Check&Find algorithm for HDT */
 	bool ask(string q);
-
-	/** CONSTRUCT SPARQL-query implementation on Check&Find algorithm for HDT */
 	int construct(string q);
-
-	/** SELECT SPARQL-query implementation on Check&Find algorithm for HDT */
 	int select(string q, vector<TripleString> **triples);
-
-	/** Builds a bitstring vector 'v' with 'elems' elements. */
 	static void buildBitString(BitString **bs, vector<uint> *v, uint elems);
+	int getLength(vector<minipair> * triplesSubClass, int current,
+			MiniHashTable *subclassLengths);
 
-	/** Util for vocab stats */	
-	int getLength(vector<minipair> * triplesSubClass,int current, MiniHashTable *subclassLengths);
-
-	/** sort minipair */
-	bool static pairSort(const struct minipair c1, const struct minipair c2)
-	{
-		if ((c1.source) < (c2.source)) return true;
-		else
-		{
-			if ((c1.source) > (c2.source)) return false;
-			else
-			{
-				if ((c1.target) < (c2.target)) return true;
-				else
-				{
-					if ((c1.target) > (c2.target)) return false;
-						else return false;
-					
+	bool static pairSort(const struct minipair c1, const struct minipair c2) {
+		if ((c1.source) < (c2.source))
+			return true;
+		else {
+			if ((c1.source) > (c2.source))
+				return false;
+			else {
+				if ((c1.target) < (c2.target))
+					return true;
+				else {
+					if ((c1.target) > (c2.target))
+						return false;
+					else
+						return false;
 				}
 			}
 		}
-
 		return true;
 	}
-	/** Returns the position of the element or -1 if not found */
-	int static
-	FindTransition(const vector<minipair> vocabularies, const int id)
-	{         
-	  int pos=-1;//to indicate not found
-	  int l = 0, r = vocabularies.size()-1, c = (l+r)/2;
 
-	  while (l<=r)  
-	  {     
-	    if (vocabularies[c].source == id)
-	    { 
-	      pos = c; 
-	      break;
-	    }
-	    if (vocabularies[c].source < id) 
-	       l = c+1;
-	    else r = c-1;
-	       c = (l+r)/2;
-	  }
-	  return pos;
+	int static FindTransition(const vector<minipair> vocabularies, const int id) {
+		int pos = -1;//to indicate not found
+		int l = 0, r = vocabularies.size() - 1, c = (l + r) / 2;
+
+		while (l <= r) {
+			if (vocabularies[c].source == id) {
+				pos = c;
+				break;
+			}
+			if (vocabularies[c].source < id)
+				l = c + 1;
+			else
+				r = c - 1;
+			c = (l + r) / 2;
+		}
+		return pos;
 	}
-	
 };
 
 #endif  /* _BITMAPTRIPLES_H */
-	 
+

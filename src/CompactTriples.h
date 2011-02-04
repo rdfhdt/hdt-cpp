@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef COMPACTTRIPLES_H
 #define COMPACTTRIPLES_H
 
@@ -31,39 +31,21 @@
 
 using namespace std;
 
-/** CompactTriples
- *   It implements the abstract class Triples on a plain encoding..
- *
- *  @author Miguel A. Martinez-Prieto
- */
-class CompactTriples : public Triples
-{
-public:	
-	/** Generic constructor */
+class CompactTriples: public Triples {
+public:
 	CompactTriples();
-	/** Constructor for parsing*/
-	CompactTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing);
-	/** Constructor for loading*/
-	CompactTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path);
-
-	/** Constructor for copying*/
+	CompactTriples(Dictionary *dictionary, unsigned int ntriples,
+			unsigned int parsing);
+	CompactTriples(Dictionary *dictionary, unsigned int ntriples,
+			unsigned int parsing, string path);
 	CompactTriples(Triples *other);
-
+	unsigned int write(string path);
 	unsigned int write(string path, vector<TripleID> &graph);
-	
+	static unsigned int write(vector<TripleID> &graph, string path);
 	void console();
 	bool transformToN3();
-	unsigned int write(string path);
-	/** Serialize HDT to a given format*/
 	bool serialize(char *output, char *format);
-	
-	/** Load the full graph to main memory */
 	bool loadGraphMemory();
-
-	static unsigned int write(vector<TripleID> &graph, string path);
-	
-	
-	/** Destructor */
 	~CompactTriples();
 };
 
