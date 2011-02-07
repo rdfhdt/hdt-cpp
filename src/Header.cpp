@@ -30,22 +30,24 @@
 
 #define BINARY_HEADER 0
 
-/** Header
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
- */
-Header::Header()
-{
+/** Base constructor */
+Header::Header() {
 }
 
-/** Header
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+/** Constructor
+ * @param pars Description of the param.
+ * @param mapp Description of the param.
+ * @param sep Description of the param.
+ * @param nsub Description of the param.
+ * @param npred Description of the param.
+ * @param nobj Description of the param.
+ * @param nsh Description of the param.
+ * @param ntrip Description of the param.
+ * @param nlit Description of the param.
+ * @param nent Description of the param.
  */
-Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred, int nobj, int nsh, int ntrip, int nlit, int nent)
-{
+Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred,
+		int nobj, int nsh, int ntrip, int nlit, int nent) {
 	parsing = pars;
 	mapping = mapp;
 	d_separator = sep;
@@ -60,18 +62,15 @@ Header::Header(int pars, int mapp, int sep, int enc, int nsub, int npred, int no
 }
 
 /** Write
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @param path Description of the param.
+ * @return void
  */
-void 
-Header::write(string path)
-{
+void Header::write(string path) {
 	string output = path;
-	
+
 #if BINARY_HEADER
 	FILE *header = fopen((output.append(".hdt.header")).c_str(), "w+");
-	
+
 	// Graph parsing
 	fwrite(&parsing,INT32,1,header);
 	// Dictionary mapping
@@ -80,53 +79,45 @@ Header::write(string path)
 	fwrite(&d_separator,INT32,1,header);
 	// Triples encoding
 	fwrite(&t_encoding,INT32,1,header);
-	
+
 	// Statistics from the Dictionary
 	fwrite(&nsubjects,INT32,1,header);
 	fwrite(&npredicates,INT32,1,header);
 	fwrite(&nobjects,INT32,1,header);
 	fwrite(&ssubobj,INT32,1,header);
-	
+
 	// Triples in the dataset
 	fwrite(&ntriples,INT32,1,header);
-	
+
 	fclose(header);
 #else
-	ofstream headerfile( (output.append(".hdt.header")).c_str());
-	
-	headerfile
-	<< "Parsing: " << parsing << endl
-	<< "Mapping: " << mapping << endl
-	<< "Separator: " << d_separator << endl
-	<< "Encoding: " << t_encoding << endl
-	<< "NSubjects: " << nsubjects << endl
-	<< "NPredicates: " << npredicates << endl
-	<< "NObjects: " << nobjects << endl
-	<< "NShared: " << ssubobj << endl
-	<< "Triples: " << ntriples << endl
-	<< "NLiterals: " << nliterals << endl
-	<< "Nentries: " << nentries << endl;
-	
+	ofstream headerfile((output.append(".hdt.header")).c_str());
+
+	headerfile << "Parsing: " << parsing << endl << "Mapping: " << mapping
+			<< endl << "Separator: " << d_separator << endl << "Encoding: "
+			<< t_encoding << endl << "NSubjects: " << nsubjects << endl
+			<< "NPredicates: " << npredicates << endl << "NObjects: "
+			<< nobjects << endl << "NShared: " << ssubobj << endl
+			<< "Triples: " << ntriples << endl << "NLiterals: " << nliterals
+			<< endl << "Nentries: " << nentries << endl;
+
 	headerfile.close();
 #endif
 }
 
 /** Read
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @param path Description of the param.
+ * @return void
  */
-void 
-Header::read(string path)
-{
+void Header::read(string path) {
 	string output = path;
-	
+
 #if BINARY_HEADER
 	FILE *header = fopen((output.append(".hdt.header")).c_str(), "r");
-	
+
 	if (header==NULL) {
-      cout << "Exception while reading Header in "<<output<<".\n";
-      exit(1);
+		cout << "Exception while reading Header in "<<output<<".\n";
+		exit(1);
 	}
 	size_t t = 0;
 
@@ -138,7 +129,7 @@ Header::read(string path)
 	t += fread(&d_separator,INT32,1,header);
 	// Triples encoding
 	t += fread(&t_encoding,INT32,1,header);
-	
+
 	// Dictionary stats
 	t += fread(&nsubjects,INT32,1,header);
 	// Dictionary mapping
@@ -147,63 +138,60 @@ Header::read(string path)
 	t += fread(&nobjects,INT32,1,header);
 	// Triples encoding
 	t += fread(&ssubobj,INT32,1,header);
-	
-	 // Triples in the dataset
+
+	// Triples in the dataset
 	t += fread(&ntriples,INT32,1,header);
-	
+
 	if (t != 9)
 	{
 		cout << "   <ERROR> Errors in Header" << endl;
 		exit(1);
 	}
-	
+
 	fclose(header);
 #else
-	try
-	{
-		ifstream headerfile( (output.append(".hdt.header")).c_str());
-		
-		if(headerfile.good()) {
+	try {
+		ifstream headerfile((output.append(".hdt.header")).c_str());
+
+		if (headerfile.good()) {
 			string line;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> parsing;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> mapping;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> d_separator;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> t_encoding;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> nsubjects;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> npredicates;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> nobjects;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> ssubobj;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> ntriples;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> nliterals;
-			
+
 			getline(headerfile, line, ' ');
 			headerfile >> nentries;
 		}
-		
+
 		headerfile.close();
-	}
-	catch(const ios::failure &problem)
-	{
+	} catch (const ios::failure &problem) {
 		// Something really went wrong here
 		cout << "Error reading header " << problem.what();
 	}
@@ -211,126 +199,83 @@ Header::read(string path)
 }
 
 /** Get Parsing
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int 
-Header::getParsing()
-{
+int Header::getParsing() {
 	return parsing;
 }
 
 /** Get Mapping
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getMapping()
-{
+int Header::getMapping() {
 	return mapping;
 }
 
 /** Get D Separator
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getD_separator()
-{
+int Header::getD_separator() {
 	return d_separator;
 }
 
 /** Get T Encoding
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getT_encoding()
-{
+int Header::getT_encoding() {
 	return t_encoding;
 }
 
 /** Get N Subjects
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getNsubjects()
-{
+int Header::getNsubjects() {
 	return nsubjects;
 }
 
 /** Get N Predicates
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getNpredicates()
-{
+int Header::getNpredicates() {
 	return npredicates;
 }
 
 /** Get N Objects
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getNobjects()
-{
+int Header::getNobjects() {
 	return nobjects;
 }
 
 /** Get S Subobj
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int 
-Header::getSsubobj()
-{
+int Header::getSsubobj() {
 	return ssubobj;
 }
 
 /** Get N Triples
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getNtriples()
-{
-        return ntriples;
+int Header::getNtriples() {
+	return ntriples;
 }
 
 /** Get N Literals
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getNliterals() 
-{
+int Header::getNliterals() {
 	return nliterals;
 }
 
 /** Get N Entries
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
-int
-Header::getNentries()
-{
+int Header::getNentries() {
 	return nentries;
 
-}/** Destructor for Header */
-Header::~Header()
-{
+}
+
+/** Destructor for Header */
+Header::~Header() {
 }

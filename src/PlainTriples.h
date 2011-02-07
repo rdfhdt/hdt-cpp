@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef PlainTriples_H
 #define PlainTriples_H
 
@@ -32,33 +32,19 @@
 
 using namespace std;
 
-/** PlainTriples
- *   It implements the abstract class Triples on a plain encoding..
- *
- *  @author Miguel A. Martinez-Prieto
- */
-class PlainTriples : public Triples
-{
-public:	
-	/** Generic constructor */
+class PlainTriples: public Triples {
+public:
 	PlainTriples();
-	/** Constructor for parsing*/
-	PlainTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing);
-	/** Constructor for loading*/
-	PlainTriples(Dictionary *dictionary, unsigned int ntriples, unsigned int parsing, string path);
-
+	PlainTriples(Dictionary *dictionary, unsigned int ntriples,
+			unsigned int parsing);
+	PlainTriples(Dictionary *dictionary, unsigned int ntriples,
+			unsigned int parsing, string path);
 	void console();
 	bool transformToN3();
 	unsigned int write(string path);
-	/** Serialize HDT to a given format*/
 	bool serialize(char *output, char *format);
-
-	/** Load the full graph to main memory */
 	bool loadGraphMemory();
-	
 	static unsigned int write(vector<TripleID> &graph, string path);
-
-	/** Destructor */
 	~PlainTriples();
 };
 

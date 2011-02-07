@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef HEADER_H
 #define HEADER_H
 
@@ -36,56 +36,37 @@
 
 using namespace std;
 
-/** Header
- *   It implements the class representing the features of the Header component.
- *   See the format description for more details.
- *
- *  @author Javier D. Fernandez
- */
-class Header
-{
-public:		
+class Header {
+public:
 	Header();
-	Header(int pars, int map, int sep, int enc, int nsub, int npred, int nobj, int nsh, int ntrip, int nlit, int nent);
-
+	Header(int pars, int map, int sep, int enc, int nsub, int npred, int nobj,
+			int nsh, int ntrip, int nlit, int nent);
 	void write(string path);
 	void read(string path);
-
 	int getParsing();
 	int getMapping();
 	int getD_separator();
 	int getT_encoding();
-
 	int getNsubjects();
 	int getNpredicates();
-	int getNobjects(); 
+	int getNobjects();
 	int getSsubobj();
 	int getNtriples();
 	int getNliterals();
 	int getNentries();
-
 	~Header();
-
 protected:
-	/** Graph parsing: SPO ('spo'), SOP ('sop'), PSO ('pso'), POS ('pos'), OSP ('osp'), OPS ('ops') */
-	int parsing; 
-	/** ID mapping: MAPPING1 ('single'), MAPPING2 ('shared') */
-	int mapping; 
-	/** Dictionary separator character */
-	int d_separator;
-	/** Dictionary encoding: PLAIN ('plain'), COMPACT ('compact'), BITMAP ('bitmap'), K2TREE ('k2tree') */
-	int t_encoding; 
-	
-	/** Dictionary statistics */
-	int nsubjects;
-	int npredicates;
-	int nobjects; 
-	int ssubobj;
-	int nliterals;
-	int nentries;
-	
-	/** Graph size in number of different triples */
-    int ntriples;
+	int parsing; /**< Graph parsing: SPO ('spo'), SOP ('sop'), PSO ('pso'), POS ('pos'), OSP ('osp'), OPS ('ops') */
+	int mapping; /**< ID mapping: MAPPING1 ('single'), MAPPING2 ('shared') */
+	int d_separator; /**< Dictionary separator character */
+	int t_encoding; /**< Dictionary encoding: PLAIN ('plain'), COMPACT ('compact'), BITMAP ('bitmap'), K2TREE ('k2tree') */
+	int nsubjects; /**< Dictionary statistics: number of subjects */
+	int npredicates; /**< Dictionary statistics: number of predicates */
+	int nobjects; /**< Dictionary statistics: number of objects */
+	int ssubobj; /**< Dictionary statistics: number of shared subject objects */
+	int nliterals; /**< Dictionary statistics: number of literals */
+	int nentries; /**< Dictionary statistics: number of entries */
+	int ntriples; /**< Graph size in number of different triples */
 };
 
 #endif  /* _HEADER_H */
