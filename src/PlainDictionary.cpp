@@ -662,7 +662,7 @@ void PlainDictionary::endClustering() {
 }
 
 /** Is Clusterized
- * @param d Description of the param.
+ * @param id Description of the param.
  * @param vocabulary Description of the param.
  * @return The expected result
  */

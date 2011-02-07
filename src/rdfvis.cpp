@@ -345,7 +345,7 @@ void keyboardUp(unsigned char key, int x, int y) {
 }
 
 /** Keyboard Special Up
- * @param key Description of the param.
+ * @param k Description of the param.
  * @param x Description of the param.
  * @param y Description of the param.
  * @return void
@@ -355,7 +355,7 @@ void keyboardSpecialUp(int k, int x, int y) {
 }
 
 /** Keyboard Special Down
- * @param key Description of the param.
+ * @param k Description of the param.
  * @param x Description of the param.
  * @param y Description of the param.
  * @return void

@@ -20,8 +20,8 @@ private:
 public:
 	/** Constructor
 	 * A histogram that can count within a range of values. All bins of the histogram are set to zero.
-	 * @param start Description of the param.
-	 * @param end Description of the param.
+	 * @param Start Description of the param.
+	 * @param End Description of the param.
 	 * @param nBins Description of the param.
 	 */
 	Histogram(const double& Start, const double& End, const unsigned int& nBins) :

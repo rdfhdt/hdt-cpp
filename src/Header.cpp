@@ -38,6 +38,7 @@ Header::Header() {
  * @param pars Description of the param.
  * @param mapp Description of the param.
  * @param sep Description of the param.
+ * @param enc Description of the param.
  * @param nsub Description of the param.
  * @param npred Description of the param.
  * @param nobj Description of the param.
