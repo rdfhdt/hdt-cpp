@@ -29,42 +29,33 @@
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
 
-
 #ifndef MINIHASHTABLE_H
 #define MINIHASHTABLE_H
-//Next defines are used in HashTable. Uncomment if HashTable is not present
+
+//Next defines are used in HashTable. Uncomment if HashTable is not present
 #define INITIAL_SIZE	1048576
 #define SEED	1159241
-
 #define HASHFN  bitwisehash
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-typedef struct minihashrec
-{
+typedef struct minihashrec {
 	char *word;
 	unsigned int id;
 	struct minihashrec *next;
 } MINIHASHREC;
 
-
-/** MiniHashTable
- *
- *  @author Javier D. Fernandez
- */        
-class MiniHashTable
-{
+class MiniHashTable {
 public:
-
 	MiniHashTable();
 	int TSIZE;
-    int globalId;
+	int globalId;
 	bool useAsCount;
 	void inithashtable();
-    void inithashtable(int size);
-    void inithashtable(int size,bool count); //use as count (assign the same first id)
+	void inithashtable(int size);
+	void inithashtable(int size, bool count); //use as count (assign the same first id)
 	MINIHASHREC ** get();
 	MINIHASHREC * get(unsigned pos);
 	MINIHASHREC * hashsearch(char *w);
@@ -73,19 +64,13 @@ public:
 	MINIHASHREC * hashinsert(char *w);
 	MINIHASHREC * hashinsert(char *w, unsigned int id);
 	void dump();
-
 	unsigned int bitwisehash(char *word, int tsize, unsigned int seed);
-	int scmp( char *s1, char *s2 );
-
+	int scmp(char *s1, char *s2);
 	~MiniHashTable();
-	
 	int size();
-
 private:
 	MINIHASHREC **hash;
 	int numNodes;
 };
 
-
-        
 #endif /*MINIHASHTABLE_H_*/

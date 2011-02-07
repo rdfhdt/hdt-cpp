@@ -31,18 +31,12 @@
 
 #include "MiniHashTable.h"
 
-/** Mini Hash Table
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
- */
+/** Base constructor */
 MiniHashTable::MiniHashTable() {
 	globalId = 1; //initialize globalId
 }
 
 /** Get
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
 MINIHASHREC**
@@ -50,23 +44,18 @@ MiniHashTable::get() {
 	return hash;
 }
 
-/** Get
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+/** Gets rec at position pos
+ * @param pos Description of the param.
  * @return The expected result
  */
-//get rec at position i
 MINIHASHREC*
 MiniHashTable::get(unsigned pos) {
 	return hash[pos];
 }
 
-/** Init Hash Table
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+/** Create hash table, initialise ptrs to NULL
+ * @return void
  */
-/* Create hash table, initialise ptrs to NULL */
 void MiniHashTable::inithashtable() {
 	int i;
 	TSIZE = INITIAL_SIZE;
@@ -78,12 +67,10 @@ void MiniHashTable::inithashtable() {
 		hash[i] = (MINIHASHREC *) NULL;
 }
 
-/** Init Hash Table
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+/** Create hash table with a given size, initialise ptrs to NULL
+ * @param size Description of the param.
+ * @return void
  */
-/* Create hash table with a given size, initialise ptrs to NULL */
 void MiniHashTable::inithashtable(int size) {
 	int i;
 	TSIZE = size;
@@ -97,12 +84,11 @@ void MiniHashTable::inithashtable(int size) {
 	useAsCount = false;
 }
 
-/** Init Hash Table
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+/** Create hash table with a given size, initialise ptrs to NULL
+ * @param size Description of the param.
+ * @param count Description of the param.
+ * @return void
  */
-/* Create hash table with a given size, initialise ptrs to NULL */
 void MiniHashTable::inithashtable(int size, bool count) {
 	int i;
 	TSIZE = size;
@@ -117,9 +103,8 @@ void MiniHashTable::inithashtable(int size, bool count) {
 }
 
 /** Detele Key
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @param w Description of the param.
+ * @return void
  */
 void MiniHashTable::delete_key(char *w) {
 	MINIHASHREC *htmp, *hprv;
@@ -141,12 +126,10 @@ void MiniHashTable::delete_key(char *w) {
 	htmp = NULL;
 }
 
-/** Hash Search
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+/** Search hash table for given string, return record if found, else NULL
+ * @param w Description of the param.
  * @return The expected result
  */
-/* Search hash table for given string, return record if found, else NULL */
 MINIHASHREC *
 MiniHashTable::hashsearch(char *w) {
 	MINIHASHREC *htmp, *hprv;
@@ -168,8 +151,7 @@ MiniHashTable::hashsearch(char *w) {
 }
 
 /* Search hash table for given string, insert if not found
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param w Description of the param.
  * @return The expected result
  */
 MINIHASHREC*
@@ -220,8 +202,8 @@ MiniHashTable::hashinsert(char *w) {
 }
 
 /** Search hash table for given string, insert with the given id if not found
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param w Description of the param.
+ * @param id Description of the param.
  * @return The expected result
  */
 MINIHASHREC*
@@ -269,8 +251,7 @@ MiniHashTable::hashinsert(char *w, unsigned int id) {
 }
 
 /* Search hash table for given string, insert if not found, increase id if found.
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param w Description of the param.
  * @return The expected result
  */
 MINIHASHREC*
@@ -322,9 +303,7 @@ MiniHashTable::hashupdate(char *w) {
 }
 
 /** Dump
- * @param param_a Description of the param.
- * @param param_b Description of the param.
- * @return The expected result
+ * @return void
  */
 void MiniHashTable::dump() {
 	int i;
@@ -339,8 +318,9 @@ void MiniHashTable::dump() {
 }
 
 /* Bitwise hash function.  Note that tsize does not have to be prime.
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param word Description of the param.
+ * @param tsize Description of the param.
+ * @param seed Description of the param.
  * @return The expected result
  */
 unsigned int MiniHashTable::bitwisehash(char *word, int tsize,
@@ -356,8 +336,8 @@ unsigned int MiniHashTable::bitwisehash(char *word, int tsize,
 }
 
 /** SCMP
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param s1 Description of the param.
+ * @param s2 Description of the param.
  * @return The expected result
  */
 int MiniHashTable::scmp(char *s1, char *s2) {
@@ -387,8 +367,6 @@ MiniHashTable::~MiniHashTable() {
 }
 
 /** Size
- * @param param_a Description of the param.
- * @param param_b Description of the param.
  * @return The expected result
  */
 int MiniHashTable::size() {

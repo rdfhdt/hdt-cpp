@@ -23,62 +23,52 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef LITERALS_H
 #define LITERALS_H
 
 #include <string>
 using namespace std;
 
-static const string DATASET="dataset";
-static const string SYNTAX="syntax";
-static const string OUTPUT="output";
-static const string APPLICATION="application";
-static const string PARSING="parsing";
-static const string MAPPING="mapping";
-static const string CLUSTER="cluster";
-static const string D_SEPARATOR="dict_separator";
-static const string D_ORDERING="dict_ordering";
-static const string D_ENCODING="dict_encoding";
-static const string D_COMPRESSION="dict_compression";
-static const string T_ENCODING="triples_encoding";
-static const string T_COMPRESSION="triples_compression";
-
-static const string VSYNTAX_N3="n3";
-
-static const string VPARSING_SPO="spo";
-static const string VPARSING_SOP="sop";
-static const string VPARSING_PSO="pso";
-static const string VPARSING_POS="pos";
-static const string VPARSING_OSP="osp";
-static const string VPARSING_OPS="ops";
-
-static const string VMAPPING_1="single";
-static const string VMAPPING_2="shared";
-
-static const string VD_ORDERING_LEX="lexicographic";
-
-static const string VD_ENCODING_IND="indexed";
-
-static const string VD_COMPRESSION_PPM="ppm";
-static const string VD_COMPRESSION_LZ="lzma";
-
-static const string VT_ENCODING_COMP="compact";
-static const string VT_ENCODING_BIT="bitmap";
-static const string VT_ENCODING_K2="k2tree";
-
-static const string VD_COMPRESSION_HUF="huffman";
-
-static const string VNO="no";
-static const string VNONE="none";
-static const string VPLAIN="plain";
-static const string VYES="yes";
-
+static const string DATASET = "dataset";
+static const string SYNTAX = "syntax";
+static const string OUTPUT = "output";
+static const string APPLICATION = "application";
+static const string PARSING = "parsing";
+static const string MAPPING = "mapping";
+static const string CLUSTER = "cluster";
+static const string D_SEPARATOR = "dict_separator";
+static const string D_ORDERING = "dict_ordering";
+static const string D_ENCODING = "dict_encoding";
+static const string D_COMPRESSION = "dict_compression";
+static const string T_ENCODING = "triples_encoding";
+static const string T_COMPRESSION = "triples_compression";
+static const string VSYNTAX_N3 = "n3";
+static const string VPARSING_SPO = "spo";
+static const string VPARSING_SOP = "sop";
+static const string VPARSING_PSO = "pso";
+static const string VPARSING_POS = "pos";
+static const string VPARSING_OSP = "osp";
+static const string VPARSING_OPS = "ops";
+static const string VMAPPING_1 = "single";
+static const string VMAPPING_2 = "shared";
+static const string VD_ORDERING_LEX = "lexicographic";
+static const string VD_ENCODING_IND = "indexed";
+static const string VD_COMPRESSION_PPM = "ppm";
+static const string VD_COMPRESSION_LZ = "lzma";
+static const string VT_ENCODING_COMP = "compact";
+static const string VT_ENCODING_BIT = "bitmap";
+static const string VT_ENCODING_K2 = "k2tree";
+static const string VD_COMPRESSION_HUF = "huffman";
+static const string VNO = "no";
+static const string VNONE = "none";
+static const string VPLAIN = "plain";
+static const string VYES = "yes";
 // OPTIONAL LITERALS
-static const string HASH_SIZE="hash_size";
-static const string GNUPLOT_PATH="gnuplot_path";
-static const string DEGREE_PATH="degree_path";
-static const string RDF_PARSER="rdf_parser";
-static const string RDF_PARSER_OWN="own";
+static const string HASH_SIZE = "hash_size";
+static const string GNUPLOT_PATH = "gnuplot_path";
+static const string DEGREE_PATH = "degree_path";
+static const string RDF_PARSER = "rdf_parser";
+static const string RDF_PARSER_OWN = "own";
 
 #endif  /* _LITERALS_H */

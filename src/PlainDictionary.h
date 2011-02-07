@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef PLAINDICTIONARY_H
 #define PLAINDICTIONARY_H
 
@@ -45,67 +45,53 @@ using namespace std;
  *
  *  @author Javier D. Fernandez
  */
-class PlainDictionary : public Dictionary
-{
-public:	
-	/** Generic constructor */
+class PlainDictionary: public Dictionary {
+public:
 	PlainDictionary();
-	/** Constructor with size options */
 	PlainDictionary(unsigned int sizeHash);
-	/** Constructor for loading */
-	PlainDictionary(string path, unsigned int mapping, unsigned int separator, 
-			unsigned int nsubjects, unsigned int npredicates, unsigned int nobjects, unsigned int ssubobj);
-	
+	PlainDictionary(string path, unsigned int mapping, unsigned int separator,
+			unsigned int nsubjects, unsigned int npredicates,
+			unsigned int nobjects, unsigned int ssubobj);
 	void checkTriple(string *node);
-	unsigned int isClusterized(unsigned int id, unsigned int mode);	
+	unsigned int isClusterized(unsigned int id, unsigned int mode);
 	unsigned int retrieveID(string key, unsigned int mode);
 	string retrieveString(unsigned int id, unsigned int mode);
 	void updateID(unsigned int id, unsigned int new_id, unsigned int mode);
-
 	void beginClustering();
 	void endClustering();
 	void lexicographicSort(unsigned int mapping);
 	void split();
 	void write(string path, unsigned int separator);
-
 	void dumpStats(string &path);
-
-	
-	/** Destructor */
 	~PlainDictionary();
-
 protected:
 	unsigned int sizeHash;
-
-	vector <HASHREC*> predicates;
-	vector <HASHREC*> subjects_shared;
-	vector <HASHREC*> subjects_not_shared;
-	vector <HASHREC*> objects_not_shared;
-
-	vector <HASHREC*> cluster_subjects_shared;
-	vector <HASHREC*> cluster_subjects_not_shared;
-	vector <HASHREC*> cluster_objects_not_shared;
-
+	vector<HASHREC*> predicates;
+	vector<HASHREC*> subjects_shared;
+	vector<HASHREC*> subjects_not_shared;
+	vector<HASHREC*> objects_not_shared;
+	vector<HASHREC*> cluster_subjects_shared;
+	vector<HASHREC*> cluster_subjects_not_shared;
+	vector<HASHREC*> cluster_objects_not_shared;
 	HashTable hashSubject;
 	HashTable hashPredicate;
 	HashTable hashObject;
-
 	MiniHashTable prefixes;
-
 	void initialize();
 	void map(unsigned int mapping);
+	bool static cmpLexicographic(const struct hashrec *c1,
+			const struct hashrec *c2) {
+		string total_c1 = c1->word;
+		if (c1->prefix != NULL)
+			total_c1 = c1->prefix->word + total_c1;
 
-	bool static cmpLexicographic(const struct hashrec *c1, const struct hashrec *c2)
-	{
-		string total_c1=c1->word;
-		if (c1->prefix!=NULL) total_c1 = c1->prefix->word + total_c1;
-		
-		string total_c2=c2->word;
-		if (c2->prefix!=NULL) total_c2 = c2->prefix->word + total_c2;
-	
-		if (strcmp ((char*)total_c1.c_str(), (char*)total_c2.c_str())<0) 
+		string total_c2 = c2->word;
+		if (c2->prefix != NULL)
+			total_c2 = c2->prefix->word + total_c2;
+
+		if (strcmp((char*) total_c1.c_str(), (char*) total_c2.c_str()) < 0)
 			return true;
-		else 
+		else
 			return false;
 	}
 };
