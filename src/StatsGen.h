@@ -31,39 +31,21 @@
 #include "Triples.h"
 #include "RDFSyntaxMediator.h"
 
-class StatsGen
-{
+class StatsGen {
 public:
-	/** Generic constructor */
 	StatsGen();
-	
-	/** Parses the RDF dataset by following the features file */
 	bool process(char *output);
 	bool readFromDataset(char *dataset, char *output);
 	bool readFromHDT(char *hdt, char*output);
-	
-	/** Destructor */
 	~StatsGen();
-	
 protected:
 	Header *header;
 	Dictionary *dictionary;
 	Triples *triples;
-	
 	string *node;
-	
-	/** Graph parsing: SPO ('spo'), SOP ('sop'), PSO ('pso'), POS ('pos'), OSP ('osp'), OPS ('ops') */
-	unsigned int parsing;
-	
-	/** ID mapping: MAPPING1 ('single'), MAPPING2 ('shared') */
-	unsigned int mapping;
-	
-	/** Dictionary encoding: PLAIN ('plain'), COMPACT ('compact'), BITMAP ('bitmap'), K2TREE ('k2tree') */
-	unsigned int t_encoding; 
-	
+	unsigned int parsing; /**< Graph parsing: SPO ('spo'), SOP ('sop'), PSO ('pso'), POS ('pos'), OSP ('osp'), OPS ('ops') */
+	unsigned int mapping; /**< ID mapping: MAPPING1 ('single'), MAPPING2 ('shared') */
+	unsigned int t_encoding; /**< Dictionary encoding: PLAIN ('plain'), COMPACT ('compact'), BITMAP ('bitmap'), K2TREE ('k2tree') */
 	DataTime t1, t2;
-	
-	/** Parse a single triple from a new line read from the dataset */
-	void parseTripleN3(string t);
-
+	void parseTripleN3(string t); /**< Parse a single triple from a new line read from the dataset */
 };

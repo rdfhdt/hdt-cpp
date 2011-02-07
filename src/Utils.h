@@ -34,8 +34,5 @@
 #include <string>
 
 int mkpath(const char *s, mode_t mode);
-
 int mkpathfile(const char *s, mode_t mode);
-
-bool
-stringHasEnding (std::string const &full, std::string const &ending);
+bool stringHasEnding(std::string const &full, std::string const &ending);

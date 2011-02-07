@@ -28,62 +28,60 @@
 #include "Utils.h"
 
 /* Function with behaviour like `mkdir -p'
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param s Description of the param.
+ * @param mode Description of the param.
  * @return The expected result
  */
-int
-mkpath(const char *s, mode_t mode){
+int mkpath(const char *s, mode_t mode) {
 	if (strcmp(s, ".") == 0 || strcmp(s, "/") == 0)
 		return (0);
-	
-	if(index(s,'/')!=NULL) {
+
+	if (index(s, '/') != NULL) {
 		char *copy = strdup(s);
 		char *base = strdup(dirname(copy));
-		
+
 		mkpath(base, mode);
-		
+
 		//printf("Creating %s\n", s);
 		mkdir(s, mode);
-		
+
 		free(copy);
 		free(base);
 	} else {
 		//printf("Creating %s\n", s);
 		mkdir(s, mode);
 	}
-	
-	return 0;	
+
+	return 0;
 }
 
 /* Create full path except for the last one, which is considered a file
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param s Description of the param.
+ * @param mode Description of the param.
  * @return The expected result
  */
-int mkpathfile(const char *s, mode_t mode){
+int mkpathfile(const char *s, mode_t mode) {
 	int len = strlen(s);
-	
-	if(s[len-1]=='/') {
+
+	if (s[len - 1] == '/') {
 		mkpath(s, mode);
 	} else {
 		char *copy = strdup(s);
 		char *base = strdup(dirname(copy));
-		
-		mkpath(base,mode);
-		
+
+		mkpath(base, mode);
+
 		free(copy);
 		free(base);
 	}
 }
 
 /** String Has Ending
- * @param param_a Description of the param.
- * @param param_b Description of the param.
+ * @param full Description of the param.
+ * @param ending Description of the param.
  * @return The expected result
  */
-bool
-stringHasEnding (std::string const &full, std::string const &ending)
-{
-    return (full.length() > ending.length()) && (!full.compare (full.length() - ending.length(), ending.length(), ending));
+bool stringHasEnding(std::string const &full, std::string const &ending) {
+	return (full.length() > ending.length()) && (!full.compare(full.length()
+			- ending.length(), ending.length(), ending));
 }

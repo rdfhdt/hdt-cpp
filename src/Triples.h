@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef TRIPLES_H
 #define TRIPLES_H
 
@@ -32,7 +32,6 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
-
 #include "Basics.h"
 #include "Dictionary.h"
 
@@ -44,100 +43,65 @@ using namespace std;
  *
  *  @author Miguel A. Martinez-Prieto
  */
-class Triples
-{
-public:		
-	/** Inserts a triple in the graph structure */
-	void insert(unsigned int subject, unsigned int predicate, unsigned int object);
-	/** Retrieves a triple in the graph structure by using the abstract 
-	    repesentation x,y,z*/
+class Triples {
+public:
+	void insert(unsigned int subject, unsigned int predicate,
+			unsigned int object);
 	TripleID retrieveTriple(unsigned int x, unsigned int y, unsigned int z);
-
-	/** Implements a console application to interact with HDT */
 	virtual void console() = 0;
-	/** Implemements an heuristic-based technique for triples clustering */
 	void clustering();
-	/** Draws the graph (in gnuplot) for all predicates
-	    @npredicates: number of predicates in the graph
-	    @predicates: predicate strings
-	    @max: max value to square the matrix
-	    @path: path for gnuplot files storage
-	*/
-	void gnuplot(unsigned int npredicates, vector <string> predicates, unsigned int max, string path);
-	/** Sorts the graph */
+	void gnuplot(unsigned int npredicates, vector<string> predicates,
+			unsigned int max, string path);
 	void graphSort();
-	/** Returns the graph size in triples */
 	unsigned int size();
-	/** Transforms HDT in format n3 */
 	virtual bool transformToN3() = 0;
-	/** Write the triples structure; returns the number of triples effectively writen */
 	virtual unsigned int write(string path) = 0;
-	
-	/** Load the full graph to main memory */
 	virtual bool loadGraphMemory()=0;
-	
-	/** Serialize HDT to a given format*/
 	virtual bool serialize(char *output, char *format) = 0;
-
-	/** Calculate degrees */
 	void calculateDegrees(string path);
-	
+
 	Dictionary *getDictionary() {
 		return dictionary;
 	}
-	
+
 	int getParsing() {
 		return parsing;
 	}
-	
+
 	vector<TripleID> &getGraph() {
 		return graph;
 	}
-	
-	void convertParsing(unsigned int to);
 
+	void convertParsing(unsigned int to);
 	void calculateDegree(string path);
 	void calculatePredicateHistogram(string path);
-	
 protected:
 	Dictionary *dictionary;
-
 	vector<TripleID> graph;
-
 	unsigned int parsing;
-
 	unsigned int ntriples;
 	string path;
+	void gnuplotHeader(unsigned int firstP, unsigned int sizeP,
+			string predicate, unsigned int xmin, unsigned int xmax,
+			unsigned int ymin, unsigned int ymax, string filename);
 
-	/** Writes the GNUPLOT header-file with the parameter-based configuration:
-	    @firstP: id of the current serie for sizeP=1
-	    @sizeP: number of series
-	    @predicate: predicate string
-	    @xmin: min value in X scale
-	    @xmax: max value in X scale
-	    @ymin: min value in Y scale
-	    @ymax: max value in Y scale
-	    @filename: preffix names for files
-	*/
-	void gnuplotHeader(unsigned int firstP, unsigned int sizeP, string predicate, 
-			   unsigned int xmin, unsigned int xmax, unsigned int ymin, unsigned int ymax, string filename);
-
-	bool static sortXYZ(const struct TripleID c1, const struct TripleID c2)
-	{
-		if ((c1.x) < (c2.x)) return true;
-		else
-		{
-			if ((c1.x) > (c2.x)) return false;
-			else
-			{
-				if ((c1.y) < (c2.y)) return true;
-				else
-				{
-					if ((c1.y) > (c2.y)) return false;
-					else
-					{
-						if ((c1.z) < (c2.z)) return true;
-						else return false;
+	bool static sortXYZ(const struct TripleID c1, const struct TripleID c2) {
+		if ((c1.x) < (c2.x))
+			return true;
+		else {
+			if ((c1.x) > (c2.x))
+				return false;
+			else {
+				if ((c1.y) < (c2.y))
+					return true;
+				else {
+					if ((c1.y) > (c2.y))
+						return false;
+					else {
+						if ((c1.z) < (c2.z))
+							return true;
+						else
+							return false;
 					}
 				}
 			}

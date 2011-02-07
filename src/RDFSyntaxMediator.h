@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef RDFSYNTAXMEDIATOR_H
 #define RDFSYNTAXMEDIATOR_H
 
@@ -34,13 +34,11 @@
 #include "Dictionary.h"
 #include "Triples.h"
 
-struct DictionaryTriples
-{
+struct DictionaryTriples {
 	Dictionary *dictionary;
 	Triples *triples;
 	int *ntriples;
-}
-;
+};
 
 using namespace std;
 
@@ -50,30 +48,19 @@ using namespace std;
  *
  *  @author Javier D. Fernandez
  */
-class RDFSyntaxMediator
-{
+class RDFSyntaxMediator {
 public:
-	
-	/** Generic constructor */
 	RDFSyntaxMediator();
-		
-	/** Prepares the RDF file to parse */
-	bool parsing(char* pathFile,DictionaryTriples dictionaryTriples);
-	
-	/** Serialize to a format */
+	bool parsing(char* pathFile, DictionaryTriples dictionaryTriples);
 	bool init_serialize(char *pathFile, char *format);
-	bool serialize_statement(string subject,string predicate,string object);
+	bool serialize_statement(string subject, string predicate, string object);
 	bool end_serialize();
-	
-	/** Destructor */
 	~RDFSyntaxMediator();
-			
 protected:
 	string *node;
 	raptor_parser* rdf_parser;
 	raptor_serializer* rdf_serializer;
 	vector<raptor_namespace*> namespaces;
-
 };
 
 #endif  /* _RDFSYNTAXMEDIATOR_H */

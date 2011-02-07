@@ -101,7 +101,7 @@ void console() {
 
 /** Main
  * @param argc Description of the param.
- * @param argv_b Description of the param.
+ * @param argv Description of the param.
  * @return The expected result
  */
 int main(int argc, char* argv[]) {

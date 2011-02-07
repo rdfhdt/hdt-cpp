@@ -23,7 +23,7 @@
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es
  */
- 
+
 #ifndef RDFPARSER_H
 #define RDFPARSER_H
 
@@ -34,7 +34,6 @@
 #include <map>
 #include <string>
 #include <stdio.h>
-
 #include "Basics.h"
 #include "Literals.h"
 #include "Header.h"
@@ -49,41 +48,26 @@ using namespace std;
  *
  *  @author Miguel A. Martinez-Prieto
  */
-class RDFParser
-{
+class RDFParser {
 public:
-	/** Generic constructor */
 	RDFParser();
-		
-	/** Parses the RDF dataset by following the features file */
 	bool parse(char* pathFile);
-
-	/** Destructor */
 	~RDFParser();
-			
 protected:
 	istream *input;
 	ifstream config;
-	map<string,string> properties;
-
+	map<string, string> properties;
 	Header *header;
 	Dictionary *dictionary;
 	Triples *triples;
-
 	string *node;
 
-	/** Graph parsing: SPO ('spo'), SOP ('sop'), PSO ('pso'), POS ('pos'), OSP ('osp'), OPS ('ops') */
-	unsigned int parsing;
-	/** ID mapping: MAPPING1 ('single'), MAPPING2 ('shared') */
-	unsigned int mapping;
-	/** Dictionary encoding: PLAIN ('plain'), COMPACT ('compact'), BITMAP ('bitmap'), K2TREE ('k2tree') */
-	unsigned int t_encoding; 
+	unsigned int parsing; /**< Graph parsing: SPO ('spo'), SOP ('sop'), PSO ('pso'), POS ('pos'), OSP ('osp'), OPS ('ops') */
+	unsigned int mapping; /**< ID mapping: MAPPING1 ('single'), MAPPING2 ('shared') */
+	unsigned int t_encoding; /**< Dictionary encoding: PLAIN ('plain'), COMPACT ('compact'), BITMAP ('bitmap'), K2TREE ('k2tree') */
 
-
-	/** Parse the config file */
-	bool parseConfig(char* pathFile);
-	/** Parse a single triple from a new line read from the dataset */
-	void parseTripleN3(string t);
+	bool parseConfig(char* pathFile); /**< Parse the config file */
+	void parseTripleN3(string t); /**< Parse a single triple from a new line read from the dataset */
 };
 
 #endif  /* _RDFPARSER_H */
