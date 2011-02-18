@@ -8,7 +8,7 @@ LIB=libcds/lib/libcds.a -L/usr/local/lib
 
 # Flags for compiler and linker
 ifeq (Darwin,$(shell uname -s))
-LDFLAGS=-lstdc++ -framework OpenGL -framework GLUT
+LDFLAGS=-lstdc++ -lraptor -framework OpenGL -framework GLUT
 endif
 
 
