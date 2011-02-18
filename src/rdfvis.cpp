@@ -31,6 +31,7 @@
 #include "PlainTriples.h"
 #include "CompactTriples.h"
 #include "BitmapTriples.h"
+#include "ClusterAlgorithm1.h"
 
 #define RDFVIS_FONT GLUT_BITMAP_HELVETICA_12
 #define TIMER_DELAY 50
@@ -97,16 +98,17 @@ Triples *triples;
 vector<char *> datasets;
 int currentFile = 0;
 int currpredicate = 0;
-unsigned int currFrame = -1;//std::numeric_limits<unsigned int>::max()-1;
+unsigned int currFrame = std::numeric_limits<unsigned int>::max()-1;
 int increment = 1;
 TripleID *foundTriple = NULL;
+ClusterAlgorithm *clusterAlg = new ClusterAlgorithm1();
 
 /** Set Predicate
  * @return void
  */
 void setPredicate() {
 	int count = 0;
-	vector < TripleID > graph = triples->getGraph();
+	vector<TripleID> graph = triples->getGraph();
 	for (unsigned int i = 0; i < graph.size(); i++) {
 		if (graph[i].x == currpredicate) {
 			count++;
@@ -207,6 +209,8 @@ bool loadHDT(char *hdt) {
  * @return void
  */
 void unloadHDT() {
+	clusterAlg->endClustering();
+
 	if (dictionary != NULL) {
 		delete dictionary;
 		dictionary = NULL;
@@ -238,10 +242,19 @@ void keyboardDown(unsigned char key, int x, int y) {
 		currFrame = 0;
 		break;
 	case 'c':
+	case 'v':
 		if (!clustering) {
-			triples->clustering();
+			//triples->clustering();
+			clusterAlg->startClustering(triples);
+
+			if(key=='v') {
+				clusterAlg->doClusteringIteration(0);
+			}
+
 			clustering = 1;
 		} else {
+			clusterAlg->endClustering();
+
 			unloadHDT();
 			loadHDT(datasets[currentFile]);
 		}
@@ -560,6 +573,10 @@ void mousePassiveMotion(int x, int y) {
 	mousex = x;
 	mousey = y;
 
+	if(clusterAlg->isActive()) {
+		return;
+	}
+
 	// HDT
 	unsigned int nsubjects = dictionary->getNsubjects();
 	unsigned int nobjects = dictionary->getMaxID();
@@ -567,7 +584,7 @@ void mousePassiveMotion(int x, int y) {
 	unsigned int nshared = dictionary->getSsubobj();
 
 	// ModelView
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	glScaled(zoom, zoom, 1.0);
@@ -658,12 +675,12 @@ void reshape(int w, int h) {
 	 glMatrixMode(GL_MODELVIEW);
 	 glLoadIdentity();*/
 
-	glMatrixMode( GL_PROJECTION);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-screenWidth / 2, +screenWidth / 2, -screenHeight / 2,
 			+screenHeight / 2, -10, 10);
 
-	glMatrixMode( GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
@@ -675,8 +692,8 @@ void reshape(int w, int h) {
  * @return void
  */
 void texto(char *cadena, float x, float y, float z) {
-	glDisable( GL_DEPTH_TEST);
-	glDisable( GL_LIGHTING);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
 	glColor4f(TEXT_COLOR);
 	glRasterPos3f(x, y, z);
 	for (char *c = cadena; *c; c++) {
@@ -716,9 +733,9 @@ void textoBox(char *cadena, float x, float y, float z) {
 
 	//printf("printBox (%d%) %s\n", siz, cadena);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable( GL_BLEND);
+	glEnable(GL_BLEND);
 	glColor4f(TEXT_BACKGROUND_COLOR);
-	glBegin( GL_QUAD_STRIP);
+	glBegin(GL_QUAD_STRIP);
 	glVertex3f(x - 5, y - 6, 0);
 	glVertex3f(x - 5, y + 14, 0);
 	glVertex3f(x + siz + 5, y - 6, 0);
@@ -869,7 +886,7 @@ void draw() {
 	glPushMatrix();
 
 	// Get vars
-	vector < TripleID > &graph = triples->getGraph();
+	vector<TripleID> &graph = triples->getGraph();
 	unsigned int nsubjects = dictionary->getNsubjects();
 	unsigned int nobjects = dictionary->getMaxID(); //dictionary->getNobjects();
 	unsigned int npredicates = dictionary->getNpredicates();
@@ -894,7 +911,7 @@ void draw() {
 
 	// Draw shared area
 	glColor4f(SHARED_AREA_COLOR);
-	glBegin( GL_QUADS);
+	glBegin(GL_QUADS);
 	glVertex3f(0, 0, 0);
 	glVertex3f(0, nshared, 0);
 	glVertex3f(nshared, nshared, 0);
@@ -902,7 +919,7 @@ void draw() {
 	glEnd();
 
 	glColor4f(SHARED_AREA_BORDER_COLOR);
-	glBegin( GL_LINE_STRIP);
+	glBegin(GL_LINE_STRIP);
 	glVertex3f(0, nshared, 0);
 	glVertex3f(nshared, nshared, 0);
 	glVertex3f(nshared, 0, 0);
@@ -919,7 +936,7 @@ void draw() {
 		}
 		texto(str, 0, i + nsubjects * 0.01, 0);
 		glColor4f(GRID_COLOR);
-		glBegin( GL_LINES);
+		glBegin(GL_LINES);
 		glVertex3f(0, i, 0);
 		glVertex3f(nobjects, i, 0);
 		glVertex3f(0, i, 0);
@@ -938,7 +955,7 @@ void draw() {
 		texto(str, i, nsubjects * 0.01, 0);
 
 		glColor4f(GRID_COLOR);
-		glBegin( GL_LINES);
+		glBegin(GL_LINES);
 		glVertex3f(i, 0, 0);
 		glVertex3f(i, nsubjects, 0);
 		glVertex3f(i, 0, 0);
@@ -953,7 +970,7 @@ void draw() {
 		texto(str, 0, 0, i);
 
 		glColor4f(GRID_COLOR);
-		glBegin( GL_LINES);
+		glBegin(GL_LINES);
 		glVertex3f(0, 0, i);
 		glVertex3f(nobjects, 0, i);
 		glVertex3f(0, 0, i);
@@ -963,7 +980,7 @@ void draw() {
 
 	// Draw outter axis
 	glColor4f(AXIS_COLOR);
-	glBegin( GL_LINES);
+	glBegin(GL_LINES);
 	glVertex3f(0, 0, 0);
 	glVertex3f(0, maxAxis, 0);
 	glVertex3f(0, 0, 0);
@@ -1001,7 +1018,7 @@ void draw() {
 #else 
 	glPointSize(3);
 #endif
-	glBegin( GL_POINTS);
+	glBegin(GL_POINTS);
 	COLOR c;
 
 	for (int i = 0; (i < graph.size()) && (i < currFrame); i += increment) {
@@ -1059,7 +1076,12 @@ void draw() {
 	// Animate
 	if (currFrame + graph.size() / 500
 			< std::numeric_limits<unsigned int>::max()) {
-		currFrame += graph.size() / 500;
+		currFrame += 1+ (graph.size() / 500);
+		glutPostRedisplay();
+	}
+
+	if (clusterAlg->isActive()) {
+		clusterAlg->doClusteringIteration(1 + (graph.size() / 1000));
 		glutPostRedisplay();
 	}
 
@@ -1095,8 +1117,8 @@ void initGL(int width, int height) {
 	glClearColor(BACKGROUND_COLOR);
 	glClearDepth(1.0f);
 
-	glEnable( GL_DEPTH_TEST);
-	glDepthFunc( GL_LEQUAL);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 }
 
 /** Main

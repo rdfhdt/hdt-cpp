@@ -1,4 +1,4 @@
-/* StatsGen.cpp
+	/* StatsGen.cpp
  * Copyright (C) 2010, Javier D. Fernandez & Miguel A, Martinez-Prieto
  * all rights reserved.
  *
@@ -36,6 +36,7 @@
 #include "StatsGen.h"
 #include "fdstream.hpp"
 #include "Utils.h"
+#include "ClusterAlgorithm1.h"
 
 /** Base constructor */
 StatsGen::StatsGen() {
@@ -385,7 +386,9 @@ bool StatsGen::process(char *output) {
 	triples->convertParsing(PSO);
 	getTime(&t2);
 	cout << "[" << showpoint << t2.user - t1.user << "]  Clustering" << endl;
-	triples->clustering();
+	ClusterAlgorithm1 cluster;
+	cluster.startClustering(triples);
+	cluster.doClusteringIteration(0);
 
 	// 12) Writing Dictionary
 	getTime(&t2);

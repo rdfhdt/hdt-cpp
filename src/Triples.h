@@ -49,7 +49,6 @@ public:
 			unsigned int object);
 	TripleID retrieveTriple(unsigned int x, unsigned int y, unsigned int z);
 	virtual void console() = 0;
-	void clustering();
 	void gnuplot(unsigned int npredicates, vector<string> predicates,
 			unsigned int max, string path);
 	void graphSort();

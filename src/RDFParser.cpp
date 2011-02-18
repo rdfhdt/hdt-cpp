@@ -28,6 +28,7 @@
 #include "RDFParser.h"
 #include "fdstream.hpp"
 #include "Utils.h"
+#include "ClusterAlgorithm1.h"
 
 /** Base constructor */
 RDFParser::RDFParser() {
@@ -312,7 +313,9 @@ bool RDFParser::parse(char *pathFile) {
 					getTime(&t2);
 					cout << "[" << showpoint << t2.user - t1.user
 							<< "]  Clustering" << endl;
-					triples->clustering();
+					ClusterAlgorithm1 cluster;
+					cluster.startClustering(triples);
+					cluster.doClusteringIteration(0);
 				}
 			}
 		}
