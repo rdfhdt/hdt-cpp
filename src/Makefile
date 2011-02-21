@@ -16,7 +16,7 @@ OBJECTS=$(patsubst %.cpp,%.o,$(filter-out HDT.cpp rdfvis.cpp, $(wildcard *.cpp))
 HEADERS=*.h
 BIN=hdt rdfvis
 
-all: libcdsMake hdt rdfvis doc
+all: libcdsMake hdt rdfvis
 
 libcdsMake:
 	@echo " [MSG] Building libcds"
