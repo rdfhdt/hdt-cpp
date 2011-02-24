@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -19,6 +20,7 @@
   <div class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+      <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
 <div class="header">
@@ -26,7 +28,7 @@
 <h1>MiniHashTable.h</h1>  </div>
 </div>
 <div class="contents">
-<div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* MiniHashTable.h</span>
+<a href="MiniHashTable_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* MiniHashTable.h</span>
 <a name="l00002"></a>00002 <span class="comment"> * Copyright (C) 2010, Javier D. Fernandez &amp; Miguel A, Martinez-Prieto</span>
 <a name="l00003"></a>00003 <span class="comment"> * all rights reserved.</span>
 <a name="l00004"></a>00004 <span class="comment"> *</span>
@@ -57,67 +59,54 @@
 <a name="l00029"></a>00029 <span class="comment"> *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es</span>
 <a name="l00030"></a>00030 <span class="comment"> */</span>
 <a name="l00031"></a>00031 
-<a name="l00032"></a>00032 
-<a name="l00033"></a>00033 <span class="preprocessor">#ifndef MINIHASHTABLE_H</span>
-<a name="l00034"></a>00034 <span class="preprocessor"></span><span class="preprocessor">#define MINIHASHTABLE_H</span>
-<a name="l00035"></a>00035 <span class="preprocessor"></span>
-<a name="l00036"></a>00036 
-<a name="l00037"></a>00037 <span class="comment">//Next defines are used in HashTable. Uncomment if HashTable is not present</span>
-<a name="l00038"></a>00038 <span class="preprocessor">#define INITIAL_SIZE    1048576</span>
-<a name="l00039"></a>00039 <span class="preprocessor"></span><span class="preprocessor">#define SEED    1159241</span>
-<a name="l00040"></a>00040 <span class="preprocessor"></span>
-<a name="l00041"></a>00041 <span class="preprocessor">#define HASHFN  bitwisehash</span>
-<a name="l00042"></a>00042 <span class="preprocessor"></span>
-<a name="l00043"></a>00043 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
-<a name="l00044"></a>00044 <span class="preprocessor">#include &lt;stdio.h&gt;</span>
-<a name="l00045"></a>00045 <span class="preprocessor">#include &lt;string.h&gt;</span>
-<a name="l00046"></a>00046 
-<a name="l00047"></a><a class="code" href="structminihashrec.html">00047</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structminihashrec.html">minihashrec</a>
-<a name="l00048"></a>00048 {
-<a name="l00049"></a>00049     <span class="keywordtype">char</span> *word;
-<a name="l00050"></a>00050     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> id;
-<a name="l00051"></a>00051     <span class="keyword">struct </span><a class="code" href="structminihashrec.html">minihashrec</a> *next;
-<a name="l00052"></a>00052 } <a class="code" href="structminihashrec.html">MINIHASHREC</a>;
-<a name="l00053"></a>00053 
-<a name="l00054"></a>00054 
-<a name="l00059"></a><a class="code" href="classMiniHashTable.html">00059</a> <span class="keyword">class </span><a class="code" href="classMiniHashTable.html">MiniHashTable</a>
-<a name="l00060"></a>00060 {
-<a name="l00061"></a>00061 <span class="keyword">public</span>:
-<a name="l00062"></a>00062 
-<a name="l00063"></a>00063     <a class="code" href="classMiniHashTable.html">MiniHashTable</a>();
-<a name="l00064"></a>00064     <span class="keywordtype">int</span> TSIZE;
-<a name="l00065"></a>00065     <span class="keywordtype">int</span> globalId;
-<a name="l00066"></a>00066     <span class="keywordtype">bool</span> useAsCount;
-<a name="l00067"></a>00067     <span class="keywordtype">void</span> inithashtable();
-<a name="l00068"></a>00068     <span class="keywordtype">void</span> inithashtable(<span class="keywordtype">int</span> size);
-<a name="l00069"></a>00069     <span class="keywordtype">void</span> inithashtable(<span class="keywordtype">int</span> size,<span class="keywordtype">bool</span> count); <span class="comment">//use as count (assign the same first id)</span>
-<a name="l00070"></a>00070     <a class="code" href="structminihashrec.html">MINIHASHREC</a> ** <span class="keyword">get</span>();
-<a name="l00071"></a>00071     <a class="code" href="structminihashrec.html">MINIHASHREC</a> * <span class="keyword">get</span>(<span class="keywordtype">unsigned</span> pos);
-<a name="l00072"></a>00072     <a class="code" href="structminihashrec.html">MINIHASHREC</a> * hashsearch(<span class="keywordtype">char</span> *w);
-<a name="l00073"></a>00073     <a class="code" href="structminihashrec.html">MINIHASHREC</a> * hashupdate(<span class="keywordtype">char</span> *w);
-<a name="l00074"></a>00074     <span class="keywordtype">void</span> delete_key(<span class="keywordtype">char</span> *w);
-<a name="l00075"></a>00075     <a class="code" href="structminihashrec.html">MINIHASHREC</a> * hashinsert(<span class="keywordtype">char</span> *w);
-<a name="l00076"></a>00076     <a class="code" href="structminihashrec.html">MINIHASHREC</a> * hashinsert(<span class="keywordtype">char</span> *w, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>);
-<a name="l00077"></a>00077     <span class="keywordtype">void</span> dump();
-<a name="l00078"></a>00078 
-<a name="l00079"></a>00079     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bitwisehash(<span class="keywordtype">char</span> *word, <span class="keywordtype">int</span> tsize, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> seed);
-<a name="l00080"></a>00080     <span class="keywordtype">int</span> scmp( <span class="keywordtype">char</span> *s1, <span class="keywordtype">char</span> *s2 );
-<a name="l00081"></a>00081 
-<a name="l00082"></a>00082     ~<a class="code" href="classMiniHashTable.html">MiniHashTable</a>();
-<a name="l00083"></a>00083     
-<a name="l00084"></a>00084     <span class="keywordtype">int</span> size();
-<a name="l00085"></a>00085 
-<a name="l00086"></a>00086 <span class="keyword">private</span>:
-<a name="l00087"></a>00087     <a class="code" href="structminihashrec.html">MINIHASHREC</a> **hash;
-<a name="l00088"></a>00088     <span class="keywordtype">int</span> numNodes;
-<a name="l00089"></a>00089 };
-<a name="l00090"></a>00090 
-<a name="l00091"></a>00091 
-<a name="l00092"></a>00092         
-<a name="l00093"></a>00093 <span class="preprocessor">#endif </span><span class="comment">/*MINIHASHTABLE_H_*/</span>
+<a name="l00032"></a>00032 <span class="preprocessor">#ifndef MINIHASHTABLE_H</span>
+<a name="l00033"></a>00033 <span class="preprocessor"></span><span class="preprocessor">#define MINIHASHTABLE_H</span>
+<a name="l00034"></a>00034 <span class="preprocessor"></span>
+<a name="l00035"></a>00035 <span class="comment">//Next defines are used in HashTable. Uncomment if HashTable is not present</span>
+<a name="l00036"></a><a class="code" href="MiniHashTable_8h.html#a40958a1382463445e451148e3a93e049">00036</a> <span class="preprocessor">#define INITIAL_SIZE    1048576</span>
+<a name="l00037"></a><a class="code" href="MiniHashTable_8h.html#ad350bae49f72ba58d73027f1316e38b8">00037</a> <span class="preprocessor"></span><span class="preprocessor">#define SEED    1159241</span>
+<a name="l00038"></a><a class="code" href="MiniHashTable_8h.html#af4b891c980e31f8e04d281cd508cc093">00038</a> <span class="preprocessor"></span><span class="preprocessor">#define HASHFN  bitwisehash</span>
+<a name="l00039"></a>00039 <span class="preprocessor"></span>
+<a name="l00040"></a>00040 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
+<a name="l00041"></a>00041 <span class="preprocessor">#include &lt;stdio.h&gt;</span>
+<a name="l00042"></a>00042 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00043"></a>00043 
+<a name="l00044"></a><a class="code" href="structMINIHASHREC.html">00044</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>minihashrec {
+<a name="l00045"></a><a class="code" href="structMINIHASHREC.html#a437a728bb85efdee95a850e0deee92f4">00045</a>     <span class="keywordtype">char</span> *word;
+<a name="l00046"></a><a class="code" href="structMINIHASHREC.html#a9c94954e84f649e5e83c4383137d9dcf">00046</a>     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> id;
+<a name="l00047"></a><a class="code" href="structMINIHASHREC.html#a52232c9ca08629cf475b95480c078476">00047</a>     <span class="keyword">struct </span>minihashrec *next;
+<a name="l00048"></a>00048 } <a class="code" href="structMINIHASHREC.html">MINIHASHREC</a>;
+<a name="l00049"></a>00049 
+<a name="l00050"></a><a class="code" href="classMiniHashTable.html">00050</a> <span class="keyword">class </span><a class="code" href="classMiniHashTable.html">MiniHashTable</a> {
+<a name="l00051"></a>00051 <span class="keyword">public</span>:
+<a name="l00052"></a>00052     <a class="code" href="classMiniHashTable.html#ae988247ae4842bbc28bef142411f75a7" title="Base constructor.">MiniHashTable</a>();
+<a name="l00053"></a><a class="code" href="classMiniHashTable.html#a42eb9b1f8751aa068ff0dc6ce76a56de">00053</a>     <span class="keywordtype">int</span> <a class="code" href="classMiniHashTable.html#a42eb9b1f8751aa068ff0dc6ce76a56de">TSIZE</a>;
+<a name="l00054"></a><a class="code" href="classMiniHashTable.html#a7dca045bc9bdbd9d6bfc0a50963c7a41">00054</a>     <span class="keywordtype">int</span> <a class="code" href="classMiniHashTable.html#a7dca045bc9bdbd9d6bfc0a50963c7a41">globalId</a>;
+<a name="l00055"></a><a class="code" href="classMiniHashTable.html#a5ee4aabc028a327a9c6ceca11adc0964">00055</a>     <span class="keywordtype">bool</span> <a class="code" href="classMiniHashTable.html#a5ee4aabc028a327a9c6ceca11adc0964">useAsCount</a>;
+<a name="l00056"></a>00056     <span class="keywordtype">void</span> <a class="code" href="classMiniHashTable.html#a973d45ffa1940f70d8480a748182db9e" title="Create hash table, initialise ptrs to NULL.">inithashtable</a>();
+<a name="l00057"></a>00057     <span class="keywordtype">void</span> <a class="code" href="classMiniHashTable.html#a973d45ffa1940f70d8480a748182db9e" title="Create hash table, initialise ptrs to NULL.">inithashtable</a>(<span class="keywordtype">int</span> <a class="code" href="classMiniHashTable.html#aedf0f63e50726d4fe5c54ce455822bb0" title="Size.">size</a>);
+<a name="l00058"></a>00058     <span class="keywordtype">void</span> <a class="code" href="classMiniHashTable.html#a973d45ffa1940f70d8480a748182db9e" title="Create hash table, initialise ptrs to NULL.">inithashtable</a>(<span class="keywordtype">int</span> <a class="code" href="classMiniHashTable.html#aedf0f63e50726d4fe5c54ce455822bb0" title="Size.">size</a>, <span class="keywordtype">bool</span> count); <span class="comment">//use as count (assign the same first id)</span>
+<a name="l00059"></a>00059     <a class="code" href="structMINIHASHREC.html">MINIHASHREC</a> ** <span class="keyword">get</span>();
+<a name="l00060"></a>00060     <a class="code" href="structMINIHASHREC.html">MINIHASHREC</a> * <span class="keyword">get</span>(<span class="keywordtype">unsigned</span> pos);
+<a name="l00061"></a>00061     <a class="code" href="structMINIHASHREC.html">MINIHASHREC</a> * <a class="code" href="classMiniHashTable.html#a8cde577318274a1d46ca37026de746e1" title="Search hash table for given string, return record if found, else NULL.">hashsearch</a>(<span class="keywordtype">char</span> *w);
+<a name="l00062"></a>00062     <a class="code" href="structMINIHASHREC.html">MINIHASHREC</a> * <a class="code" href="classMiniHashTable.html#a3b75dcbf22866525117108578bf80301">hashupdate</a>(<span class="keywordtype">char</span> *w);
+<a name="l00063"></a>00063     <span class="keywordtype">void</span> <a class="code" href="classMiniHashTable.html#ac4cc2a456444f96d44e5c980c3f58dc1" title="Detele Key.">delete_key</a>(<span class="keywordtype">char</span> *w);
+<a name="l00064"></a>00064     <a class="code" href="structMINIHASHREC.html">MINIHASHREC</a> * <a class="code" href="classMiniHashTable.html#ae2a8fc728f1e2a70784f87446e78e486">hashinsert</a>(<span class="keywordtype">char</span> *w);
+<a name="l00065"></a>00065     <a class="code" href="structMINIHASHREC.html">MINIHASHREC</a> * <a class="code" href="classMiniHashTable.html#ae2a8fc728f1e2a70784f87446e78e486">hashinsert</a>(<span class="keywordtype">char</span> *w, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <span class="keywordtype">id</span>);
+<a name="l00066"></a>00066     <span class="keywordtype">void</span> <a class="code" href="classMiniHashTable.html#ab1e47b583088ab3339ae335d953bb00b" title="Dump.">dump</a>();
+<a name="l00067"></a>00067     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classMiniHashTable.html#af873f505b0923961ed020106b1017c89">bitwisehash</a>(<span class="keywordtype">char</span> *word, <span class="keywordtype">int</span> tsize, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> seed);
+<a name="l00068"></a>00068     <span class="keywordtype">int</span> <a class="code" href="classMiniHashTable.html#a5534d13c707066898fb47d17bb037a70" title="SCMP.">scmp</a>(<span class="keywordtype">char</span> *s1, <span class="keywordtype">char</span> *s2);
+<a name="l00069"></a>00069     <a class="code" href="classMiniHashTable.html#aa0a709fb52ec01a91af4a3c78554ef6a" title="Destructor for MiniHashTable.">~MiniHashTable</a>();
+<a name="l00070"></a>00070     <span class="keywordtype">int</span> <a class="code" href="classMiniHashTable.html#aedf0f63e50726d4fe5c54ce455822bb0" title="Size.">size</a>();
+<a name="l00071"></a>00071 <span class="keyword">private</span>:
+<a name="l00072"></a>00072     <a class="code" href="structMINIHASHREC.html">MINIHASHREC</a> **hash;
+<a name="l00073"></a>00073     <span class="keywordtype">int</span> numNodes;
+<a name="l00074"></a>00074 };
+<a name="l00075"></a>00075 
+<a name="l00076"></a>00076 <span class="preprocessor">#endif </span><span class="comment">/*MINIHASHTABLE_H_*/</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:02 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

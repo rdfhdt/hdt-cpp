@@ -201,7 +201,18 @@ int main(int argc, char* argv[]) {
 				stats->readFromHDT(argv[2], argv[3]);
 				stats->process(argv[3]);
 				delete stats;
-			} else {
+			
+			} else if ((argc == 4) && (strcmp(argv[1], "-D") == 0 || strcmp(
+					argv[1], "--Degree") == 0)) {
+				StatsGen *stats = new StatsGen();
+				stats->readFromHDT(argv[2], argv[3]);
+				stats->degrees(argv[3]);
+				string pathDict(argv[3]);
+				pathDict.append("/dictStats");
+				stats->dictionaryStats(pathDict);
+				delete stats;
+			}
+			else {
 				// Bad option
 				cout << "   <ERROR> '" << argv[1][0]
 						<< "' is not a valid execution option\n\nFor help, type: hdt -h"

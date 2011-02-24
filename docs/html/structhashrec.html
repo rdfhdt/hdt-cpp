@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>HDT-it: hashrec Struct Reference</title>
+<title>HDT-it: HASHREC Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -29,37 +30,138 @@
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a>  </div>
   <div class="headertitle">
-<h1>hashrec Struct Reference</h1>  </div>
+<h1>HASHREC Struct Reference</h1>  </div>
 </div>
 <div class="contents">
-<!-- doxytag: class="hashrec" -->
-<p><a href="structhashrec-members.html">List of all members.</a></p>
+<!-- doxytag: class="HASHREC" -->
+<p><code>#include &lt;<a class="el" href="HashTable_8h_source.html">HashTable.h</a>&gt;</code></p>
+
+<p><a href="structHASHREC-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aba73f3e67c1b040d2d2c814621f7955e"></a><!-- doxytag: member="hashrec::count" ref="aba73f3e67c1b040d2d2c814621f7955e" args="" -->
-int&nbsp;</td><td class="memItemRight" valign="bottom"><b>count</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a196ee1c022ec3c60b5d45b13b47d2bd7"></a><!-- doxytag: member="hashrec::id" ref="a196ee1c022ec3c60b5d45b13b47d2bd7" args="" -->
-unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><b>id</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a246e05a3f40b698fa20b5f6c21cb485f"></a><!-- doxytag: member="hashrec::new_id" ref="a246e05a3f40b698fa20b5f6c21cb485f" args="" -->
-unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><b>new_id</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d97de029748970bf9620661e06fd377"></a><!-- doxytag: member="hashrec::next" ref="a8d97de029748970bf9620661e06fd377" args="" -->
-struct <a class="el" href="structhashrec.html">hashrec</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>next</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd0a4644f941f39f9bb87a5dff14e0e1"></a><!-- doxytag: member="hashrec::prefix" ref="afd0a4644f941f39f9bb87a5dff14e0e1" args="" -->
-<a class="el" href="structminihashrec.html">MINIHASHREC</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><b>prefix</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae5fb66f1b15a882dfea93db5b161a2f6"></a><!-- doxytag: member="hashrec::shared" ref="ae5fb66f1b15a882dfea93db5b161a2f6" args="" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>shared</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a06cf0a19716447d4a4c0252fd81253f9"></a><!-- doxytag: member="hashrec::word" ref="a06cf0a19716447d4a4c0252fd81253f9" args="" -->
-char *&nbsp;</td><td class="memItemRight" valign="bottom"><b>word</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHASHREC.html#acf64030528d9608d95d458c54fe3994b">count</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHASHREC.html#a681e03e81de3f2b2872d776c6162953c">id</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHASHREC.html#a0a18076530dda5a176cf2f7552ac9e93">new_id</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">struct hashrec *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHASHREC.html#a96fda2e57d8faeaa66471ee6808c574d">next</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="structMINIHASHREC.html">MINIHASHREC</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHASHREC.html#a908674a1f2a8d9ee69ff7df611a6969d">prefix</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHASHREC.html#ab0017efcafef66ffffc1b961cd06a04f">shared</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHASHREC.html#a00d1bdcfd26ab7051e50fc20d4963ce9">word</a></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
 
 <p>Definition at line <a class="el" href="HashTable_8h_source.html#l00046">46</a> of file <a class="el" href="HashTable_8h_source.html">HashTable.h</a>.</p>
+<hr/><h2>Member Data Documentation</h2>
+<a class="anchor" id="acf64030528d9608d95d458c54fe3994b"></a><!-- doxytag: member="HASHREC::count" ref="acf64030528d9608d95d458c54fe3994b" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="structHASHREC.html#acf64030528d9608d95d458c54fe3994b">HASHREC::count</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="HashTable_8h_source.html#l00048">48</a> of file <a class="el" href="HashTable_8h_source.html">HashTable.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a681e03e81de3f2b2872d776c6162953c"></a><!-- doxytag: member="HASHREC::id" ref="a681e03e81de3f2b2872d776c6162953c" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int <a class="el" href="structHASHREC.html#a681e03e81de3f2b2872d776c6162953c">HASHREC::id</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="HashTable_8h_source.html#l00050">50</a> of file <a class="el" href="HashTable_8h_source.html">HashTable.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a0a18076530dda5a176cf2f7552ac9e93"></a><!-- doxytag: member="HASHREC::new_id" ref="a0a18076530dda5a176cf2f7552ac9e93" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int <a class="el" href="structHASHREC.html#a0a18076530dda5a176cf2f7552ac9e93">HASHREC::new_id</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="HashTable_8h_source.html#l00051">51</a> of file <a class="el" href="HashTable_8h_source.html">HashTable.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a96fda2e57d8faeaa66471ee6808c574d"></a><!-- doxytag: member="HASHREC::next" ref="a96fda2e57d8faeaa66471ee6808c574d" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct hashrec* <a class="el" href="structHASHREC.html#a96fda2e57d8faeaa66471ee6808c574d">HASHREC::next</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="HashTable_8h_source.html#l00053">53</a> of file <a class="el" href="HashTable_8h_source.html">HashTable.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a908674a1f2a8d9ee69ff7df611a6969d"></a><!-- doxytag: member="HASHREC::prefix" ref="a908674a1f2a8d9ee69ff7df611a6969d" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structMINIHASHREC.html">MINIHASHREC</a>* <a class="el" href="structHASHREC.html#a908674a1f2a8d9ee69ff7df611a6969d">HASHREC::prefix</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="HashTable_8h_source.html#l00052">52</a> of file <a class="el" href="HashTable_8h_source.html">HashTable.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ab0017efcafef66ffffc1b961cd06a04f"></a><!-- doxytag: member="HASHREC::shared" ref="ab0017efcafef66ffffc1b961cd06a04f" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="structHASHREC.html#ab0017efcafef66ffffc1b961cd06a04f">HASHREC::shared</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="HashTable_8h_source.html#l00049">49</a> of file <a class="el" href="HashTable_8h_source.html">HashTable.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a00d1bdcfd26ab7051e50fc20d4963ce9"></a><!-- doxytag: member="HASHREC::word" ref="a00d1bdcfd26ab7051e50fc20d4963ce9" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* <a class="el" href="structHASHREC.html#a00d1bdcfd26ab7051e50fc20d4963ce9">HASHREC::word</a></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="HashTable_8h_source.html#l00047">47</a> of file <a class="el" href="HashTable_8h_source.html">HashTable.h</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li><a class="el" href="HashTable_8h_source.html">HashTable.h</a></li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:03 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

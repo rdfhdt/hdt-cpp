@@ -774,6 +774,33 @@ void PlainDictionary::dumpStats(string &output) {
 	Histogram histoLiteral(0, maxval, nbins);
 	Histogram histoBlank(0, maxval, nbins);
 
+	//basic stats
+	ofstream out;
+	out.open((output + "_Sets_Ratios").c_str(), ios::out);
+	out << "Basic Stats" << endl;
+	out << "predicates: " << predicates.size() << endl;
+	out << "subjects: " << subjects_shared.size()+subjects_not_shared.size() << endl;
+	out << "objects: " << subjects_shared.size()+objects_not_shared.size() << endl;
+	out << "shared subject-object: "<< subjects_shared.size() << endl;
+	out << "s-o ratio: "<< ((double)subjects_shared.size())/(subjects_shared.size()+subjects_not_shared.size()+subjects_shared.size()+objects_not_shared.size()) << endl;
+	
+	
+	int shared_sp=0, shared_op=0;
+	string pred="";
+
+	for (int p = 1; p< predicates.size()+1;p++){
+		pred = retrieveString(p,VOC_PREDICATE);
+		if (retrieveID(pred,VOC_SUBJECT)!=ERROR)
+			shared_sp+=1;
+		if (retrieveID(pred,VOC_OBJECT)!=ERROR)
+			shared_op+=1;
+	}
+	out << "shared subject-predicates: "<<shared_sp<<endl;
+		out << "s-p ratio: "<< ((double)shared_sp)/(subjects_shared.size()+subjects_not_shared.size()+subjects_shared.size()+objects_not_shared.size()) << endl;
+	out << "shared object-predicates: "<<shared_op<<endl;
+		out << "o-p ratio: "<< ((double)shared_op)/(subjects_shared.size()+subjects_not_shared.size()+subjects_shared.size()+objects_not_shared.size()) << endl;
+	out.close();
+
 	string tmp;
 	//shared subjects-objects from subjects
 	for (i = 0; i < subjects_shared.size(); i++) {

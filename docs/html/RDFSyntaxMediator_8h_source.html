@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -19,6 +20,7 @@
   <div class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+      <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
 <div class="header">
@@ -26,7 +28,7 @@
 <h1>RDFSyntaxMediator.h</h1>  </div>
 </div>
 <div class="contents">
-<div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* RDFSyntaxMediator.h</span>
+<a href="RDFSyntaxMediator_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* RDFSyntaxMediator.h</span>
 <a name="l00002"></a>00002 <span class="comment"> * Copyright (C) 2010, Javier D. Fernandez &amp; Miguel A, Martinez-Prieto</span>
 <a name="l00003"></a>00003 <span class="comment"> * all rights reserved.</span>
 <a name="l00004"></a>00004 <span class="comment"> *</span>
@@ -51,7 +53,7 @@
 <a name="l00023"></a>00023 <span class="comment"> *   Javier D. Fernandez:       jfergar@infor.uva.es</span>
 <a name="l00024"></a>00024 <span class="comment"> *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es</span>
 <a name="l00025"></a>00025 <span class="comment"> */</span>
-<a name="l00026"></a>00026  
+<a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#ifndef RDFSYNTAXMEDIATOR_H</span>
 <a name="l00028"></a>00028 <span class="preprocessor"></span><span class="preprocessor">#define RDFSYNTAXMEDIATOR_H</span>
 <a name="l00029"></a>00029 <span class="preprocessor"></span>
@@ -59,45 +61,36 @@
 <a name="l00031"></a>00031 <span class="preprocessor">#include &lt;string&gt;</span>
 <a name="l00032"></a>00032 <span class="preprocessor">#include &lt;stdio.h&gt;</span>
 <a name="l00033"></a>00033 <span class="preprocessor">#include &lt;raptor.h&gt;</span>
-<a name="l00034"></a>00034 <span class="preprocessor">#include &quot;Dictionary.h&quot;</span>
-<a name="l00035"></a>00035 <span class="preprocessor">#include &quot;Triples.h&quot;</span>
+<a name="l00034"></a>00034 <span class="preprocessor">#include &quot;<a class="code" href="Dictionary_8h.html">Dictionary.h</a>&quot;</span>
+<a name="l00035"></a>00035 <span class="preprocessor">#include &quot;<a class="code" href="Triples_8h.html">Triples.h</a>&quot;</span>
 <a name="l00036"></a>00036 
-<a name="l00037"></a><a class="code" href="structDictionaryTriples.html">00037</a> <span class="keyword">struct </span><a class="code" href="structDictionaryTriples.html">DictionaryTriples</a>
-<a name="l00038"></a>00038 {
-<a name="l00039"></a>00039     <a class="code" href="classDictionary.html">Dictionary</a> *dictionary;
-<a name="l00040"></a>00040     <a class="code" href="classTriples.html">Triples</a> *triples;
-<a name="l00041"></a>00041     <span class="keywordtype">int</span> *ntriples;
-<a name="l00042"></a>00042 }
-<a name="l00043"></a>00043 ;
+<a name="l00037"></a><a class="code" href="structDictionaryTriples.html">00037</a> <span class="keyword">struct </span><a class="code" href="structDictionaryTriples.html">DictionaryTriples</a> {
+<a name="l00038"></a><a class="code" href="structDictionaryTriples.html#a4402518d179548462fad666b1c6f681c">00038</a>     <a class="code" href="classDictionary.html">Dictionary</a> *<a class="code" href="structDictionaryTriples.html#a4402518d179548462fad666b1c6f681c">dictionary</a>;
+<a name="l00039"></a><a class="code" href="structDictionaryTriples.html#a8046dfefa484d58bf7b2aeb7b1634b38">00039</a>     <a class="code" href="classTriples.html" title="Triples It implements an abstract class representing the features of the Triples component in HDT...">Triples</a> *<a class="code" href="structDictionaryTriples.html#a8046dfefa484d58bf7b2aeb7b1634b38">triples</a>;
+<a name="l00040"></a><a class="code" href="structDictionaryTriples.html#a6224d664d5b37feb699913422f1b6aef">00040</a>     <span class="keywordtype">int</span> *<a class="code" href="structDictionaryTriples.html#a6224d664d5b37feb699913422f1b6aef">ntriples</a>;
+<a name="l00041"></a>00041 };
+<a name="l00042"></a>00042 
+<a name="l00043"></a>00043 <span class="keyword">using namespace </span>std;
 <a name="l00044"></a>00044 
-<a name="l00045"></a>00045 <span class="keyword">using namespace </span>std;
-<a name="l00046"></a>00046 
-<a name="l00053"></a><a class="code" href="classRDFSyntaxMediator.html">00053</a> <span class="keyword">class </span><a class="code" href="classRDFSyntaxMediator.html">RDFSyntaxMediator</a>
-<a name="l00054"></a>00054 {
-<a name="l00055"></a>00055 <span class="keyword">public</span>:
-<a name="l00056"></a>00056     
-<a name="l00058"></a>00058     <a class="code" href="classRDFSyntaxMediator.html">RDFSyntaxMediator</a>();
-<a name="l00059"></a>00059         
-<a name="l00061"></a>00061     <span class="keywordtype">bool</span> parsing(<span class="keywordtype">char</span>* pathFile,<a class="code" href="structDictionaryTriples.html">DictionaryTriples</a> dictionaryTriples);
-<a name="l00062"></a>00062     
-<a name="l00064"></a>00064     <span class="keywordtype">bool</span> init_serialize(<span class="keywordtype">char</span> *pathFile, <span class="keywordtype">char</span> *format);
-<a name="l00065"></a>00065     <span class="keywordtype">bool</span> serialize_statement(<span class="keywordtype">string</span> subject,<span class="keywordtype">string</span> predicate,<span class="keywordtype">string</span> <span class="keywordtype">object</span>);
-<a name="l00066"></a>00066     <span class="keywordtype">bool</span> end_serialize();
-<a name="l00067"></a>00067     
-<a name="l00069"></a>00069     ~<a class="code" href="classRDFSyntaxMediator.html">RDFSyntaxMediator</a>();
-<a name="l00070"></a>00070             
-<a name="l00071"></a>00071 <span class="keyword">protected</span>:
-<a name="l00072"></a>00072     <span class="keywordtype">string</span> *node;
-<a name="l00073"></a>00073     raptor_parser* rdf_parser;
-<a name="l00074"></a>00074     raptor_serializer* rdf_serializer;
-<a name="l00075"></a>00075     vector&lt;raptor_namespace*&gt; namespaces;
-<a name="l00076"></a>00076 
-<a name="l00077"></a>00077 };
-<a name="l00078"></a>00078 
-<a name="l00079"></a>00079 <span class="preprocessor">#endif  </span><span class="comment">/* _RDFSYNTAXMEDIATOR_H */</span>
+<a name="l00051"></a><a class="code" href="classRDFSyntaxMediator.html">00051</a> <span class="keyword">class </span><a class="code" href="classRDFSyntaxMediator.html" title="RDF syntaxMediator It parses a RDF syntax to elements It serializes to RDF syntaxes.">RDFSyntaxMediator</a> {
+<a name="l00052"></a>00052 <span class="keyword">public</span>:
+<a name="l00053"></a>00053     <a class="code" href="classRDFSyntaxMediator.html" title="RDF syntaxMediator It parses a RDF syntax to elements It serializes to RDF syntaxes.">RDFSyntaxMediator</a>();
+<a name="l00054"></a>00054     <span class="keywordtype">bool</span> parsing(<span class="keywordtype">char</span>* pathFile, <a class="code" href="structDictionaryTriples.html">DictionaryTriples</a> dictionaryTriples);
+<a name="l00055"></a>00055     <span class="keywordtype">bool</span> init_serialize(<span class="keywordtype">char</span> *pathFile, <span class="keywordtype">char</span> *format);
+<a name="l00056"></a>00056     <span class="keywordtype">bool</span> serialize_statement(<span class="keywordtype">string</span> subject, <span class="keywordtype">string</span> predicate, <span class="keywordtype">string</span> <span class="keywordtype">object</span>);
+<a name="l00057"></a>00057     <span class="keywordtype">bool</span> end_serialize();
+<a name="l00058"></a>00058     ~<a class="code" href="classRDFSyntaxMediator.html" title="RDF syntaxMediator It parses a RDF syntax to elements It serializes to RDF syntaxes.">RDFSyntaxMediator</a>();
+<a name="l00059"></a>00059 <span class="keyword">protected</span>:
+<a name="l00060"></a><a class="code" href="classRDFSyntaxMediator.html#a3a06f02b3ca11550cc3e1744bbcfe712">00060</a>     <span class="keywordtype">string</span> *<a class="code" href="RDFSyntaxMediator_8cpp.html#a6b93f4fc0c370dff78e8d6d209715a0c">node</a>;
+<a name="l00061"></a><a class="code" href="classRDFSyntaxMediator.html#a6d73acbe65df2f184023415ff8b498eb">00061</a>     raptor_parser* rdf_parser;
+<a name="l00062"></a><a class="code" href="classRDFSyntaxMediator.html#a9c7dffba21cab4b7854c8f38d0c06129">00062</a>     raptor_serializer* rdf_serializer;
+<a name="l00063"></a><a class="code" href="classRDFSyntaxMediator.html#a21dc06ac0ea26489979e1df4b895839e">00063</a>     vector&lt;raptor_namespace*&gt; namespaces;
+<a name="l00064"></a>00064 };
+<a name="l00065"></a>00065 
+<a name="l00066"></a>00066 <span class="preprocessor">#endif  </span><span class="comment">/* _RDFSYNTAXMEDIATOR_H */</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:03 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

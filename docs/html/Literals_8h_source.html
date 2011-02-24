@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -19,6 +20,7 @@
   <div class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+      <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
 <div class="header">
@@ -26,7 +28,7 @@
 <h1>Literals.h</h1>  </div>
 </div>
 <div class="contents">
-<div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* Literals.h</span>
+<a href="Literals_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* Literals.h</span>
 <a name="l00002"></a>00002 <span class="comment"> * Copyright (C) 2010, Javier D. Fernandez &amp; Miguel A, Martinez-Prieto</span>
 <a name="l00003"></a>00003 <span class="comment"> * all rights reserved.</span>
 <a name="l00004"></a>00004 <span class="comment"> *</span>
@@ -51,68 +53,58 @@
 <a name="l00023"></a>00023 <span class="comment"> *   Javier D. Fernandez:       jfergar@infor.uva.es</span>
 <a name="l00024"></a>00024 <span class="comment"> *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es</span>
 <a name="l00025"></a>00025 <span class="comment"> */</span>
-<a name="l00026"></a>00026  
+<a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#ifndef LITERALS_H</span>
 <a name="l00028"></a>00028 <span class="preprocessor"></span><span class="preprocessor">#define LITERALS_H</span>
 <a name="l00029"></a>00029 <span class="preprocessor"></span>
 <a name="l00030"></a>00030 <span class="preprocessor">#include &lt;string&gt;</span>
 <a name="l00031"></a>00031 <span class="keyword">using namespace </span>std;
 <a name="l00032"></a>00032 
-<a name="l00033"></a>00033 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> DATASET=<span class="stringliteral">&quot;dataset&quot;</span>;
-<a name="l00034"></a>00034 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> SYNTAX=<span class="stringliteral">&quot;syntax&quot;</span>;
-<a name="l00035"></a>00035 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> OUTPUT=<span class="stringliteral">&quot;output&quot;</span>;
-<a name="l00036"></a>00036 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> APPLICATION=<span class="stringliteral">&quot;application&quot;</span>;
-<a name="l00037"></a>00037 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> PARSING=<span class="stringliteral">&quot;parsing&quot;</span>;
-<a name="l00038"></a>00038 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> MAPPING=<span class="stringliteral">&quot;mapping&quot;</span>;
-<a name="l00039"></a>00039 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> CLUSTER=<span class="stringliteral">&quot;cluster&quot;</span>;
-<a name="l00040"></a>00040 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> D_SEPARATOR=<span class="stringliteral">&quot;dict_separator&quot;</span>;
-<a name="l00041"></a>00041 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> D_ORDERING=<span class="stringliteral">&quot;dict_ordering&quot;</span>;
-<a name="l00042"></a>00042 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> D_ENCODING=<span class="stringliteral">&quot;dict_encoding&quot;</span>;
-<a name="l00043"></a>00043 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> D_COMPRESSION=<span class="stringliteral">&quot;dict_compression&quot;</span>;
-<a name="l00044"></a>00044 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> T_ENCODING=<span class="stringliteral">&quot;triples_encoding&quot;</span>;
-<a name="l00045"></a>00045 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> T_COMPRESSION=<span class="stringliteral">&quot;triples_compression&quot;</span>;
-<a name="l00046"></a>00046 
-<a name="l00047"></a>00047 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VSYNTAX_N3=<span class="stringliteral">&quot;n3&quot;</span>;
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VPARSING_SPO=<span class="stringliteral">&quot;spo&quot;</span>;
-<a name="l00050"></a>00050 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VPARSING_SOP=<span class="stringliteral">&quot;sop&quot;</span>;
-<a name="l00051"></a>00051 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VPARSING_PSO=<span class="stringliteral">&quot;pso&quot;</span>;
-<a name="l00052"></a>00052 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VPARSING_POS=<span class="stringliteral">&quot;pos&quot;</span>;
-<a name="l00053"></a>00053 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VPARSING_OSP=<span class="stringliteral">&quot;osp&quot;</span>;
-<a name="l00054"></a>00054 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VPARSING_OPS=<span class="stringliteral">&quot;ops&quot;</span>;
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VMAPPING_1=<span class="stringliteral">&quot;single&quot;</span>;
-<a name="l00057"></a>00057 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VMAPPING_2=<span class="stringliteral">&quot;shared&quot;</span>;
-<a name="l00058"></a>00058 
-<a name="l00059"></a>00059 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VD_ORDERING_LEX=<span class="stringliteral">&quot;lexicographic&quot;</span>;
-<a name="l00060"></a>00060 
-<a name="l00061"></a>00061 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VD_ENCODING_IND=<span class="stringliteral">&quot;indexed&quot;</span>;
-<a name="l00062"></a>00062 
-<a name="l00063"></a>00063 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VD_COMPRESSION_PPM=<span class="stringliteral">&quot;ppm&quot;</span>;
-<a name="l00064"></a>00064 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VD_COMPRESSION_LZ=<span class="stringliteral">&quot;lzma&quot;</span>;
-<a name="l00065"></a>00065 
-<a name="l00066"></a>00066 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VT_ENCODING_COMP=<span class="stringliteral">&quot;compact&quot;</span>;
-<a name="l00067"></a>00067 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VT_ENCODING_BIT=<span class="stringliteral">&quot;bitmap&quot;</span>;
-<a name="l00068"></a>00068 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VT_ENCODING_K2=<span class="stringliteral">&quot;k2tree&quot;</span>;
-<a name="l00069"></a>00069 
-<a name="l00070"></a>00070 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VD_COMPRESSION_HUF=<span class="stringliteral">&quot;huffman&quot;</span>;
-<a name="l00071"></a>00071 
-<a name="l00072"></a>00072 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VNO=<span class="stringliteral">&quot;no&quot;</span>;
-<a name="l00073"></a>00073 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VNONE=<span class="stringliteral">&quot;none&quot;</span>;
-<a name="l00074"></a>00074 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VPLAIN=<span class="stringliteral">&quot;plain&quot;</span>;
-<a name="l00075"></a>00075 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> VYES=<span class="stringliteral">&quot;yes&quot;</span>;
-<a name="l00076"></a>00076 
-<a name="l00077"></a>00077 <span class="comment">// OPTIONAL LITERALS</span>
-<a name="l00078"></a>00078 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> HASH_SIZE=<span class="stringliteral">&quot;hash_size&quot;</span>;
-<a name="l00079"></a>00079 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> GNUPLOT_PATH=<span class="stringliteral">&quot;gnuplot_path&quot;</span>;
-<a name="l00080"></a>00080 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> DEGREE_PATH=<span class="stringliteral">&quot;degree_path&quot;</span>;
-<a name="l00081"></a>00081 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> RDF_PARSER=<span class="stringliteral">&quot;rdf_parser&quot;</span>;
-<a name="l00082"></a>00082 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> RDF_PARSER_OWN=<span class="stringliteral">&quot;own&quot;</span>;
-<a name="l00083"></a>00083 
-<a name="l00084"></a>00084 <span class="preprocessor">#endif  </span><span class="comment">/* _LITERALS_H */</span>
+<a name="l00033"></a><a class="code" href="Literals_8h.html#a2b6e5b851fcc9c0ffcfaf4594d960623">00033</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a2b6e5b851fcc9c0ffcfaf4594d960623">DATASET</a> = <span class="stringliteral">&quot;dataset&quot;</span>;
+<a name="l00034"></a><a class="code" href="Literals_8h.html#ae082d2cc207ae147d077090ec8ce0082">00034</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#ae082d2cc207ae147d077090ec8ce0082">SYNTAX</a> = <span class="stringliteral">&quot;syntax&quot;</span>;
+<a name="l00035"></a><a class="code" href="Literals_8h.html#ac84b430251739158424a9356eda1fb6a">00035</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#ac84b430251739158424a9356eda1fb6a">OUTPUT</a> = <span class="stringliteral">&quot;output&quot;</span>;
+<a name="l00036"></a><a class="code" href="Literals_8h.html#a0f68da68eb6e4dc9ce933cc191c8f775">00036</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a0f68da68eb6e4dc9ce933cc191c8f775">APPLICATION</a> = <span class="stringliteral">&quot;application&quot;</span>;
+<a name="l00037"></a><a class="code" href="Literals_8h.html#a4ca882e3fac360be5fd39bddd494bd5a">00037</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a4ca882e3fac360be5fd39bddd494bd5a">PARSING</a> = <span class="stringliteral">&quot;parsing&quot;</span>;
+<a name="l00038"></a><a class="code" href="Literals_8h.html#acc4214bb3c5423dd6ae5deb6d87e961f">00038</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#acc4214bb3c5423dd6ae5deb6d87e961f">MAPPING</a> = <span class="stringliteral">&quot;mapping&quot;</span>;
+<a name="l00039"></a><a class="code" href="Literals_8h.html#a7f2474fd0abf182829d5c331f33aaaa8">00039</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a7f2474fd0abf182829d5c331f33aaaa8">CLUSTER</a> = <span class="stringliteral">&quot;cluster&quot;</span>;
+<a name="l00040"></a><a class="code" href="Literals_8h.html#a1dd09c9bf2d572d51e51d7a336f01ae5">00040</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a1dd09c9bf2d572d51e51d7a336f01ae5">D_SEPARATOR</a> = <span class="stringliteral">&quot;dict_separator&quot;</span>;
+<a name="l00041"></a><a class="code" href="Literals_8h.html#aede87105d4a1efd3c9675797fe100a32">00041</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#aede87105d4a1efd3c9675797fe100a32">D_ORDERING</a> = <span class="stringliteral">&quot;dict_ordering&quot;</span>;
+<a name="l00042"></a><a class="code" href="Literals_8h.html#ac29a38108823cc834005060992d67de5">00042</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#ac29a38108823cc834005060992d67de5">D_ENCODING</a> = <span class="stringliteral">&quot;dict_encoding&quot;</span>;
+<a name="l00043"></a><a class="code" href="Literals_8h.html#a3fd6fbf3c7d6bf12fd604dab3dc32bee">00043</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a3fd6fbf3c7d6bf12fd604dab3dc32bee">D_COMPRESSION</a> = <span class="stringliteral">&quot;dict_compression&quot;</span>;
+<a name="l00044"></a><a class="code" href="Literals_8h.html#a8151dd8a6243d469812c5c5ecf8ca039">00044</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a8151dd8a6243d469812c5c5ecf8ca039">T_ENCODING</a> = <span class="stringliteral">&quot;triples_encoding&quot;</span>;
+<a name="l00045"></a><a class="code" href="Literals_8h.html#a4bf3288ea3dbbc7374362480c69cefbc">00045</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a4bf3288ea3dbbc7374362480c69cefbc">T_COMPRESSION</a> = <span class="stringliteral">&quot;triples_compression&quot;</span>;
+<a name="l00046"></a><a class="code" href="Literals_8h.html#aae280ae75588a3866d02069cda15b376">00046</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#aae280ae75588a3866d02069cda15b376">VSYNTAX_N3</a> = <span class="stringliteral">&quot;n3&quot;</span>;
+<a name="l00047"></a><a class="code" href="Literals_8h.html#a0b49649a91effa38e152495b0d16b467">00047</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a0b49649a91effa38e152495b0d16b467">VPARSING_SPO</a> = <span class="stringliteral">&quot;spo&quot;</span>;
+<a name="l00048"></a><a class="code" href="Literals_8h.html#aefda194dba5316fa60f969c93cfb20b7">00048</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#aefda194dba5316fa60f969c93cfb20b7">VPARSING_SOP</a> = <span class="stringliteral">&quot;sop&quot;</span>;
+<a name="l00049"></a><a class="code" href="Literals_8h.html#a80ea33f060d41bcd09a42176210f6975">00049</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a80ea33f060d41bcd09a42176210f6975">VPARSING_PSO</a> = <span class="stringliteral">&quot;pso&quot;</span>;
+<a name="l00050"></a><a class="code" href="Literals_8h.html#a071cfd9d62563e044d06394727e8300c">00050</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a071cfd9d62563e044d06394727e8300c">VPARSING_POS</a> = <span class="stringliteral">&quot;pos&quot;</span>;
+<a name="l00051"></a><a class="code" href="Literals_8h.html#adc6b16201cb0bfa220a9b9b1ed1d3bc3">00051</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#adc6b16201cb0bfa220a9b9b1ed1d3bc3">VPARSING_OSP</a> = <span class="stringliteral">&quot;osp&quot;</span>;
+<a name="l00052"></a><a class="code" href="Literals_8h.html#a831f91a634a3b2895393377f03aec429">00052</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a831f91a634a3b2895393377f03aec429">VPARSING_OPS</a> = <span class="stringliteral">&quot;ops&quot;</span>;
+<a name="l00053"></a><a class="code" href="Literals_8h.html#aa039c90c365eaa896ac5e3b0c52db199">00053</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#aa039c90c365eaa896ac5e3b0c52db199">VMAPPING_1</a> = <span class="stringliteral">&quot;single&quot;</span>;
+<a name="l00054"></a><a class="code" href="Literals_8h.html#afdf234e0b4baa9bd3382c0cc6b3251cb">00054</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#afdf234e0b4baa9bd3382c0cc6b3251cb">VMAPPING_2</a> = <span class="stringliteral">&quot;shared&quot;</span>;
+<a name="l00055"></a><a class="code" href="Literals_8h.html#a88192fecf04ad5f2e19d5f40d4c31f90">00055</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a88192fecf04ad5f2e19d5f40d4c31f90">VD_ORDERING_LEX</a> = <span class="stringliteral">&quot;lexicographic&quot;</span>;
+<a name="l00056"></a><a class="code" href="Literals_8h.html#a945a3b2aa016c4f69c8585e68c6f132b">00056</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a945a3b2aa016c4f69c8585e68c6f132b">VD_ENCODING_IND</a> = <span class="stringliteral">&quot;indexed&quot;</span>;
+<a name="l00057"></a><a class="code" href="Literals_8h.html#afde843831222f829ca1f1fb50c6762d0">00057</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#afde843831222f829ca1f1fb50c6762d0">VD_COMPRESSION_PPM</a> = <span class="stringliteral">&quot;ppm&quot;</span>;
+<a name="l00058"></a><a class="code" href="Literals_8h.html#a20bb8f9cde99141bf165645dbe4b9c76">00058</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a20bb8f9cde99141bf165645dbe4b9c76">VD_COMPRESSION_LZ</a> = <span class="stringliteral">&quot;lzma&quot;</span>;
+<a name="l00059"></a><a class="code" href="Literals_8h.html#aec7d57a3a9561ad89b3a62828fa1d380">00059</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#aec7d57a3a9561ad89b3a62828fa1d380">VT_ENCODING_COMP</a> = <span class="stringliteral">&quot;compact&quot;</span>;
+<a name="l00060"></a><a class="code" href="Literals_8h.html#a99b27e4e3ed303f08117b702f917a085">00060</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a99b27e4e3ed303f08117b702f917a085">VT_ENCODING_BIT</a> = <span class="stringliteral">&quot;bitmap&quot;</span>;
+<a name="l00061"></a><a class="code" href="Literals_8h.html#a63597e88fe6fc6f847143faa771a83da">00061</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a63597e88fe6fc6f847143faa771a83da">VT_ENCODING_K2</a> = <span class="stringliteral">&quot;k2tree&quot;</span>;
+<a name="l00062"></a><a class="code" href="Literals_8h.html#aec6bb9906012c51c25adb0c0a4bedcca">00062</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#aec6bb9906012c51c25adb0c0a4bedcca">VD_COMPRESSION_HUF</a> = <span class="stringliteral">&quot;huffman&quot;</span>;
+<a name="l00063"></a><a class="code" href="Literals_8h.html#adab9f312e8b863c3b56377b001b1d79b">00063</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#adab9f312e8b863c3b56377b001b1d79b">VNO</a> = <span class="stringliteral">&quot;no&quot;</span>;
+<a name="l00064"></a><a class="code" href="Literals_8h.html#ab3ec64731b8d478c5b79b5c11569993c">00064</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#ab3ec64731b8d478c5b79b5c11569993c">VNONE</a> = <span class="stringliteral">&quot;none&quot;</span>;
+<a name="l00065"></a><a class="code" href="Literals_8h.html#a63aed20df12fde70f54b173f968061d1">00065</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a63aed20df12fde70f54b173f968061d1">VPLAIN</a> = <span class="stringliteral">&quot;plain&quot;</span>;
+<a name="l00066"></a><a class="code" href="Literals_8h.html#aab9e08a556bdcb2254a835c218f478bd">00066</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#aab9e08a556bdcb2254a835c218f478bd">VYES</a> = <span class="stringliteral">&quot;yes&quot;</span>;
+<a name="l00067"></a>00067 <span class="comment">// OPTIONAL LITERALS</span>
+<a name="l00068"></a><a class="code" href="Literals_8h.html#a960423cfc1e792777d69cdbecaada39d">00068</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a960423cfc1e792777d69cdbecaada39d">HASH_SIZE</a> = <span class="stringliteral">&quot;hash_size&quot;</span>;
+<a name="l00069"></a><a class="code" href="Literals_8h.html#a79078f7cd59656cd0101e094c648bd39">00069</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a79078f7cd59656cd0101e094c648bd39">GNUPLOT_PATH</a> = <span class="stringliteral">&quot;gnuplot_path&quot;</span>;
+<a name="l00070"></a><a class="code" href="Literals_8h.html#ab984e66f38b716488bba2d040a2605b4">00070</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#ab984e66f38b716488bba2d040a2605b4">DEGREE_PATH</a> = <span class="stringliteral">&quot;degree_path&quot;</span>;
+<a name="l00071"></a><a class="code" href="Literals_8h.html#ae4ce8fbbdab1dc798bfb36c59dfe33e7">00071</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#ae4ce8fbbdab1dc798bfb36c59dfe33e7">RDF_PARSER</a> = <span class="stringliteral">&quot;rdf_parser&quot;</span>;
+<a name="l00072"></a><a class="code" href="Literals_8h.html#a5bee49b8676bb07e24add67972b98c9e">00072</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">string</span> <a class="code" href="Literals_8h.html#a5bee49b8676bb07e24add67972b98c9e">RDF_PARSER_OWN</a> = <span class="stringliteral">&quot;own&quot;</span>;
+<a name="l00073"></a>00073 
+<a name="l00074"></a>00074 <span class="preprocessor">#endif  </span><span class="comment">/* _LITERALS_H */</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:02 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

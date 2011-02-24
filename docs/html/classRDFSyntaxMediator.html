@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -34,36 +35,39 @@
 </div>
 <div class="contents">
 <!-- doxytag: class="RDFSyntaxMediator" -->
+<p>RDF syntaxMediator It parses a RDF syntax to elements It serializes to RDF syntaxes.  
+<a href="#_details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="RDFSyntaxMediator_8h_source.html">RDFSyntaxMediator.h</a>&gt;</code></p>
 
 <p><a href="classRDFSyntaxMediator-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa84106b6a7e1cfbcd873fdfa27f7e75f"></a><!-- doxytag: member="RDFSyntaxMediator::end_serialize" ref="aa84106b6a7e1cfbcd873fdfa27f7e75f" args="()" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>end_serialize</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#aa84106b6a7e1cfbcd873fdfa27f7e75f">end_serialize</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">End Serialize.  <a href="#aa84106b6a7e1cfbcd873fdfa27f7e75f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a0ce23a2b3806129feb4212f17044005c">init_serialize</a> (char *pathFile, char *format)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Init Serialize.  <a href="#a0ce23a2b3806129feb4212f17044005c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a8665fc72bd587d42e41f1779b84aea45">parsing</a> (char *pathFile, <a class="el" href="structDictionaryTriples.html">DictionaryTriples</a> dictionaryTriples)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Parsing.  <a href="#a8665fc72bd587d42e41f1779b84aea45"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a5b9528c6ab936902875da2b94c85bc56">RDFSyntaxMediator</a> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f32b3f10dcaee9b2911d591c29d0a96"></a><!-- doxytag: member="RDFSyntaxMediator::serialize_statement" ref="a3f32b3f10dcaee9b2911d591c29d0a96" args="(string subject, string predicate, string object)" -->
-bool&nbsp;</td><td class="memItemRight" valign="bottom"><b>serialize_statement</b> (string subject, string predicate, string object)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Base constructor.  <a href="#a5b9528c6ab936902875da2b94c85bc56"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a3f32b3f10dcaee9b2911d591c29d0a96">serialize_statement</a> (string subject, string predicate, string object)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Serialize Statement.  <a href="#a3f32b3f10dcaee9b2911d591c29d0a96"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a462d255a44531300567e0028b7cfea41">~RDFSyntaxMediator</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destructor for <a class="el" href="classRDFSyntaxMediator.html" title="RDF syntaxMediator It parses a RDF syntax to elements It serializes to RDF syntaxes.">RDFSyntaxMediator</a>.  <a href="#a462d255a44531300567e0028b7cfea41"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21dc06ac0ea26489979e1df4b895839e"></a><!-- doxytag: member="RDFSyntaxMediator::namespaces" ref="a21dc06ac0ea26489979e1df4b895839e" args="" -->
-vector&lt; raptor_namespace * &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><b>namespaces</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3a06f02b3ca11550cc3e1744bbcfe712"></a><!-- doxytag: member="RDFSyntaxMediator::node" ref="a3a06f02b3ca11550cc3e1744bbcfe712" args="" -->
-string *&nbsp;</td><td class="memItemRight" valign="bottom"><b>node</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d73acbe65df2f184023415ff8b498eb"></a><!-- doxytag: member="RDFSyntaxMediator::rdf_parser" ref="a6d73acbe65df2f184023415ff8b498eb" args="" -->
-raptor_parser *&nbsp;</td><td class="memItemRight" valign="bottom"><b>rdf_parser</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c7dffba21cab4b7854c8f38d0c06129"></a><!-- doxytag: member="RDFSyntaxMediator::rdf_serializer" ref="a9c7dffba21cab4b7854c8f38d0c06129" args="" -->
-raptor_serializer *&nbsp;</td><td class="memItemRight" valign="bottom"><b>rdf_serializer</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">vector&lt; raptor_namespace * &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a21dc06ac0ea26489979e1df4b895839e">namespaces</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">string *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a3a06f02b3ca11550cc3e1744bbcfe712">node</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">raptor_parser *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a6d73acbe65df2f184023415ff8b498eb">rdf_parser</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">raptor_serializer *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRDFSyntaxMediator.html#a9c7dffba21cab4b7854c8f38d0c06129">rdf_serializer</a></td></tr>
 </table>
 <hr/><a name="_details"></a><h2>Detailed Description</h2>
-<p>RDF syntaxMediator It parses a RDF syntax to elements It serializes to RDF syntaxes.</p>
+<p>RDF syntaxMediator It parses a RDF syntax to elements It serializes to RDF syntaxes. </p>
 <dl class="author"><dt><b>Author:</b></dt><dd>Javier D. Fernandez </dd></dl>
 
-<p>Definition at line <a class="el" href="RDFSyntaxMediator_8h_source.html#l00053">53</a> of file <a class="el" href="RDFSyntaxMediator_8h_source.html">RDFSyntaxMediator.h</a>.</p>
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8h_source.html#l00051">51</a> of file <a class="el" href="RDFSyntaxMediator_8h_source.html">RDFSyntaxMediator.h</a>.</p>
 <hr/><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a5b9528c6ab936902875da2b94c85bc56"></a><!-- doxytag: member="RDFSyntaxMediator::RDFSyntaxMediator" ref="a5b9528c6ab936902875da2b94c85bc56" args="()" -->
 <div class="memitem">
@@ -79,9 +83,10 @@ raptor_serializer *&nbsp;</td><td class="memItemRight" valign="bottom"><b>rdf_se
       </table>
 </div>
 <div class="memdoc">
-<p>Generic constructor </p>
 
-<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00029">29</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
+<p>Base constructor. </p>
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00031">31</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
 
 </div>
 </div>
@@ -99,13 +104,36 @@ raptor_serializer *&nbsp;</td><td class="memItemRight" valign="bottom"><b>rdf_se
       </table>
 </div>
 <div class="memdoc">
-<p>Destructor </p>
 
-<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00217">217</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
+<p>Destructor for <a class="el" href="classRDFSyntaxMediator.html" title="RDF syntaxMediator It parses a RDF syntax to elements It serializes to RDF syntaxes.">RDFSyntaxMediator</a>. </p>
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00268">268</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
 
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="aa84106b6a7e1cfbcd873fdfa27f7e75f"></a><!-- doxytag: member="RDFSyntaxMediator::end_serialize" ref="aa84106b6a7e1cfbcd873fdfa27f7e75f" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RDFSyntaxMediator::end_serialize </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>End Serialize. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The expected result </dd></dl>
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00258">258</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a0ce23a2b3806129feb4212f17044005c"></a><!-- doxytag: member="RDFSyntaxMediator::init_serialize" ref="a0ce23a2b3806129feb4212f17044005c" args="(char *pathFile, char *format)" -->
 <div class="memitem">
 <div class="memproto">
@@ -130,9 +158,18 @@ raptor_serializer *&nbsp;</td><td class="memItemRight" valign="bottom"><b>rdf_se
       </table>
 </div>
 <div class="memdoc">
-<p>Serialize to a format </p>
 
-<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00136">136</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
+<p>Init Serialize. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>pathFile</em>&nbsp;</td><td>Description of the param. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>format</em>&nbsp;</td><td>Description of the param. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The expected result </dd></dl>
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00176">176</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
 
 </div>
 </div>
@@ -160,9 +197,125 @@ raptor_serializer *&nbsp;</td><td class="memItemRight" valign="bottom"><b>rdf_se
       </table>
 </div>
 <div class="memdoc">
-<p>Prepares the RDF file to parse </p>
 
-<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00098">98</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
+<p>Parsing. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>pathFile</em>&nbsp;</td><td>Description of the param. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dictionaryTriples</em>&nbsp;</td><td>Description of the param. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The expected result </dd></dl>
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00136">136</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3f32b3f10dcaee9b2911d591c29d0a96"></a><!-- doxytag: member="RDFSyntaxMediator::serialize_statement" ref="a3f32b3f10dcaee9b2911d591c29d0a96" args="(string subject, string predicate, string object)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool RDFSyntaxMediator::serialize_statement </td>
+          <td>(</td>
+          <td class="paramtype">string&nbsp;</td>
+          <td class="paramname"> <em>subject</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&nbsp;</td>
+          <td class="paramname"> <em>predicate</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&nbsp;</td>
+          <td class="paramname"> <em>object</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Serialize Statement. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>subject</em>&nbsp;</td><td>Description of the param. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>predicate</em>&nbsp;</td><td>Description of the param. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>object</em>&nbsp;</td><td>Description of the param. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The expected result </dd></dl>
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8cpp_source.html#l00220">220</a> of file <a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a>.</p>
+
+</div>
+</div>
+<hr/><h2>Member Data Documentation</h2>
+<a class="anchor" id="a21dc06ac0ea26489979e1df4b895839e"></a><!-- doxytag: member="RDFSyntaxMediator::namespaces" ref="a21dc06ac0ea26489979e1df4b895839e" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vector&lt;raptor_namespace*&gt; <a class="el" href="classRDFSyntaxMediator.html#a21dc06ac0ea26489979e1df4b895839e">RDFSyntaxMediator::namespaces</a><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8h_source.html#l00063">63</a> of file <a class="el" href="RDFSyntaxMediator_8h_source.html">RDFSyntaxMediator.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3a06f02b3ca11550cc3e1744bbcfe712"></a><!-- doxytag: member="RDFSyntaxMediator::node" ref="a3a06f02b3ca11550cc3e1744bbcfe712" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string* <a class="el" href="classRDFSyntaxMediator.html#a3a06f02b3ca11550cc3e1744bbcfe712">RDFSyntaxMediator::node</a><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8h_source.html#l00060">60</a> of file <a class="el" href="RDFSyntaxMediator_8h_source.html">RDFSyntaxMediator.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a6d73acbe65df2f184023415ff8b498eb"></a><!-- doxytag: member="RDFSyntaxMediator::rdf_parser" ref="a6d73acbe65df2f184023415ff8b498eb" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">raptor_parser* <a class="el" href="classRDFSyntaxMediator.html#a6d73acbe65df2f184023415ff8b498eb">RDFSyntaxMediator::rdf_parser</a><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8h_source.html#l00061">61</a> of file <a class="el" href="RDFSyntaxMediator_8h_source.html">RDFSyntaxMediator.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9c7dffba21cab4b7854c8f38d0c06129"></a><!-- doxytag: member="RDFSyntaxMediator::rdf_serializer" ref="a9c7dffba21cab4b7854c8f38d0c06129" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">raptor_serializer* <a class="el" href="classRDFSyntaxMediator.html#a9c7dffba21cab4b7854c8f38d0c06129">RDFSyntaxMediator::rdf_serializer</a><code> [protected]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="RDFSyntaxMediator_8h_source.html#l00062">62</a> of file <a class="el" href="RDFSyntaxMediator_8h_source.html">RDFSyntaxMediator.h</a>.</p>
 
 </div>
 </div>
@@ -171,7 +324,7 @@ raptor_serializer *&nbsp;</td><td class="memItemRight" valign="bottom"><b>rdf_se
 <li><a class="el" href="RDFSyntaxMediator_8cpp_source.html">RDFSyntaxMediator.cpp</a></li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:03 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

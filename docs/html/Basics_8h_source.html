@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -19,6 +20,7 @@
   <div class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+      <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
 <div class="header">
@@ -26,7 +28,7 @@
 <h1>Basics.h</h1>  </div>
 </div>
 <div class="contents">
-<div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* Basics.h</span>
+<a href="Basics_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* Basics.h</span>
 <a name="l00002"></a>00002 <span class="comment"> * Copyright (C) 2010, Javier D. Fernandez &amp; Miguel A, Martinez-Prieto</span>
 <a name="l00003"></a>00003 <span class="comment"> * all rights reserved.</span>
 <a name="l00004"></a>00004 <span class="comment"> *</span>
@@ -51,7 +53,7 @@
 <a name="l00023"></a>00023 <span class="comment"> *   Javier D. Fernandez:       jfergar@infor.uva.es</span>
 <a name="l00024"></a>00024 <span class="comment"> *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es</span>
 <a name="l00025"></a>00025 <span class="comment"> */</span>
-<a name="l00026"></a>00026  
+<a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#ifndef BASICS_H</span>
 <a name="l00028"></a>00028 <span class="preprocessor"></span><span class="preprocessor">#define BASICS_H</span>
 <a name="l00029"></a>00029 <span class="preprocessor"></span>
@@ -63,77 +65,160 @@
 <a name="l00035"></a>00035 
 <a name="l00036"></a>00036 <span class="keyword">using namespace </span>std;
 <a name="l00037"></a>00037 
-<a name="l00038"></a>00038 <span class="preprocessor">#define INT32 4</span>
+<a name="l00038"></a><a class="code" href="Basics_8h.html#aac92c5ec332dafe0abb24688dad1b795">00038</a> <span class="preprocessor">#define INT32 4</span>
 <a name="l00039"></a>00039 <span class="preprocessor"></span>
 <a name="l00040"></a>00040 <span class="comment">// Points a variable value in a query</span>
-<a name="l00041"></a>00041 <span class="preprocessor">#define QVARIABLE 0</span>
+<a name="l00041"></a><a class="code" href="Basics_8h.html#a96f2fdea1d1b1365d2bf27e6f867230a">00041</a> <span class="preprocessor">#define QVARIABLE 0</span>
 <a name="l00042"></a>00042 <span class="preprocessor"></span><span class="comment">// Points out some error</span>
-<a name="l00043"></a>00043 <span class="preprocessor">#define ERROR -1</span>
+<a name="l00043"></a><a class="code" href="Basics_8h.html#a8fe83ac76edc595f6b98cd4a4127aed5">00043</a> <span class="preprocessor">#define ERROR -1</span>
 <a name="l00044"></a>00044 <span class="preprocessor"></span>
 <a name="l00045"></a>00045 <span class="comment">// Graph parsing constant</span>
-<a name="l00046"></a>00046 <span class="keyword">enum</span> ParsingType {
-<a name="l00047"></a>00047     SPO = 1,
-<a name="l00048"></a>00048     SOP,
-<a name="l00049"></a>00049     PSO,
-<a name="l00050"></a>00050     POS,
-<a name="l00051"></a>00051     OSP,
-<a name="l00052"></a>00052     OPS
-<a name="l00053"></a>00053 };
-<a name="l00054"></a>00054 
-<a name="l00055"></a>00055 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *parsingTypeStr[] = { <span class="stringliteral">&quot;&quot;</span>, <span class="stringliteral">&quot;SPO&quot;</span>,<span class="stringliteral">&quot;SOP&quot;</span>,<span class="stringliteral">&quot;PSO&quot;</span>,<span class="stringliteral">&quot;POS&quot;</span>,<span class="stringliteral">&quot;OSP&quot;</span>,<span class="stringliteral">&quot;OPS&quot;</span> }; 
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057 <span class="preprocessor">#define SPO 1</span>
-<a name="l00058"></a>00058 <span class="preprocessor"></span><span class="preprocessor">#define SOP 2</span>
-<a name="l00059"></a>00059 <span class="preprocessor"></span><span class="preprocessor">#define PSO 3</span>
-<a name="l00060"></a>00060 <span class="preprocessor"></span><span class="preprocessor">#define POS 4</span>
-<a name="l00061"></a>00061 <span class="preprocessor"></span><span class="preprocessor">#define OSP 5</span>
-<a name="l00062"></a>00062 <span class="preprocessor"></span><span class="preprocessor">#define OPS 6</span>
+<a name="l00046"></a><a class="code" href="Basics_8h.html#a5c8a3558c9a2b5d5dce60d4f46699597">00046</a> <span class="keyword">enum</span> <a class="code" href="Basics_8h.html#a5c8a3558c9a2b5d5dce60d4f46699597">ParsingType</a> {
+<a name="l00047"></a><a class="code" href="Basics_8h.html#a5c8a3558c9a2b5d5dce60d4f46699597a037fbf5052ce9e2ef5d7795b52340a2e">00047</a>     <a class="code" href="Basics_8h.html#ac42db4ab14e838fffa402a8b3744c795">SPO</a> = 1, SOP, PSO, POS, OSP, <a class="code" href="Basics_8h.html#a00ee1af6cc99c68dbafdbd4821e27354">OPS</a>
+<a name="l00048"></a>00048 };
+<a name="l00049"></a>00049 
+<a name="l00050"></a><a class="code" href="Basics_8h.html#aa9e41d2658e3ddc6684e8427be60d6aa">00050</a> <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="Basics_8h.html#aa9e41d2658e3ddc6684e8427be60d6aa">parsingTypeStr</a>[] = { <span class="stringliteral">&quot;&quot;</span>, <span class="stringliteral">&quot;SPO&quot;</span>, <span class="stringliteral">&quot;SOP&quot;</span>, <span class="stringliteral">&quot;PSO&quot;</span>, <span class="stringliteral">&quot;POS&quot;</span>, <span class="stringliteral">&quot;OSP&quot;</span>,
+<a name="l00051"></a>00051         <span class="stringliteral">&quot;OPS&quot;</span> };
+<a name="l00052"></a>00052 
+<a name="l00053"></a><a class="code" href="Basics_8h.html#ac42db4ab14e838fffa402a8b3744c795">00053</a> <span class="preprocessor">#define SPO 1</span>
+<a name="l00054"></a><a class="code" href="Basics_8h.html#aca4b4a1895b8640f925648aec3c406dd">00054</a> <span class="preprocessor"></span><span class="preprocessor">#define SOP 2</span>
+<a name="l00055"></a><a class="code" href="Basics_8h.html#a838696413b88618152779138f0d452db">00055</a> <span class="preprocessor"></span><span class="preprocessor">#define PSO 3</span>
+<a name="l00056"></a><a class="code" href="Basics_8h.html#a63cb3834e6075ddad87f8ce324e53988">00056</a> <span class="preprocessor"></span><span class="preprocessor">#define POS 4</span>
+<a name="l00057"></a><a class="code" href="Basics_8h.html#a3124b0fe64ad790b48cdc507cadac985">00057</a> <span class="preprocessor"></span><span class="preprocessor">#define OSP 5</span>
+<a name="l00058"></a><a class="code" href="Basics_8h.html#a00ee1af6cc99c68dbafdbd4821e27354">00058</a> <span class="preprocessor"></span><span class="preprocessor">#define OPS 6</span>
+<a name="l00059"></a>00059 <span class="preprocessor"></span>
+<a name="l00060"></a>00060 <span class="comment">// Dictionary mapping constants</span>
+<a name="l00061"></a><a class="code" href="Basics_8h.html#aa95d5443626e0ea22e2ec41f6660c87f">00061</a> <span class="preprocessor">#define MAPPING1 1</span>
+<a name="l00062"></a><a class="code" href="Basics_8h.html#aee4667f3c47bf97ab996cd61640889d5">00062</a> <span class="preprocessor"></span><span class="preprocessor">#define MAPPING2 2</span>
 <a name="l00063"></a>00063 <span class="preprocessor"></span>
-<a name="l00064"></a>00064 <span class="comment">// Dictionary mapping constants</span>
-<a name="l00065"></a>00065 <span class="preprocessor">#define MAPPING1 1</span>
-<a name="l00066"></a>00066 <span class="preprocessor"></span><span class="preprocessor">#define MAPPING2 2</span>
-<a name="l00067"></a>00067 <span class="preprocessor"></span>
-<a name="l00068"></a>00068 <span class="comment">// Dictionary encoding constants</span>
-<a name="l00069"></a>00069 <span class="preprocessor">#define PLAIN 1</span>
-<a name="l00070"></a>00070 <span class="preprocessor"></span><span class="preprocessor">#define COMPACT 2</span>
-<a name="l00071"></a>00071 <span class="preprocessor"></span><span class="preprocessor">#define BITMAP 3</span>
-<a name="l00072"></a>00072 <span class="preprocessor"></span><span class="preprocessor">#define K2TREE 4</span>
-<a name="l00073"></a>00073 <span class="preprocessor"></span>
-<a name="l00074"></a>00074 <span class="comment">// Modes for accessing a specific vocabulary in the dictionary</span>
-<a name="l00075"></a>00075 <span class="preprocessor">#define VOC_SUBJECT 0</span>
-<a name="l00076"></a>00076 <span class="preprocessor"></span><span class="preprocessor">#define VOC_PREDICATE 1</span>
-<a name="l00077"></a>00077 <span class="preprocessor"></span><span class="preprocessor">#define VOC_OBJECT 2</span>
-<a name="l00078"></a>00078 <span class="preprocessor"></span>
-<a name="l00079"></a><a class="code" href="structDataTime.html">00079</a> <span class="keyword">struct </span><a class="code" href="structDataTime.html">DataTime</a>
-<a name="l00080"></a>00080 {
-<a name="l00081"></a>00081     <span class="keywordtype">double</span> user;
-<a name="l00082"></a>00082     <span class="keywordtype">double</span> sys;
-<a name="l00083"></a>00083     <span class="keywordtype">double</span> total;
-<a name="l00084"></a>00084 };
-<a name="l00085"></a>00085 
-<a name="l00086"></a><a class="code" href="structTripleID.html">00086</a> <span class="keyword">struct </span><a class="code" href="structTripleID.html">TripleID</a>
-<a name="l00087"></a>00087 {
-<a name="l00088"></a>00088     <span class="keywordtype">int</span> x;
-<a name="l00089"></a>00089     <span class="keywordtype">int</span> y;
-<a name="l00090"></a>00090     <span class="keywordtype">int</span> z;
-<a name="l00091"></a>00091 };
-<a name="l00092"></a>00092 
-<a name="l00093"></a><a class="code" href="structQuery.html">00093</a> <span class="keyword">struct </span><a class="code" href="structQuery.html">Query</a>
-<a name="l00094"></a>00094 {
-<a name="l00095"></a>00095     <span class="keywordtype">int</span> variables;
-<a name="l00096"></a>00096     <a class="code" href="structTripleID.html">TripleID</a> q;
-<a name="l00097"></a>00097 };
-<a name="l00098"></a>00098 
-<a name="l00099"></a><a class="code" href="structTripleString.html">00099</a> <span class="keyword">struct </span><a class="code" href="structTripleString.html">TripleString</a>
-<a name="l00100"></a>00100 {
-<a name="l00101"></a>00101     <span class="keywordtype">string</span> x;
-<a name="l00102"></a>00102     <span class="keywordtype">string</span> y;
-<a name="l00103"></a>00103     <span class="keywordtype">string</span> z;
-<a name="l00104"></a>00104 };
-<a name="l00105"></a>00105 
+<a name="l00064"></a>00064 <span class="comment">// Dictionary encoding constants</span>
+<a name="l00065"></a><a class="code" href="Basics_8h.html#abc7f43a908375cea671baef998280202">00065</a> <span class="preprocessor">#define PLAIN 1</span>
+<a name="l00066"></a><a class="code" href="Basics_8h.html#a2292f931282e7760b30786e13ba3f661">00066</a> <span class="preprocessor"></span><span class="preprocessor">#define COMPACT 2</span>
+<a name="l00067"></a><a class="code" href="Basics_8h.html#adab53bea12ff97f8803d37dfcc8b1627">00067</a> <span class="preprocessor"></span><span class="preprocessor">#define BITMAP 3</span>
+<a name="l00068"></a><a class="code" href="Basics_8h.html#a7e849435a41be9b960f7d375951b90f2">00068</a> <span class="preprocessor"></span><span class="preprocessor">#define K2TREE 4</span>
+<a name="l00069"></a>00069 <span class="preprocessor"></span>
+<a name="l00070"></a>00070 <span class="comment">// Modes for accessing a specific vocabulary in the dictionary</span>
+<a name="l00071"></a><a class="code" href="Basics_8h.html#a822ff4325196817ea446cb9ecd742769">00071</a> <span class="preprocessor">#define VOC_SUBJECT 0</span>
+<a name="l00072"></a><a class="code" href="Basics_8h.html#a3c425908bb40aa29470b18a8d7cbf0ca">00072</a> <span class="preprocessor"></span><span class="preprocessor">#define VOC_PREDICATE 1</span>
+<a name="l00073"></a><a class="code" href="Basics_8h.html#a250fb37e208525b44161a78789570bd7">00073</a> <span class="preprocessor"></span><span class="preprocessor">#define VOC_OBJECT 2</span>
+<a name="l00074"></a>00074 <span class="preprocessor"></span>
+<a name="l00075"></a><a class="code" href="structDataTime.html">00075</a> <span class="keyword">struct </span><a class="code" href="structDataTime.html">DataTime</a> {
+<a name="l00076"></a><a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">00076</a>     <span class="keywordtype">double</span> user;
+<a name="l00077"></a><a class="code" href="structDataTime.html#a8daa435eaad59919a87ad55fbf3a7563">00077</a>     <span class="keywordtype">double</span> sys;
+<a name="l00078"></a><a class="code" href="structDataTime.html#a4c505e1a82276e5f8c2580b609b9b24c">00078</a>     <span class="keywordtype">double</span> total;
+<a name="l00079"></a>00079 };
+<a name="l00080"></a>00080 
+<a name="l00081"></a><a class="code" href="structTripleID.html">00081</a> <span class="keyword">struct </span><a class="code" href="structTripleID.html">TripleID</a> {
+<a name="l00082"></a><a class="code" href="structTripleID.html#acb1372acc6d1e0b6a6639e7f9276a077">00082</a>     <span class="keywordtype">int</span> x;
+<a name="l00083"></a><a class="code" href="structTripleID.html#a104650066a0172234ade29c3c7b679e5">00083</a>     <span class="keywordtype">int</span> y;
+<a name="l00084"></a><a class="code" href="structTripleID.html#a012d561e4c272f4118eabd35e8d19a40">00084</a>     <span class="keywordtype">int</span> z;
+<a name="l00085"></a>00085 };
+<a name="l00086"></a>00086 
+<a name="l00087"></a><a class="code" href="structQuery.html">00087</a> <span class="keyword">struct </span><a class="code" href="structQuery.html">Query</a> {
+<a name="l00088"></a><a class="code" href="structQuery.html#a0d80c79e18e95e8853f72adf31f40f3f">00088</a>     <span class="keywordtype">int</span> variables;
+<a name="l00089"></a><a class="code" href="structQuery.html#afe109832f31440dc875c3a6e57439a94">00089</a>     <a class="code" href="structTripleID.html">TripleID</a> q;
+<a name="l00090"></a>00090 };
+<a name="l00091"></a>00091 
+<a name="l00092"></a><a class="code" href="structTripleString.html">00092</a> <span class="keyword">struct </span><a class="code" href="structTripleString.html">TripleString</a> {
+<a name="l00093"></a><a class="code" href="structTripleString.html#a22581300d7102962fa91e089e5c2e36b">00093</a>     <span class="keywordtype">string</span> x;
+<a name="l00094"></a><a class="code" href="structTripleString.html#aefe29283e5a631adbe26ddcf4a706fde">00094</a>     <span class="keywordtype">string</span> y;
+<a name="l00095"></a><a class="code" href="structTripleString.html#adf107a8a747eb4c48a64b901e4d658e4">00095</a>     <span class="keywordtype">string</span> z;
+<a name="l00096"></a>00096 };
+<a name="l00097"></a>00097 
+<a name="l00102"></a>00102 <a class="code" href="structTripleString.html">TripleString</a>
+<a name="l00103"></a><a class="code" href="Basics_8h.html#a40851011a2f5af2abef7edcc16887086">00103</a> <span class="keyword">static</span> <a class="code" href="Basics_8h.html#a40851011a2f5af2abef7edcc16887086" title="Parses a Query.">parseQuery</a>(<span class="keywordtype">string</span> q) {
+<a name="l00104"></a>00104     <span class="keywordtype">size_t</span> pos_a = 0, pos_b;
+<a name="l00105"></a>00105     <a class="code" href="structTripleString.html">TripleString</a> qstring;
+<a name="l00106"></a>00106 
+<a name="l00107"></a>00107     <span class="comment">// Reads the subject</span>
+<a name="l00108"></a>00108     pos_b = q.find(<span class="stringliteral">&quot; &quot;</span>, pos_a);
+<a name="l00109"></a>00109     qstring.<a class="code" href="structTripleString.html#a22581300d7102962fa91e089e5c2e36b">x</a> = q.substr(pos_a, pos_b - pos_a);
+<a name="l00110"></a>00110     pos_a = pos_b + 1;
+<a name="l00111"></a>00111 
+<a name="l00112"></a>00112     <span class="comment">// Reads the predicate</span>
+<a name="l00113"></a>00113     pos_b = q.find(<span class="stringliteral">&quot; &quot;</span>, pos_a);
+<a name="l00114"></a>00114     qstring.<a class="code" href="structTripleString.html#aefe29283e5a631adbe26ddcf4a706fde">y</a> = q.substr(pos_a, pos_b - pos_a);
+<a name="l00115"></a>00115     pos_a = pos_b + 1;
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117     <span class="comment">// Reads the predicate</span>
+<a name="l00118"></a>00118     pos_b = q.find(<span class="stringliteral">&quot; &quot;</span>, pos_a);
+<a name="l00119"></a>00119     qstring.<a class="code" href="structTripleString.html#adf107a8a747eb4c48a64b901e4d658e4">z</a> = q.substr(pos_a, pos_b - pos_a);
+<a name="l00120"></a>00120     pos_a = pos_b;
+<a name="l00121"></a>00121 
+<a name="l00122"></a>00122     <span class="keywordflow">return</span> qstring;
+<a name="l00123"></a>00123 }
+<a name="l00124"></a>00124 
+<a name="l00129"></a>00129 <span class="keywordtype">void</span>
+<a name="l00130"></a><a class="code" href="Basics_8h.html#afea05d5d5cad4ef6b18ed4dbe4d0490c">00130</a> <span class="keyword">static</span> <a class="code" href="Basics_8h.html#afea05d5d5cad4ef6b18ed4dbe4d0490c" title="Get the time.">getTime</a>(<a class="code" href="structDataTime.html">DataTime</a> *t) {
+<a name="l00131"></a>00131     <span class="keyword">struct </span>rusage buffer;
+<a name="l00132"></a>00132     <span class="keyword">struct </span>timeval tp;
+<a name="l00133"></a>00133     <span class="keyword">struct </span>timezone tzp;
+<a name="l00134"></a>00134 
+<a name="l00135"></a>00135     getrusage(RUSAGE_SELF, &amp;buffer);
+<a name="l00136"></a>00136     gettimeofday(&amp;tp, &amp;tzp);
+<a name="l00137"></a>00137 
+<a name="l00138"></a>00138     t-&gt;<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> = (double) buffer.ru_utime.tv_sec + 1.0e-6
+<a name="l00139"></a>00139             * buffer.ru_utime.tv_usec;
+<a name="l00140"></a>00140     t-&gt;<a class="code" href="structDataTime.html#a4c505e1a82276e5f8c2580b609b9b24c">total</a> = (<span class="keywordtype">double</span>) tp.tv_sec + 1.0e-6 * tp.tv_usec;
+<a name="l00141"></a>00141 }
+<a name="l00142"></a>00142 
+<a name="l00146"></a><a class="code" href="Basics_8h.html#a23593e50fa73a80132e45702e6b4e009">00146</a> <span class="keywordtype">void</span> <span class="keyword">static</span> <a class="code" href="Basics_8h.html#a23593e50fa73a80132e45702e6b4e009" title="Print the credits.">printCredits</a>() {
+<a name="l00147"></a>00147     cout &lt;&lt; <span class="stringliteral">&quot;\n *** HDT IT! prototype v.0.7 2010. All rights reserved.***&quot;</span>;
+<a name="l00148"></a>00148     cout &lt;&lt; <span class="stringliteral">&quot;\n    University of Valladolid (Spain)&quot;</span>;
+<a name="l00149"></a>00149     cout
+<a name="l00150"></a>00150             &lt;&lt; <span class="stringliteral">&quot;\n\n    This is an experimental prototype. Contacting the authors:&quot;</span>;
+<a name="l00151"></a>00151     cout &lt;&lt; <span class="stringliteral">&quot;\n    Javier D. Fernandez &amp; Miguel A. Martinez-Prieto&quot;</span>;
+<a name="l00152"></a>00152     cout &lt;&lt; <span class="stringliteral">&quot;\n    ETIyT. Departamento de Informatica.&quot;</span>;
+<a name="l00153"></a>00153     cout &lt;&lt; <span class="stringliteral">&quot;\n    Camino del Cementerio s/n&quot;</span>;
+<a name="l00154"></a>00154     cout &lt;&lt; <span class="stringliteral">&quot;\n    47011 Valladolid (Spain)&quot;</span>;
+<a name="l00155"></a>00155     cout &lt;&lt; <span class="stringliteral">&quot;\n\n    jfergar@infor.uva.es;migumar2@infor.uva.es&quot;</span>;
+<a name="l00156"></a>00156     cout &lt;&lt; <span class="stringliteral">&quot;\n\n&quot;</span>;
+<a name="l00157"></a>00157 }
+<a name="l00158"></a>00158 
+<a name="l00163"></a><a class="code" href="Basics_8h.html#afcc2c83cfa0553a81fc3ac3d91424b0f">00163</a> <span class="keywordtype">void</span> <span class="keyword">static</span> <a class="code" href="Basics_8h.html#afcc2c83cfa0553a81fc3ac3d91424b0f" title="Prints the help.">printHelp</a>(<span class="keywordtype">char</span> *exe) {
+<a name="l00164"></a>00164     cout &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span> &lt;&lt; exe &lt;&lt; <span class="stringliteral">&quot;[Options]\n&quot;</span>;
+<a name="l00165"></a>00165     cout
+<a name="l00166"></a>00166             &lt;&lt; <span class="stringliteral">&quot;        -p --parse &lt;config_file&gt;              Parse data set within the given &lt;config_file&gt;\n&quot;</span>;
+<a name="l00167"></a>00167     cout
+<a name="l00168"></a>00168             &lt;&lt; <span class="stringliteral">&quot;        -l --load &lt;file&gt;                      Load HDT structure into memory. Access triples console if serialize command is not given\n&quot;</span>;
+<a name="l00169"></a>00169     cout
+<a name="l00170"></a>00170             &lt;&lt; <span class="stringliteral">&quot;            -s --serialize [format]           Serialize the loaded HDT representation to a given format: ntriples (default), rdfxml, turtle, rdfxml-abbrev, rdfxml-xmp, atom, json-triples, json, dot\n&quot;</span>;
+<a name="l00171"></a>00171     cout
+<a name="l00172"></a>00172             &lt;&lt; <span class="stringliteral">&quot;            -o --output &lt;file&gt;               Serialize output (output.rdf by default)\n&quot;</span>;
+<a name="l00173"></a>00173     cout &lt;&lt; <span class="stringliteral">&quot;        -h --help                             Show this help\n&quot;</span>;
+<a name="l00174"></a>00174     cout
+<a name="l00175"></a>00175             &lt;&lt; <span class="stringliteral">&quot;        -c --console                          Entering console mode\n&quot;</span>;
+<a name="l00176"></a>00176 }
+<a name="l00177"></a>00177 
+<a name="l00181"></a><a class="code" href="Basics_8h.html#a494922471cbd66b3ea0abd69af09ea54">00181</a> <span class="keywordtype">void</span> <span class="keyword">static</span> <a class="code" href="Basics_8h.html#a494922471cbd66b3ea0abd69af09ea54" title="Prints the help of the console.">printHelpConsole</a>() {
+<a name="l00182"></a>00182     cout
+<a name="l00183"></a>00183             &lt;&lt; <span class="stringliteral">&quot;        parse &lt;config_file&gt;            Parse data set within the given &lt;config_file&gt;\n&quot;</span>;
+<a name="l00184"></a>00184     cout
+<a name="l00185"></a>00185             &lt;&lt; <span class="stringliteral">&quot;        load &lt;file&gt;                    Load HDT structure into memory and access triples console\n&quot;</span>;
+<a name="l00186"></a>00186     cout &lt;&lt; <span class="stringliteral">&quot;        help                           Show this help\n&quot;</span>;
+<a name="l00187"></a>00187     cout &lt;&lt; <span class="stringliteral">&quot;        exit                           Exit console mode\n&quot;</span>;
+<a name="l00188"></a>00188 }
+<a name="l00189"></a>00189 
+<a name="l00196"></a><a class="code" href="Basics_8h.html#ad37673d99e8d1bf745b1025b8fe6af31">00196</a> <span class="keywordtype">void</span> <span class="keyword">static</span> <a class="code" href="Basics_8h.html#ad37673d99e8d1bf745b1025b8fe6af31" title="Splits a string with an specific separator.">stringExplode</a>(<span class="keywordtype">string</span> str, <span class="keywordtype">string</span> separator, vector&lt;string&gt;* results) {
+<a name="l00197"></a>00197 
+<a name="l00198"></a>00198     <span class="keywordtype">int</span> found;
+<a name="l00199"></a>00199     found = str.find_first_of(separator);
+<a name="l00200"></a>00200     <span class="keywordflow">while</span> (found != string::npos) {
+<a name="l00201"></a>00201         <span class="keywordflow">if</span> (found &gt; 0) {
+<a name="l00202"></a>00202 
+<a name="l00203"></a>00203             results-&gt;push_back(str.substr(0, found));
+<a name="l00204"></a>00204         }
+<a name="l00205"></a>00205         str = str.substr(found + 1);
+<a name="l00206"></a>00206         found = str.find_first_of(separator);
+<a name="l00207"></a>00207     }
+<a name="l00208"></a>00208     <span class="keywordflow">if</span> (str.length() &gt; 0) {
+<a name="l00209"></a>00209         results-&gt;push_back(str);
+<a name="l00210"></a>00210     }
+<a name="l00211"></a>00211 }
+<a name="l00212"></a>00212 <span class="preprocessor">#endif  </span><span class="comment">/* _BASICS_H */</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:02 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

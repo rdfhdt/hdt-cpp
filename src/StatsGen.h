@@ -35,6 +35,8 @@ class StatsGen {
 public:
 	StatsGen();
 	bool process(char *output);
+	bool degrees(char *output);
+	bool dictionaryStats(string &output);
 	bool readFromDataset(char *dataset, char *output);
 	bool readFromHDT(char *hdt, char*output);
 	~StatsGen();

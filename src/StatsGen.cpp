@@ -446,8 +446,7 @@ bool StatsGen::process(char *output) {
 	dictStats.append("/dictstats");
 	cout << "[" << showpoint << t2.user - t1.user
 			<< "]  Calculate Dictionary Statistics on " << dictStats << endl;
-	mkpathfile((dictStats).c_str(), 0744);
-	dictionary->dumpStats(dictStats);
+	dictionaryStats(dictStats);
 
 	// 10) Degree
 	getTime(&t2);
@@ -474,6 +473,29 @@ bool StatsGen::process(char *output) {
 	return true;
 }
 
+/** dictionaryStats
+ * @param output Description of the param.
+ * @return The expected result
+ */
+bool StatsGen::dictionaryStats(string &output) {
+	 
+	mkpathfile((output).c_str(), 0744);
+	dictionary->dumpStats(output);
+	
+}
+
+/** degrees
+ * @param output Description of the param.
+ * @return The expected result
+ */
+bool StatsGen::degrees(char *output) {
+	string degreePath(output);
+	degreePath.append("/degree");
+	cout << " Calculate Degree Metrics on " << degreePath << endl;
+	mkpathfile((degreePath).c_str(), 0744);
+	triples->calculateDegrees(degreePath);
+}
+	
 /** Parse Triple N3
  * @param t Description of the param.
  * @return void

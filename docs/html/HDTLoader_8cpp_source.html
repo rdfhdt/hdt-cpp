@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -19,6 +20,7 @@
   <div class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+      <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
 <div class="header">
@@ -26,7 +28,7 @@
 <h1>HDTLoader.cpp</h1>  </div>
 </div>
 <div class="contents">
-<div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* HDTLoader.h</span>
+<a href="HDTLoader_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* HDTLoader.h</span>
 <a name="l00002"></a>00002 <span class="comment"> * Copyright (C) 2010, Javier D. Fernandez &amp; Miguel A, Martinez-Prieto</span>
 <a name="l00003"></a>00003 <span class="comment"> * all rights reserved.</span>
 <a name="l00004"></a>00004 <span class="comment"> *</span>
@@ -51,82 +53,84 @@
 <a name="l00023"></a>00023 <span class="comment"> *   Javier D. Fernandez:       jfergar@infor.uva.es</span>
 <a name="l00024"></a>00024 <span class="comment"> *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es</span>
 <a name="l00025"></a>00025 <span class="comment"> */</span>
-<a name="l00026"></a>00026  
-<a name="l00027"></a>00027 <span class="preprocessor">#include &quot;HDTLoader.h&quot;</span>
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027 <span class="preprocessor">#include &quot;<a class="code" href="HDTLoader_8h.html">HDTLoader.h</a>&quot;</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a><a class="code" href="classHDTLoader.html#a4f601de636ce025122b5bda053e0ba08">00029</a> <a class="code" href="classHDTLoader.html#a4f601de636ce025122b5bda053e0ba08">HDTLoader::HDTLoader</a>()
-<a name="l00030"></a>00030 {
+<a name="l00030"></a><a class="code" href="classHDTLoader.html#a4f601de636ce025122b5bda053e0ba08">00030</a> <a class="code" href="classHDTLoader.html#a4f601de636ce025122b5bda053e0ba08" title="Base constructor.">HDTLoader::HDTLoader</a>() {
 <a name="l00031"></a>00031 }
 <a name="l00032"></a>00032 
-<a name="l00033"></a>00033 <span class="keywordtype">bool</span> 
-<a name="l00034"></a><a class="code" href="classHDTLoader.html#a2971ecd785a7f343e1466ece1ec2e3c6">00034</a> <a class="code" href="classHDTLoader.html#a2971ecd785a7f343e1466ece1ec2e3c6">HDTLoader::load</a>(<span class="keywordtype">char</span>* location)
-<a name="l00035"></a>00035 {
-<a name="l00036"></a>00036     <a class="code" href="structDataTime.html">DataTime</a> t1, t2;
-<a name="l00037"></a>00037     getTime(&amp;t1);
-<a name="l00038"></a>00038 
-<a name="l00039"></a>00039     cout.precision(4);
-<a name="l00040"></a>00040     
-<a name="l00041"></a>00041     cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; showpoint &lt;&lt; t1.user - t1.user &lt;&lt; <span class="stringliteral">&quot;]  Loading HDT&quot;</span> &lt;&lt; endl;
-<a name="l00042"></a>00042     
-<a name="l00043"></a>00043     getTime(&amp;t2);
-<a name="l00044"></a>00044     cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; showpoint &lt;&lt; t2.user - t1.user &lt;&lt; <span class="stringliteral">&quot;]  Reading Header&quot;</span> &lt;&lt; endl;
-<a name="l00045"></a>00045     header = <span class="keyword">new</span> <a class="code" href="classHeader.html">Header</a>();
-<a name="l00046"></a>00046     header-&gt;read(location);
-<a name="l00047"></a>00047     
-<a name="l00048"></a>00048     getTime(&amp;t2);
-<a name="l00049"></a>00049     cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; showpoint &lt;&lt; t2.user - t1.user &lt;&lt; <span class="stringliteral">&quot;]  Loading Dictionary&quot;</span> &lt;&lt; endl;
-<a name="l00050"></a>00050     
-<a name="l00051"></a>00051     <span class="keywordtype">int</span> mapping = header-&gt;getMapping();
-<a name="l00052"></a>00052     
-<a name="l00053"></a>00053     <span class="keywordflow">if</span> ((mapping != MAPPING1) &amp;&amp; (mapping != MAPPING2))
-<a name="l00054"></a>00054             cout &lt;&lt; <span class="stringliteral">&quot;   &lt;ERROR&gt; Mapping &quot;</span> &lt;&lt; mapping &lt;&lt; <span class="stringliteral">&quot; is not supported&quot;</span> &lt;&lt; endl;
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056     dictionary = <span class="keyword">new</span> <a class="code" href="classPlainDictionary.html">PlainDictionary</a>(location, mapping, header-&gt;getD_separator(), header-&gt;getNsubjects(), header-&gt;getNpredicates(), header-&gt;getNobjects(), header-&gt;getSsubobj());
-<a name="l00057"></a>00057     
-<a name="l00058"></a>00058     getTime(&amp;t2);
-<a name="l00059"></a>00059     cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; showpoint &lt;&lt; t2.user - t1.user &lt;&lt; <span class="stringliteral">&quot;]  Loading Console&quot;</span> &lt;&lt; endl;
-<a name="l00060"></a>00060     <span class="keywordflow">switch</span>(header-&gt;getT_encoding())
-<a name="l00061"></a>00061     {
-<a name="l00062"></a>00062         <span class="keywordflow">case</span> PLAIN:
-<a name="l00063"></a>00063             triples = <span class="keyword">new</span> <a class="code" href="classPlainTriples.html">PlainTriples</a>(dictionary, header-&gt;getNtriples(), header-&gt;getParsing(), location);
-<a name="l00064"></a>00064             <span class="keywordflow">break</span>;
-<a name="l00065"></a>00065         <span class="keywordflow">case</span> COMPACT:
-<a name="l00066"></a>00066             triples = <span class="keyword">new</span> <a class="code" href="classCompactTriples.html">CompactTriples</a>(dictionary, header-&gt;getNtriples(), header-&gt;getParsing(), location);
-<a name="l00067"></a>00067             <span class="keywordflow">break</span>;
-<a name="l00068"></a>00068         <span class="keywordflow">case</span> BITMAP:
-<a name="l00069"></a>00069             triples = <span class="keyword">new</span> <a class="code" href="classBitmapTriples.html">BitmapTriples</a>(dictionary, header-&gt;getNtriples(), header-&gt;getParsing(), location);
-<a name="l00070"></a>00070             <span class="keywordflow">break</span>;
-<a name="l00071"></a>00071         <span class="keywordflow">case</span> K2TREE:
-<a name="l00072"></a>00072             cout &lt;&lt; <span class="stringliteral">&quot;   &lt;WARNING&gt; K2-tree Triples encoding is not currently supported&quot;</span> &lt;&lt; endl;
-<a name="l00073"></a>00073             <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00074"></a>00074             <span class="keywordflow">break</span>;
-<a name="l00075"></a>00075         <span class="keywordflow">default</span>:
-<a name="l00076"></a>00076             cout &lt;&lt; <span class="stringliteral">&quot;   &lt;ERROR&gt; Current triples encoding  is not supported&quot;</span> &lt;&lt; endl;
-<a name="l00077"></a>00077             <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00078"></a>00078     }
-<a name="l00079"></a>00079     
-<a name="l00080"></a>00080     <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00081"></a>00081 }
-<a name="l00082"></a>00082 
-<a name="l00083"></a>00083 <span class="keywordtype">void</span>
-<a name="l00084"></a><a class="code" href="classHDTLoader.html#aa6a07c53e50ec502c6b61a38a48b032b">00084</a> <a class="code" href="classHDTLoader.html#aa6a07c53e50ec502c6b61a38a48b032b">HDTLoader::console</a>()
-<a name="l00085"></a>00085 {
-<a name="l00086"></a>00086     triples-&gt;<a class="code" href="classTriples.html#a6e5028f05289cf084d2d4ae9a1abdbf6">console</a>();
-<a name="l00087"></a>00087 }
-<a name="l00088"></a>00088 
-<a name="l00089"></a>00089 <span class="keywordtype">void</span>
-<a name="l00090"></a><a class="code" href="classHDTLoader.html#a68d38ceb81efd0e62abc2a09c5c71c85">00090</a> <a class="code" href="classHDTLoader.html#a68d38ceb81efd0e62abc2a09c5c71c85">HDTLoader::serialize</a>(<span class="keywordtype">char</span> *output, <span class="keywordtype">char</span> *format)
-<a name="l00091"></a>00091 {
-<a name="l00092"></a>00092     triples-&gt;<a class="code" href="classTriples.html#a6a4cc727abea2d5c2af665c2853615b1">serialize</a>(output,format);
+<a name="l00037"></a><a class="code" href="classHDTLoader.html#a2971ecd785a7f343e1466ece1ec2e3c6">00037</a> <span class="keywordtype">bool</span> <a class="code" href="classHDTLoader.html#a2971ecd785a7f343e1466ece1ec2e3c6" title="Load.">HDTLoader::load</a>(<span class="keywordtype">char</span>* location) {
+<a name="l00038"></a>00038     <a class="code" href="structDataTime.html">DataTime</a> t1, t2;
+<a name="l00039"></a>00039     <a class="code" href="Basics_8h.html#afea05d5d5cad4ef6b18ed4dbe4d0490c" title="Get the time.">getTime</a>(&amp;t1);
+<a name="l00040"></a>00040 
+<a name="l00041"></a>00041     cout.precision(4);
+<a name="l00042"></a>00042 
+<a name="l00043"></a>00043     cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; showpoint &lt;&lt; t1.<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> - t1.<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> &lt;&lt; <span class="stringliteral">&quot;]  Loading HDT&quot;</span> &lt;&lt; endl;
+<a name="l00044"></a>00044 
+<a name="l00045"></a>00045     <a class="code" href="Basics_8h.html#afea05d5d5cad4ef6b18ed4dbe4d0490c" title="Get the time.">getTime</a>(&amp;t2);
+<a name="l00046"></a>00046     cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; showpoint &lt;&lt; t2.<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> - t1.<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> &lt;&lt; <span class="stringliteral">&quot;]  Reading Header&quot;</span>
+<a name="l00047"></a>00047             &lt;&lt; endl;
+<a name="l00048"></a>00048     <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a> = <span class="keyword">new</span> <a class="code" href="classHeader.html">Header</a>();
+<a name="l00049"></a>00049     <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#afefaa9874157430455b24d826c861090" title="Read.">read</a>(location);
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051     <a class="code" href="Basics_8h.html#afea05d5d5cad4ef6b18ed4dbe4d0490c" title="Get the time.">getTime</a>(&amp;t2);
+<a name="l00052"></a>00052     cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; showpoint &lt;&lt; t2.<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> - t1.<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> &lt;&lt; <span class="stringliteral">&quot;]  Loading Dictionary&quot;</span>
+<a name="l00053"></a>00053             &lt;&lt; endl;
+<a name="l00054"></a>00054 
+<a name="l00055"></a>00055     <span class="keywordtype">int</span> mapping = <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#a9e132ba226a258c3ea0cad5ba4390642" title="Get Mapping.">getMapping</a>();
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057     <span class="keywordflow">if</span> ((mapping != <a class="code" href="Basics_8h.html#aa95d5443626e0ea22e2ec41f6660c87f">MAPPING1</a>) &amp;&amp; (mapping != <a class="code" href="Basics_8h.html#aee4667f3c47bf97ab996cd61640889d5">MAPPING2</a>))
+<a name="l00058"></a>00058         cout &lt;&lt; <span class="stringliteral">&quot;   &lt;ERROR&gt; Mapping &quot;</span> &lt;&lt; mapping &lt;&lt; <span class="stringliteral">&quot; is not supported&quot;</span> &lt;&lt; endl;
+<a name="l00059"></a>00059 
+<a name="l00060"></a>00060     <a class="code" href="classHDTLoader.html#af3807027b7a1253b18e01608c767eda8">dictionary</a> = <span class="keyword">new</span> <a class="code" href="classPlainDictionary.html" title="PlainDictionary It implements the abstract class Dictionary on a &amp;#39;plain approach&amp;#39; based on ha...">PlainDictionary</a>(location, mapping,
+<a name="l00061"></a>00061             <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#aace41bf330ddb5ea2c3de9b59d8eeb37" title="Get D Separator.">getD_separator</a>(), <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#a2dbde5c63d8cd0bd22d9546a0265bab9" title="Get N Subjects.">getNsubjects</a>(),
+<a name="l00062"></a>00062             <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#ad067cea744bb6e772270909fab1e8916" title="Get N Predicates.">getNpredicates</a>(), <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#ae10f6628bdeb608c7195f144e3da6a1f" title="Get N Objects.">getNobjects</a>(),
+<a name="l00063"></a>00063             <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#a82189c495eb542b43ed2e8a54542ff75" title="Get S Subobj.">getSsubobj</a>());
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065     <a class="code" href="Basics_8h.html#afea05d5d5cad4ef6b18ed4dbe4d0490c" title="Get the time.">getTime</a>(&amp;t2);
+<a name="l00066"></a>00066     cout &lt;&lt; <span class="stringliteral">&quot;[&quot;</span> &lt;&lt; showpoint &lt;&lt; t2.<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> - t1.<a class="code" href="structDataTime.html#af8e7d010deb8ae460b1bbc821a94f8bc">user</a> &lt;&lt; <span class="stringliteral">&quot;]  Loading Console&quot;</span>
+<a name="l00067"></a>00067             &lt;&lt; endl;
+<a name="l00068"></a>00068     <span class="keywordflow">switch</span> (<a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#afd4adc8beac2c1140e9c1a9ee1d35cd7" title="Get T Encoding.">getT_encoding</a>()) {
+<a name="l00069"></a>00069     <span class="keywordflow">case</span> <a class="code" href="Basics_8h.html#abc7f43a908375cea671baef998280202">PLAIN</a>:
+<a name="l00070"></a>00070         <a class="code" href="classHDTLoader.html#a73e5d76c09a8dd61ede65cfbd5387713">triples</a> = <span class="keyword">new</span> <a class="code" href="classPlainTriples.html">PlainTriples</a>(<a class="code" href="classHDTLoader.html#af3807027b7a1253b18e01608c767eda8">dictionary</a>, <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#a3b1dee1992652c2cd2ea07ce58bb0700" title="Get N Triples.">getNtriples</a>(),
+<a name="l00071"></a>00071                 <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#aa255a3e4473ba42996a3b4276a01e488" title="Get Parsing.">getParsing</a>(), location);
+<a name="l00072"></a>00072         <span class="keywordflow">break</span>;
+<a name="l00073"></a>00073     <span class="keywordflow">case</span> <a class="code" href="Basics_8h.html#a2292f931282e7760b30786e13ba3f661">COMPACT</a>:
+<a name="l00074"></a>00074         <a class="code" href="classHDTLoader.html#a73e5d76c09a8dd61ede65cfbd5387713">triples</a> = <span class="keyword">new</span> <a class="code" href="classCompactTriples.html">CompactTriples</a>(<a class="code" href="classHDTLoader.html#af3807027b7a1253b18e01608c767eda8">dictionary</a>, <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#a3b1dee1992652c2cd2ea07ce58bb0700" title="Get N Triples.">getNtriples</a>(),
+<a name="l00075"></a>00075                 <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#aa255a3e4473ba42996a3b4276a01e488" title="Get Parsing.">getParsing</a>(), location);
+<a name="l00076"></a>00076         <span class="keywordflow">break</span>;
+<a name="l00077"></a>00077     <span class="keywordflow">case</span> <a class="code" href="Basics_8h.html#adab53bea12ff97f8803d37dfcc8b1627">BITMAP</a>:
+<a name="l00078"></a>00078         <a class="code" href="classHDTLoader.html#a73e5d76c09a8dd61ede65cfbd5387713">triples</a> = <span class="keyword">new</span> <a class="code" href="classBitmapTriples.html">BitmapTriples</a>(<a class="code" href="classHDTLoader.html#af3807027b7a1253b18e01608c767eda8">dictionary</a>, <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#a3b1dee1992652c2cd2ea07ce58bb0700" title="Get N Triples.">getNtriples</a>(),
+<a name="l00079"></a>00079                 <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>-&gt;<a class="code" href="classHeader.html#aa255a3e4473ba42996a3b4276a01e488" title="Get Parsing.">getParsing</a>(), location);
+<a name="l00080"></a>00080         <span class="keywordflow">break</span>;
+<a name="l00081"></a>00081     <span class="keywordflow">case</span> <a class="code" href="Basics_8h.html#a7e849435a41be9b960f7d375951b90f2">K2TREE</a>:
+<a name="l00082"></a>00082         cout
+<a name="l00083"></a>00083                 &lt;&lt; <span class="stringliteral">&quot;   &lt;WARNING&gt; K2-tree Triples encoding is not currently supported&quot;</span>
+<a name="l00084"></a>00084                 &lt;&lt; endl;
+<a name="l00085"></a>00085         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00086"></a>00086         <span class="keywordflow">break</span>;
+<a name="l00087"></a>00087     <span class="keywordflow">default</span>:
+<a name="l00088"></a>00088         cout &lt;&lt; <span class="stringliteral">&quot;   &lt;ERROR&gt; Current triples encoding  is not supported&quot;</span> &lt;&lt; endl;
+<a name="l00089"></a>00089         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00090"></a>00090     }
+<a name="l00091"></a>00091 
+<a name="l00092"></a>00092     <span class="keywordflow">return</span> <span class="keyword">true</span>;
 <a name="l00093"></a>00093 }
 <a name="l00094"></a>00094 
-<a name="l00095"></a><a class="code" href="classHDTLoader.html#ad20f55499283f38084f26975775d597e">00095</a> <a class="code" href="classHDTLoader.html#ad20f55499283f38084f26975775d597e">HDTLoader::~HDTLoader</a>()
-<a name="l00096"></a>00096 {
-<a name="l00097"></a>00097     <span class="keyword">delete</span> header;
-<a name="l00098"></a>00098 }
+<a name="l00098"></a><a class="code" href="classHDTLoader.html#aa6a07c53e50ec502c6b61a38a48b032b">00098</a> <span class="keywordtype">void</span> <a class="code" href="classHDTLoader.html#aa6a07c53e50ec502c6b61a38a48b032b" title="Console.">HDTLoader::console</a>() {
+<a name="l00099"></a>00099     <a class="code" href="classHDTLoader.html#a73e5d76c09a8dd61ede65cfbd5387713">triples</a>-&gt;<a class="code" href="classTriples.html#a6e5028f05289cf084d2d4ae9a1abdbf6">console</a>();
+<a name="l00100"></a>00100 }
+<a name="l00101"></a>00101 
+<a name="l00107"></a><a class="code" href="classHDTLoader.html#a68d38ceb81efd0e62abc2a09c5c71c85">00107</a> <span class="keywordtype">void</span> <a class="code" href="classHDTLoader.html#a68d38ceb81efd0e62abc2a09c5c71c85" title="Serialize.">HDTLoader::serialize</a>(<span class="keywordtype">char</span> *output, <span class="keywordtype">char</span> *format) {
+<a name="l00108"></a>00108     <a class="code" href="classHDTLoader.html#a73e5d76c09a8dd61ede65cfbd5387713">triples</a>-&gt;<a class="code" href="classTriples.html#a6a4cc727abea2d5c2af665c2853615b1">serialize</a>(output, format);
+<a name="l00109"></a>00109 }
+<a name="l00110"></a>00110 
+<a name="l00112"></a><a class="code" href="classHDTLoader.html#ad20f55499283f38084f26975775d597e">00112</a> <a class="code" href="classHDTLoader.html#ad20f55499283f38084f26975775d597e" title="Destructor for HDTLoader.">HDTLoader::~HDTLoader</a>() {
+<a name="l00113"></a>00113     <span class="keyword">delete</span> <a class="code" href="classHDTLoader.html#abbb84758bf2c01688445a7755e9e75a1">header</a>;
+<a name="l00114"></a>00114 }
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:02 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

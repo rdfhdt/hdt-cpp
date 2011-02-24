@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -19,6 +20,7 @@
   <div class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+      <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
 <div class="header">
@@ -26,160 +28,135 @@
 <h1>Histogram.h</h1>  </div>
 </div>
 <div class="contents">
-<div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="preprocessor">#include&lt;math.h&gt;</span>
+<a href="Histogram_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="preprocessor">#include &lt;math.h&gt;</span>
 <a name="l00002"></a>00002 <span class="preprocessor">#include &lt;limits&gt;</span>
 <a name="l00003"></a>00003 <span class="preprocessor">#include &lt;iostream&gt;</span>
 <a name="l00004"></a>00004 <span class="preprocessor">#include &lt;string&gt;</span>
-<a name="l00005"></a>00005 <span class="keyword">using namespace </span>std;
-<a name="l00006"></a>00006 <span class="comment">// A histogram class.</span>
-<a name="l00007"></a>00007 <span class="comment">// The Histogram object can keep a tally of values</span>
-<a name="l00008"></a>00008 <span class="comment">// within a range, the range is arranged into some</span>
-<a name="l00009"></a>00009 <span class="comment">// number of bins specified during construction.</span>
-<a name="l00010"></a>00010 <span class="comment">// Any allocation of a Histogram object may throw</span>
-<a name="l00011"></a>00011 <span class="comment">// a bad_alloc exception.</span>
-<a name="l00012"></a><a class="code" href="classHistogram.html">00012</a> <span class="keyword">class </span><a class="code" href="classHistogram.html">Histogram</a>
-<a name="l00013"></a>00013 {
+<a name="l00005"></a>00005 
+<a name="l00006"></a>00006 <span class="keyword">using namespace </span>std;
+<a name="l00007"></a>00007 
+<a name="l00013"></a><a class="code" href="classHistogram.html">00013</a> <span class="keyword">class </span><a class="code" href="classHistogram.html" title="A histogram class.">Histogram</a> {
 <a name="l00014"></a>00014 <span class="keyword">private</span>:
-<a name="l00015"></a>00015     <span class="keywordtype">double</span> Start,nBins_by_interval;
+<a name="l00015"></a>00015     <span class="keywordtype">double</span> Start, nBins_by_interval;
 <a name="l00016"></a>00016     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> nBins;
 <a name="l00017"></a>00017     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number;
 <a name="l00018"></a>00018     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>* freq;
 <a name="l00019"></a>00019     <span class="keywordtype">double</span> minValue, maxValue, mean, deviation, total;
-<a name="l00020"></a>00020 
-<a name="l00021"></a>00021 <span class="keyword">public</span>:
-<a name="l00022"></a>00022     <span class="comment">// Construct a histogram that can count</span>
-<a name="l00023"></a>00023     <span class="comment">// within a range of values.</span>
-<a name="l00024"></a>00024     <span class="comment">// All bins of the histogram are set to zero.</span>
-<a name="l00025"></a>00025     <a class="code" href="classHistogram.html">Histogram</a>(
-<a name="l00026"></a>00026               <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; Start,
-<a name="l00027"></a>00027               <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; End,
-<a name="l00028"></a>00028               <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>&amp; nBins):
-<a name="l00029"></a>00029     Start(Start),
-<a name="l00030"></a>00030     nBins_by_interval(nBins/(End-Start)),
-<a name="l00031"></a>00031     nBins(nBins),
-<a name="l00032"></a>00032     freq( <span class="keyword">new</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>[nBins] )
-<a name="l00033"></a>00033     {
-<a name="l00034"></a>00034         reset();
-<a name="l00035"></a>00035     }
-<a name="l00036"></a>00036     <span class="comment">// Construct a histogram by copying another one.</span>
-<a name="l00037"></a>00037     <a class="code" href="classHistogram.html">Histogram</a>(<span class="keyword">const</span> <a class="code" href="classHistogram.html">Histogram</a>&amp; other):
-<a name="l00038"></a>00038         Start(other.Start),
-<a name="l00039"></a>00039         nBins_by_interval(other.nBins_by_interval),
-<a name="l00040"></a>00040         nBins(other.nBins),
-<a name="l00041"></a>00041         freq( <span class="keyword">new</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>[nBins] )
-<a name="l00042"></a>00042     {
-<a name="l00043"></a>00043         <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(0); i &lt; nBins; ++i)
-<a name="l00044"></a>00044             freq[i] = other.freq[i];
-<a name="l00045"></a>00045     }
-<a name="l00046"></a>00046     
-<a name="l00047"></a>00047     <span class="keywordtype">void</span> reset() {
-<a name="l00048"></a>00048         <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(0); i &lt; nBins; ++i)
+<a name="l00020"></a>00020 <span class="keyword">public</span>:
+<a name="l00027"></a><a class="code" href="classHistogram.html#a7b3b737f5a0c87a35078b074698fc034">00027</a>     <a class="code" href="classHistogram.html" title="A histogram class.">Histogram</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; Start, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; End, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>&amp; nBins) :
+<a name="l00028"></a>00028         Start(Start), nBins_by_interval(nBins / (End - Start)), nBins(nBins),
+<a name="l00029"></a>00029                 freq(new unsigned int[nBins]) {
+<a name="l00030"></a>00030         reset();
+<a name="l00031"></a>00031     }
+<a name="l00032"></a>00032 
+<a name="l00037"></a><a class="code" href="classHistogram.html#afed71ab02baa416129ebe375ad07868a">00037</a>     <a class="code" href="classHistogram.html" title="A histogram class.">Histogram</a>(<span class="keyword">const</span> <a class="code" href="classHistogram.html" title="A histogram class.">Histogram</a>&amp; other) :
+<a name="l00038"></a>00038         Start(other.Start), nBins_by_interval(other.nBins_by_interval), nBins(
+<a name="l00039"></a>00039                 other.nBins), freq(new unsigned int[nBins]) {
+<a name="l00040"></a>00040         <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(0); i &lt; nBins; ++i)
+<a name="l00041"></a>00041             freq[i] = other.freq[i];
+<a name="l00042"></a>00042     }
+<a name="l00043"></a>00043 
+<a name="l00047"></a><a class="code" href="classHistogram.html#ab18fbea2f675c873c9c90d60eaf5dd28">00047</a>     <span class="keywordtype">void</span> <a class="code" href="classHistogram.html#ab18fbea2f675c873c9c90d60eaf5dd28" title="Reset.">reset</a>() {
+<a name="l00048"></a>00048         <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(0); i &lt; nBins; ++i)
 <a name="l00049"></a>00049             freq[i] = 0U;
-<a name="l00050"></a>00050         number=total=mean=deviation=0;
+<a name="l00050"></a>00050         number = total = mean = deviation = 0;
 <a name="l00051"></a>00051         minValue = std::numeric_limits&lt;double&gt;::max();
 <a name="l00052"></a>00052         maxValue = std::numeric_limits&lt;double&gt;::min();
-<a name="l00053"></a>00053         
+<a name="l00053"></a>00053 
 <a name="l00054"></a>00054     }
-<a name="l00055"></a>00055     
-<a name="l00056"></a>00056     <span class="comment">// Deallocate the memory that was allocated for</span>
-<a name="l00057"></a>00057     <span class="comment">// the tallied counts.</span>
-<a name="l00058"></a>00058     ~<a class="code" href="classHistogram.html">Histogram</a>() {<span class="keyword">delete</span>[] freq;}
-<a name="l00059"></a>00059     <span class="comment">// Set this histogram equal to another.</span>
-<a name="l00060"></a>00060     <a class="code" href="classHistogram.html">Histogram</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classHistogram.html">Histogram</a>&amp; other)
-<a name="l00061"></a>00061     {
-<a name="l00062"></a>00062         <span class="keywordflow">if</span>( <span class="keyword">this</span> != &amp;other )
-<a name="l00063"></a>00063         {
-<a name="l00064"></a>00064             Start = other.Start;
-<a name="l00065"></a>00065             nBins_by_interval = other.nBins_by_interval;
-<a name="l00066"></a>00066             <span class="keywordflow">if</span>( nBins != other.nBins )
-<a name="l00067"></a>00067             {
-<a name="l00068"></a>00068                 nBins = other.nBins;
-<a name="l00069"></a>00069                 <span class="keyword">delete</span>[] freq;
-<a name="l00070"></a>00070                 freq = <span class="keyword">new</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>[nBins];
-<a name="l00071"></a>00071             }
-<a name="l00072"></a>00072             <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(0); i &lt; nBins; ++i)
-<a name="l00073"></a>00073                 freq[i] = other.freq[i];
-<a name="l00074"></a>00074         }
-<a name="l00075"></a>00075         <span class="keywordflow">return</span> *<span class="keyword">this</span>;
-<a name="l00076"></a>00076     }
-<a name="l00077"></a>00077     
-<a name="l00078"></a>00078     <span class="keywordtype">void</span> Add(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; x, <span class="keywordtype">int</span> ntimes) {
-<a name="l00079"></a>00079         number+=ntimes;
-<a name="l00080"></a>00080         total+=(x*ntimes);
-<a name="l00081"></a>00081         mean+=(x*ntimes);
-<a name="l00082"></a>00082         deviation+= (x * x)*ntimes;
-<a name="l00083"></a>00083         minValue = min(minValue, x);
-<a name="l00084"></a>00084         maxValue = max(maxValue, x);
-<a name="l00085"></a>00085         
-<a name="l00086"></a>00086         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i( static_cast&lt;unsigned int&gt;( (x-Start)*nBins_by_interval) );
-<a name="l00087"></a>00087         
-<a name="l00088"></a>00088         <span class="keywordflow">if</span>( i &lt; nBins ) {
-<a name="l00089"></a>00089             freq[i]+=ntimes;
-<a name="l00090"></a>00090         }
-<a name="l00091"></a>00091     }
-<a name="l00092"></a>00092     
-<a name="l00093"></a>00093     <span class="comment">// Increase the count for the bin that holds a</span>
-<a name="l00094"></a>00094     <span class="comment">// value that is in range for this histogram.</span>
-<a name="l00095"></a>00095     <span class="keywordtype">void</span> Add(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; x)
-<a name="l00096"></a>00096     {
-<a name="l00097"></a>00097         Add(x,1);
-<a name="l00098"></a>00098     }
-<a name="l00099"></a>00099     
-<a name="l00100"></a>00100     <span class="keywordtype">void</span> end() {
-<a name="l00101"></a>00101         mean = mean / number;
-<a name="l00102"></a>00102         deviation = deviation/number - mean * mean;
-<a name="l00103"></a>00103         deviation = sqrt(deviation);
-<a name="l00104"></a>00104     }
-<a name="l00105"></a>00105     
-<a name="l00106"></a>00106     <span class="keywordtype">void</span> dumpStr(ostream &amp;outfile) {
-<a name="l00107"></a>00107         <span class="keywordtype">int</span> maxfreq=0;
-<a name="l00108"></a>00108         <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;nBins &amp;&amp; i&lt;=maxValue;i++) {
-<a name="l00109"></a>00109             outfile &lt;&lt; i &lt;&lt; <span class="stringliteral">&quot;  &quot;</span> &lt;&lt; freq[i] &lt;&lt; endl;
-<a name="l00110"></a>00110             maxfreq = freq[i]&gt;maxfreq ? freq[i] : maxfreq;
-<a name="l00111"></a>00111         }
-<a name="l00112"></a>00112         
-<a name="l00113"></a>00113         outfile &lt;&lt; <span class="stringliteral">&quot;# Number: &quot;</span>&lt;&lt;number &lt;&lt;endl;
-<a name="l00114"></a>00114         outfile &lt;&lt; <span class="stringliteral">&quot;# Mean: &quot;</span>&lt;&lt;mean&lt;&lt;endl;
-<a name="l00115"></a>00115         outfile &lt;&lt; <span class="stringliteral">&quot;# Deviation: &quot;</span>&lt;&lt;deviation&lt;&lt;endl;
-<a name="l00116"></a>00116         outfile &lt;&lt; <span class="stringliteral">&quot;# Min: &quot;</span>&lt;&lt;minValue&lt;&lt;endl;
-<a name="l00117"></a>00117         outfile &lt;&lt; <span class="stringliteral">&quot;# Max: &quot;</span>&lt;&lt;maxValue&lt;&lt;endl;
-<a name="l00118"></a>00118 
-<a name="l00119"></a>00119         <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> max=15;
-<a name="l00120"></a>00120         <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=maxValue&lt;nBins?maxValue:nBins; i&gt;15; i--) {
-<a name="l00121"></a>00121             <span class="keywordflow">if</span>(freq[i]&gt;maxfreq/10000) {
-<a name="l00122"></a>00122                 max = i;
-<a name="l00123"></a>00123                 <span class="keywordflow">break</span>;
-<a name="l00124"></a>00124             }
-<a name="l00125"></a>00125         }
-<a name="l00126"></a>00126         outfile &lt;&lt; <span class="stringliteral">&quot;# Latest: &quot;</span>&lt;&lt;max&lt;&lt;endl;
-<a name="l00127"></a>00127     }
-<a name="l00128"></a>00128     
-<a name="l00129"></a>00129     <span class="keywordtype">void</span> dump(<span class="keyword">const</span> <span class="keywordtype">char</span> * name, <span class="keyword">const</span> <span class="keywordtype">char</span> *suffix) {
-<a name="l00130"></a>00130         <span class="keywordtype">string</span> fileName(name);
-<a name="l00131"></a>00131         fileName.append(suffix);
-<a name="l00132"></a>00132         ofstream outfile;
-<a name="l00133"></a>00133         
-<a name="l00134"></a>00134         cout &lt;&lt; <span class="stringliteral">&quot;Writing histogram to: &quot;</span> &lt;&lt; fileName &lt;&lt; endl;
-<a name="l00135"></a>00135             
-<a name="l00136"></a>00136         outfile.open(fileName.c_str());
-<a name="l00137"></a>00137 
-<a name="l00138"></a>00138         dumpStr(outfile);
-<a name="l00139"></a>00139         
-<a name="l00140"></a>00140         outfile.close();
-<a name="l00141"></a>00141     }
-<a name="l00142"></a>00142     
-<a name="l00143"></a>00143     <span class="comment">// Get the sum of all counts in the histogram.</span>
-<a name="l00144"></a>00144     <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> GetTotalCount()<span class="keyword"> const</span>
-<a name="l00145"></a>00145 <span class="keyword">    </span>{
-<a name="l00146"></a>00146         <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> c(0U);
-<a name="l00147"></a>00147         <span class="keywordflow">for</span>( <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(0); i &lt; nBins; ++i )
-<a name="l00148"></a>00148             c += freq[i];
-<a name="l00149"></a>00149         <span class="keywordflow">return</span> c;
-<a name="l00150"></a>00150     }
-<a name="l00151"></a>00151 };
+<a name="l00055"></a>00055 
+<a name="l00057"></a><a class="code" href="classHistogram.html#aaf22daf3b8e3f0578337109005532f51">00057</a>     <a class="code" href="classHistogram.html#aaf22daf3b8e3f0578337109005532f51" title="Destructor for Histogram.">~Histogram</a>() {
+<a name="l00058"></a>00058         <span class="keyword">delete</span>[] freq;
+<a name="l00059"></a>00059     }
+<a name="l00060"></a>00060 
+<a name="l00066"></a><a class="code" href="classHistogram.html#a59a00fc6b49ca1d497948aa5b07ca589">00066</a>     <a class="code" href="classHistogram.html" title="A histogram class.">Histogram</a>&amp; <a class="code" href="classHistogram.html#a59a00fc6b49ca1d497948aa5b07ca589" title="operator= Set this histogram equal to another.">operator=</a>(<span class="keyword">const</span> <a class="code" href="classHistogram.html" title="A histogram class.">Histogram</a>&amp; other) {
+<a name="l00067"></a>00067         <span class="keywordflow">if</span> (<span class="keyword">this</span> != &amp;other) {
+<a name="l00068"></a>00068             Start = other.Start;
+<a name="l00069"></a>00069             nBins_by_interval = other.nBins_by_interval;
+<a name="l00070"></a>00070             <span class="keywordflow">if</span> (nBins != other.nBins) {
+<a name="l00071"></a>00071                 nBins = other.nBins;
+<a name="l00072"></a>00072                 <span class="keyword">delete</span>[] freq;
+<a name="l00073"></a>00073                 freq = <span class="keyword">new</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>[nBins];
+<a name="l00074"></a>00074             }
+<a name="l00075"></a>00075             <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(0); i &lt; nBins; ++i)
+<a name="l00076"></a>00076                 freq[i] = other.freq[i];
+<a name="l00077"></a>00077         }
+<a name="l00078"></a>00078         <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00079"></a>00079     }
+<a name="l00080"></a>00080 
+<a name="l00086"></a><a class="code" href="classHistogram.html#af0c4d99c1eb4452f39d084336e45e48d">00086</a>     <span class="keywordtype">void</span> <a class="code" href="classHistogram.html#af0c4d99c1eb4452f39d084336e45e48d" title="Add.">Add</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; x, <span class="keywordtype">int</span> ntimes) {
+<a name="l00087"></a>00087         number += ntimes;
+<a name="l00088"></a>00088         total += (x * ntimes);
+<a name="l00089"></a>00089         mean += (x * ntimes);
+<a name="l00090"></a>00090         deviation += (x * x) * ntimes;
+<a name="l00091"></a>00091         minValue = min(minValue, x);
+<a name="l00092"></a>00092         maxValue = max(maxValue, x);
+<a name="l00093"></a>00093 
+<a name="l00094"></a>00094         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(static_cast&lt;unsigned int&gt; ((x - Start)
+<a name="l00095"></a>00095                 * nBins_by_interval));
+<a name="l00096"></a>00096 
+<a name="l00097"></a>00097         <span class="keywordflow">if</span> (i &lt; nBins) {
+<a name="l00098"></a>00098             freq[i] += ntimes;
+<a name="l00099"></a>00099         }
+<a name="l00100"></a>00100     }
+<a name="l00101"></a>00101 
+<a name="l00107"></a><a class="code" href="classHistogram.html#ae71bc233c012fa68d8926efecd47b7b8">00107</a>     <span class="keywordtype">void</span> <a class="code" href="classHistogram.html#ae71bc233c012fa68d8926efecd47b7b8" title="Add Increase the count for the bin that holds a value that is in range for this histogram.">Add</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; x) {
+<a name="l00108"></a>00108         Add(x, 1);
+<a name="l00109"></a>00109     }
+<a name="l00110"></a>00110 
+<a name="l00114"></a><a class="code" href="classHistogram.html#a62846da645ec1d7f84b901590a72b5a3">00114</a>     <span class="keywordtype">void</span> <a class="code" href="classHistogram.html#a62846da645ec1d7f84b901590a72b5a3" title="end">end</a>() {
+<a name="l00115"></a>00115         mean = mean / number;
+<a name="l00116"></a>00116         deviation = deviation / number - mean * mean;
+<a name="l00117"></a>00117         deviation = sqrt(deviation);
+<a name="l00118"></a>00118     }
+<a name="l00119"></a>00119 
+<a name="l00124"></a><a class="code" href="classHistogram.html#aac79d8548ddf93d70f3d026e5a537bde">00124</a>     <span class="keywordtype">void</span> <a class="code" href="classHistogram.html#aac79d8548ddf93d70f3d026e5a537bde" title="dumpStr">dumpStr</a>(ostream &amp;outfile) {
+<a name="l00125"></a>00125         <span class="keywordtype">int</span> maxfreq = 0;
+<a name="l00126"></a>00126         <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; nBins &amp;&amp; i &lt;= maxValue; i++) {
+<a name="l00127"></a>00127             outfile &lt;&lt; i &lt;&lt; <span class="stringliteral">&quot;  &quot;</span> &lt;&lt; freq[i] &lt;&lt; endl;
+<a name="l00128"></a>00128             maxfreq = freq[i] &gt; maxfreq ? freq[i] : maxfreq;
+<a name="l00129"></a>00129         }
+<a name="l00130"></a>00130 
+<a name="l00131"></a>00131         outfile &lt;&lt; <span class="stringliteral">&quot;# Number: &quot;</span> &lt;&lt; number &lt;&lt; endl;
+<a name="l00132"></a>00132         outfile &lt;&lt; <span class="stringliteral">&quot;# Mean: &quot;</span> &lt;&lt; mean &lt;&lt; endl;
+<a name="l00133"></a>00133         outfile &lt;&lt; <span class="stringliteral">&quot;# Deviation: &quot;</span> &lt;&lt; deviation &lt;&lt; endl;
+<a name="l00134"></a>00134         outfile &lt;&lt; <span class="stringliteral">&quot;# Min: &quot;</span> &lt;&lt; minValue &lt;&lt; endl;
+<a name="l00135"></a>00135         outfile &lt;&lt; <span class="stringliteral">&quot;# Max: &quot;</span> &lt;&lt; maxValue &lt;&lt; endl;
+<a name="l00136"></a>00136 
+<a name="l00137"></a>00137         <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> max = 15;
+<a name="l00138"></a>00138         <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = maxValue &lt; nBins ? maxValue : nBins; i &gt; 15; i--) {
+<a name="l00139"></a>00139             <span class="keywordflow">if</span> (freq[i] &gt; maxfreq / 10000) {
+<a name="l00140"></a>00140                 max = i;
+<a name="l00141"></a>00141                 <span class="keywordflow">break</span>;
+<a name="l00142"></a>00142             }
+<a name="l00143"></a>00143         }
+<a name="l00144"></a>00144         outfile &lt;&lt; <span class="stringliteral">&quot;# Latest: &quot;</span> &lt;&lt; max &lt;&lt; endl;
+<a name="l00145"></a>00145     }
+<a name="l00146"></a>00146 
+<a name="l00152"></a><a class="code" href="classHistogram.html#abfebbc3cc3066a00324bfc548af9ae04">00152</a>     <span class="keywordtype">void</span> <a class="code" href="classHistogram.html#abfebbc3cc3066a00324bfc548af9ae04" title="dump">dump</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> * name, <span class="keyword">const</span> <span class="keywordtype">char</span> *suffix) {
+<a name="l00153"></a>00153         <span class="keywordtype">string</span> fileName(name);
+<a name="l00154"></a>00154         fileName.append(suffix);
+<a name="l00155"></a>00155         ofstream outfile;
+<a name="l00156"></a>00156 
+<a name="l00157"></a>00157         cout &lt;&lt; <span class="stringliteral">&quot;Writing histogram to: &quot;</span> &lt;&lt; fileName &lt;&lt; endl;
+<a name="l00158"></a>00158 
+<a name="l00159"></a>00159         outfile.open(fileName.c_str());
+<a name="l00160"></a>00160 
+<a name="l00161"></a>00161         dumpStr(outfile);
+<a name="l00162"></a>00162 
+<a name="l00163"></a>00163         outfile.close();
+<a name="l00164"></a>00164     }
+<a name="l00165"></a>00165 
+<a name="l00170"></a><a class="code" href="classHistogram.html#a9704744c6f15223b26c64aa62ee6af14">00170</a>     <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classHistogram.html#a9704744c6f15223b26c64aa62ee6af14" title="GetTotalCount Get the sum of all counts in the histogram.">GetTotalCount</a>()<span class="keyword"> const </span>{
+<a name="l00171"></a>00171         <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> c(0U);
+<a name="l00172"></a>00172         <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i(0); i &lt; nBins; ++i)
+<a name="l00173"></a>00173             c += freq[i];
+<a name="l00174"></a>00174         <span class="keywordflow">return</span> c;
+<a name="l00175"></a>00175     }
+<a name="l00176"></a>00176 };
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:02 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

@@ -12,6 +12,7 @@
   <div class="tabs">
     <ul class="tablist">
       <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
     </ul>
@@ -19,6 +20,7 @@
   <div class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+      <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
     </ul>
   </div>
 <div class="header">
@@ -26,7 +28,7 @@
 <h1>CompactTriples.h</h1>  </div>
 </div>
 <div class="contents">
-<div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* CompactTriples.h</span>
+<a href="CompactTriples_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* CompactTriples.h</span>
 <a name="l00002"></a>00002 <span class="comment"> * Copyright (C) 2010, Javier D. Fernandez &amp; Miguel A, Martinez-Prieto</span>
 <a name="l00003"></a>00003 <span class="comment"> * all rights reserved.</span>
 <a name="l00004"></a>00004 <span class="comment"> *</span>
@@ -51,42 +53,36 @@
 <a name="l00023"></a>00023 <span class="comment"> *   Javier D. Fernandez:       jfergar@infor.uva.es</span>
 <a name="l00024"></a>00024 <span class="comment"> *   Miguel A Martinez-Prieto:  migumar2@infor.uva.es</span>
 <a name="l00025"></a>00025 <span class="comment"> */</span>
-<a name="l00026"></a>00026  
+<a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#ifndef COMPACTTRIPLES_H</span>
 <a name="l00028"></a>00028 <span class="preprocessor"></span><span class="preprocessor">#define COMPACTTRIPLES_H</span>
 <a name="l00029"></a>00029 <span class="preprocessor"></span>
-<a name="l00030"></a>00030 <span class="preprocessor">#include &quot;Triples.h&quot;</span>
+<a name="l00030"></a>00030 <span class="preprocessor">#include &quot;<a class="code" href="Triples_8h.html">Triples.h</a>&quot;</span>
 <a name="l00031"></a>00031 
 <a name="l00032"></a>00032 <span class="keyword">using namespace </span>std;
 <a name="l00033"></a>00033 
-<a name="l00039"></a><a class="code" href="classCompactTriples.html">00039</a> <span class="keyword">class </span><a class="code" href="classCompactTriples.html">CompactTriples</a> : <span class="keyword">public</span> <a class="code" href="classTriples.html">Triples</a>
-<a name="l00040"></a>00040 {
-<a name="l00041"></a>00041 <span class="keyword">public</span>: 
-<a name="l00043"></a>00043     <a class="code" href="classCompactTriples.html">CompactTriples</a>();
-<a name="l00045"></a>00045     <a class="code" href="classCompactTriples.html">CompactTriples</a>(<a class="code" href="classDictionary.html">Dictionary</a> *dictionary, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ntriples, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> parsing);
-<a name="l00047"></a>00047     <a class="code" href="classCompactTriples.html">CompactTriples</a>(<a class="code" href="classDictionary.html">Dictionary</a> *dictionary, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ntriples, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> parsing, <span class="keywordtype">string</span> path);
-<a name="l00048"></a>00048 
-<a name="l00050"></a>00050     <a class="code" href="classCompactTriples.html">CompactTriples</a>(<a class="code" href="classTriples.html">Triples</a> *other);
+<a name="l00034"></a><a class="code" href="classCompactTriples.html">00034</a> <span class="keyword">class </span><a class="code" href="classCompactTriples.html">CompactTriples</a>: <span class="keyword">public</span> <a class="code" href="classTriples.html" title="Triples It implements an abstract class representing the features of the Triples component in HDT...">Triples</a> {
+<a name="l00035"></a>00035 <span class="keyword">public</span>:
+<a name="l00036"></a>00036     <a class="code" href="classCompactTriples.html">CompactTriples</a>();
+<a name="l00037"></a>00037     <a class="code" href="classCompactTriples.html">CompactTriples</a>(<a class="code" href="classDictionary.html">Dictionary</a> *<a class="code" href="rdfvis_8cpp.html#afff9d001464644076ad030c851084164">dictionary</a>, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ntriples,
+<a name="l00038"></a>00038             <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> parsing);
+<a name="l00039"></a>00039     <a class="code" href="classCompactTriples.html">CompactTriples</a>(<a class="code" href="classDictionary.html">Dictionary</a> *dictionary, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> ntriples,
+<a name="l00040"></a>00040             <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> parsing, <span class="keywordtype">string</span> path);
+<a name="l00041"></a>00041     <a class="code" href="classCompactTriples.html">CompactTriples</a>(<a class="code" href="classTriples.html" title="Triples It implements an abstract class representing the features of the Triples component in HDT...">Triples</a> *other);
+<a name="l00042"></a>00042     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> write(<span class="keywordtype">string</span> path);
+<a name="l00043"></a>00043     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> write(<span class="keywordtype">string</span> path, vector&lt;TripleID&gt; &amp;graph);
+<a name="l00044"></a>00044     <span class="keyword">static</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> write(vector&lt;TripleID&gt; &amp;graph, <span class="keywordtype">string</span> path);
+<a name="l00045"></a>00045     <span class="keywordtype">void</span> <a class="code" href="HDT_8cpp.html#afdd066255a12a1963ed773be219e8f3f" title="Console.">console</a>();
+<a name="l00046"></a>00046     <span class="keywordtype">bool</span> transformToN3();
+<a name="l00047"></a>00047     <span class="keywordtype">bool</span> serialize(<span class="keywordtype">char</span> *output, <span class="keywordtype">char</span> *format);
+<a name="l00048"></a>00048     <span class="keywordtype">bool</span> loadGraphMemory();
+<a name="l00049"></a>00049     ~<a class="code" href="classCompactTriples.html">CompactTriples</a>();
+<a name="l00050"></a>00050 };
 <a name="l00051"></a>00051 
-<a name="l00052"></a>00052     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> write(<span class="keywordtype">string</span> path, vector&lt;TripleID&gt; &amp;graph);
-<a name="l00053"></a>00053     
-<a name="l00054"></a>00054     <span class="keywordtype">void</span> console();
-<a name="l00055"></a>00055     <span class="keywordtype">bool</span> transformToN3();
-<a name="l00056"></a>00056     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> write(<span class="keywordtype">string</span> path);
-<a name="l00058"></a>00058     <span class="keywordtype">bool</span> serialize(<span class="keywordtype">char</span> *output, <span class="keywordtype">char</span> *format);
-<a name="l00059"></a>00059     
-<a name="l00061"></a>00061     <span class="keywordtype">bool</span> loadGraphMemory();
-<a name="l00062"></a>00062 
-<a name="l00063"></a>00063     <span class="keyword">static</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> write(vector&lt;TripleID&gt; &amp;graph, <span class="keywordtype">string</span> path);
-<a name="l00064"></a>00064     
-<a name="l00065"></a>00065     
-<a name="l00067"></a>00067     ~<a class="code" href="classCompactTriples.html">CompactTriples</a>();
-<a name="l00068"></a>00068 };
-<a name="l00069"></a>00069 
-<a name="l00070"></a>00070 <span class="preprocessor">#endif  </span><span class="comment">/* _COMPACTTRIPLES_H */</span>
+<a name="l00052"></a>00052 <span class="preprocessor">#endif  </span><span class="comment">/* _COMPACTTRIPLES_H */</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Thu Feb 3 2011 09:46:45 for HDT-it by&nbsp;
+<hr class="footer"/><address class="footer"><small>Generated on Mon Feb 21 2011 17:32:02 for HDT-it by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.1 </small></address>
 </body>

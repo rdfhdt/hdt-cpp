@@ -531,9 +531,8 @@ void Triples::calculateDegree(string path) {
 	int z = graph[0].z;
 
 	//cout << graph[0].x << " " << graph[0].y << " " << graph[0].z << endl;	
-
 	for (int i = 1; i < ntriples; i++) {
-
+		//cout<<graph[i].x<< " " << graph[i].y << " " << graph[i].z<<"\n";
 		// Ignore duplicate triples
 		if ((x == graph[i].x) && (y == graph[i].y) && (z == graph[i].z)) {
 			continue;
@@ -566,6 +565,8 @@ void Triples::calculateDegree(string path) {
 				ycount++;
 			}
 		}
+		
+		
 
 		//cout << graph[i].x << " " << graph[i].y << " " << graph[i].z << endl;
 
@@ -574,30 +575,78 @@ void Triples::calculateDegree(string path) {
 		z = graph[i].z;
 	}
 
+		//cout << "\tdegree: " << xcount <<endl;
+		hDegree.Add(xcount);
+
+		//cout << "\tpartial degree: " << ycount << endl;
+		hDegreePartial.Add(ycount);
+
+		//cout << "\tlabeled degree: " << ychanged << endl;
+		hDegreeLabeled.Add(ychanged);
+		
 	hDegree.end();
 	hDegreePartial.end();
 	hDegreeLabeled.end();
 
 	ofstream out;
-	string direcc = (parsing == SPO) ? "out" : "in";
-
-	//	cout << endl << "Degree" << endl;
-	out.open((path + "_" + direcc).c_str(), ios::out);
-	out << "# " << direcc << " degree" << endl;
-	hDegree.dumpStr(out);
-	out.close();
+	
+	string direcc=""; //predicate total degree is neither in nor out
+	if (parsing == SPO) direcc="out";
+	else if (parsing == OPS) direcc="in";
+	else direcc="predicate";
+	
+	
 
 	//cout << endl << "Partial degree" << endl;
-	out.open((path + "_p" + direcc).c_str(), ios::out);
-	out << "# Partial " << direcc << " degree" << endl;
-	hDegreePartial.dumpStr(out);
-	out.close();
-
-	//cout << endl << "Labeled degree" << endl;
-	out.open((path + "_l" + direcc).c_str(), ios::out);
-	out << "# Labeled" << direcc << " degree" << endl;
-	hDegreeLabeled.dumpStr(out);
-	out.close();
+	
+	if (parsing==PSO){
+		out.open((path + "_Predicate").c_str(), ios::out);
+		out << "# Predicate degree" << endl;
+		hDegree.dumpStr(out);
+		out.close();
+		
+		out.open((path + "_inPredicate").c_str(), ios::out);
+		out << "# Predicate_in degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		out.close();
+		
+	}
+	else if (parsing==POS){
+		out.open((path + "_outPredicate").c_str(), ios::out);
+		out << "# Predicate_out degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		out.close();
+	}
+	else if (parsing==SOP){
+		out.open((path + "_DirectOut").c_str(), ios::out);
+		out << "# Direct_out degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		out.close();
+	}
+	else if (parsing==OSP){
+		out.open((path + "_DirectIn").c_str(), ios::out);
+		out << "# Direct_in degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		out.close();
+	}
+	else{
+		string direcc = (parsing == SPO) ? "out" : "in";
+		//	cout << endl << "Degree" << endl;
+		out.open((path + "_" + direcc).c_str(), ios::out);
+		out << "# " << direcc << " degree" << endl;
+		hDegree.dumpStr(out);
+		out.close();
+	
+		out.open((path + "_p" + direcc).c_str(), ios::out);
+		out << "# Partial " << direcc << " degree" << endl;
+		hDegreePartial.dumpStr(out);
+		out.close();
+		//cout << endl << "Labeled degree" << endl;
+		out.open((path + "_l" + direcc).c_str(), ios::out);
+		out << "# Labeled" << direcc << " degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		out.close();
+	}
 
 }
 
@@ -611,10 +660,13 @@ void Triples::calculatePredicateHistogram(string path) {
 
 	for (unsigned int i = 0; i < graph.size(); i++) {
 		hPred.Add(graph[i].x);
+		//cout<<graph[i].x<< " " << graph[i].y << " " << graph[i].z<<"\n";
 	}
+	hPred.end();
 
 	ofstream out;
 	out.open((path).c_str(), ios::out);
+	
 	hPred.dumpStr(out);
 	out.close();
 }
@@ -632,4 +684,24 @@ void Triples::calculateDegrees(string path) {
 	cout << "Calculate IN Degree" << endl;
 	convertParsing( OPS);
 	calculateDegree(path);
+	
+	cout << "Calculate Direct OUT Degree" << endl;
+	convertParsing( SOP);
+	calculateDegree(path);
+	
+	cout << "Calculate Direct IN Degree" << endl;
+	convertParsing( OSP);
+	calculateDegree(path);
+	
+	cout << "Calculate Predicate Degree" << endl;
+	cout << "Calculate Predicate IN Degree" << endl;
+	convertParsing( PSO);
+	calculateDegree(path);
+	
+	cout << "Calculate Predicate OUT Degree" << endl;
+	convertParsing( POS);
+	calculateDegree(path);
+	
+	
+	
 }
