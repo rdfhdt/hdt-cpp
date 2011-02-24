@@ -782,7 +782,7 @@ void PlainDictionary::dumpStats(string &output) {
 	out << "subjects: " << subjects_shared.size()+subjects_not_shared.size() << endl;
 	out << "objects: " << subjects_shared.size()+objects_not_shared.size() << endl;
 	out << "shared subject-object: "<< subjects_shared.size() << endl;
-	out << "s-o ratio: "<< ((double)subjects_shared.size())/(subjects_shared.size()+subjects_not_shared.size()+subjects_shared.size()+objects_not_shared.size()) << endl;
+	out << "s-o ratio: "<< ((double)subjects_shared.size())/(subjects_shared.size()+subjects_not_shared.size()+objects_not_shared.size()) << endl;
 	
 	
 	int shared_sp=0, shared_op=0;
@@ -796,9 +796,9 @@ void PlainDictionary::dumpStats(string &output) {
 			shared_op+=1;
 	}
 	out << "shared subject-predicates: "<<shared_sp<<endl;
-		out << "s-p ratio: "<< ((double)shared_sp)/(subjects_shared.size()+subjects_not_shared.size()+subjects_shared.size()+objects_not_shared.size()) << endl;
+		out << "s-p ratio: "<< ((double)shared_sp)/(subjects_shared.size()+subjects_not_shared.size()+objects_not_shared.size()) << endl;
 	out << "shared object-predicates: "<<shared_op<<endl;
-		out << "o-p ratio: "<< ((double)shared_op)/(subjects_shared.size()+subjects_not_shared.size()+subjects_shared.size()+objects_not_shared.size()) << endl;
+		out << "o-p ratio: "<< ((double)shared_op)/(subjects_shared.size()+subjects_not_shared.size()+objects_not_shared.size()) << endl;
 	out.close();
 
 	string tmp;
