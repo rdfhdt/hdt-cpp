@@ -39,7 +39,7 @@
 
 namespace hdt {
 
-	enum TriplePosition
+	enum TripleComponentRole
 	{
 		SUBJECT,
 		PREDICATE,

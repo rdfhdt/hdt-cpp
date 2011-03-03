@@ -48,8 +48,8 @@ namespace hdt {
 	class Dictionary
 	{
 		public:
-			virtual std::string idToString(unsigned int id, TriplePosition position)=0;
-			virtual unsigned int stringToId(std::string &str, TriplePosition position)=0;
+			virtual std::string idToString(unsigned int id, TripleComponentRole position)=0;
+			virtual unsigned int stringToId(std::string &str, TripleComponentRole position)=0;
 
 			virtual TripleID tripleStringtoTripleID(TripleString &tripleString)=0;
 			virtual TripleString tripleIDtoTripleString(TripleID &tripleID)=0;
@@ -57,7 +57,7 @@ namespace hdt {
 			virtual bool save(std::ostream &output)=0;
 			virtual void load(std::istream &input)=0;
 
-			virtual unsigned int insert(std::string &str, TriplePosition position)=0;
+			virtual void insert(std::string &str, TripleComponentRole position)=0;
 			virtual unsigned int numberOfElements()=0;
 
 			virtual void startProcessing()=0;

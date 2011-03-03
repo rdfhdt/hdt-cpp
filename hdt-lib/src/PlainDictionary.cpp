@@ -46,7 +46,7 @@ PlainDictionary::~PlainDictionary() {
 
 }
 
-std::string PlainDictionary::idToString(unsigned int id, TriplePosition position)
+std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole position)
 {
 	vector<DictionaryEntry*> &vector = getDictionaryEntryVector(id, position);
 
@@ -60,7 +60,7 @@ std::string PlainDictionary::idToString(unsigned int id, TriplePosition position
 	return string();
 }
 
-unsigned int PlainDictionary::stringToId(std::string &key, TriplePosition position)
+unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole position)
 {
 	unsigned int id = 0;
 	DictEntryIt ret;
@@ -141,17 +141,17 @@ void PlainDictionary::load(std::istream & input)
 	startProcessing();
 
 	while(getline(input, line)) {
-		std::cout << line << std::endl;
+		//std::cout << line << std::endl;
 
 		if(line!="") {
 			if (region == 1) { //shared SO
-				addEntry(line, SHARED_SUBJECT);
+				insert(line, SHARED_SUBJECT);
 			} else if (region == 2) { //not shared Subjects
-				addEntry(line, NOT_SHARED_SUBJECT);
+				insert(line, NOT_SHARED_SUBJECT);
 			} else if (region == 3) { //not shared Objects
-				addEntry(line, NOT_SHARED_OBJECT);
+				insert(line, NOT_SHARED_OBJECT);
 			} else if (region == 4) { //predicates
-				addEntry(line, NOT_SHARED_PREDICATE);
+				insert(line, NOT_SHARED_PREDICATE);
 			}
 		}
 	}
@@ -162,9 +162,66 @@ unsigned int PlainDictionary::numberOfElements()
 	return subjects_shared.size() + subjects_not_shared.size() + objects_not_shared.size() + predicates.size();
 }
 
-unsigned int PlainDictionary::insert(std::string & str, TriplePosition position)
+void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 {
-	addEntry(str, position);
+	if(str=="") return;
+
+	if(pos==PREDICATE) {
+		DictEntryIt it = hashPredicate.find(str.c_str());
+		if(it!=hashPredicate.end()) {
+			//cout << "  existing predicate: " << str << endl;
+		} else {
+			DictionaryEntry *entry = new DictionaryEntry;
+			setPrefixAndString(entry, str);
+			//cout << " Add new predicate: " << str.c_str() << endl;
+
+			hashPredicate[str.c_str()] = entry;
+			predicates.push_back(entry);
+		}
+
+		return;
+	}
+
+	DictEntryIt subjectIt = hashSubject.find(str.c_str());
+	DictEntryIt objectIt = hashObject.find(str.c_str());
+
+	bool foundSubject = subjectIt!=hashSubject.end();
+	bool foundObject = objectIt!=hashObject.end();
+	//cout << "A: " << foundSubject << " B: " << foundSubject << endl;
+
+	if(pos==SUBJECT) {
+		if( !foundSubject && !foundObject) {
+			// Did not exist, create new.
+			DictionaryEntry *entry = new DictionaryEntry;
+			setPrefixAndString(entry, str);
+
+			//cout << " Add new subject: " << str << endl;
+			hashSubject[str.c_str()] = entry;
+		} else if(foundSubject) {
+			// Already exists in subjects.
+			//cout << "   existing subject: " << str << endl;
+		} else if(foundObject) {
+			// Already exists in objects.
+			//cout << "   existing subject as object: " << str << endl;
+			hashSubject[str.c_str()] = objectIt->second;
+		}
+	} else if(pos==OBJECT) {
+		if(!foundSubject && !foundObject) {
+			// Did not exist, create new.
+			DictionaryEntry *entry = new DictionaryEntry;
+			setPrefixAndString(entry, str);
+
+			//cout << " Add new object: " << str << endl;
+			hashObject[str.c_str()] = entry;
+		} else if(foundObject) {
+			// Already exists in objects.
+			//cout << "     existing object: " << str << endl;
+		} else if(foundSubject) {
+			// Already exists in subjects.
+			//cout << "     existing object as subject: " << str << endl;
+			hashObject[str.c_str()] = subjectIt->second;
+		}
+	}
 }
 
 bool PlainDictionary::save(std::ostream &output)
@@ -207,12 +264,9 @@ bool PlainDictionary::save(std::ostream &output)
 	}
 }
 
-
-
-
 // PRIVATE
 
-void PlainDictionary::addEntry(string str, DictionarySection pos) {
+void PlainDictionary::insert(string str, DictionarySection pos) {
 
 	if(str=="") return;
 
@@ -239,59 +293,6 @@ void PlainDictionary::addEntry(string str, DictionarySection pos) {
 	}
 }
 
-void PlainDictionary::addEntry(string str, TriplePosition pos) {
-
-	if(str=="") return;
-
-	if(pos==PREDICATE) {
-		DictEntryIt it = hashPredicate.find(str.c_str());
-		if(it==hashPredicate.end()) {
-			DictionaryEntry *entry = new DictionaryEntry;
-			setPrefixAndString(entry, str);
-			hashPredicate[str.c_str()] = entry;
-			predicates.push_back(entry);
-		}
-
-		return;
-	}
-
-	DictEntryIt subjectIt = hashSubject.find(str.c_str());
-	DictEntryIt objectIt = hashObject.find(str.c_str());
-
-	if(pos==SUBJECT) {
-		if(subjectIt==hashSubject.end() && objectIt==hashSubject.end()) {
-			// Did not exist, create new.
-			DictionaryEntry *entry = new DictionaryEntry;
-			setPrefixAndString(entry, str);
-
-			hashSubject[str.c_str()] = entry;
-			cout << " Add new subject: " << str << endl;
-		}
-
-		if(objectIt!=hashObject.end() && subjectIt==hashSubject.end()) {
-			// Already exists in objects.
-			hashSubject[str.c_str()] = objectIt->second;
-			cout << "   existing subject: " << str << endl;
-		}
-	} else if(pos==OBJECT) {
-		if(subjectIt==hashSubject.end() && objectIt==hashSubject.end()) {
-			// Did not exist, create new.
-			DictionaryEntry *entry = new DictionaryEntry;
-			setPrefixAndString(entry, str);
-
-			hashObject[str.c_str()] = entry;
-			cout << " Add new object: " << str << endl;
-		}
-
-		if(subjectIt!=hashSubject.end() && objectIt==hashObject.end()) {
-			// Already exists in subjects.
-			hashObject[str.c_str()] = subjectIt->second;
-			cout << "     existing object: " << str << endl;
-		}
-	}
-
-}
-
 /** Split
  * @return void
  */
@@ -300,8 +301,8 @@ void PlainDictionary::split() {
 	subjects_shared.clear();
 	objects_not_shared.clear();
 
-	for(DictEntryHash::const_iterator subj_it = hashSubject.begin(); subj_it!=hashSubject.end(); subj_it++) {
-		cout << "Check Subj: " << subj_it->first << endl;
+	for(DictEntryIt subj_it = hashSubject.begin(); subj_it!=hashSubject.end(); subj_it++) {
+		//cout << "Check Subj: " << subj_it->first << endl;
 		DictEntryIt other = hashObject.find(subj_it->first);
 
 		if(other==hashObject.end()) {
@@ -314,14 +315,14 @@ void PlainDictionary::split() {
 	}
 	cout << "Hash Size Object: " << hashObject.size() << endl;
 
-	for(DictEntryHash::iterator obj_it = hashObject.begin(); obj_it!=hashObject.end(); ++obj_it) {
-		cout << "Check Obj: " << obj_it->first << endl;
-		/*DictEntryIt other = hashSubject.find(obj_it->first);
+	for(DictEntryIt obj_it = hashObject.begin(); obj_it!=hashObject.end(); ++obj_it) {
+		//cout << "Check Obj: " << obj_it->first << endl;
+		DictEntryIt other = hashSubject.find(obj_it->first);
 
 		if(other==hashSubject.end()) {
 			// Only object
 			objects_not_shared.push_back(obj_it->second);
-		}*/
+		}
 	}
 }
 
@@ -418,12 +419,12 @@ void PlainDictionary::convertMapping(unsigned int mapping) {
 	}
 }
 
-void PlainDictionary::setPrefixAndString(DictionaryEntry *entry, string &str) {
+void PlainDictionary::setPrefixAndString(DictionaryEntry *entry, const string str) {
 	static string empty("");
 
-	size_t pos = str.find_last_of('/');
+/*	size_t pos = str.find_last_of('/');
 	if(pos!=string::npos) {
-		string prefix = str.substr(0, pos);
+		string prefix = str.substr(0, pos+1);
 
 		PrefixIt prefixIt = prefixes.find(prefix.c_str());
 
@@ -437,14 +438,16 @@ void PlainDictionary::setPrefixAndString(DictionaryEntry *entry, string &str) {
 		}
 
 		entry->prefix = foundPrefix;
-		entry->str = new string(str.substr(pos));
-	} else {
+		entry->str = new string(str.substr(pos+1));
+	} else {*/
 		entry->prefix = &empty;
 		entry->str = new string(str);
-	}
+	//}
+
+	//cout<<"Converted: "<< str << " to |" << *entry->prefix << "|" << *entry->str << "|" << endl;
 }
 
-vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int id, TriplePosition position) {
+vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
 		if(id<= subjects_shared.size()) {
@@ -495,7 +498,7 @@ unsigned int PlainDictionary::getGlobalId(unsigned int id, DictionarySection pos
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TriplePosition position) {
+unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
 	switch (position) {
 		case SUBJECT:
 			if(id<=subjects_shared.size()) {
@@ -522,7 +525,7 @@ unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, 
 		throw "Item not found";
 }
 
-unsigned int PlainDictionary::getLocalId(unsigned int id, TriplePosition position) {
+unsigned int PlainDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
 	return getLocalId(mapping,id,position);
 }
 

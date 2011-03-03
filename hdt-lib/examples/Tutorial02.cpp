@@ -16,6 +16,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
 	std::string inputFileName = "data/test.n3";
+	std::string outputFileName = "data/test.n3.D";
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
@@ -26,7 +27,9 @@ int main(int argc, char **argv) {
 
 	cout << dictionary.numberOfElements() << " elements in the dictionary." << endl;
 
-	dictionary.save(cout);
+	ofstream out(outputFileName.c_str());
+	dictionary.save(out);
+	out.close();
 
 	//string s("Rebecca");
 	//cout << "Rebecca has id " << dictionary.stringToId(s, SUBJECT) << endl;
