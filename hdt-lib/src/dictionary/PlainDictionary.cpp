@@ -6,7 +6,7 @@
  */
 
 #include "PlainDictionary.hpp"
-#include "Histogram.h"
+#include "../util/Histogram.h"
 
 namespace hdt {
 

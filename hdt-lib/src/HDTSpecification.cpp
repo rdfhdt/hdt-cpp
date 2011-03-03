@@ -6,7 +6,7 @@
  */
 
 #include <HDTSpecification.hpp>
-#include "propertyutil.h"
+#include "util/propertyutil.h"
 
 namespace hdt {
 

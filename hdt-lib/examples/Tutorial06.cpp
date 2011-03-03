@@ -5,7 +5,7 @@
  *      Author: mck
  */
 
-#include "../src/PlainDictionary.hpp"
+#include "../src/dictionary/PlainDictionary.hpp"
 
 #include <string>
 #include <fstream>

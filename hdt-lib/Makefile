@@ -4,14 +4,14 @@ LIBCDSPATH = ../libcds
 CPP=g++
 CPPFLAGS=
 #FLAGS=-O9
-FLAGS=-g -Wno-deprecated
+FLAGS=-ggdb -Wno-deprecated
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include
 LDFLAGS=-lstdc++ -lraptor
 DOXYGEN=doxygen
 
 LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib
 
-OBJECTS=$(patsubst %.cpp,%.o, $(wildcard src/*.cpp))
+OBJECTS=$(patsubst %.cpp,%.o, $(wildcard src/*.cpp) $(wildcard src/**/*.cpp))
 HEADERS=$(wildcard include/*.hpp) $(wildcard src/*.hpp) $(wildcard include/*.h) $(wildcard src/*.h)
 EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
 

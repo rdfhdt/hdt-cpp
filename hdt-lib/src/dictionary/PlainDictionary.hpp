@@ -17,7 +17,7 @@
 #include <fstream>
 #include <iostream>
 
-#include <google/sparse_hash_map>
+//#include <google/sparse_hash_map>
 
 #include <ext/hash_map>
    namespace std { using namespace __gnu_cxx; }
@@ -43,7 +43,7 @@ struct str_cmp {
 
 typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 
-#if 1
+#if 0
 typedef google::sparse_hash_map<const char *, DictionaryEntry *, std::hash<const char *>, str_cmp> DictEntryHash;
 #else
 typedef std::hash_map<const char *, DictionaryEntry *, std::hash<const char *>, str_cmp> DictEntryHash;

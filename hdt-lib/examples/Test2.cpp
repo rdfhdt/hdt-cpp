@@ -1,5 +1,5 @@
 #include <string>
-#include <google/sparse_hash_map>
+//#include <google/sparse_hash_map>
 #include <ext/hash_map>
 #include <string.h>
 #include <iostream>
@@ -18,8 +18,8 @@ struct str_cmp {
 };
 
 typedef std::pair<const char*, const char*> DictEntryPair;
-//typedef std::hash_map<const char *, const char*, std::hash<const char *>, str_cmp> DictEntryHash;
-typedef google::sparse_hash_map<const char *, const char*, std::hash<const char *>, str_cmp> DictEntryHash;
+typedef std::hash_map<const char *, const char*, std::hash<const char *>, str_cmp> DictEntryHash;
+//typedef google::sparse_hash_map<const char *, const char*, std::hash<const char *>, str_cmp> DictEntryHash;
 typedef DictEntryHash::iterator DictEntryIt;
 
 int main(int argc, char **argv) {

@@ -37,8 +37,8 @@
 #include <string>
 
 #include "BasicHDT.hpp"
-#include "PlainDictionary.hpp"
-#include "PlainTriples.hpp"
+#include "dictionary/PlainDictionary.hpp"
+#include "triples/PlainTriples.hpp"
 #include "RDFParser.hpp"
 
 namespace hdt {

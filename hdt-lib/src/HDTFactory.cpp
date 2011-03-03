@@ -11,15 +11,19 @@
 
 using namespace hdt;
 
-HDT *hdt::HDTFactory::createDefaultHDT()
+
+namespace hdt {
+
+HDT *HDTFactory::createDefaultHDT()
 {
 	BasicHDT *h = new BasicHDT();
 	return h;
 }
 
-HDT *hdt::HDTFactory::createBasicHDT(HDTSpecification &spec)
+HDT *HDTFactory::createBasicHDT(HDTSpecification &spec)
 {
 	BasicHDT *h = new BasicHDT(spec);
 	return h;
 }
 
+}
