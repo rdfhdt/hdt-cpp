@@ -1,7 +1,0 @@
-<http://example.org/uri1> <http://example.org/predicate1> "literal1" .
-<http://example.org/uri1> <http://example.org/predicate2> <http://example.org/uri3> .
-<http://example.org/uri2> <http://example.org/predicate1> "literal2" .
-<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri4> .
-<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri5> .
-
-
