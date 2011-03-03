@@ -3,7 +3,8 @@ LIBCDSPATH = ../libcds
 
 CPP=g++
 CPPFLAGS=
-FLAGS=-O9 
+#FLAGS=-O9
+FLAGS=-g
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include
 LDFLAGS=-lstdc++ -lraptor
 DOXYGEN=doxygen

@@ -46,6 +46,21 @@ namespace hdt {
 		OBJECT
 	};
 
+	enum DictionarySection
+	{
+		SHARED_SUBJECT,
+		NOT_SHARED_SUBJECT,
+		SHARED_OBJECT,
+		NOT_SHARED_OBJECT,
+		NOT_SHARED_PREDICATE
+	};
+
+	enum Mapping
+	{
+		MAPPING1,
+		MAPPING2
+	};
+
 	enum TripleComponentOrder {
 		/**
 		 * Subject, predicate, object

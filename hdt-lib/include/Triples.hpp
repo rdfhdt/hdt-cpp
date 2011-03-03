@@ -102,6 +102,9 @@ namespace hdt {
 		     * @return
 		     */
 			virtual void load(std::istream &input) = 0;
+
+			void startProcessing() { }
+			void stopProcessing() { }
 	}; // Triples{}
 
 	class ModifiableTriples : public Triples {

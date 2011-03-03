@@ -45,6 +45,7 @@ namespace hdt {
 
 
 BasicHDT::BasicHDT() {
+	createComponents();
 }
 
 BasicHDT::BasicHDT(HDTSpecification &spec) {
@@ -53,13 +54,14 @@ BasicHDT::BasicHDT(HDTSpecification &spec) {
 }
 
 BasicHDT::~BasicHDT() {
-	createComponents();
+
 }
 
 void BasicHDT::createComponents() {
 	std::string dictType = spec.get("dictionary.type");
 	std::string triplesType = spec.get("triples.type");
 
+	// FIXME: SELECT
 	std::cout << "Create" << std::endl << "Dict: " << dictType << std::endl <<"Triples: " << triplesType << std::endl;
 
 	dictionary = new PlainDictionary();
@@ -109,7 +111,7 @@ void BasicHDT::loadFromRDF(std::istream &input)
 	dictionary->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
-		std::cout << ts << std::endl;
+//		std::cout << ts << std::endl;
 
 		dictionary->insert(ts.getSubject(), SUBJECT);
 		dictionary->insert(ts.getPredicate(), PREDICATE);
@@ -117,17 +119,21 @@ void BasicHDT::loadFromRDF(std::istream &input)
 	}
 	dictionary->stopProcessing();
 
+
 	// Triples
+	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
 
+	triples->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
-		std::cout << ts << std::endl;
+	//	std::cout << ts << std::endl;
 
 		TripleID ti = dictionary->tripleStringtoTripleID(ts);
 
 		triples->insert(ti);
 	}
+	triples->stopProcessing();
 }
 
 

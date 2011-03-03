@@ -15,10 +15,7 @@ using namespace hdt;
 using namespace std;
 
 int main(int argc, char **argv) {
-	std::string inputFileName = "data/0.rdf";
-	// final String inputFileName = "data/1.owl";
-	// final String inputFileName = "data/2.rdf";
-	// final String inputFileName = "data/3.owl";
+	std::string inputFileName = "data/test.n3";
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
@@ -29,8 +26,10 @@ int main(int argc, char **argv) {
 
 	cout << dictionary.numberOfElements() << " elements in the dictionary." << endl;
 
-	string s("Rebecca");
-	cout << "Rebecca has id " << dictionary.stringToId(s, SUBJECT) << endl;
+	dictionary.save(cout);
+
+	//string s("Rebecca");
+	//cout << "Rebecca has id " << dictionary.stringToId(s, SUBJECT) << endl;
 
 	delete hdt;
 }

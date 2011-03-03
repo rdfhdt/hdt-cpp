@@ -71,6 +71,10 @@ public:
 	 * @return
 	 */
 	void load(std::istream &input);
+
+	void startProcessing();
+
+	void stopProcessing();
 };
 
 }

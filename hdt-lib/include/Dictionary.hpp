@@ -51,28 +51,15 @@ namespace hdt {
 			virtual std::string idToString(unsigned int id, TriplePosition position)=0;
 			virtual unsigned int stringToId(std::string &str, TriplePosition position)=0;
 
-			/**
-			 * Converts a TripleString to a TripleID
-			 *
-			 * @param tripleString
-			 *            The Triple to convert from
-			 * @return TripleID
-			 */
-			virtual TripleID tripleStringtoTripleID(TripleString tripleString)=0;
-
-			/**
-			 * Converts a TripleID to a TripleString
-			 *
-			 * @param tripleID
-			 *            The Triple to convert from
-			 * @return TripleString
-			 */
-			virtual TripleString tripleIDtoTripleString(TripleID tripleID)=0;
+			virtual TripleID tripleStringtoTripleID(TripleString &tripleString)=0;
+			virtual TripleString tripleIDtoTripleString(TripleID &tripleID)=0;
 
 			virtual bool save(std::ostream &output)=0;
 			virtual void load(std::istream &input)=0;
+
 			virtual unsigned int insert(std::string &str, TriplePosition position)=0;
 			virtual unsigned int numberOfElements()=0;
+
 			virtual void startProcessing()=0;
 			virtual void stopProcessing()=0;
 	}; // IDictionary{}

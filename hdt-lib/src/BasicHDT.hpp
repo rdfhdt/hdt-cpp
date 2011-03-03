@@ -108,7 +108,8 @@ public:
 	}
 
 	TripleString next() {
-		return dict->tripleIDtoTripleString(iterator->next());
+		TripleID tid = iterator->next();
+		return dict->tripleIDtoTripleString(tid);
 	}
 };
 

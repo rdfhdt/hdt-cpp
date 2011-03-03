@@ -27,5 +27,9 @@ std::string HDTSpecification::get(std::string key) {
 	return map[key];
 }
 
+void HDTSpecification::set(std::string key, std::string value) {
+	map[key] = value;
+}
+
 
 }
