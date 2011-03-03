@@ -5,11 +5,11 @@ CPP=g++
 CPPFLAGS=
 #FLAGS=-O9
 FLAGS=-g
-INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include
+INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include
 LDFLAGS=-lstdc++ -lraptor
 DOXYGEN=doxygen
 
-LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib
+LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib
 
 OBJECTS=$(patsubst %.cpp,%.o, $(wildcard src/*.cpp))
 HEADERS=$(wildcard include/*.hp?p?) $(wildcard src/*.hp?p?)
