@@ -17,8 +17,8 @@ class TripleID
 {
 	private:
 		unsigned int subject;
-		unsigned int object;
 		unsigned int predicate;
+		unsigned int object;
 
 	public:
 
@@ -28,7 +28,7 @@ class TripleID
 		TripleID(unsigned int subject, unsigned int predicate, unsigned int object) {
 			this->subject = subject;
 			this->predicate = predicate;
-			this->subject = subject;
+			this->object = object;
 		}
 
 		~TripleID() {
@@ -62,7 +62,7 @@ class TripleID
 		}
 
 		friend std::ostream &operator<<(std::ostream &stream, const TripleID &ts) {
-			stream << "TripleString: "<< ts.subject << ", "<< ts.predicate <<", "<< ts.object;
+			stream << "TripleID: "<< ts.subject << ", "<< ts.predicate <<", "<< ts.object;
 
 			return stream;
 		}
@@ -73,7 +73,7 @@ class TripleID
 		 * @param oeprand The operand to compare with
 		 * @return boolean
 		 */
-		boolean operator==(TripleID &operand) {
+		bool operator==(TripleID &operand) {
 
 			// Subject comparison
 			if (this->subject != operand.subject) {
@@ -100,7 +100,7 @@ class TripleID
 		 * @param pattern The pattern to match against
 		 * @return boolean
 		 */
-		boolean match(TripleID &pattern) {
+		bool match(TripleID &pattern) {
 
 			// Save triple components
 			unsigned int subject = pattern.getSubject();
@@ -178,6 +178,7 @@ class TripleString
 
  class IteratorTripleID {
 
+#if 0
  	private:
 	    /** The TripleID pattern to match against */
 	    TripleID &pattern;
@@ -197,6 +198,9 @@ class TripleString
 		~IteratorTripleID() {
 			//TODO
 		}
+#endif
+
+public:
 
  		virtual bool hasNext() {
  			return false;

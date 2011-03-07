@@ -43,17 +43,17 @@ void BasicHeader::remove(TripleString & triple)
 	hdt->remove(triple);
 }
 
-void BasicHeader::insert(IteratorTripleString & triples)
+void BasicHeader::insert(IteratorTripleString *triples)
 {
 	hdt->insert(triples);
 }
 
-void BasicHeader::remove(IteratorTripleString & triples)
+void BasicHeader::remove(IteratorTripleString *triples)
 {
 	hdt->remove(triples);
 }
 
-IteratorTripleString BasicHeader::search(const char *subject, const char *predicate, const char *object)
+IteratorTripleString *BasicHeader::search(const char *subject, const char *predicate, const char *object)
 {
 	return hdt->search(subject, predicate, object);
 }

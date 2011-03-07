@@ -8,6 +8,9 @@
 #include <HDT.hpp>
 #include <HDTFactory.hpp>
 
+#include "../src/header/EmptyHeader.hpp"
+#include "../src/triples/TripleListDisk.hpp"
+
 #include <string>
 #include <fstream>
 
@@ -22,24 +25,25 @@ int main(int argc, char **argv) {
 
 	std::string outputFileName = "data/test.n3.T";
 
-	HDTSpecification hdtspec;
-	HDT *hdt = HDTFactory::createBasicHDT(hdtspec);
+	EmptyHeader h;
+	TripleListDisk triples;
 
-	ifstream in(inputFileName.c_str());
-	hdt->loadFromRDF(in);
-	in.close();
-
-	Triples &triples = hdt->getTriples();
-
-	ofstream out(outputFileName.c_str());
-	triples.save(out);
-	out.close();
-
+	ifstream in;
 	in.open(outputFileName.c_str());
-	triples.load(in, hdt->getHeader());
+	triples.load(in, h);
 	in.close();
 
-	delete hdt;
+	TripleID toDelete(2,2,0);
+	triples.remove(toDelete);
+
+	TripleID all(0,0,0);
+	IteratorTripleID *it = triples.search(all);
+
+	while(it->hasNext()) {
+		TripleID triple = it->next();
+		cout << ">>" << triple << endl;
+	}
+	delete it;
 }
 
 

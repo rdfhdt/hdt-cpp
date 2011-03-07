@@ -16,7 +16,7 @@ class RDFSerializerN3: public RDFSerializer {
 public:
 	RDFSerializerN3(std::ostream &s) : RDFSerializer(s) { }
 	virtual ~RDFSerializerN3();
-	void serialize(IteratorTripleString &it);
+	void serialize(IteratorTripleString *it);
 	void endProcessing();
 };
 

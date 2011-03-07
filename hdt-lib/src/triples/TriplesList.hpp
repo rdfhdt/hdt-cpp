@@ -8,14 +8,15 @@
 #ifndef TRIPLESLIST_H_
 #define TRIPLESLIST_H_
 
-#include <vector>
+#include <Triples.hpp>
 
+#include <vector>
 
 namespace hdt {
 
 class TriplesList : public ModifiableTriples {
 private:
-	vector<TripleID> arrayOfTriples;
+	std::vector<TripleID> arrayOfTriples;
 
 public:
 	TriplesList();
@@ -29,7 +30,7 @@ public:
 	 * @param pattern
 	 * @return
 	 */
-	IteratorTripleID search(TripleID &pattern);
+	IteratorTripleID *search(TripleID &pattern);
 
 };
 

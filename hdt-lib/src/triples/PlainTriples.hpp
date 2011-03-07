@@ -23,7 +23,7 @@ public:
 	 * @param triple
 	 * @return
 	 */
-	IteratorTripleID search(TripleID &triple);
+	IteratorTripleID *search(TripleID &triple);
 
 	/**
 	 * Adds a single triple to
@@ -39,7 +39,7 @@ public:
 	 * @param triples
 	 * @return
 	 */
-	bool insert(IteratorTripleID &triples);
+	bool insert(IteratorTripleID *triples);
 
 	/**
 	 * Calculates the cost to retrieve a specific pattern

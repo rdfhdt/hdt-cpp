@@ -15,10 +15,10 @@ RDFSerializerN3::~RDFSerializerN3() {
 	// TODO Auto-generated destructor stub
 }
 
-void RDFSerializerN3::serialize(IteratorTripleString & it)
+void RDFSerializerN3::serialize(IteratorTripleString *it)
 {
-	while(it.hasNext()) {
-		TripleString ts = it.next();
+	while(it->hasNext()) {
+		TripleString ts = it->next();
 
 		stream << ts.getSubject() << ' ' << ts.getPredicate() << ' ' << ts.getObject() << " ." << endl;
 	}

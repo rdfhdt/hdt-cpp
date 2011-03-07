@@ -58,7 +58,7 @@ class ModifiableTriples;
 		     * @param triple
 		     * @return
 		     */
-			virtual IteratorTripleID search(TripleID &triple)=0;
+			virtual IteratorTripleID *search(TripleID &triple)=0;
 
 			/**
 			 * Calculates the cost to retrieve a specific pattern
@@ -118,7 +118,7 @@ class ModifiableTriples;
 			 */
 			virtual bool insert(TripleID &triple)=0;
 
-			virtual bool insert(IteratorTripleID &triples)=0;
+			virtual bool insert(IteratorTripleID *triples)=0;
 
 			/**
 			 * Deletes one or more triples according to a pattern
@@ -129,7 +129,7 @@ class ModifiableTriples;
 			 */
 			virtual bool remove(TripleID &pattern)=0;
 
-			virtual bool remove(IteratorTripleID &pattern)=0;
+			virtual bool remove(IteratorTripleID *pattern)=0;
 
 			/**
 			 * Updates a triple with new components

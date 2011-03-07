@@ -34,7 +34,7 @@ public:
 	 * @param object
 	 * @return
 	 */
-	IteratorTripleString search(const char *subject, const char *predicate, const char *object);
+	IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
 
 	/**
 	 *
@@ -42,7 +42,7 @@ public:
 	 */
 	void insert(TripleString &triple);
 
-	void insert(IteratorTripleString &triple);
+	void insert(IteratorTripleString *triple);
 
 	/**
 	 * Deletes with pattern matching
@@ -51,7 +51,7 @@ public:
 	 */
 	void remove(TripleString &triples);
 
-	void remove(IteratorTripleString &triples);
+	void remove(IteratorTripleString *triples);
 
 	/**
 	 * Updates a triple with new components

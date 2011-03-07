@@ -8,6 +8,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <string.h> // For memcpy()
+
 #include "StopWatch.hpp"
 
 StopWatch::StopWatch() {

@@ -21,16 +21,15 @@ public:
 	bool save(std::ostream &output){ return false; }
 	void load(std::istream &input){ }
 
-	IteratorTripleString search(const char *subject, const char *predicate, const char *object){
-		IteratorTripleString it;
-		return it;
+	IteratorTripleString *search(const char *subject, const char *predicate, const char *object){
+		return new IteratorTripleString();
 	}
 
 	void insert(TripleString &triple){ }
-	void insert(IteratorTripleString &triple){ }
+	void insert(IteratorTripleString *triple){ }
 
 	void remove(TripleString &triples){ }
-	void remove(IteratorTripleString &triples){ }
+	void remove(IteratorTripleString *triples){ }
 
 	bool edit(TripleString &oldTriple, TripleString &newTriple){ return false; }
 };

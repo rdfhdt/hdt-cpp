@@ -17,7 +17,7 @@ namespace hdt {
 class TripleListDisk : public ModifiableTriples {
 private:
 	char *fileName;
-	std::ofstream *outStream;
+	std::fstream stream;
 	unsigned int numTriples;
 
 public:
@@ -32,7 +32,7 @@ public:
 	 * @param pattern
 	 * @return
 	 */
-	IteratorTripleID search(TripleID &pattern);
+	IteratorTripleID *search(TripleID &pattern);
 
 	/**
 	 * Calculates the cost to retrieve a specific pattern
@@ -94,7 +94,7 @@ public:
 	 */
 	bool insert(TripleID &triple);
 
-	bool insert(IteratorTripleID &triples);
+	bool insert(IteratorTripleID *triples);
 
 	/**
 	 * Deletes one or more triples according to a pattern
@@ -105,7 +105,7 @@ public:
 	 */
 	bool remove(TripleID &pattern);
 
-	bool remove(IteratorTripleID &pattern);
+	bool remove(IteratorTripleID *pattern);
 
 	/**
 	 * Updates a triple with new components
@@ -138,37 +138,19 @@ public:
 
 class TripleListDiskIterator : public IteratorTripleID {
 private:
-	std::ifstream stream;
+	std::fstream stream;
 	bool hasNextv;
-	TripleID previousv, nextv;
+	TripleID nextv, &pattern;
 
-	void doFetch() {
-		if(stream.good()) {
-			stream.read((char *)&nextv, sizeof(TripleID));
+	void doFetch();
 
-			hasNextv = !stream.fail();
-		}
-		hasNextv = false;
-	}
 public:
-	TripleListDiskIterator(char *tmpfile) : stream(tmpfile) {
+	TripleListDiskIterator(char *tmpfile, TripleID &p);
+	virtual ~TripleListDiskIterator();
 
-	}
+	bool hasNext();
 
-	virtual ~TripleListDiskIterator(){
-		if(stream.good())
-			stream.close();
-	}
-
-	bool hasNext() {
-		return hasNextv;
-	}
-
-	TripleID next() {
-		previousv = nextv;
-		doFetch();
-		return previousv;
-	}
+	TripleID next();
 };
 
 

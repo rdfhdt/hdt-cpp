@@ -30,10 +30,11 @@ int main(int argc, char **argv) {
 
 	hdt->loadFromRDF(in);
 
-	IteratorTripleString i = hdt->search("http://somewhere/RebeccaSmith/", "", "");
-	while (i.hasNext()) {
-		cout << "Found " << i.next() << endl;
+	IteratorTripleString *i = hdt->search("http://somewhere/RebeccaSmith/", "", "");
+	while (i->hasNext()) {
+		cout << "Found " << i->next() << endl;
 	}
+	delete i;
 
 	delete hdt;
 }

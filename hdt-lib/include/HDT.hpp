@@ -100,7 +100,7 @@ public:
 	 * @param object
 	 * @return
 	 */
-	virtual IteratorTripleString search(const char *subject, const char *predicate, const char *object) = 0;
+	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object) = 0;
 
 };
 
@@ -112,7 +112,7 @@ public:
 	 */
 	virtual void insert(TripleString &triple) = 0;
 
-	virtual void insert(IteratorTripleString &triple) = 0;
+	virtual void insert(IteratorTripleString *triple) = 0;
 
 	/**
 	 * Deletes with pattern matching
@@ -121,7 +121,7 @@ public:
 	 */
 	virtual void remove(TripleString &triples) = 0;
 
-	virtual void remove(IteratorTripleString &triples) = 0;
+	virtual void remove(IteratorTripleString *triples) = 0;
 
 	/**
 	 * Updates a triple with new components

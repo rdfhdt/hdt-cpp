@@ -329,7 +329,7 @@ void PlainDictionary::split() {
 	subjects_not_shared.clear();
 	subjects_shared.clear();
 	objects_not_shared.clear();
-/*
+
 	for(DictEntryIt subj_it = hashSubject.begin(); subj_it!=hashSubject.end(); subj_it++) {
 		cout << "Check Subj: " << subj_it->first << endl;
 		DictEntryIt other = hashObject.find(subj_it->first);
@@ -341,7 +341,7 @@ void PlainDictionary::split() {
 			// Exist in both
 			subjects_shared.push_back(subj_it->second);
 		}
-	}*/
+	}
 	cout << "Hash Size Object: " << hashObject.size() << endl;
 
 	for(DictEntryIt obj_it = hashObject.begin(); obj_it!=hashObject.end(); ++obj_it) {

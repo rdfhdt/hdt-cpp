@@ -100,15 +100,15 @@ Triples & BasicHDT::getTriples()
 }
 
 
-IteratorTripleString BasicHDT::search(const char *subject, const char *predicate, const char *object)
+IteratorTripleString *BasicHDT::search(const char *subject, const char *predicate, const char *object)
 {
 	TripleString ts(subject, predicate, object);
 
 	TripleID tid(dictionary->tripleStringtoTripleID(ts));
 
-	IteratorTripleID iterID = triples->search(tid);
+	IteratorTripleID *iterID = triples->search(tid);
 
-	BasicIteratorTripleString iterator(dictionary, &iterID);
+	BasicIteratorTripleString *iterator = new BasicIteratorTripleString(dictionary, iterID);
 	return iterator;
 }
 
@@ -154,7 +154,7 @@ void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
 {
 	RDFSerializerN3 serializer(output);
 
-	IteratorTripleString it = search("", "", "");
+	IteratorTripleString *it = search("", "", "");
 	serializer.serialize(it);
 	serializer.endProcessing();
 }
@@ -181,7 +181,7 @@ void BasicHDT::insert(TripleString & triple)
 }
 
 
-void BasicHDT::insert(IteratorTripleString & triples)
+void BasicHDT::insert(IteratorTripleString *triples)
 {
 	throw "Not implemented";
 }
@@ -195,7 +195,7 @@ void BasicHDT::remove(TripleString & triple)
 	// Fixme: Need to remove from dictionary?
 }
 
-void BasicHDT::remove(IteratorTripleString & triples)
+void BasicHDT::remove(IteratorTripleString *triples)
 {
 	throw "Not implemented";
 }

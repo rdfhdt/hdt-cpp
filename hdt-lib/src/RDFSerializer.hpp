@@ -20,7 +20,7 @@ protected:
 public:
 	RDFSerializer(std::ostream &s) : stream(s) { }
 	virtual ~RDFSerializer() { }
-	virtual void serialize(IteratorTripleString &it)=0;
+	virtual void serialize(IteratorTripleString *it)=0;
 	virtual void endProcessing()=0;
 };
 

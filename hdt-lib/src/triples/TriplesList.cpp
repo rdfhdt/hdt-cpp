@@ -20,7 +20,7 @@ TriplesList::~TriplesList() {
 
 // From Triples
 
-IteratorTripleID TripleListDisk::search(TripleID &pattern)
+IteratorTripleID *TripleList::search(TripleID &pattern)
 {
 	vector<TripleID>::iterator &it;
 	return new IteratorTripleID(it, pattern);

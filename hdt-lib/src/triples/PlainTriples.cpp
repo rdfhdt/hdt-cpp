@@ -22,7 +22,7 @@ float PlainTriples::cost(TripleID & triple)
 {
 }
 
-bool PlainTriples::insert(TripleID & triple)
+bool PlainTriples::insert(TripleID &triple)
 {
 }
 
@@ -34,7 +34,7 @@ void PlainTriples::populateHeader(Header &header) {
 
 }
 
-IteratorTripleID PlainTriples::search(TripleID & triple)
+IteratorTripleID *PlainTriples::search(TripleID & triple)
 {
 }
 
@@ -50,7 +50,7 @@ unsigned int PlainTriples::size()
 {
 }
 
-bool PlainTriples::insert(IteratorTripleID & triples)
+bool PlainTriples::insert(IteratorTripleID *triples)
 {
 }
 
