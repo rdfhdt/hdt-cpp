@@ -66,6 +66,59 @@ class TripleID
 
 			return stream;
 		}
+
+		/**
+		 * Compares two triples
+		 *
+		 * @param oeprand The operand to compare with
+		 * @return boolean
+		 */
+		boolean operator==(TripleID &operand) {
+
+			// Subject comparison
+			if (this->subject != operand.subject) {
+				return false;
+			}
+
+			// Object comparison (since subject was successful)
+			if (this->object != operand.object) {
+				return false;
+			}
+
+			// Predicate comparison (since subject and object were successful)
+			if (this->predicate != operand.predicate) {
+				return false;
+			}
+
+			return true;
+
+		} // ==()
+
+		/**
+		 * Match a triple to a pattern of TripleID. 0 acts as a wildcard
+		 *
+		 * @param pattern The pattern to match against
+		 * @return boolean
+		 */
+		boolean match(TripleID &pattern) {
+
+			// Save triple components
+			unsigned int subject = pattern.getSubject();
+			unsigned int object = pattern.getObject();
+			unsigned int predicate = pattern.getPredicate();
+
+			if (subject == 0 || subject == this->subject) {
+				if (object == 0 || object == this->object) {
+					if (predicate == 0 || predicate == this->predicate) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+
+		} // match()
+
 };
 
 class TripleString

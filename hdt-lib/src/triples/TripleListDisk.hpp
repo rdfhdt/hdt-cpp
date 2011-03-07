@@ -29,10 +29,10 @@ public:
 	/**
 	 * Returns a vector of triples matching the pattern
 	 *
-	 * @param triple
+	 * @param pattern
 	 * @return
 	 */
-	IteratorTripleID search(TripleID &triple);
+	IteratorTripleID search(TripleID &pattern);
 
 	/**
 	 * Calculates the cost to retrieve a specific pattern

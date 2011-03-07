@@ -71,7 +71,7 @@ unsigned int TripleListDisk::size()
 }
 
 
-IteratorTripleID TripleListDisk::search(TripleID & triple)
+IteratorTripleID TripleListDisk::search(TripleID &pattern)
 {
 	TripleListDiskIterator it(fileName);
 	return it;
