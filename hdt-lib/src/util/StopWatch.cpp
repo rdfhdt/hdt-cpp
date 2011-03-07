@@ -71,7 +71,6 @@ std::ostream &operator<<(std::ostream &stream, StopWatch &sw) {
 }
 
 std::string StopWatch::toHuman(time_t tot_secs, suseconds_t tot_usecs) {
-	std::cout << tot_secs << " " << tot_usecs << std::endl;
 	unsigned int hours = tot_secs/3600;
 	unsigned int mins = (tot_secs/60) % 60;
 	unsigned int secs = (tot_secs % 60);

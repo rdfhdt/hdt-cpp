@@ -12,7 +12,7 @@
 
 namespace hdt {
 
-class PlainTriples : public Triples {
+class PlainTriples : public ModifiableTriples {
 public:
 	PlainTriples();
 	~PlainTriples();
@@ -23,7 +23,7 @@ public:
 	 * @param triple
 	 * @return
 	 */
-	IteratorTripleID retrieve(TripleID &triple);
+	IteratorTripleID search(TripleID &triple);
 
 	/**
 	 * Adds a single triple to
@@ -54,7 +54,9 @@ public:
 	 *
 	 * @return
 	 */
-	int numberOfTriples();
+	unsigned int getNumberOfElements();
+
+	unsigned int size();
 
 	/**
 	 * Saves the triples
@@ -65,12 +67,14 @@ public:
 	bool save(std::ostream &output);
 
 	/**
-	 * Loads triples from a file
-	 *
-	 * @param input
-	 * @return
-	 */
-	void load(std::istream &input);
+     * Loads triples from a file
+     *
+     * @param input
+     * @return
+     */
+	void load(std::istream &input, Header &header);
+
+	void populateHeader(Header &header);
 
 	void startProcessing();
 

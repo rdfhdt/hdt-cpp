@@ -26,11 +26,15 @@ bool PlainTriples::insert(TripleID & triple)
 {
 }
 
-void PlainTriples::load(std::istream & input)
+void PlainTriples::load(std::istream & input, Header &header)
 {
 }
 
-IteratorTripleID PlainTriples::retrieve(TripleID & triple)
+void PlainTriples::populateHeader(Header &header) {
+
+}
+
+IteratorTripleID PlainTriples::search(TripleID & triple)
 {
 }
 
@@ -38,12 +42,24 @@ bool PlainTriples::save(std::ostream & output)
 {
 }
 
-int PlainTriples::numberOfTriples()
+unsigned int PlainTriples::getNumberOfElements()
+{
+}
+
+unsigned int PlainTriples::size()
 {
 }
 
 bool PlainTriples::insert(IteratorTripleID & triples)
 {
+}
+
+void PlainTriples::startProcessing(){
+
+}
+
+void PlainTriples::stopProcessing(){
+
 }
 
 }

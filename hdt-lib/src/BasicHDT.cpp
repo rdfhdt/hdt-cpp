@@ -37,9 +37,16 @@
 #include <string>
 
 #include "BasicHDT.hpp"
+#include "header/BasicHeader.hpp"
+#include "header/EmptyHeader.hpp"
 #include "dictionary/PlainDictionary.hpp"
 #include "triples/PlainTriples.hpp"
-#include "RDFParser.hpp"
+#include "triples/TripleListDisk.hpp"
+#include "RDFParserN3.hpp"
+#include "RDFSerializerN3.hpp"
+
+
+using namespace std;
 
 namespace hdt {
 
@@ -54,7 +61,9 @@ BasicHDT::BasicHDT(HDTSpecification &spec) {
 }
 
 BasicHDT::~BasicHDT() {
-
+	delete header;
+	delete dictionary;
+	delete triples;
 }
 
 void BasicHDT::createComponents() {
@@ -64,14 +73,16 @@ void BasicHDT::createComponents() {
 	// FIXME: SELECT
 	std::cout << "Create" << std::endl << "Dict: " << dictType << std::endl <<"Triples: " << triplesType << std::endl;
 
+	if(spec.get("noheader")=="true") {
+		header = new EmptyHeader();
+	} else {
+		header = new BasicHeader();
+	}
 	dictionary = new PlainDictionary();
-	triples = new PlainTriples();
+	triples = new TripleListDisk();
 }
 
-void BasicHDT::remove(TripleString & triples)
-{
 
-}
 
 Header & BasicHDT::getHeader()
 {
@@ -95,7 +106,7 @@ IteratorTripleString BasicHDT::search(const char *subject, const char *predicate
 
 	TripleID tid(dictionary->tripleStringtoTripleID(ts));
 
-	IteratorTripleID iterID = triples->retrieve(tid);
+	IteratorTripleID iterID = triples->search(tid);
 
 	BasicIteratorTripleString iterator(dictionary, &iterID);
 	return iterator;
@@ -105,72 +116,96 @@ IteratorTripleString BasicHDT::search(const char *subject, const char *predicate
 
 void BasicHDT::loadFromRDF(std::istream &input)
 {
-	RDFParser parser(&input);
+	RDFParserN3 parser(input);
 
-	// Dictionary
+	// Generate Dictionary
+	cout << "Gen Dictionary "<< endl;
 	dictionary->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
-//		std::cout << ts << std::endl;
+		std::cout << ts << std::endl;
 
 		dictionary->insert(ts.getSubject(), SUBJECT);
 		dictionary->insert(ts.getPredicate(), PREDICATE);
 		dictionary->insert(ts.getObject(), OBJECT);
 	}
 	dictionary->stopProcessing();
+	//dictionary->populateHeader(*header);
 
-
-	// Triples
+	// Generate Triples
+	cout << "Gen triples "<< endl;
 	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
 
 	triples->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
-	//	std::cout << ts << std::endl;
+		std::cout << ts << std::endl;
 
 		TripleID ti = dictionary->tripleStringtoTripleID(ts);
 
 		triples->insert(ti);
 	}
 	triples->stopProcessing();
+	triples->populateHeader(*header);
 }
 
-
-
-void BasicHDT::insert(TripleString & triple)
+void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
 {
+	RDFSerializerN3 serializer(output);
+
+	IteratorTripleString it = search("", "", "");
+	serializer.serialize(it);
+	serializer.endProcessing();
 }
-
-
-
-void BasicHDT::saveToHDT(std::ostream & output)
-{
-}
-
 
 
 void BasicHDT::loadFromHDT(std::istream & input)
 {
+	header->load(input);
+	dictionary->load(input, *header);
+	triples->load(input, *header);
 }
 
-
-
-void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
+void BasicHDT::saveToHDT(std::ostream & output)
 {
+	header->save(output);
+	dictionary->save(output);
+	triples->save(output);
 }
 
-
-
-void BasicHDT::insert(IteratorTripleString & triple)
+void BasicHDT::insert(TripleString & triple)
 {
+	TripleID tid = dictionary->tripleStringtoTripleID(triple);
+	triples->insert(tid);
 }
 
 
+void BasicHDT::insert(IteratorTripleString & triples)
+{
+	throw "Not implemented";
+}
+
+void BasicHDT::remove(TripleString & triple)
+{
+	// Fixme: Only if modifiable triples.
+	//TripleID tid = dictionary->tripleStringtoTripleID(triple);
+	//triples->remove(tid);
+
+	// Fixme: Need to remove from dictionary?
+}
 
 void BasicHDT::remove(IteratorTripleString & triples)
 {
+	throw "Not implemented";
 }
+
+bool BasicHDT::edit(TripleString &oldTriple, TripleString &newTriple)
+{
+	remove(oldTriple);
+	insert(newTriple);
+}
+
 
 
 }

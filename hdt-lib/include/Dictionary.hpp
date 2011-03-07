@@ -42,6 +42,7 @@
 
 #include <SingleTriple.hpp>
 #include <HDTEnums.hpp>
+#include <Header.hpp>
 
 namespace hdt {
 
@@ -54,11 +55,23 @@ namespace hdt {
 			virtual TripleID tripleStringtoTripleID(TripleString &tripleString)=0;
 			virtual TripleString tripleIDtoTripleString(TripleID &tripleID)=0;
 
+			virtual unsigned int numberOfElements()=0;
+
+			virtual unsigned int getNsubjects()=0;
+			virtual unsigned int getNpredicates()=0;
+			virtual unsigned int getNobjects()=0;
+			virtual unsigned int getSsubobj()=0;
+
+			virtual unsigned int getMaxID()=0;
+			virtual unsigned int getMaxSubjectID()=0;
+			virtual unsigned int getMaxPredicateID()=0;
+			virtual unsigned int getMaxObjectID()=0;
+
+			virtual void populateHeader(Header &header)=0;
 			virtual bool save(std::ostream &output)=0;
-			virtual void load(std::istream &input)=0;
+			virtual void load(std::istream &input, Header &header)=0;
 
 			virtual void insert(std::string &str, TripleComponentRole position)=0;
-			virtual unsigned int numberOfElements()=0;
 
 			virtual void startProcessing()=0;
 			virtual void stopProcessing()=0;

@@ -125,14 +125,24 @@ class TripleString
 
  class IteratorTripleID {
  	public:
- 		virtual bool hasNext() { }
- 		virtual TripleID next() { }
+ 		virtual bool hasNext() {
+ 			return false;
+ 		}
+ 		virtual TripleID next() {
+ 			TripleID id;
+ 			return id;
+ 		}
  };
 
  class IteratorTripleString {
  	public:
- 		virtual bool hasNext() { }
- 		virtual TripleString next() { }
+ 		virtual bool hasNext() {
+ 			return false;
+ 		}
+ 		virtual TripleString next() {
+ 			TripleString ts;
+ 			return ts;
+ 		}
  };
 }
 

@@ -17,8 +17,6 @@
 #include <fstream>
 #include <iostream>
 
-//#include <google/sparse_hash_map>
-
 #include <ext/hash_map>
    namespace std { using namespace __gnu_cxx; }
 
@@ -44,6 +42,7 @@ struct str_cmp {
 typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 
 #if 0
+#include <google/sparse_hash_map>
 typedef google::sparse_hash_map<const char *, DictionaryEntry *, std::hash<const char *>, str_cmp> DictEntryHash;
 #else
 typedef std::hash_map<const char *, DictionaryEntry *, std::hash<const char *>, str_cmp> DictEntryHash;
@@ -81,10 +80,25 @@ public:
 	TripleID tripleStringtoTripleID(TripleString &tripleString);
 	TripleString tripleIDtoTripleString(TripleID &tripleID);
 
-	bool save(std::ostream &output);
-	void load(std::istream &input);
-	void insert(std::string &str, TripleComponentRole position);
 	unsigned int numberOfElements();
+
+	unsigned int getNsubjects();
+	unsigned int getNpredicates();
+	unsigned int getNobjects();
+	unsigned int getSsubobj();
+
+	unsigned int getMaxID();
+	unsigned int getMaxSubjectID();
+	unsigned int getMaxPredicateID();
+	unsigned int getMaxObjectID();
+
+	void populateHeader(Header &header);
+	bool save(std::ostream &output);
+	void load(std::istream &input, Header &header);
+
+
+	void insert(std::string &str, TripleComponentRole position);
+
 	void startProcessing();
 	void stopProcessing();
 
@@ -110,15 +124,7 @@ public:
 	void convertMapping(unsigned int mapping);
 	void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);
 
-	unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxPredicateID();
-	unsigned int getMaxObjectID();
 
-	unsigned int getNsubjects();
-	unsigned int getNpredicates();
-	unsigned int getNobjects();
-	unsigned int getSsubobj();
 
 	unsigned int getMapping();
 

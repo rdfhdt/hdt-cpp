@@ -13,11 +13,11 @@
 
 namespace hdt {
 
-class BasicHDT : public HDT {
+class BasicHDT : public ModifiableHDT {
 private:
 	Header *header;
 	Dictionary *dictionary;
-	Triples *triples;
+	ModifiableTriples *triples;
 	HDTSpecification spec;
 
 	void createComponents();
@@ -28,6 +28,21 @@ public:
 	BasicHDT(HDTSpecification &spec);
 
 	~BasicHDT();
+
+	/**
+	 *
+	 */
+	Header &getHeader();
+
+	/**
+	 *
+	 */
+	Dictionary &getDictionary();
+
+	/**
+	 *
+	 */
+	Triples &getTriples();
 
 	/*
 	 * @param input
@@ -51,45 +66,47 @@ public:
 	 */
 	void saveToHDT(std::ostream &output);
 
+
+	/*
+	 * FROM RDFAccess
+	 */
+
 	/**
 	 * @param subject
 	 * @param predicate
 	 * @param object
 	 * @return
 	 */
-	IteratorTripleString search(const char *subject, const char *predicate, const char *object);
+	virtual IteratorTripleString search(const char *subject, const char *predicate, const char *object);
 
 	/**
 	 *
 	 * @param triples
 	 */
-	void insert(TripleString &triple);
+	virtual void insert(TripleString &triple);
 
-	void insert(IteratorTripleString &triple);
+	virtual void insert(IteratorTripleString &triple);
 
 	/**
 	 * Deletes with pattern matching
 	 *
 	 * @param triples
 	 */
-	void remove(TripleString &triples);
+	virtual void remove(TripleString &triples);
 
-	void remove(IteratorTripleString &triples);
-
-	/**
-	 *
-	 */
-	Header &getHeader();
+	virtual void remove(IteratorTripleString &triples);
 
 	/**
+	 * Updates a triple with new components
 	 *
+	 * @param oldTriple
+	 *            The triple to be replaced
+	 * @param newTriple
+	 *            The triple to replace the old one
+	 * @return boolean
 	 */
-	Dictionary &getDictionary();
+	virtual bool edit(TripleString &oldTriple, TripleString &newTriple);
 
-	/**
-	 *
-	 */
-	Triples &getTriples();
 };
 
 class BasicIteratorTripleString : public IteratorTripleString {

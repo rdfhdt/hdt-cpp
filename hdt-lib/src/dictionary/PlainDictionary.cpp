@@ -43,6 +43,23 @@ PlainDictionary::PlainDictionary(HDTSpecification &spec) {
 }
 
 PlainDictionary::~PlainDictionary() {
+	unsigned int i;
+
+	for(i=0;i<subjects_shared.size();i++) {
+		delete subjects_shared[i];
+	}
+
+	for(i=0;i<subjects_not_shared.size();i++) {
+		delete subjects_not_shared[i];
+	}
+
+	for(i=0;i<objects_not_shared.size();i++) {
+		delete objects_not_shared[i];
+	}
+
+	for(i=0;i<predicates.size();i++) {
+		delete predicates[i];
+	}
 
 }
 
@@ -133,7 +150,7 @@ void PlainDictionary::stopProcessing()
 	std::cout << "Sorted" << std::endl;
 }
 
-void PlainDictionary::load(std::istream & input)
+void PlainDictionary::load(std::istream & input, Header &header)
 {
 	std::string line;
 	unsigned char region = 1;
@@ -153,8 +170,15 @@ void PlainDictionary::load(std::istream & input)
 			} else if (region == 4) { //predicates
 				insert(line, NOT_SHARED_PREDICATE);
 			}
+		} else {
+			region++;
+
+			if(region==5)
+				break;
 		}
 	}
+
+	// No stopProcessing() Needed. Dictionary already split and sorted in file.
 }
 
 unsigned int PlainDictionary::numberOfElements()
@@ -262,6 +286,10 @@ bool PlainDictionary::save(std::ostream &output)
 		output << *predicates[i]->str;
 		output.put(marker); //character  to split file
 	}
+
+	output.put(marker);
+
+	return true;
 }
 
 // PRIVATE
@@ -275,6 +303,7 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
 
 	switch(pos) {
 	case SHARED_SUBJECT:
+	case SHARED_OBJECT:
 		subjects_shared.push_back(entry);
 		hashSubject[str.c_str()] = entry;
 		hashObject[str.c_str()] = entry;
@@ -300,9 +329,9 @@ void PlainDictionary::split() {
 	subjects_not_shared.clear();
 	subjects_shared.clear();
 	objects_not_shared.clear();
-
+/*
 	for(DictEntryIt subj_it = hashSubject.begin(); subj_it!=hashSubject.end(); subj_it++) {
-		//cout << "Check Subj: " << subj_it->first << endl;
+		cout << "Check Subj: " << subj_it->first << endl;
 		DictEntryIt other = hashObject.find(subj_it->first);
 
 		if(other==hashObject.end()) {
@@ -312,11 +341,11 @@ void PlainDictionary::split() {
 			// Exist in both
 			subjects_shared.push_back(subj_it->second);
 		}
-	}
+	}*/
 	cout << "Hash Size Object: " << hashObject.size() << endl;
 
 	for(DictEntryIt obj_it = hashObject.begin(); obj_it!=hashObject.end(); ++obj_it) {
-		//cout << "Check Obj: " << obj_it->first << endl;
+		cout << "Check Obj: " << obj_it->first << endl;
 		DictEntryIt other = hashSubject.find(obj_it->first);
 
 		if(other==hashSubject.end()) {
@@ -365,7 +394,7 @@ void PlainDictionary::idSort() {
  * @return void
  */
 void PlainDictionary::updateIDs() {
-	int i;
+	unsigned int i;
 
 	for (i = 0; i < subjects_shared.size(); i++) {
 		subjects_shared[i]->id = getGlobalId(i, SHARED_SUBJECT);
@@ -383,25 +412,6 @@ void PlainDictionary::updateIDs() {
 		predicates[i]->id = getGlobalId(i, NOT_SHARED_PREDICATE);
 	}
 }
-
-
-
-// OLD
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void PlainDictionary::convertMapping(unsigned int mapping) {
@@ -623,6 +633,10 @@ void PlainDictionary::updateID(unsigned int oldid, unsigned int newid, Dictionar
 		objects_not_shared[oldid]->id = newid;
 		break;
 	}
+}
+
+void PlainDictionary::populateHeader(Header & header)
+{
 }
 
 void PlainDictionary::dumpSizes(ostream &out) {

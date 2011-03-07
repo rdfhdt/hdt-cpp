@@ -1,28 +1,20 @@
 /*
- * Header.hpp
+ * RDF.hpp
  *
- *  Created on: 02/03/2011
+ *  Created on: 06/03/2011
  *      Author: mck
  */
 
-#ifndef HEADER_
-#define HEADER_
+#ifndef RDF_HPP_
+#define RDF_HPP_
 
-#include <RDF.hpp>
-#include <iostream>
+#include <SingleTriple.hpp>
 
 namespace hdt {
 
-class Header : public RDFAccess {
+class RDFAccess {
 
 public:
-	virtual bool save(std::ostream &output)=0;
-	virtual void load(std::istream &input)=0;
-
-	/*
-	 * FROM RDFAccess
-	 */
-
 	/**
 	 * @param subject
 	 * @param predicate
@@ -60,6 +52,7 @@ public:
 	virtual bool edit(TripleString &oldTriple, TripleString &newTriple) = 0;
 };
 
+
 }
 
-#endif /* HEADER_HPP_ */
+#endif /* RDF_HPP_ */

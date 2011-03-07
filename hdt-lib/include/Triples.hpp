@@ -39,12 +39,16 @@
 
 #include <HDTEnums.hpp>
 #include <SingleTriple.hpp>
+#include <Header.hpp>
 
 #include <iostream>
 #include <iterator>
 #include <vector>
 
 namespace hdt {
+
+class ModifiableTriples;
+
 	class Triples
 	{
 		public:
@@ -54,23 +58,7 @@ namespace hdt {
 		     * @param triple
 		     * @return
 		     */
-			virtual IteratorTripleID retrieve(TripleID &triple) = 0;
-
-			/**
-			 * Adds a single triple to
-		     *
-		     * @param triple
-		     * @return
-		     */
-			virtual bool insert(TripleID &triple) = 0;
-
-			/**
-			 * Adds a collection of triples
-			 *
-			 * @param triples
-			 * @return
-			 */
-			virtual bool insert(IteratorTripleID &triples) = 0;
+			virtual IteratorTripleID search(TripleID &triple)=0;
 
 			/**
 			 * Calculates the cost to retrieve a specific pattern
@@ -78,14 +66,19 @@ namespace hdt {
 		     * @param triple
 		     * @return
 		     */
-			virtual float cost(TripleID &triple) = 0;
+			virtual float cost(TripleID &triple)=0;
 
 			/**
 		     * Returns the number of triples
 		     *
 		     * @return
 		     */
-			virtual int numberOfTriples() = 0;
+			virtual unsigned int getNumberOfElements()=0;
+
+			/**
+			 * Returns size in bytes
+			 */
+			virtual unsigned int size()=0;
 
 			/**
 		     * Saves the triples
@@ -93,7 +86,10 @@ namespace hdt {
 		     * @param output
 		     * @return
 		     */
-			virtual bool save(std::ostream &output) = 0;
+			virtual bool save(std::ostream &output)=0;
+
+
+			virtual void load(ModifiableTriples &input)=0;
 
 			/**
 		     * Loads triples from a file
@@ -101,13 +97,18 @@ namespace hdt {
 		     * @param input
 		     * @return
 		     */
-			virtual void load(std::istream &input) = 0;
+			virtual void load(std::istream &input, Header &header)=0;
 
-			void startProcessing() { }
-			void stopProcessing() { }
+
+			virtual void populateHeader(Header &header)=0;
+
+			virtual void startProcessing()=0;
+
+			virtual void stopProcessing()=0;
 	}; // Triples{}
 
 	class ModifiableTriples : public Triples {
+	public:
 		/**
 			 * Adds one or more triples
 			 *
@@ -115,9 +116,9 @@ namespace hdt {
 			 *            The triples to be inserted
 			 * @return boolean
 			 */
-			virtual bool insert(TripleID &triple) = 0;
+			virtual bool insert(TripleID &triple)=0;
 
-			virtual bool insert(IteratorTripleID &triples) = 0;
+			virtual bool insert(IteratorTripleID &triples)=0;
 
 			/**
 			 * Deletes one or more triples according to a pattern
@@ -126,9 +127,9 @@ namespace hdt {
 			 *            The pattern to match against
 			 * @return boolean
 			 */
-			virtual bool remove(TripleID &pattern) = 0;
+			virtual bool remove(TripleID &pattern)=0;
 
-			virtual bool remove(IteratorTripleID &pattern) = 0;
+			virtual bool remove(IteratorTripleID &pattern)=0;
 
 			/**
 			 * Updates a triple with new components
@@ -139,7 +140,7 @@ namespace hdt {
 			 *            The triple to replace the old one
 			 * @return boolean
 			 */
-			virtual bool edit(TripleID &oldTriple, TripleID &newTriple) = 0;
+			virtual bool edit(TripleID &oldTriple, TripleID &newTriple)=0;
 
 			/**
 			 * Sorts the triples based on an order(TripleComponentOrder)
@@ -147,7 +148,7 @@ namespace hdt {
 			 * @param order
 			 *            The order to sort the triples with
 			 */
-			virtual void sort(TripleComponentOrder order) = 0;
+			virtual void sort(TripleComponentOrder order)=0;
 
 			/**
 			 * Sets a type of order(TripleComponentOrder)
@@ -155,7 +156,7 @@ namespace hdt {
 			 * @param order
 			 *            The order to set
 			 */
-			virtual void setOrder(TripleComponentOrder order) = 0;
+			virtual void setOrder(TripleComponentOrder order)=0;
 
 	};
 

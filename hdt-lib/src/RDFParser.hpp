@@ -9,23 +9,23 @@
 #define RDFPARSER_H_
 
 #include <string>
-#include <iostream>
+#include <istream>
 
 #include "SingleTriple.hpp"
 
 namespace hdt {
-class RDFParser: public hdt::IteratorTripleString {
 
-private:
-	std::istream *in;
-	std::string line;
+class RDFParser: public IteratorTripleString {
+
+protected:
+	std::istream &input;
 
 public:
-	RDFParser(std::istream *in);
-	~RDFParser();
+	RDFParser(std::istream &in) : input(in) { }
+	~RDFParser() { }
 
-	bool hasNext();
-	TripleString next();
+	virtual bool hasNext()=0;
+	virtual TripleString next()=0;
 };
 }
 

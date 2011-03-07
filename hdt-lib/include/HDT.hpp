@@ -37,6 +37,7 @@
 #ifndef HDT_
 #define HDT_
 
+#include <RDF.hpp>
 #include <HDTSpecification.hpp>
 #include <HDTEnums.hpp>
 #include <Header.hpp>
@@ -47,71 +48,92 @@
 
 namespace hdt {
 
-	class HDT
-	{
-		public:
-			/*
-			 * @param input
-		     * @param specification
-		     */
-			virtual void loadFromRDF(std::istream &input) = 0;
+class HDT : public RDFAccess
+{
+public:
 
-			/**
-		     * @param input
-		     */
-			virtual void loadFromHDT(std::istream &input) = 0;
+	/**
+	 *
+	 */
+	virtual Header &getHeader() = 0;
 
-		    /**
-		     * @param output
-		     * @param notation
-		     */
-		    virtual void saveToRDF(std::ostream &output, RDFNotation notation) = 0;
+	/**
+	 *
+	 */
+	virtual Dictionary &getDictionary() = 0;
 
-		    /**
-		     * @param output
-		     */
-		    virtual void saveToHDT(std::ostream &output) = 0;
+	/**
+	 *
+	 */
+	virtual Triples &getTriples() = 0;
 
-		    /**
-		     * @param subject
-		     * @param predicate
-		     * @param object
-		     * @return
-		     */
-		    virtual IteratorTripleString search(const char *subject, const char *predicate, const char *object) = 0;
+	/*
+	 * @param input
+	 * @param specification
+	 */
+	virtual void loadFromRDF(std::istream &input) = 0;
 
-		    /**
-		     *
-		     * @param triples
-		     */
-		    virtual void insert(TripleString &triple) = 0;
+	/**
+	 * @param input
+	 */
+	virtual void loadFromHDT(std::istream &input) = 0;
 
-		    virtual void insert(IteratorTripleString &triple) = 0;
+	/**
+	 * @param output
+	 * @param notation
+	 */
+	virtual void saveToRDF(std::ostream &output, RDFNotation notation) = 0;
 
-		    /**
-		     * Deletes with pattern matching
-		     *
-		     * @param triples
-		     */
-		    virtual void remove(TripleString &triples) = 0;
+	/**
+	 * @param output
+	 */
+	virtual void saveToHDT(std::ostream &output) = 0;
 
-		    virtual void remove(IteratorTripleString &triples) = 0;
 
-			/**
-			 *
-			 */
-			virtual Header &getHeader() = 0;
+	/*
+	 * FROM RDFAccess
+	 */
 
-			/**
-			 *
-			 */
-			virtual Dictionary &getDictionary() = 0;
+	/**
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 * @return
+	 */
+	virtual IteratorTripleString search(const char *subject, const char *predicate, const char *object) = 0;
 
-			/**
-			 *
-			 */
-			virtual Triples &getTriples() = 0;
-	};
+};
+
+class ModifiableHDT : public HDT {
+public:
+	/**
+	 *
+	 * @param triples
+	 */
+	virtual void insert(TripleString &triple) = 0;
+
+	virtual void insert(IteratorTripleString &triple) = 0;
+
+	/**
+	 * Deletes with pattern matching
+	 *
+	 * @param triples
+	 */
+	virtual void remove(TripleString &triples) = 0;
+
+	virtual void remove(IteratorTripleString &triples) = 0;
+
+	/**
+	 * Updates a triple with new components
+	 *
+	 * @param oldTriple
+	 *            The triple to be replaced
+	 * @param newTriple
+	 *            The triple to replace the old one
+	 * @return boolean
+	 */
+	virtual bool edit(TripleString &oldTriple, TripleString &newTriple) = 0;
+};
 
 }
 

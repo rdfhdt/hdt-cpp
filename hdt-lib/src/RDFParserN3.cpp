@@ -1,31 +1,30 @@
 /*
- * RDFParser.cpp
+ * RDFParserN3.cpp
  *
- *  Created on: 02/03/2011
+ *  Created on: 05/03/2011
  *      Author: mck
  */
 
-#include "RDFParser.hpp"
+#include "RDFParserN3.hpp"
 
 namespace hdt {
 
-RDFParser::RDFParser(std::istream *in) {
-	this->in = in;
+RDFParserN3::RDFParserN3(std::istream &in) : RDFParser(in) {
+
 }
 
-RDFParser::~RDFParser() {
+RDFParserN3::~RDFParserN3() {
 	// TODO Auto-generated destructor stub
 }
 
-bool RDFParser::hasNext() {
-	return getline(*in, line);
+
+bool RDFParserN3::hasNext() {
+	return getline(input, line);
 }
 
-TripleString RDFParser::next() {
-
+TripleString RDFParserN3::next() {
 	using namespace std;
 
-	string value = line;
 	int pos = 0;
 	int firstIndex = 0;
 	int lastIndex = 0;
@@ -34,36 +33,36 @@ TripleString RDFParser::next() {
 	vector<string> node(3);
 
 	while (true) {
-		value = value.substr(firstIndex);
+		line = line.substr(firstIndex);
 
-		if (value == "." || value == "\n" || value == "" || value.at(0) == '#')
+		if (line == "." || line == "\n" || line == "" || line.at(0) == '#')
 			break;
 
 		//obvious space
-		if (value.at(0) == ' ') {
+		if (line.at(0) == ' ') {
 			//do nothing
 			lastIndex = 0;
 		}
 		//URI
-		else if (value.at(0) == '<') {
-			lastIndex = value.find(">");
+		else if (line.at(0) == '<') {
+			lastIndex = line.find(">");
 			//check size of pos
 			if (pos > 2) {
 				errorParsing = true;
 				break;
 			}
-			node[pos] = value.substr(0, lastIndex + 1);
+			node[pos] = line.substr(0, lastIndex + 1);
 			pos++;
 		}
 		//Literal
-		else if (value.at(0) == '"') {
-			lastIndex = value.find('"', 1);
+		else if (line.at(0) == '"') {
+			lastIndex = line.find('"', 1);
 			//check if literal is escaped
 			while (true) {
 				bool escaped = false;
 				int temp = lastIndex - 1;
 
-				while (temp > 0 && value.at(temp) == '\\') {
+				while (temp > 0 && line.at(temp) == '\\') {
 					if (escaped)
 						escaped = false;
 					else
@@ -74,10 +73,10 @@ TripleString RDFParser::next() {
 				if (!escaped)
 					break;
 				lastIndex++;
-				if (lastIndex == value.length())
+				if (lastIndex == line.length())
 					//Cannot find the (unescaped) end
 					errorParsing = true;
-				lastIndex = value.find('"', lastIndex);
+				lastIndex = line.find('"', lastIndex);
 				if (lastIndex == string::npos)
 					//Cannot find the (unescaped) end
 					errorParsing = true;
@@ -85,48 +84,48 @@ TripleString RDFParser::next() {
 
 			// literal can extend to a bit more than just the ",
 			// also take into account lang and datatype strings
-			if (value.at(lastIndex + 1) == '@') {
+			if (line.at(lastIndex + 1) == '@') {
 				// find end of literal/lang tag
-				lastIndex = value.find(' ', lastIndex + 1) - 1;
-			} else if (value.at(lastIndex + 1) == '^') {
-				lastIndex = value.find('>', lastIndex + 1);
+				lastIndex = line.find(' ', lastIndex + 1) - 1;
+			} else if (line.at(lastIndex + 1) == '^') {
+				lastIndex = line.find('>', lastIndex + 1);
 			}
 			//check size of pos
 			if (pos > 2) {
 				errorParsing = true;
 				break;
 			}
-			node[pos] = value.substr(0, lastIndex + 1);
+			node[pos] = line.substr(0, lastIndex + 1);
 			pos++;
 		}
 		//blank, a variable, a relative predicate
-		else if (value.at(0) == '_' || (value.find(":") != string::npos)) {
-			lastIndex = value.find(" ");
+		else if (line.at(0) == '_' || (line.find(":") != string::npos)) {
+			lastIndex = line.find(" ");
 			//check size of pos
 			if (pos > 2) {
 				errorParsing = true;
 				break;
 			}
-			node[pos] = value.substr(0, lastIndex);
+			node[pos] = line.substr(0, lastIndex);
 			pos++;
 		}
 		//parameter or variable ---> obviate for Triples. In future, add to a Hash
-		else if (value.at(0) == '@' || value.at(0) == '?') {
+		else if (line.at(0) == '@' || line.at(0) == '?') {
 			break;
 		}
 		// test if number
 		else {
 			// else it is a parsing error
-			lastIndex = value.find(" ");
+			lastIndex = line.find(" ");
 			for (int j = 0; j < lastIndex; j++) {
-				if (!isdigit(value.at(j)) && value.at(j) != '.' && value.at(j)
+				if (!isdigit(line.at(j)) && line.at(j) != '.' && line.at(j)
 						!= ',') {
 					errorParsing = true;
 				}
 			}
 
 			if (errorParsing == false) {
-				node[pos] = value.substr(0, lastIndex);
+				node[pos] = line.substr(0, lastIndex);
 				pos++;
 			}
 
