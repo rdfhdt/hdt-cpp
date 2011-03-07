@@ -177,10 +177,31 @@ class TripleString
 }; // TripleString{}
 
  class IteratorTripleID {
+
+ 	private:
+	    /** The TripleID pattern to match against */
+	    TripleID &pattern;
+	    /** The iterator of TripleID */
+	    iterator<bidirectional_iterator_tag, TripleID> &iterator;
+
  	public:
+		IteratorTripleID() {
+			//TODO
+		}
+
+		IteratorTripleID(iterator<bidirectional_iterator_tag, TripleID> &it, TripleID &pattern) {
+			this->iterator = it;
+			this->pattern = pattern;
+		}
+
+		~IteratorTripleID() {
+			//TODO
+		}
+
  		virtual bool hasNext() {
  			return false;
  		}
+
  		virtual TripleID next() {
  			TripleID id;
  			return id;

@@ -22,15 +22,8 @@ TriplesList::~TriplesList() {
 
 IteratorTripleID TripleListDisk::search(TripleID &pattern)
 {
-	IteratorTripleID &res;
-	vector<TripleID>::iterator it;
-
-
-	for (it = arrayOfTriples.begin() ; it < arrayOfTriples.end(); it++) {
-
-	}
-
-	return res;
+	vector<TripleID>::iterator &it;
+	return new IteratorTripleID(it, pattern);
 }
 
 } // hdt{}
