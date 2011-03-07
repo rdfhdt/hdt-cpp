@@ -15,7 +15,7 @@ using namespace hdt;
 using namespace std;
 
 int main(int argc, char **argv) {
-	std::string inputFileName = "data/0.rdf";
+	std::string inputFileName = "data/test.n3";
 	// final String inputFileName = "data/1.owl";
 	// final String inputFileName = "data/2.rdf";
 	// final String inputFileName = "data/3.owl";
@@ -35,9 +35,10 @@ int main(int argc, char **argv) {
 	triples.save(out);
 	out.close();
 
-	in.open(outputFileName.c_str());
-	triples.load(in);
+/*	in.open(outputFileName.c_str());
+	triples.load(in, hdt->getHeader());
 	in.close();
+*/
 
 	delete hdt;
 }

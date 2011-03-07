@@ -16,7 +16,7 @@ using namespace hdt;
 using namespace std;
 
 int main(int argc, char **argv) {
-	string inputFileName = "data/0.rdf";
+	string inputFileName = "data/test.n3";
 	// final String inputFileName = "data/1.owl";
 	// final String inputFileName = "data/2.rdf";
 	// final String inputFileName = "data/3.owl";
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 	ifstream in(inputFileName.c_str());
 	hdt->loadFromRDF(in);
 
-	hdt->saveToRDF(cout, NTRIPLE);
+	//hdt->saveToRDF(cout, NTRIPLE);
 
 	delete hdt;
 }
