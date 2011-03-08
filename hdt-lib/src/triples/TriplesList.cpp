@@ -20,9 +20,9 @@ TriplesList::~TriplesList() {
 
 // From Triples
 
-IteratorTripleID *TriplesList::search(TripleID &pattern)
+IteratorTripleID *TriplesList::search(const TripleID &pattern)
 {
-	vector<TripleID>::iterator it = arrayOfTriples.begin();
+	std::vector<TripleID *>::iterator it = this->arrayOfTriples.begin();
 	return new IteratorTripleID(it, pattern);
 }
 

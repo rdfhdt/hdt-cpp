@@ -199,19 +199,18 @@ class TripleString
 	    /** The TripleID pattern to match against */
 	    TripleID pattern;
 	    /** The iterator of TripleID */
-	    vector<TripleID>::iterator *iterator;
+	    std::vector<TripleID *>::iterator iterator;
 
  	public:
 		IteratorTripleID() {
 			//TODO
 		}
 
-		IteratorTripleID(std::vector<TripleID>::iterator it, TripleID &pattern) {
-			this->iterator = &it;
-			this->pattern = pattern;
-		}
+		IteratorTripleID(std::vector<TripleID *>::iterator &it, const TripleID &pattern)
+			: iterator(it), pattern(pattern) { }
 
 		~IteratorTripleID() {
+			//delete iterator;
 			//TODO
 		}
 

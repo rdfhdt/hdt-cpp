@@ -8,31 +8,27 @@
 #ifndef TRIPLESLIST_H_
 #define TRIPLESLIST_H_
 
-#include <vector>
 #include <Triples.hpp>
 
 namespace hdt {
 
 class TriplesList : public ModifiableTriples {
-private:
-	vector<TripleID> arrayOfTriples;
+	private:
+		std::vector<TripleID *> arrayOfTriples;
 
-public:
-	TriplesList();
-	virtual ~TriplesList();
-
-	// From Triples
-
-	/**
-	 * Returns a vector of triples matching the pattern
-	 *
-	 * @param pattern
-	 * @return
-	 */
-	IteratorTripleID *search(TripleID &pattern);
+	public:
+		TriplesList();
+		virtual ~TriplesList();
+		/**
+		 * Returns a vector of triples matching the pattern
+		 *
+		 * @param pattern
+		 * @return
+		 */
+		IteratorTripleID *search(const TripleID &pattern);
 
 };
 
-}
+} // hdt{}
 
 #endif /* TRIPLESLIST_H_ */

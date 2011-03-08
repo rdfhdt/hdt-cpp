@@ -55,10 +55,10 @@ class ModifiableTriples;
 			/**
 		     * Returns a vector of triples matching the pattern
 		     *
-		     * @param triple
+		     * @param pattern
 		     * @return
 		     */
-			virtual IteratorTripleID *search(TripleID &triple)=0;
+			virtual IteratorTripleID *search(TripleID &pattern)=0;
 
 			/**
 			 * Calculates the cost to retrieve a specific pattern
@@ -99,7 +99,12 @@ class ModifiableTriples;
 		     */
 			virtual void load(std::istream &input, Header &header)=0;
 
-
+			/**
+			 * Populates the header
+			 *
+			 * @param header
+			 * @return
+			 */
 			virtual void populateHeader(Header &header)=0;
 
 			virtual void startProcessing()=0;
