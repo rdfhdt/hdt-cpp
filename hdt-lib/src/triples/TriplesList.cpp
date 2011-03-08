@@ -19,12 +19,12 @@ TriplesList::~TriplesList() {
 }
 
 // From Triples
-#if 0
-IteratorTripleID *TripleList::search(TripleID &pattern)
+
+IteratorTripleID *TriplesList::search(TripleID &pattern)
 {
-	vector<TripleID>::iterator &it;
+	vector<TripleID>::iterator it = arrayOfTriples.begin();
 	return new IteratorTripleID(it, pattern);
 }
-#endif
+
 
 } // hdt{}

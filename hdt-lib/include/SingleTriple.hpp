@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 namespace hdt {
 class TripleID
 {
@@ -192,31 +194,28 @@ class TripleString
 
  class IteratorTripleID {
 
-#if 0
+
  	private:
 	    /** The TripleID pattern to match against */
-	    TripleID &pattern;
+	    TripleID pattern;
 	    /** The iterator of TripleID */
-	    iterator<bidirectional_iterator_tag, TripleID> &iterator;
+	    vector<TripleID>::iterator *iterator;
 
  	public:
 		IteratorTripleID() {
 			//TODO
 		}
 
-		IteratorTripleID(iterator<bidirectional_iterator_tag, TripleID> &it, TripleID &pattern) {
-			this->iterator = it;
+		IteratorTripleID(std::vector<TripleID>::iterator it, TripleID &pattern) {
+			this->iterator = &it;
 			this->pattern = pattern;
 		}
 
 		~IteratorTripleID() {
 			//TODO
 		}
-#endif
 
-public:
-
- 		virtual bool hasNext() {
+		virtual bool hasNext() {
  			return false;
  		}
 

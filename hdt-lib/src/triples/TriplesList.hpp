@@ -8,15 +8,14 @@
 #ifndef TRIPLESLIST_H_
 #define TRIPLESLIST_H_
 
-#include <Triples.hpp>
-
 #include <vector>
+#include <Triples.hpp>
 
 namespace hdt {
 
 class TriplesList : public ModifiableTriples {
 private:
-	std::vector<TripleID> arrayOfTriples;
+	vector<TripleID> arrayOfTriples;
 
 public:
 	TriplesList();
