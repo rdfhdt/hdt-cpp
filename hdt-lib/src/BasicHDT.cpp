@@ -123,7 +123,7 @@ void BasicHDT::loadFromRDF(std::istream &input)
 	dictionary->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
-		std::cout << ts << std::endl;
+		//std::cout << ts << std::endl;
 
 		dictionary->insert(ts.getSubject(), SUBJECT);
 		dictionary->insert(ts.getPredicate(), PREDICATE);
@@ -140,13 +140,14 @@ void BasicHDT::loadFromRDF(std::istream &input)
 	triples->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
-		std::cout << ts << std::endl;
+		//std::cout << ts << std::endl;
 
 		TripleID ti = dictionary->tripleStringtoTripleID(ts);
 
 		triples->insert(ti);
 	}
 	triples->stopProcessing();
+	triples->sort(SPO);
 	triples->populateHeader(*header);
 }
 
@@ -162,14 +163,14 @@ void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
 
 void BasicHDT::loadFromHDT(std::istream & input)
 {
-	header->load(input);
+	//header->load(input);
 	dictionary->load(input, *header);
 	triples->load(input, *header);
 }
 
 void BasicHDT::saveToHDT(std::ostream & output)
 {
-	header->save(output);
+	//header->save(output);
 	dictionary->save(output);
 	triples->save(output);
 }

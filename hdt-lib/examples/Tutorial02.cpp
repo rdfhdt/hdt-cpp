@@ -15,24 +15,29 @@ using namespace hdt;
 using namespace std;
 
 int main(int argc, char **argv) {
-	std::string inputFileName = "data/test.n3";
-	std::string outputFileName = "data/test.n3.D";
+	string dictFileName = "data/nytimes.D";
+	string triplesFileName = "data/nytimes.T";
+	string hdtFileName = "data/nytimes.hdt";
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
-	ifstream in(inputFileName.c_str());
-	hdt->loadFromRDF(in);
+	ifstream in;
 
-	Dictionary &dictionary = hdt->getDictionary();
+	in.open(hdtFileName.c_str());
+	hdt->loadFromHDT(in);
 
-	cout << dictionary.numberOfElements() << " elements in the dictionary." << endl;
 
-	ofstream out(outputFileName.c_str());
-	dictionary.save(out);
-	out.close();
+	/*in.open(dictFileName.c_str());
+	Dictionary &dict = hdt->getDictionary();
+	dict.load(in, hdt->getHeader());
+	in.close();
 
-	//string s("Rebecca");
-	//cout << "Rebecca has id " << dictionary.stringToId(s, SUBJECT) << endl;
+	in.open(triplesFileName.c_str());
+	Triples &triples = hdt->getTriples();
+	triples.load(in, hdt->getHeader());
+	in.close();
+	*/
+	hdt->saveToRDF(cout, N3);
 
 	delete hdt;
 }

@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 	// final String inputFileName = "data/2.rdf";
 	// final String inputFileName = "data/3.owl";
 
-	std::string outputFileName = "data/test.n3.T";
+	std::string outputFileName = "data/nytimes.T";
 
 	EmptyHeader h;
 	TripleListDisk triples;
@@ -33,8 +33,10 @@ int main(int argc, char **argv) {
 	triples.load(in, h);
 	in.close();
 
-	TripleID toDelete(2,2,0);
-	triples.remove(toDelete);
+	triples.sort(SPO);
+
+//	TripleID toDelete(2,2,0);
+//	triples.remove(toDelete);
 
 	TripleID all(0,0,0);
 	IteratorTripleID *it = triples.search(all);

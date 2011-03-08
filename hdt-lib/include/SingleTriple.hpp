@@ -94,6 +94,20 @@ class TripleID
 
 		} // ==()
 
+		int compare(TripleID &other) {
+			int result = this->subject - other.subject;
+			if(result==0) {
+				result = this->predicate - other.predicate;
+				if(result==0) {
+					return this->object - other.object;
+				} else {
+					return result;
+				}
+			} else {
+				return result;
+			}
+		}
+
 		/**
 		 * Match a triple to a pattern of TripleID. 0 acts as a wildcard
 		 *

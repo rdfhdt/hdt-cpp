@@ -143,11 +143,13 @@ void PlainDictionary::startProcessing()
 
 void PlainDictionary::stopProcessing()
 {
-	std::cout << "End processing: " << numberOfElements() << std::endl;
+	std::cout << "End processing: " << std::endl;
 	this->split();
 	std::cout << "Splitted" << std::endl;
 	this->lexicographicSort();
 	std::cout << "Sorted" << std::endl;
+
+	dumpSizes(cout);
 }
 
 void PlainDictionary::load(std::istream & input, Header &header)
@@ -157,7 +159,7 @@ void PlainDictionary::load(std::istream & input, Header &header)
 
 	startProcessing();
 
-	while(getline(input, line)) {
+	while(region<5 && getline(input, line)) {
 		//std::cout << line << std::endl;
 
 		if(line!="") {
@@ -172,9 +174,6 @@ void PlainDictionary::load(std::istream & input, Header &header)
 			}
 		} else {
 			region++;
-
-			if(region==5)
-				break;
 		}
 	}
 
@@ -199,7 +198,7 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			setPrefixAndString(entry, str);
 			//cout << " Add new predicate: " << str.c_str() << endl;
 
-			hashPredicate[str.c_str()] = entry;
+			hashPredicate[entry->str->c_str()] = entry;
 			predicates.push_back(entry);
 		}
 
@@ -220,14 +219,14 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			setPrefixAndString(entry, str);
 
 			//cout << " Add new subject: " << str << endl;
-			hashSubject[str.c_str()] = entry;
+			hashSubject[entry->str->c_str()] = entry;
 		} else if(foundSubject) {
 			// Already exists in subjects.
 			//cout << "   existing subject: " << str << endl;
 		} else if(foundObject) {
 			// Already exists in objects.
 			//cout << "   existing subject as object: " << str << endl;
-			hashSubject[str.c_str()] = objectIt->second;
+			hashSubject[objectIt->second->str->c_str()] = objectIt->second;
 		}
 	} else if(pos==OBJECT) {
 		if(!foundSubject && !foundObject) {
@@ -236,14 +235,14 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			setPrefixAndString(entry, str);
 
 			//cout << " Add new object: " << str << endl;
-			hashObject[str.c_str()] = entry;
+			hashObject[entry->str->c_str()] = entry;
 		} else if(foundObject) {
 			// Already exists in objects.
 			//cout << "     existing object: " << str << endl;
 		} else if(foundSubject) {
 			// Already exists in subjects.
 			//cout << "     existing object as subject: " << str << endl;
-			hashObject[str.c_str()] = subjectIt->second;
+			hashObject[subjectIt->second->str->c_str()] = subjectIt->second;
 		}
 	}
 }
@@ -260,7 +259,7 @@ bool PlainDictionary::save(std::ostream &output)
 		output.put(marker); //character to split file
 	}
 
-	output.put(marker); //extra line to set the beggining of next part of dictionary
+	output.put(marker); //extra line to set the begining of next part of dictionary
 
 	//not shared subjects
 	for (i = 0; i < subjects_not_shared.size(); i++) {
@@ -269,7 +268,7 @@ bool PlainDictionary::save(std::ostream &output)
 		output.put(marker); //character to split file
 	}
 
-	output.put(marker); //extra line to set the beggining of next part of dictionary
+	output.put(marker); //extra line to set the begining of next part of dictionary
 
 	//not shared objects
 	for (i = 0; i < objects_not_shared.size(); i++) {
@@ -278,7 +277,7 @@ bool PlainDictionary::save(std::ostream &output)
 		output.put(marker); //character to split file
 	}
 
-	output.put(marker); //extra line to set the beggining of next part of dictionary
+	output.put(marker); //extra line to set the begining of next part of dictionary
 
 	//predicates
 	for (i = 0; i < predicates.size(); i++) {
@@ -305,20 +304,20 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
 	case SHARED_SUBJECT:
 	case SHARED_OBJECT:
 		subjects_shared.push_back(entry);
-		hashSubject[str.c_str()] = entry;
-		hashObject[str.c_str()] = entry;
+		hashSubject[entry->str->c_str()] = entry;
+		hashObject[entry->str->c_str()] = entry;
 		break;
 	case NOT_SHARED_SUBJECT:
 		subjects_not_shared.push_back(entry);
-		hashSubject[str.c_str()] = entry;
+		hashSubject[entry->str->c_str()] = entry;
 		break;
 	case NOT_SHARED_OBJECT:
 		objects_not_shared.push_back(entry);
-		hashObject[str.c_str()] = entry;
+		hashObject[entry->str->c_str()] = entry;
 		break;
 	case NOT_SHARED_PREDICATE:
 		predicates.push_back(entry);
-		hashPredicate[str.c_str()] = entry;
+		hashPredicate[entry->str->c_str()] = entry;
 	}
 }
 
@@ -330,8 +329,8 @@ void PlainDictionary::split() {
 	subjects_shared.clear();
 	objects_not_shared.clear();
 
-	for(DictEntryIt subj_it = hashSubject.begin(); subj_it!=hashSubject.end(); subj_it++) {
-		cout << "Check Subj: " << subj_it->first << endl;
+	for(DictEntryIt subj_it = hashSubject.begin(); subj_it!=hashSubject.end() && subj_it->first; subj_it++) {
+		//cout << "Check Subj: " << subj_it->first << endl;
 		DictEntryIt other = hashObject.find(subj_it->first);
 
 		if(other==hashObject.end()) {
@@ -342,10 +341,9 @@ void PlainDictionary::split() {
 			subjects_shared.push_back(subj_it->second);
 		}
 	}
-	cout << "Hash Size Object: " << hashObject.size() << endl;
 
 	for(DictEntryIt obj_it = hashObject.begin(); obj_it!=hashObject.end(); ++obj_it) {
-		cout << "Check Obj: " << obj_it->first << endl;
+		//cout << "Check Obj: " << obj_it->first << endl;
 		DictEntryIt other = hashSubject.find(obj_it->first);
 
 		if(other==hashSubject.end()) {

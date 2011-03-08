@@ -34,7 +34,7 @@ private:
 	unsigned int idx;
 
 public:
-	IteratorUintVector(std::vector<unsigned int> v) : vector(v), idx(0) { }
+	IteratorUintVector(std::vector<unsigned int> &v) : vector(v), idx(0) { }
 
 	virtual ~IteratorUintVector() {	}
 

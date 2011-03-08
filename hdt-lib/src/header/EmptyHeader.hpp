@@ -18,7 +18,7 @@ class EmptyHeader : public Header {
 public:
 	EmptyHeader() { }
 	virtual ~EmptyHeader(){ }
-	bool save(std::ostream &output){ return false; }
+	bool save(std::ostream &output){ return true; }
 	void load(std::istream &input){ }
 
 	IteratorTripleString *search(const char *subject, const char *predicate, const char *object){

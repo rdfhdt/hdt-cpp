@@ -19,7 +19,7 @@ using namespace std;
 
 namespace hdt {
 
-TripleListDisk::TripleListDisk() : fileName(tmpnam(NULL)), stream(fileName, std::ios::in | std::ios::out | std::ios::trunc), numTriples(0) {
+TripleListDisk::TripleListDisk() : fileName(tmpnam(NULL)), stream(0), numTriples(0) {
 	cout << "TripleListDisk: "<< fileName << endl;
 }
 
@@ -39,7 +39,6 @@ void TripleListDisk::load(ModifiableTriples & input)
 
 void TripleListDisk::load(std::istream & input, Header & header)
 {
-	stream.close();
 	stream.open(fileName, std::ios::out | std::ios::trunc);
 
 	unsigned int type;
@@ -64,13 +63,18 @@ void TripleListDisk::load(std::istream & input, Header & header)
 	cout << "Read succesfully triples: " << numRead << endl;
 	this->numTriples = numRead;
 
-	stream.flush();
+	stream.close();
 }
+
+
+bool invalidTriple(TripleID &triple) {
+	return triple.getSubject()==0 || triple.getPredicate()==0 || triple.getObject()==0;
+}
+
 
 bool TripleListDisk::save(std::ostream & output)
 {
-	stream.clear();
-	stream.seekg(0);
+	stream.open(fileName, std::ios::in);
 
 	unsigned int numSaved=0;
 	unsigned int type=1;
@@ -83,24 +87,25 @@ bool TripleListDisk::save(std::ostream & output)
 	TripleID tid;
 	while(stream.good() && numSaved < numTriples) {
 		stream.read((char *)&tid, sizeof(TripleID));
-		if(!stream.fail()) {
+		if(!stream.fail() && !invalidTriple(tid)) {
 			output.write((char *)&tid, sizeof(TripleID));
 		}
 		numSaved++;
 	}
+	stream.close();
 }
 
 void TripleListDisk::startProcessing()
 {
 	cout << "TripleListDisk Start processing" << endl;
-	stream.clear();
-	stream.seekg(0);
+	stream.open(fileName, std::ios::out | std::ios::trunc);
 }
 
 void TripleListDisk::stopProcessing()
 {
 	cout << "TripleListDisk Stop processing: Triples=" <<numTriples<< endl;
 	stream.flush();
+	stream.close();
 }
 
 void TripleListDisk::populateHeader(Header &header)
@@ -133,7 +138,7 @@ float TripleListDisk::cost(TripleID & triple)
 
 bool TripleListDisk::insert(TripleID &triple)
 {
-	cout << "Insert: " << triple << endl;
+	//cout << "Insert: " << triple << endl;
 	stream.write((char *)&triple, sizeof(TripleID));
 	numTriples++;
 }
@@ -148,18 +153,16 @@ bool TripleListDisk::insert(IteratorTripleID *triples)
 
 bool TripleListDisk::remove(TripleID & pattern)
 {
-	stream.close();
-
 	int fd = open(fileName, O_RDWR);
-    if (fd == -1) {
-    	throw "Error open";
-    }
+	if (fd == -1) {
+		throw "Error open";
+	}
 
-    char *pointer = (char *) mmap(0, numTriples*sizeof(TripleID), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+	char *pointer = (char *) mmap(0, numTriples*sizeof(TripleID), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 
-    if(pointer==(char *)-1) {
-    	throw "Could not mmap";
-    }
+	if(pointer==(char *)-1) {
+		throw "Could not mmap";
+	}
 
 	// FIND
 	TripleID *tid;
@@ -206,8 +209,77 @@ bool TripleListDisk::edit(TripleID & oldTriple, TripleID & newTriple)
 	stopProcessing();
 }
 
+int tripleIDcmp(const void *a, const void *b) {
+	TripleID *t1 = (TripleID *) a;
+	TripleID *t2 = (TripleID *) b;
+
+	return t1->compare(*t2);
+}
+
+void radixSort(unsigned int *a, size_t size, int bits) {
+	unsigned int mask;
+	unsigned int rshift=0u;
+	unsigned int *p, *b, *b_orig;
+	unsigned int i;
+	unsigned int key;
+	int cntsize;
+	int *cntarray;
+
+	b=b_orig=(unsigned int *)malloc(size*sizeof(unsigned int));
+
+	cntsize=1u<<bits;
+	cntarray=(int *)calloc(cntsize, sizeof(int));
+
+	for(mask=~(UINT_MAX<<bits); mask; mask<<=bits, rshift+=bits) {
+		for(p=a; p<a+size; p++) {
+			key=(*p & mask)>>rshift;
+			cntarray[key]++;
+		}
+
+
+		for(i=1; i<cntsize; i++) {
+			cntarray[i] += cntarray[i-1];
+		}
+
+		for(p=a+size-1; p>=a; --p) {
+			key=(*p & mask)>>rshift;
+			b[cntarray[key]-1]=*p;
+			--cntarray[key];
+		}
+
+		p=b; b=a; a=p;
+
+		bzero(cntarray, cntsize * sizeof(int));
+	}
+
+
+	if(a==b_orig) memcpy(b, a, size*sizeof(unsigned int));
+
+	free(b_orig);
+	free(cntarray);
+
+}
+
 void TripleListDisk::sort(TripleComponentOrder order)
 {
+	int fd = open(fileName, O_RDWR);
+	if (fd == -1) {
+		throw "Error open";
+	}
+
+	char *pointer = (char *) mmap(0, numTriples*sizeof(TripleID), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+
+	if(pointer==(char *)-1) {
+		throw "Could not mmap";
+	}
+
+	// SORT
+	// FIXME: USE specified order
+	qsort(pointer, numTriples, sizeof(TripleID), tripleIDcmp);
+
+	munmap(pointer, numTriples*sizeof(TripleID));
+
+	close(fd);
 }
 
 void TripleListDisk::setOrder(TripleComponentOrder order)
@@ -216,12 +288,7 @@ void TripleListDisk::setOrder(TripleComponentOrder order)
 
 ///// ITERATOR
 
-bool invalidTriple(TripleID &triple) {
-	return triple.getSubject()==0 || triple.getPredicate()==0 || triple.getObject()==0;
-}
-
 void TripleListDiskIterator::doFetch() {
-	cout << "Fetch " << endl;
 	do {
 		if(stream.good()) {
 			stream.read((char *)&nextv, sizeof(TripleID));
