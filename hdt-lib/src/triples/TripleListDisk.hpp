@@ -14,23 +14,39 @@
 
 namespace hdt {
 
+struct TripleListHeader {
+	unsigned int type;
+	unsigned int numValidTriples;
+	unsigned int numTotalTriples;
+};
+
 class TripleListDisk : public ModifiableTriples {
 private:
-	unsigned int numTotalTriples, numValidTriples, capacity;
-	TripleID *pointer;
-	char fileName[22];
+	unsigned int capacity;
+
+	char *pointer;
+	struct TripleListHeader *tripleHead;
+	TripleID *arrayTriples;
+
+	size_t mappedSize;
+	string fileName;
 	int fd;
+	bool isTemp;
 
 	void mapFile();
 	void unmapFile();
+	void getFileSize();
 	void increaseSize();
 	void ensureSize(unsigned int size);
+
+
 	void removeDuplicates();
 
 	TripleID *getTripleID(unsigned int num);
 
 public:
 	TripleListDisk();
+	TripleListDisk(const char *file);
 	virtual ~TripleListDisk();
 
 	// From Triples
