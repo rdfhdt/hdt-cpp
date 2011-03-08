@@ -44,6 +44,7 @@
 #include "triples/TripleListDisk.hpp"
 #include "RDFParserN3.hpp"
 #include "RDFSerializerN3.hpp"
+#include "util/StopWatch.hpp"
 
 
 using namespace std;
@@ -117,7 +118,9 @@ void BasicHDT::loadFromRDF(std::istream &input)
 	RDFParserN3 parser(input);
 
 	// Generate Dictionary
-	cout << "Gen Dictionary "<< endl;
+	cout << "Generate Dictionary "<< endl;
+
+	StopWatch st;
 	dictionary->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
@@ -129,12 +132,14 @@ void BasicHDT::loadFromRDF(std::istream &input)
 	}
 	dictionary->stopProcessing();
 	dictionary->populateHeader(*header);
+	cout << dictionary->numberOfElements() << " entries added in " << st << endl;
 
 	// Generate Triples
-	cout << "Gen triples "<< endl;
+	cout << "Generating triples "<< endl;
 	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
 
+	st.reset();
 	triples->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
@@ -146,6 +151,7 @@ void BasicHDT::loadFromRDF(std::istream &input)
 	}
 	triples->stopProcessing();
 	triples->populateHeader(*header);
+	cout << triples->getNumberOfElements() << " triples added in " << st << endl;
 }
 
 void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
@@ -187,8 +193,8 @@ void BasicHDT::insert(IteratorTripleString *triples)
 void BasicHDT::remove(TripleString & triple)
 {
 	// Fixme: Only if modifiable triples.
-	//TripleID tid = dictionary->tripleStringtoTripleID(triple);
-	//triples->remove(tid);
+	TripleID tid = dictionary->tripleStringtoTripleID(triple);
+	triples->remove(tid);
 
 	// Fixme: Need to remove from dictionary?
 }
