@@ -19,9 +19,10 @@ using namespace std;
 int main(int argc, char **argv) {
 	//string inputFileName = "data/test.n3";
 
-	string dataset = "dblp";
+	string dataset = "nytimes";
 
-	string inputFileName = "/home/mck/rdfdata/dataset/"+dataset;
+	//string inputFileName = "/home/mck/rdfdata/dataset/"+dataset;
+	string inputFileName = "/Users/mck/rdf/dataset/"+dataset;
 
 	string headFileName = "data/"+dataset+".H";
 	string dictFileName = "data/"+dataset+".D";

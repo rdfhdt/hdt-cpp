@@ -15,7 +15,7 @@ using namespace hdt;
 using namespace std;
 
 int main(int argc, char **argv) {
-	string dataset = "dblp";
+	string dataset = "nytimes";
 	string headFileName = "data/"+dataset+".H";
 	string dictFileName = "data/"+dataset+".D";
 	string triplesFileName = "data/"+dataset+".T";
@@ -38,6 +38,8 @@ int main(int argc, char **argv) {
 	triples.load(in, hdt->getHeader());
 	in.close();
 	*/
+
+	cout << "Triples: " << hdt->getTriples().getNumberOfElements() << endl;
 
 	hdt->saveToRDF(cout, N3);
 
