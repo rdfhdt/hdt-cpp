@@ -25,11 +25,16 @@ BasicHeader::~BasicHeader() {
 
 void BasicHeader::load(std::istream & input)
 {
+	unsigned int triples;
+	input.read((char *)&triples, sizeof(unsigned int));
 	hdt->loadFromRDF(input);
 }
 
 bool BasicHeader::save(std::ostream & output)
 {
+	unsigned int triples = hdt->getTriples().getNumberOfElements();
+
+	output.write((const char *)&triples, sizeof(unsigned int));
 	hdt->saveToRDF(output, NTRIPLE);
 }
 

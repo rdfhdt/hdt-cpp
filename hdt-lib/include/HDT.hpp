@@ -52,6 +52,8 @@ class HDT : public RDFAccess
 {
 public:
 
+	virtual ~HDT() { };
+
 	/**
 	 *
 	 */
@@ -106,6 +108,9 @@ public:
 
 class ModifiableHDT : public HDT {
 public:
+
+	virtual ~ModifiableHDT(){ }
+
 	/**
 	 *
 	 * @param triples

@@ -16,6 +16,8 @@ namespace hdt {
 class Header : public RDFAccess {
 
 public:
+	virtual ~Header() { }
+
 	virtual bool save(std::ostream &output)=0;
 	virtual void load(std::istream &input)=0;
 

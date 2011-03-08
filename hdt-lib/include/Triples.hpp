@@ -52,6 +52,9 @@ class ModifiableTriples;
 	class Triples
 	{
 		public:
+
+			virtual ~Triples() { }
+
 			/**
 		     * Returns a vector of triples matching the pattern
 		     *
@@ -114,6 +117,7 @@ class ModifiableTriples;
 
 	class ModifiableTriples : public Triples {
 	public:
+			virtual ~ModifiableTriples() { }
 		/**
 			 * Adds one or more triples
 			 *

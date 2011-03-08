@@ -18,11 +18,15 @@ using namespace std;
 
 int main(int argc, char **argv) {
 	//string inputFileName = "data/test.n3";
-	string inputFileName = "/Users/mck/rdf/dataset/nytimes";
 
-	string dictFileName = "data/nytimes.D";
-	string triplesFileName = "data/nytimes.T";
-	string hdtFileName = "data/nytimes.hdt";
+	string dataset = "dblp";
+
+	string inputFileName = "/home/mck/rdfdata/dataset/"+dataset;
+
+	string headFileName = "data/"+dataset+".H";
+	string dictFileName = "data/"+dataset+".D";
+	string triplesFileName = "data/"+dataset+".T";
+	string hdtFileName = "data/"+dataset+".hdt";
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 	ifstream in(inputFileName.c_str());
@@ -30,19 +34,22 @@ int main(int argc, char **argv) {
 	hdt->loadFromRDF(in);
 	in.close();
 
-	// Save dict
-
 	ofstream out;
 
-	Dictionary &dictionary = hdt->getDictionary();
+	// Save header
+	Header &header = hdt->getHeader();
+	out.open(headFileName.c_str());
+	header.save(out);
+	out.close();
 
+	// Save dictionary
+	Dictionary &dictionary = hdt->getDictionary();
 	out.open(dictFileName.c_str());
 	dictionary.save(out);
 	out.close();
 
 	// Save triples
 	Triples &triples = hdt->getTriples();
-
 	out.open(triplesFileName.c_str());
 	triples.save(out);
 	out.close();

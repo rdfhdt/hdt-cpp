@@ -190,6 +190,14 @@ class TripleString
 			subject = predicate = object = "";
 		}
 
+		bool isEmpty() {
+			return subject == "" && predicate == "" && object == "";
+		}
+
+		bool hasEmpty() {
+			return subject == "" || predicate == "" || object == "";
+		}
+
 }; // TripleString{}
 
  class IteratorTripleID {

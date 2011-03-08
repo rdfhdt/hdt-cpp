@@ -27,7 +27,7 @@ public:
 
 	BasicHDT(HDTSpecification &spec);
 
-	~BasicHDT();
+	virtual ~BasicHDT();
 
 	/**
 	 *

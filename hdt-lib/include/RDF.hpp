@@ -15,6 +15,9 @@ namespace hdt {
 class RDFAccess {
 
 public:
+
+	virtual ~RDFAccess() { }
+
 	/**
 	 * @param subject
 	 * @param predicate

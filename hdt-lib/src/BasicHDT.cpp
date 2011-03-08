@@ -71,8 +71,6 @@ void BasicHDT::createComponents() {
 	std::string triplesType = spec.get("triples.type");
 
 	// FIXME: SELECT
-	std::cout << "Create" << std::endl << "Dict: " << dictType << std::endl <<"Triples: " << triplesType << std::endl;
-
 	if(spec.get("noheader")=="true") {
 		header = new EmptyHeader();
 	} else {
@@ -130,7 +128,7 @@ void BasicHDT::loadFromRDF(std::istream &input)
 		dictionary->insert(ts.getObject(), OBJECT);
 	}
 	dictionary->stopProcessing();
-	//dictionary->populateHeader(*header);
+	dictionary->populateHeader(*header);
 
 	// Generate Triples
 	cout << "Gen triples "<< endl;
@@ -147,7 +145,6 @@ void BasicHDT::loadFromRDF(std::istream &input)
 		triples->insert(ti);
 	}
 	triples->stopProcessing();
-	triples->sort(SPO);
 	triples->populateHeader(*header);
 }
 

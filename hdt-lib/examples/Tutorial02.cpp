@@ -15,9 +15,11 @@ using namespace hdt;
 using namespace std;
 
 int main(int argc, char **argv) {
-	string dictFileName = "data/nytimes.D";
-	string triplesFileName = "data/nytimes.T";
-	string hdtFileName = "data/nytimes.hdt";
+	string dataset = "dblp";
+	string headFileName = "data/"+dataset+".H";
+	string dictFileName = "data/"+dataset+".D";
+	string triplesFileName = "data/"+dataset+".T";
+	string hdtFileName = "data/"+dataset+".hdt";
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
@@ -25,7 +27,6 @@ int main(int argc, char **argv) {
 
 	in.open(hdtFileName.c_str());
 	hdt->loadFromHDT(in);
-
 
 	/*in.open(dictFileName.c_str());
 	Dictionary &dict = hdt->getDictionary();
@@ -37,6 +38,7 @@ int main(int argc, char **argv) {
 	triples.load(in, hdt->getHeader());
 	in.close();
 	*/
+
 	hdt->saveToRDF(cout, N3);
 
 	delete hdt;

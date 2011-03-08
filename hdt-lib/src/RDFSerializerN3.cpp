@@ -20,7 +20,9 @@ void RDFSerializerN3::serialize(IteratorTripleString *it)
 	while(it->hasNext()) {
 		TripleString ts = it->next();
 
-		stream << ts.getSubject() << ' ' << ts.getPredicate() << ' ' << ts.getObject() << " ." << endl;
+		if(!ts.isEmpty()) {
+			stream << ts.getSubject() << ' ' << ts.getPredicate() << ' ' << ts.getObject() << " ." << endl;
+		}
 	}
 }
 

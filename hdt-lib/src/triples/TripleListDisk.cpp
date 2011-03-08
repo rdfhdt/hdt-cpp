@@ -14,17 +14,108 @@ using namespace std;
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include <stdlib.h> // for qsort
 #include <sys/mman.h> // For mmap
+#include <string.h> // memcpy
 
+#include "../util/StopWatch.hpp"
 
 namespace hdt {
 
-TripleListDisk::TripleListDisk() : fileName(tmpnam(NULL)), stream(0), numTriples(0) {
-	cout << "TripleListDisk: "<< fileName << endl;
+TripleListDisk::TripleListDisk() :
+		numTotalTriples(0),
+		numValidTriples(0),
+		capacity(0),
+		pointer(NULL)
+{
+	strcpy(fileName, "triplelistdiskXXXXXX");
+
+	fd = mkostemp(fileName, O_RDWR | O_CREAT | O_TRUNC);
+	if (fd == -1) {
+		perror("Error open");
+		throw "Error open";
+	}
+
+	cout << "TriplelistDisk: " << fileName << endl;
+
+	this->increaseSize();
+	this->mapFile();
 }
 
 TripleListDisk::~TripleListDisk() {
-	// TODO Auto-generated destructor stub
+	this->unmapFile();
+	close(fd);
+	int res = unlink(fileName);
+	if(res==-1) {
+		perror("Unlinking tmp file");
+	}
+}
+
+void TripleListDisk::mapFile() {
+	if(pointer!=NULL) {
+		return;
+	}
+
+	//cout << "MAP" << endl;
+	pointer = (TripleID *) mmap(0, capacity*sizeof(TripleID), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+
+	if(pointer==(TripleID *)-1) {
+		throw "Could not mmap";
+	}
+}
+
+void TripleListDisk::unmapFile() {
+	if(pointer!=NULL && pointer!=(TripleID *)-1) {
+		//cout << "UNMAP" << endl;
+		munmap(pointer, capacity*sizeof(TripleID));
+		pointer=NULL;
+	}
+}
+
+void TripleListDisk::increaseSize() {
+	ensureSize(capacity+4096);
+}
+
+// NOTE: Must be closed before calling.
+void TripleListDisk::ensureSize(unsigned int size) {
+	if(capacity>=size) {
+		return;
+	}
+
+	unmapFile();
+
+	//cout << "Increase size: " << size << endl;
+	capacity = size;
+
+	int pos = lseek(fd, 3*capacity*sizeof(unsigned int)-1, SEEK_SET);
+	if(pos==-1) {
+		perror("Error lseek");
+		throw "Error lseek";
+	}
+	//cout << "Seek pos: "<< pos << endl;
+
+	char c = 0;
+	int wr = write(fd, &c, 1);
+	if(wr==-1) {
+		perror("Error write");
+		throw "Error write";
+	}
+	//cout << "Written: " << wr << endl;;
+	fsync(fd);
+
+	mapFile();
+}
+
+TripleID *TripleListDisk::getTripleID(unsigned int num) {
+	if(num>numTotalTriples || pointer==NULL) {
+		return NULL;
+	}
+
+	return &pointer[num];
+}
+
+bool invalidTriple(TripleID *triple) {
+	return triple->getSubject()==0 || triple->getPredicate()==0 || triple->getObject()==0;
 }
 
 void TripleListDisk::load(ModifiableTriples & input)
@@ -33,14 +124,13 @@ void TripleListDisk::load(ModifiableTriples & input)
 	IteratorTripleID *it = input.search(all);
 
 	startProcessing();
+	ensureSize(input.getNumberOfElements());
 	insert(it);
 	stopProcessing();
 }
 
 void TripleListDisk::load(std::istream & input, Header & header)
 {
-	stream.open(fileName, std::ios::out | std::ios::trunc);
-
 	unsigned int type;
 	unsigned int ntriples;
 
@@ -56,56 +146,45 @@ void TripleListDisk::load(std::istream & input, Header & header)
 		input.read((char *)&tid, sizeof(TripleID));
 
 		if(!input.fail()) {
-			stream.write((char *)&tid, sizeof(TripleID));
+			insert(tid);
 		}
 		numRead++;
 	}
-	cout << "Read succesfully triples: " << numRead << endl;
-	this->numTriples = numRead;
-
-	stream.close();
+	cout << "Succesfully read triples: " << numRead << endl;
 }
 
-
-bool invalidTriple(TripleID &triple) {
-	return triple.getSubject()==0 || triple.getPredicate()==0 || triple.getObject()==0;
-}
 
 
 bool TripleListDisk::save(std::ostream & output)
 {
-	stream.open(fileName, std::ios::in);
-
 	unsigned int numSaved=0;
 	unsigned int type=1;
 
-	cout << "Saving triples: " << numTriples << endl;
+	cout << "Saving triples: " << numValidTriples << endl;
 
 	output.write((char *)&type, sizeof(unsigned int));
-	output.write((char *)&numTriples, sizeof(unsigned int));
+	output.write((char *)&numValidTriples, sizeof(unsigned int));
 
-	TripleID tid;
-	while(stream.good() && numSaved < numTriples) {
-		stream.read((char *)&tid, sizeof(TripleID));
-		if(!stream.fail() && !invalidTriple(tid)) {
-			output.write((char *)&tid, sizeof(TripleID));
+	//for(tid=pointer; tid<pointer+numTotalTriples; tid++) {
+	for(unsigned int i=0; i<numTotalTriples; i++) {
+		TripleID *tid = getTripleID(i);
+		if(!invalidTriple(tid)) {
+			//cout << "Write: " << tid << " " << *tid << endl;
+			output.write((char *)tid, sizeof(TripleID));
 		}
-		numSaved++;
 	}
-	stream.close();
 }
 
 void TripleListDisk::startProcessing()
 {
 	cout << "TripleListDisk Start processing" << endl;
-	stream.open(fileName, std::ios::out | std::ios::trunc);
 }
 
 void TripleListDisk::stopProcessing()
 {
-	cout << "TripleListDisk Stop processing: Triples=" <<numTriples<< endl;
-	stream.flush();
-	stream.close();
+	sort(SPO);
+	removeDuplicates();
+	cout << "TripleListDisk Stop processing: Triples=" <<numValidTriples<< endl;
 }
 
 void TripleListDisk::populateHeader(Header &header)
@@ -114,7 +193,7 @@ void TripleListDisk::populateHeader(Header &header)
 
 unsigned int TripleListDisk::getNumberOfElements()
 {
-	return numTriples;
+	return numValidTriples;
 }
 
 unsigned int TripleListDisk::size()
@@ -125,8 +204,11 @@ unsigned int TripleListDisk::size()
 
 IteratorTripleID *TripleListDisk::search(TripleID &pattern)
 {
-	TripleListDiskIterator *it=new TripleListDiskIterator(fileName, pattern);
-	return it;
+	if(numValidTriples>0) {
+		return new TripleListDiskIterator(this, pattern);
+	} else {
+		return new IteratorTripleID();
+	}
 }
 
 float TripleListDisk::cost(TripleID & triple)
@@ -138,9 +220,22 @@ float TripleListDisk::cost(TripleID & triple)
 
 bool TripleListDisk::insert(TripleID &triple)
 {
-	//cout << "Insert: " << triple << endl;
-	stream.write((char *)&triple, sizeof(TripleID));
-	numTriples++;
+	if(pointer==NULL) {
+		throw "Invalid pointer";
+	}
+
+	if(numTotalTriples>=capacity) {
+		increaseSize();
+	}
+
+	//cout << "Insert: " <<&pointer[numTotalTriples] << "* "<< triple << " "<<sizeof(TripleID) << endl;
+
+	memcpy(&pointer[numTotalTriples], &triple, sizeof(TripleID));
+	numTotalTriples++;
+	numValidTriples++;
+	//cout << "Inserted: "<< numTotalTriples << endl;
+
+	return true;
 }
 
 bool TripleListDisk::insert(IteratorTripleID *triples)
@@ -153,52 +248,34 @@ bool TripleListDisk::insert(IteratorTripleID *triples)
 
 bool TripleListDisk::remove(TripleID & pattern)
 {
-	int fd = open(fileName, O_RDWR);
-	if (fd == -1) {
-		throw "Error open";
-	}
-
-	char *pointer = (char *) mmap(0, numTriples*sizeof(TripleID), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-
-	if(pointer==(char *)-1) {
-		throw "Could not mmap";
-	}
-
-	// FIND
 	TripleID *tid;
 
-	for(unsigned int i=0; i<numTriples; i++) {
-		tid = (TripleID *) &pointer[i*sizeof(TripleID)];
-
+	for(tid=pointer; tid<pointer+numTotalTriples; tid++) {
 		if (tid->match(pattern)) {
-			tid->setSubject(0);
-			tid->setPredicate(0);
-			tid->setObject(0);
+			tid->clear();
+			numValidTriples--;
 		}
 	}
-
-	munmap(pointer, numTriples*sizeof(TripleID));
-
-	close(fd);
 }
 
 bool TripleListDisk::remove(IteratorTripleID *triples)
 {
-	/*while(stream.good() && numRead < numTriples) {
-		stream.read((char *)tid, sizeof(TripleID));
-		if(!stream.fail()) {
-			if(tid.match(pattern)) {
-				tid.setSubject(0);
-				tid.setPredicate(0);
-				tid.setObject(0);
+	TripleID *tid;
 
-				stream.seekp(stream.tellg());
+	vector<TripleID> allPat;
 
-				stream.write((char *)tid, sizeof(TripleID));
+	while(triples->hasNext()) {
+		allPat.push_back(triples->next());
+	}
+
+	for(tid=pointer; tid<pointer+numTotalTriples; tid++) {
+		for(int i=0; i<allPat.size(); i++) {
+			if (tid->match(allPat[i])) {
+				tid->clear();
+				numValidTriples--;
 			}
 		}
-		numRead++;
-	}*/
+	}
 }
 
 bool TripleListDisk::edit(TripleID & oldTriple, TripleID & newTriple)
@@ -209,13 +286,10 @@ bool TripleListDisk::edit(TripleID & oldTriple, TripleID & newTriple)
 	stopProcessing();
 }
 
-int tripleIDcmp(const void *a, const void *b) {
-	TripleID *t1 = (TripleID *) a;
-	TripleID *t2 = (TripleID *) b;
 
-	return t1->compare(*t2);
-}
 
+#if 0
+// Not used yet
 void radixSort(unsigned int *a, size_t size, int bits) {
 	unsigned int mask;
 	unsigned int rshift=0u;
@@ -259,27 +333,45 @@ void radixSort(unsigned int *a, size_t size, int bits) {
 	free(cntarray);
 
 }
+#endif
+
+int tripleIDcmp(const void *a, const void *b) {
+	TripleID *t1 = (TripleID *) a;
+	TripleID *t2 = (TripleID *) b;
+
+	return t1->compare(*t2);
+}
 
 void TripleListDisk::sort(TripleComponentOrder order)
 {
-	int fd = open(fileName, O_RDWR);
-	if (fd == -1) {
-		throw "Error open";
-	}
-
-	char *pointer = (char *) mmap(0, numTriples*sizeof(TripleID), PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-
-	if(pointer==(char *)-1) {
-		throw "Could not mmap";
-	}
-
 	// SORT
 	// FIXME: USE specified order
-	qsort(pointer, numTriples, sizeof(TripleID), tripleIDcmp);
+	StopWatch st;
 
-	munmap(pointer, numTriples*sizeof(TripleID));
+	qsort(pointer, numTotalTriples, sizeof(TripleID), tripleIDcmp);
 
-	close(fd);
+	cout << "Sorted in " << st << endl;
+}
+
+void TripleListDisk::removeDuplicates() {
+
+	TripleID previous = *pointer;
+	StopWatch st;
+
+	unsigned int numduplicates = 0;
+
+	for(TripleID *tid = pointer+1; tid<pointer+numTotalTriples; tid++) {
+		//cout << "Compare: " << &previous << " "<<previous << " New: " << tid << " "<<*tid << endl;
+		if(previous == *tid) {
+			tid->clear();
+			numValidTriples--;
+			numduplicates++;
+		} else {
+			previous = *tid;
+		}
+	}
+
+	cout << "Removed "<< numduplicates << " duplicates in " << st << endl;
 }
 
 void TripleListDisk::setOrder(TripleComponentOrder order)
@@ -289,24 +381,21 @@ void TripleListDisk::setOrder(TripleComponentOrder order)
 ///// ITERATOR
 
 void TripleListDiskIterator::doFetch() {
-	do {
-		if(stream.good()) {
-			stream.read((char *)&nextv, sizeof(TripleID));
 
-			hasNextv = !stream.fail();
-		} else {
-			hasNextv = false;
-		}
-	} while (hasNextv && (invalidTriple(nextv) || !nextv.match(pattern)));
+	do {
+		nextv = triples->getTripleID(pos);
+		pos++;
+	} while(pos<=triples->numTotalTriples && (invalidTriple(nextv) || !nextv->match(pattern)));
+
+	hasNextv= pos<=triples->numTotalTriples;
 }
 
-TripleListDiskIterator::TripleListDiskIterator(char *tmpfile, TripleID &p) : stream(tmpfile), pattern(p), hasNextv(true) {
+TripleListDiskIterator::TripleListDiskIterator(TripleListDisk *t, TripleID &p) : triples(t), pattern(p), hasNextv(true) {
 	doFetch();
 }
 
 TripleListDiskIterator::~TripleListDiskIterator(){
-	if(stream.good())
-		stream.close();
+
 }
 
 bool TripleListDiskIterator::hasNext() {
@@ -314,7 +403,7 @@ bool TripleListDiskIterator::hasNext() {
 }
 
 TripleID TripleListDiskIterator::next() {
-	TripleID previousv = nextv;
+	TripleID previousv = *nextv;
 	doFetch();
 	return previousv;
 }

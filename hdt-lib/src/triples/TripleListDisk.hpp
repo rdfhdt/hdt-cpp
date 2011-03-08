@@ -16,9 +16,18 @@ namespace hdt {
 
 class TripleListDisk : public ModifiableTriples {
 private:
-	char *fileName;
-	std::fstream stream;
-	unsigned int numTriples;
+	unsigned int numTotalTriples, numValidTriples, capacity;
+	TripleID *pointer;
+	char fileName[22];
+	int fd;
+
+	void mapFile();
+	void unmapFile();
+	void increaseSize();
+	void ensureSize(unsigned int size);
+	void removeDuplicates();
+
+	TripleID *getTripleID(unsigned int num);
 
 public:
 	TripleListDisk();
@@ -134,18 +143,20 @@ public:
 	 */
 	void setOrder(TripleComponentOrder order);
 
+	friend class TripleListDiskIterator;
 };
 
 class TripleListDiskIterator : public IteratorTripleID {
 private:
-	std::fstream stream;
+	TripleListDisk *triples;
+	TripleID *nextv, pattern;
 	bool hasNextv;
-	TripleID nextv, &pattern;
+	unsigned int pos;
 
 	void doFetch();
 
 public:
-	TripleListDiskIterator(char *tmpfile, TripleID &p);
+	TripleListDiskIterator(TripleListDisk *triples, TripleID &p);
 	virtual ~TripleListDiskIterator();
 
 	bool hasNext();
