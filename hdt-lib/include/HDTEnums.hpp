@@ -41,9 +41,9 @@ namespace hdt {
 
 	enum TripleComponentRole
 	{
-		SUBJECT,
-		PREDICATE,
-		OBJECT
+		SUBJECT,	/** Subject */
+		PREDICATE,	/** Predicate */
+		OBJECT		/** Object */
 	};
 
 	enum DictionarySection

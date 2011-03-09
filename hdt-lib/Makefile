@@ -34,7 +34,7 @@ libhdt: $(OBJECTS)
 
 doc:	
 	@echo " [HDT] Generating documentation"
-	@cd ..; $(DOXYGEN)
+	$(DOXYGEN)
 	
 clean:
 	@echo " [CLN] Removing object files"

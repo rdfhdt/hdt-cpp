@@ -13,6 +13,11 @@
 
 namespace hdt {
 
+/**
+ * Header of the HDT
+ *
+ * Describes the Header of any HDT.
+ */
 class Header : public RDFAccess {
 
 public:
@@ -26,6 +31,11 @@ public:
 	 */
 
 	/**
+	 * Search a Triple Pattern.
+	 *
+	 * Searches all triples that match the supplied Triple Pattern. The pattern is composed by
+	 * a subject, a predicate and and object, where NULL or empty string "" mean match any.
+	 *
 	 * @param subject
 	 * @param predicate
 	 * @param object
@@ -34,20 +44,32 @@ public:
 	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object) = 0;
 
 	/**
+	 * Insert a triple to the collection.
 	 *
-	 * @param triples
+	 * @param triples New triple to be added.
 	 */
 	virtual void insert(TripleString &triple) = 0;
 
+	/**
+	 * Insert a set of triples, as specified in the iterator.
+	 *
+	 * @param triples Iterator of Triples
+	 */
 	virtual void insert(IteratorTripleString *triple) = 0;
 
 	/**
-	 * Deletes with pattern matching
+	 * Removes from the collection all triples that match the supplied Triple pattern.
 	 *
 	 * @param triples
 	 */
 	virtual void remove(TripleString &triples) = 0;
 
+	/**
+	 * Remove a set of patterns.
+	 * Removes all triples that match the specified triple patterns.
+	 *
+	 * @param triples Iterator of TripleString indicating the triple patterns to be removed.
+	 */
 	virtual void remove(IteratorTripleString *triples) = 0;
 
 	/**

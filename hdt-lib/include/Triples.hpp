@@ -49,126 +49,144 @@ namespace hdt {
 
 class ModifiableTriples;
 
-	class Triples
-	{
-		public:
+/**
+ * Interface that defines readonly access to a set of triples. It allows loading a saving from a file. Asking the number of
+ */
 
-			virtual ~Triples() { }
+class Triples {
+public:
 
-			/**
-		     * Returns a vector of triples matching the pattern
-		     *
-		     * @param pattern
-		     * @return
-		     */
-			virtual IteratorTripleID *search(TripleID &pattern)=0;
+	virtual ~Triples() {
+	}
 
-			/**
-			 * Calculates the cost to retrieve a specific pattern
-		     *
-		     * @param triple
-		     * @return
-		     */
-			virtual float cost(TripleID &triple)=0;
+	/**
+	 * Returns a vector of triples matching the pattern
+	 *
+	 * @param pattern
+	 * @return
+	 */
+	virtual IteratorTripleID *search(TripleID &pattern)=0;
 
-			/**
-		     * Returns the number of triples
-		     *
-		     * @return
-		     */
-			virtual unsigned int getNumberOfElements()=0;
+	/**
+	 * Calculates the cost to retrieve a specific pattern
+	 *
+	 * @param triple
+	 * @return
+	 */
+	virtual float cost(TripleID &triple)=0;
 
-			/**
-			 * Returns size in bytes
-			 */
-			virtual unsigned int size()=0;
+	/**
+	 * Returns the number of triples
+	 *
+	 * @return
+	 */
+	virtual unsigned int getNumberOfElements()=0;
 
-			/**
-		     * Saves the triples
-		     *
-		     * @param output
-		     * @return
-		     */
-			virtual bool save(std::ostream &output)=0;
+	/**
+	 * Returns size in bytes
+	 */
+	virtual unsigned int size()=0;
 
+	/**
+	 * Saves the triples
+	 *
+	 * @param output
+	 * @return
+	 */
+	virtual bool save(std::ostream &output)=0;
 
-			virtual void load(ModifiableTriples &input)=0;
+	/**
+	 *
+	 * @param input
+	 */
+	virtual void load(ModifiableTriples &input)=0;
 
-			/**
-		     * Loads triples from a file
-		     *
-		     * @param input
-		     * @return
-		     */
-			virtual void load(std::istream &input, Header &header)=0;
+	/**
+	 * Load triples from a file
+	 *
+	 * @param input
+	 * @return
+	 */
+	virtual void load(std::istream &input, Header &header)=0;
 
-			/**
-			 * Populates the header
-			 *
-			 * @param header
-			 * @return
-			 */
-			virtual void populateHeader(Header &header)=0;
+	/**
+	 * Populates the header
+	 *
+	 * @param header
+	 * @return
+	 */
+	virtual void populateHeader(Header &header)=0;
 
-			virtual void startProcessing()=0;
+	/**
+	 *  Called before inserting a set of triples
+	 *
+	 */
+	virtual void startProcessing()=0;
 
-			virtual void stopProcessing()=0;
-	}; // Triples{}
+	/**
+	 * Called after all triples have been inserted.
+	 */
+	virtual void stopProcessing()=0;
+}; // Triples{}
 
-	class ModifiableTriples : public Triples {
-	public:
-			virtual ~ModifiableTriples() { }
-		/**
-			 * Adds one or more triples
-			 *
-			 * @param triples
-			 *            The triples to be inserted
-			 * @return boolean
-			 */
-			virtual bool insert(TripleID &triple)=0;
+/**
+ * Provides readwrite access to a set of triples.
+ *
+ */
+class ModifiableTriples: public Triples {
+public:
+	virtual ~ModifiableTriples() {
+	}
+	/**
+	 * Adds one or more triples
+	 *
+	 * @param triples
+	 *            The triples to be inserted
+	 * @return boolean
+	 */
+	virtual bool insert(TripleID &triple)=0;
 
-			virtual bool insert(IteratorTripleID *triples)=0;
+	virtual bool insert(IteratorTripleID *triples)=0;
 
-			/**
-			 * Deletes one or more triples according to a pattern
-			 *
-			 * @param pattern
-			 *            The pattern to match against
-			 * @return boolean
-			 */
-			virtual bool remove(TripleID &pattern)=0;
+	/**
+	 * Deletes one or more triples according to a pattern
+	 *
+	 * @param pattern
+	 *            The pattern to match against
+	 * @return boolean
+	 */
+	virtual bool remove(TripleID &pattern)=0;
 
-			virtual bool remove(IteratorTripleID *pattern)=0;
+	virtual bool remove(IteratorTripleID *pattern)=0;
 
-			/**
-			 * Updates a triple with new components
-			 *
-			 * @param oldTriple
-			 *            The triple to be replaced
-			 * @param newTriple
-			 *            The triple to replace the old one
-			 * @return boolean
-			 */
-			virtual bool edit(TripleID &oldTriple, TripleID &newTriple)=0;
+	/**
+	 * Updates a triple with new components
+	 *
+	 * @param oldTriple
+	 *            The triple to be replaced
+	 * @param newTriple
+	 *            The triple to replace the old one
+	 * @return boolean
+	 */
+	virtual bool edit(TripleID &oldTriple, TripleID &newTriple)=0;
 
-			/**
-			 * Sorts the triples based on an order(TripleComponentOrder)
-			 *
-			 * @param order
-			 *            The order to sort the triples with
-			 */
-			virtual void sort(TripleComponentOrder order)=0;
+	/**
+	 * Sorts the triples based on an order(TripleComponentOrder)
+	 *
+	 * @param order
+	 *            The order to sort the triples with
+	 */
+	virtual void sort(TripleComponentOrder order)=0;
 
-			/**
-			 * Sets a type of order(TripleComponentOrder)
-			 *
-			 * @param order
-			 *            The order to set
-			 */
-			virtual void setOrder(TripleComponentOrder order)=0;
+	/**
+	 * Sets a type of order(TripleComponentOrder)
+	 *
+	 * @param order
+	 *            The order to set
+	 */
+	virtual void setOrder(TripleComponentOrder order)=0;
 
-	};
-
+};
 
 }
 
