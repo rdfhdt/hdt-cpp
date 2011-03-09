@@ -14,7 +14,7 @@ namespace hdt {
 
 class TriplesList : public ModifiableTriples {
 	private:
-		std::vector<TripleID *> arrayOfTriples;
+		std::vector<TripleID> arrayOfTriples;
 		TripleComponentOrder order;
 
 	public:

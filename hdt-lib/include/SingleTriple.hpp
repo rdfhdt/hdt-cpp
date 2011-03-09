@@ -207,14 +207,14 @@ class TripleString
 	    /** The TripleID pattern to match against */
 	    TripleID pattern;
 	    /** The iterator of TripleID */
-	    std::vector<TripleID *>::iterator iterator;
+	    std::vector<TripleID>::iterator iterator;
 
  	public:
 		IteratorTripleID() {
 			//TODO
 		}
 
-		IteratorTripleID(std::vector<TripleID *>::iterator &it, const TripleID &pattern)
+		IteratorTripleID(std::vector<TripleID>::iterator &it, const TripleID &pattern)
 			: iterator(it), pattern(pattern) { }
 
 		~IteratorTripleID() {

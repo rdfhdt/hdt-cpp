@@ -22,7 +22,7 @@ TriplesList::~TriplesList() {
 
 IteratorTripleID *TriplesList::search(const TripleID &pattern)
 {
-	std::vector<TripleID *>::iterator it = this->arrayOfTriples.begin();
+	std::vector<TripleID>::iterator it = this->arrayOfTriples.begin();
 	return new IteratorTripleID(it, pattern);
 } // search()
 
@@ -82,10 +82,8 @@ bool TriplesList::insert(const TripleID &triple)
 	// Saving the size of the list of triples before inserting anything
 	unsigned int size = this->arrayOfTriples.size();
 
-	TripleID temp = triple;
-
 	// Add the triple
-	arrayOfTriples.push_back(&temp);
+	arrayOfTriples.push_back(triple);
 
 	// Verify the triple has been added (sort of assert...)
 	if (this->arrayOfTriples.size() != (size+1)) {
