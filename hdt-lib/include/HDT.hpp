@@ -6,8 +6,6 @@
  *                     Mario Arias
  * All rights reserved.
  *
- * TODO: Define me
- *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -55,38 +53,42 @@ public:
 	virtual ~HDT() { };
 
 	/**
-	 *
+	 * Obtain the Header part of this HDT.
 	 */
 	virtual Header &getHeader() = 0;
 
 	/**
-	 *
+	 * Obtain the Dictionary part of this HDT
 	 */
 	virtual Dictionary &getDictionary() = 0;
 
 	/**
-	 *
+	 * Obtain the Triples of this HDT.
 	 */
 	virtual Triples &getTriples() = 0;
 
-	/*
+	/**
+	 * Load an RDF file represented in the specified RDFNotation into the current HDT.
 	 * @param input
 	 * @param specification
 	 */
-	virtual void loadFromRDF(std::istream &input) = 0;
+	virtual void loadFromRDF(std::istream &input, RDFNotation notation) = 0;
 
 	/**
+	 * Load an HDT file from a stream.
 	 * @param input
 	 */
 	virtual void loadFromHDT(std::istream &input) = 0;
 
 	/**
+	 * Export the current HDT to RDF in the specified notation.
 	 * @param output
 	 * @param notation
 	 */
 	virtual void saveToRDF(std::ostream &output, RDFNotation notation) = 0;
 
 	/**
+	 * Save the current HDT into a stream in a compact manner.
 	 * @param output
 	 */
 	virtual void saveToHDT(std::ostream &output) = 0;
@@ -97,6 +99,7 @@ public:
 	 */
 
 	/**
+	 * Search all patterns that match the specified pattern.
 	 * @param subject
 	 * @param predicate
 	 * @param object
