@@ -11,9 +11,9 @@
 #include <string>
 #include <fstream>
 
-#include "../src/header/EmptyHeader.hpp";
-#include "../src/dictionary/PlainDictionary.hpp";
-#include "../src/triples/TripleListDisk.hpp";
+#include "../src/header/EmptyHeader.hpp"
+#include "../src/dictionary/PlainDictionary.hpp"
+#include "../src/triples/TripleListDisk.hpp"
 #include "../src/BasicHDT.hpp"
 #include "../src/RDFSerializerN3.hpp"
 
