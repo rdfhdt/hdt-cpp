@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
 	// Load data from file
 	ifstream in(inputFileName.c_str());
-	hdt->loadFromRDF(in);
+	hdt->loadFromRDF(in, N3);
 	in.close();
 
 	// Load triples

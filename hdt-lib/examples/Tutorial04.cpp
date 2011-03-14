@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 
 	ifstream in(inputFileName.c_str());
 
-	hdt->loadFromRDF(in);
+	hdt->loadFromRDF(in, N3);
 
 	IteratorTripleString *i = hdt->search("http://somewhere/RebeccaSmith/", "", "");
 	while (i->hasNext()) {

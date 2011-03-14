@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 	HDT *hdt = HDTFactory::createBasicHDT(spec);
 
 	ifstream in(inputFileName.c_str());
-	hdt->loadFromRDF(in);
+	hdt->loadFromRDF(in, N3);
 	in.close();
 
 	ofstream out(outFile.c_str());

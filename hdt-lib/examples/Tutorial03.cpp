@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 	HDT *hdt = HDTFactory::createBasicHDT(hdtspec);
 
 	ifstream in(inputFileName.c_str());
-	hdt->loadFromRDF(in);
+	hdt->loadFromRDF(in, N3);
 	in.close();
 
 	Triples &triples = hdt->getTriples();
