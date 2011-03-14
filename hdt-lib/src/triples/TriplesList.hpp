@@ -97,7 +97,7 @@ class TriplesList : public ModifiableTriples {
 		 */
 		bool insert(const TripleID &triple);
 
-		bool insert(const IteratorTripleID *triples);
+		bool insert(IteratorTripleID *triples);
 
 		/**
 		 * Deletes one or more triples according to a pattern

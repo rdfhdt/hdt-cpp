@@ -72,7 +72,7 @@ class TripleID
 		/**
 		 * Compares two triples
 		 *
-		 * @param oeprand The operand to compare with
+		 * @param operand The operand to compare with
 		 * @return boolean
 		 */
 		bool operator==(TripleID &operand) {
@@ -95,6 +95,18 @@ class TripleID
 			return true;
 
 		} // ==()
+
+		/**
+		 * Inverts the comparison of two triples
+		 *
+		 * @param operand The operand to compare with
+		 * @return boolean
+		 */
+		bool operator!=(TripleID &operand) {
+
+			return !(this->operator==(operand));
+
+		} // !=()
 
 		int compare(TripleID &other) {
 			int result = this->subject - other.subject;
@@ -227,6 +239,7 @@ class TripleString
  		}
 
  		virtual TripleID next() {
+ 			// TODO: Return a copy or a pointer to a TripleID?
  			TripleID id;
  			return id;
  		}
@@ -238,6 +251,7 @@ class TripleString
  			return false;
  		}
  		virtual TripleString next() {
+ 			// TODO: Return a copy or a pointer to a TripleString?
  			TripleString ts;
  			return ts;
  		}

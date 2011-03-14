@@ -92,11 +92,62 @@ bool TriplesList::insert(const TripleID &triple)
 	// TODO: Retrieve the last triple added and compare it with the parameter
 
 	return true;
-}
+} // insert()
 
-bool TriplesList::insert(const IteratorTripleID *triples)
+bool TriplesList::insert(IteratorTripleID *triples)
 {
+	// Supporting counter for the assert
+	unsigned int counter = 0;
+
+	// Saving the size of the list of triples before inserting anything
+	unsigned int size = this->arrayOfTriples.size();
+
+	// Add all triples
+	while( triples->hasNext() ) {
+		this->arrayOfTriples.push_back(triples->next());
+		counter++;
+	}
+
+	// Verify the triples have been added (sort of assert...)
+	if (this->arrayOfTriples.size() != (size+counter)) {
+		return false;
+	}
+
+	return true;
+} // insert()
+
+bool TriplesList::remove(TripleID &pattern)
+{
+	bool isMatch = true;
+
+	// Iterator at the beginning of the vector
+	vector<TripleID>::iterator it = this->arrayOfTriples.begin();
+
+	// Iterate through the vector until a match is found
+	while ( isMatch = it->match(pattern) ) {
+		it++;
+	}
+
+	// Check whether there has been a match or not
+	if (!isMatch) {
+		this->arrayOfTriples.erase(it);
+		return true;
+	}
+
 	return false;
-}
+} // remove()
+
+bool TriplesList::remove(IteratorTripleID *pattern)
+{
+	// TODO: Revise... isMatch logic... I don't like it
+	bool isMatch = false;
+
+	while( pattern->hasNext() ) {
+		TripleID tmp = pattern->next();
+		isMatch = remove(tmp);
+	}
+
+	return isMatch;
+} // remove()
 
 } // hdt{}
