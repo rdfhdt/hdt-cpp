@@ -113,8 +113,13 @@ IteratorTripleString *BasicHDT::search(const char *subject, const char *predicat
 
 
 
-void BasicHDT::loadFromRDF(std::istream &input)
+void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 {
+	// FIXME: Add other parsers.
+	if(notation!=N3) {
+		throw "Not implemented: Only parsing available: N3";
+	}
+
 	RDFParserN3 parser(input);
 
 	// Generate Dictionary

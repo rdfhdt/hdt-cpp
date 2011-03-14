@@ -48,7 +48,7 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	void loadFromRDF(std::istream &input);
+	void loadFromRDF(std::istream &input, RDFNotation notation);
 
 	/**
 	 * @param input

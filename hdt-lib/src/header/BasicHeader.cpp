@@ -27,7 +27,7 @@ void BasicHeader::load(std::istream & input)
 {
 	unsigned int triples;
 	input.read((char *)&triples, sizeof(unsigned int));
-	hdt->loadFromRDF(input);
+	hdt->loadFromRDF(input, N3);
 }
 
 bool BasicHeader::save(std::ostream & output)
