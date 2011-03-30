@@ -108,12 +108,20 @@ class TripleID
 
 		} // !=()
 
-		int compare(TripleID &other) {
-			int result = this->subject - other.subject;
+		/**
+		 * Compares two triples and returns -1, 0 or 1
+		 *
+		 * @param other
+		 * @return
+		 */
+		int compare(TripleID &operand) {
+
+			int result = this->subject - operand.subject;
+
 			if(result==0) {
-				result = this->predicate - other.predicate;
+				result = this->predicate - operand.predicate;
 				if(result==0) {
-					return this->object - other.object;
+					return this->object - operand.object;
 				} else {
 					return result;
 				}
@@ -146,6 +154,19 @@ class TripleID
 			return false;
 
 		} // match()
+
+		/**
+		 * Replaces the contents of a triple with the provided replacement
+		 *
+		 * @param replacement
+		 */
+		void replace(TripleID &replacement) {
+
+			this->subject = replacement.getSubject();
+			this->object = replacement.getObject();
+			this->predicate = replacement.getPredicate();
+
+		} // replace()
 
 };
 

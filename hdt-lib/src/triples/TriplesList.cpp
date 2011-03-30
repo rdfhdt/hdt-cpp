@@ -139,7 +139,7 @@ bool TriplesList::remove(TripleID &pattern)
 
 bool TriplesList::remove(IteratorTripleID *pattern)
 {
-	// TODO: Revise... isMatch logic... I don't like it
+	// TODO: Revise... this isMatch logic... I don't like it
 	bool isMatch = false;
 
 	while( pattern->hasNext() ) {
@@ -149,5 +149,27 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 
 	return isMatch;
 } // remove()
+
+bool TriplesList::edit(TripleID &oldTriple, TripleID &newTriple)
+{
+	// Iterator at the beginning of the vector
+	vector<TripleID>::iterator it = this->arrayOfTriples.begin();
+
+
+	// TODO: Check that we don't go too far, otherwise we will get out of bounds... check with end() of vector
+	// Iterate through the vector until a match is found
+	while ( it != this->arrayOfTriples.end() && *it != oldTriple ) {
+		it++;
+	}
+
+	if ( it != this->arrayOfTriples.end() ) {
+		// Replace old values with new ones
+		it->replace(newTriple);
+		return true;
+	}
+
+	return false;
+
+} // edit()
 
 } // hdt{}
