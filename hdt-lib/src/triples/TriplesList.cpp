@@ -6,6 +6,9 @@
  */
 
 #include "TriplesList.hpp"
+#include "TriplesComparator.hpp"
+
+#include <algorithm>
 
 namespace hdt {
 
@@ -171,5 +174,10 @@ bool TriplesList::edit(TripleID &oldTriple, TripleID &newTriple)
 	return false;
 
 } // edit()
+
+void TriplesList::sort(TripleComponentOrder order)
+{
+	std::sort(this->arrayOfTriples.begin(), this->arrayOfTriples.end(), TriplesComparator(order));
+} // sort()
 
 } // hdt{}
