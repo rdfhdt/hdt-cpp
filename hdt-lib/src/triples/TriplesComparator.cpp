@@ -37,25 +37,29 @@
 
 namespace hdt {
 
-TriplesComparator::TriplesComparator() {
+TriplesComparator::TriplesComparator()
+{
 	// TODO Auto-generated constructor stub
+} // TriplesComparator()
 
-}
-
-TriplesComparator::TriplesComparator(TripleComponentOrder order) {
+TriplesComparator::TriplesComparator(TripleComponentOrder order)
+{
 	this->order = order;
 } // TriplesComparator()
 
 
-TriplesComparator::~TriplesComparator() {
+TriplesComparator::~TriplesComparator()
+{
 	// TODO Auto-generated destructor stub
-}
+} // TriplesComparator()
 
-bool TriplesComparator::operator()(TripleID &o1, TripleID &o2)  {
-
+bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
+{
 	//TODO: Revise because STL C++ only allows true if o1 > o2, false otherwise...
 
 	int res;
+	TripleID o1 = a;
+	TripleID o2 = b;
 	/*
 	﻿ * Components of the triple. Meaning will be given based on the order
 	﻿ * variable, see below

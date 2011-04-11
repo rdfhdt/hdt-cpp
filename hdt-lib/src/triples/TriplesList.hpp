@@ -161,6 +161,14 @@ class TriplesList : public ModifiableTriples {
 		 */
 		void setOrder(TripleComponentOrder order);
 
+		// Others
+
+		/**
+		 *
+		 * @param i
+		 * @return
+		 */
+		TripleID &getTripleID(unsigned int i);
 
 };
 

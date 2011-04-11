@@ -49,7 +49,7 @@ class TriplesComparator {
 		TriplesComparator();
 		TriplesComparator(TripleComponentOrder order);
 		virtual ~TriplesComparator();
-		bool operator()(TripleID &o1, TripleID &o2);
+		bool operator()(const TripleID &a, const TripleID &b);
 
 }; //TriplesComparator{}
 

@@ -38,16 +38,18 @@
 
 #include <algorithm>
 
+
 namespace hdt {
 
-TriplesList::TriplesList() {
+TriplesList::TriplesList()
+{
 	// TODO Auto-generated constructor stub
+} // TriplesList()
 
-}
-
-TriplesList::~TriplesList() {
+TriplesList::~TriplesList()
+{
 	// TODO Auto-generated destructor stub
-}
+} // ~TriplesList()
 
 // From Triples
 
@@ -60,7 +62,7 @@ IteratorTripleID *TriplesList::search(const TripleID &pattern)
 float TriplesList::cost(const TripleID &pattern)
 {
 	// TODO: Theoretically define this with the team
-	return -1;
+	throw "Not implemented";
 } // cost()
 
 unsigned int TriplesList::getNumberOfElements()
@@ -76,8 +78,17 @@ unsigned int TriplesList::size()
 
 bool TriplesList::save(const std::ostream &output)
 {
-	// TODO
-	return false;
+	// TODO: Revise & fix
+
+	for( unsigned int i = 0; i < this->getNumberOfElements(); i++ ) {
+		TripleID &tid = this->getTripleID(i);
+		if ( !tid.isValid() ) {
+			//cout << "Write: " << tid << " " << *tid << endl;
+			//output.write(tid, sizeof(TripleID));
+		}
+	}
+
+	return true;
 }
 
 void TriplesList::load(const std::istream &input, const Header &header)
@@ -207,5 +218,15 @@ void TriplesList::sort(TripleComponentOrder order)
 {
 	std::sort(this->arrayOfTriples.begin(), this->arrayOfTriples.end(), TriplesComparator(order));
 } // sort()
+
+void TriplesList::setOrder(TripleComponentOrder order)
+{
+	this->order = order;
+} // setOrder()
+
+TripleID& TriplesList::getTripleID(unsigned int i)
+{
+	return this->arrayOfTriples[i];
+} // getTripleID()
 
 } // hdt{}

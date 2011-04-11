@@ -28,14 +28,28 @@ class TripleID
 		}
 
 		TripleID(unsigned int subject, unsigned int predicate, unsigned int object) {
-			this->subject = subject;
-			this->predicate = predicate;
-			this->object = object;
-		}
+
+			if ( subject != 0) {
+				this->subject = subject;
+				if ( predicate != 0 ) {
+					this->predicate = predicate;
+					if ( object != 0 ) {
+						this->object = object;
+					} else {
+						throw "Supplied object is not valid";
+					}
+				} else {
+					throw "Supplied predicate is not valid";
+				}
+			} else {
+				throw "Supplied subject is not valid";
+			}
+
+		} // TripleID()
 
 		~TripleID() {
-
 		}
+
 		unsigned int getSubject() {
 			return subject;
 		}
@@ -44,7 +58,7 @@ class TripleID
 		}
 
 		unsigned  getPredicate() {
-			return predicate;
+			return this->predicate;
 		}
 
 		void setPredicate(unsigned int predicate) {
@@ -52,7 +66,7 @@ class TripleID
 		}
 
 		unsigned int getObject() {
-			return object;
+			return this->object;
 		}
 
 		void setObject(unsigned int object) {
@@ -60,8 +74,10 @@ class TripleID
 		}
 
 		void clear() {
-			subject = predicate = object = 0;
-		}
+			this->subject = 0;
+			this->predicate = 0;
+			this->object = 0;
+		} //clear()
 
 		friend std::ostream &operator<<(std::ostream &stream, const TripleID &ts) {
 			stream << "TripleID: "<< ts.subject << ", "<< ts.predicate <<", "<< ts.object;
@@ -167,6 +183,15 @@ class TripleID
 			this->predicate = replacement.getPredicate();
 
 		} // replace()
+
+		/**
+		 * Validates the contents of a triple
+		 *
+		 * @return boolean
+		 */
+		bool isValid() {
+			return !(this->subject == 0 || this->predicate == 0 || this->object == 0);
+		} // validate()
 
 };
 

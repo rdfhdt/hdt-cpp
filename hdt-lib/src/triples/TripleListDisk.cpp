@@ -393,6 +393,7 @@ void TripleListDisk::sort(TripleComponentOrder order)
 {
 	// SORT
 	// FIXME: USE specified order
+	// FIXME: Use TripleComparator class
 	StopWatch st;
 
 	qsort(arrayTriples, tripleHead->numTotalTriples, sizeof(TripleID), tripleIDcmp);
