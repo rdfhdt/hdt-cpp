@@ -1,9 +1,11 @@
-/*
+	/*
  * PlainDictionary.cpp
  *
  *  Created on: 02/03/2011
  *      Author: mck
  */
+
+#include <sstream>
 
 #include "PlainDictionary.hpp"
 #include "../util/Histogram.h"
@@ -79,29 +81,31 @@ std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole pos
 
 unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole position)
 {
-	unsigned int id = 0;
 	DictEntryIt ret;
+
+	if(key=="")
+		return 0;
 
 	switch (position) {
 	case SUBJECT:
 		ret = hashSubject.find(key.c_str());
-		if(ret!=hashSubject.end()) {
-			id = ret->second->id;
-		}
-		break;
+		if(ret!=hashSubject.end())
+			return ret->second->id;
+		else
+			throw "Subject not found in dictionary";
 	case PREDICATE:
 		ret = hashPredicate.find(key.c_str());
 		if (ret != hashPredicate.end())
-			id = ret->second->id;
-		break;
+			return ret->second->id;
+		else
+			throw "Predicate not found in dictionary";
 	case OBJECT:
 		ret = hashObject.find(key.c_str());
 		if (ret != hashObject.end())
-			id = ret->second->id;
-		break;
+			return ret->second->id;
+		else
+			throw "Object not found in dictionary";
 	}
-
-	return id;
 }
 
 TripleString PlainDictionary::tripleIDtoTripleString(TripleID &tripleID)
@@ -152,7 +156,7 @@ void PlainDictionary::stopProcessing()
 	dumpSizes(cout);
 }
 
-void PlainDictionary::load(std::istream & input, Header &header)
+void PlainDictionary::load(std::istream & input, ControlInformation &ci)
 {
 	std::string line;
 	unsigned char region = 1;
@@ -178,6 +182,7 @@ void PlainDictionary::load(std::istream & input, Header &header)
 	}
 
 	// No stopProcessing() Needed. Dictionary already split and sorted in file.
+	updateIDs();
 }
 
 unsigned int PlainDictionary::numberOfElements()
@@ -247,8 +252,30 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 	}
 }
 
-bool PlainDictionary::save(std::ostream &output)
+string intToStr(int val) {
+	std::stringstream out;
+	out << val;
+	return out.str();
+}
+
+bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation)
 {
+	controlInformation.set("codification", "http://purl.org/HDT/hdt#dictionaryPlain");
+	controlInformation.set("format", "text/plain");
+	controlInformation.setUint("$elements", numberOfElements());
+
+	controlInformation.setUint("$subjects", getNsubjects());
+	controlInformation.setUint("$objects", getNobjects());
+	controlInformation.setUint("$predicates", getNpredicates());
+	controlInformation.setUint("$sharedso", getSsubobj());
+
+	controlInformation.setUint("$maxid", getMaxID());
+	controlInformation.setUint("$maxsubjectid",getMaxSubjectID());
+	controlInformation.setUint("$maxpredicateid", getMaxPredicateID());
+	controlInformation.setUint("$maxobjectid", getMaxObjectID());
+
+	controlInformation.save(output);
+
 	unsigned int i = 0;
 	const char marker = '\n';
 
@@ -304,19 +331,23 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
 	case SHARED_SUBJECT:
 	case SHARED_OBJECT:
 		subjects_shared.push_back(entry);
+		//entry->id = subjects_shared.size();
 		hashSubject[entry->str->c_str()] = entry;
 		hashObject[entry->str->c_str()] = entry;
 		break;
 	case NOT_SHARED_SUBJECT:
 		subjects_not_shared.push_back(entry);
+		//entry->id = subjects_shared.size()+subjects_not_shared.size();
 		hashSubject[entry->str->c_str()] = entry;
 		break;
 	case NOT_SHARED_OBJECT:
 		objects_not_shared.push_back(entry);
+		//entry->id = subjects_shared.size()+objects_not_shared.size();
 		hashObject[entry->str->c_str()] = entry;
 		break;
 	case NOT_SHARED_PREDICATE:
 		predicates.push_back(entry);
+		//entry->id = predicates.size();
 		hashPredicate[entry->str->c_str()] = entry;
 	}
 }

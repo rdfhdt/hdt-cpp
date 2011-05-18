@@ -42,6 +42,7 @@
 #include <SingleTriple.hpp>
 #include <HDTEnums.hpp>
 #include <Header.hpp>
+#include <ControlInformation.hpp>
 
 namespace hdt {
 
@@ -112,14 +113,14 @@ public:
 	 * @param output
 	 * @return
 	 */
-	virtual bool save(std::ostream &output)=0;
+	virtual bool save(std::ostream &output, ControlInformation &ci)=0;
 
 	/**
 	 * Load dictionary information from a stream. The dictionary may fetch properties from the supplied header.
 	 * @param input
 	 * @param header
 	 */
-	virtual void load(std::istream &input, Header &header)=0;
+	virtual void load(std::istream &input, ControlInformation &ci)=0;
 
 	/**
 	 * Insert a new entry to the dictionary in the corresponding section according to the role (Subject, Predicate, Object).

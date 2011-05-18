@@ -16,7 +16,7 @@ BasicHeader::BasicHeader() {
 
 	spec.set("noheader", "true");
 
-	hdt = HDTFactory::createBasicHDT(spec);
+	hdt = HDTFactory::createModifiableHDT(spec);
 }
 
 BasicHeader::~BasicHeader() {
@@ -61,11 +61,6 @@ void BasicHeader::remove(IteratorTripleString *triples)
 IteratorTripleString *BasicHeader::search(const char *subject, const char *predicate, const char *object)
 {
 	return hdt->search(subject, predicate, object);
-}
-
-bool BasicHeader::edit(TripleString & oldTriple, TripleString & newTriple)
-{
-	return hdt->edit(oldTriple, newTriple);
 }
 
 }

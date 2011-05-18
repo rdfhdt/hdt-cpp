@@ -66,6 +66,7 @@ private:
 	PrefixHash prefixes;
 	unsigned int mapping;
 
+	//ControlInformation controlInformation;
 	HDTSpecification spec;
 
 // Public Interface
@@ -93,8 +94,8 @@ public:
 	unsigned int getMaxObjectID();
 
 	void populateHeader(Header &header);
-	bool save(std::ostream &output);
-	void load(std::istream &input, Header &header);
+	bool save(std::ostream &output, ControlInformation &ci);
+	void load(std::istream &input, ControlInformation &ci);
 
 
 	void insert(std::string &str, TripleComponentRole position);

@@ -85,7 +85,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	bool save(std::ostream &output);
+	bool save(std::ostream &output, ControlInformation &controlInformation);
 
 
 	void load(ModifiableTriples &input);
@@ -96,7 +96,7 @@ public:
 	 * @param input
 	 * @return
 	 */
-	void load(std::istream &input, Header &header);
+	void load(std::istream &input, ControlInformation &controlInformation);
 
 
 	void populateHeader(Header &header);
@@ -133,17 +133,6 @@ public:
 	bool remove(IteratorTripleID *pattern);
 
 	/**
-	 * Updates a triple with new components
-	 *
-	 * @param oldTriple
-	 *            The triple to be replaced
-	 * @param newTriple
-	 *            The triple to replace the old one
-	 * @return boolean
-	 */
-	bool edit(TripleID &oldTriple, TripleID &newTriple);
-
-	/**
 	 * Sorts the triples based on an order(TripleComponentOrder)
 	 *
 	 * @param order
@@ -172,7 +161,7 @@ private:
 	void doFetch();
 
 public:
-	TripleListDiskIterator(TripleListDisk *triples, TripleID &p);
+	TripleListDiskIterator(TripleListDisk *triples, TripleID );
 	virtual ~TripleListDiskIterator();
 
 	bool hasNext();

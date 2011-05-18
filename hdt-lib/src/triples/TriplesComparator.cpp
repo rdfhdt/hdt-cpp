@@ -151,13 +151,13 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 			if ( res == 0) {
 				return true;
 			} else {
-				return (z2 > z1 ? true : false);
+				return (z2 > z1);
 			}
 		} else {
-			return (y2 > y1 ? true : false);
+			return (y2 > y1);
 		}
 	} else {
-		return (x2 > x1 ? true : false);
+		return (x2 > x1);
 	}
 
 } // operator()

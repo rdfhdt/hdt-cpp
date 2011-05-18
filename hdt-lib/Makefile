@@ -14,8 +14,16 @@ LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib
 OBJECTS=$(patsubst %.cpp,%.o, $(wildcard src/*.cpp) $(wildcard src/**/*.cpp))
 HEADERS=$(wildcard include/*.hpp) $(wildcard src/*.hpp) $(wildcard include/*.h) $(wildcard src/*.h)
 EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
+TOOLS=$(patsubst %.cpp,%, $(wildcard tools/*.cpp))
 
-all: libhdt examples
+all: libhdt tools
+
+tools/%: tools/%.cpp $(OBJECTS) $(HEADERS)
+	@echo " [HDT] Compiling tool $<"
+	@$(CPP) $(INCLUDES) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) ${LIB} libhdt.a 
+
+tools: libhdt $(TOOLS) tools/dataset.h
+	@echo " [HDT] Compiling tools"
 
 examples/%: examples/%.cpp $(OBJECTS) $(HEADERS)
 	@echo " [HDT] Compiling example $<"
@@ -28,7 +36,7 @@ examples: libhdt $(EXAMPLES)
 	@echo " [HDT] Compiling $<"
 	@$(CPP) $(INCLUDES) $(CPPFLAGS) $(FLAGS) -c $< -o $@
 
-libhdt: $(OBJECTS)
+libhdt: $(OBJECTS) $(HEADERS)
 	@echo " [HDT] Linking libhdt.a"
 	@ar rcs  libhdt.a $(OBJECTS)
 
@@ -38,5 +46,5 @@ doc:
 	
 clean:
 	@echo " [CLN] Removing object files"
-	@rm -f $(OBJECTS) $(EXAMPLES) libhdt.a *~
+	@rm -f $(OBJECTS) $(EXAMPLES) $(TOOLS) libhdt.a *~
 

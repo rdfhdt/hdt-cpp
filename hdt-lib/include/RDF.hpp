@@ -13,10 +13,23 @@
 namespace hdt {
 
 class RDFAccess {
+	/**
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 * @return
+	 */
+	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object) = 0;
+};
+
+/**
+ * Provides writable access to a RDF repository, search triples, insert, remove.
+ */
+class RDFStorage : public RDFAccess {
 
 public:
 
-	virtual ~RDFAccess() { }
+	virtual ~RDFStorage() { }
 
 	/**
 	 * @param subject
@@ -42,17 +55,6 @@ public:
 	virtual void remove(TripleString &triples) = 0;
 
 	virtual void remove(IteratorTripleString *triples) = 0;
-
-	/**
-	 * Updates a triple with new components
-	 *
-	 * @param oldTriple
-	 *            The triple to be replaced
-	 * @param newTriple
-	 *            The triple to replace the old one
-	 * @return boolean
-	 */
-	virtual bool edit(TripleString &oldTriple, TripleString &newTriple) = 0;
 };
 
 

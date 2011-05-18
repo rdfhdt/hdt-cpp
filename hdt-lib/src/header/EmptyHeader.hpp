@@ -30,8 +30,6 @@ public:
 
 	void remove(TripleString &triples){ }
 	void remove(IteratorTripleString *triples){ }
-
-	bool edit(TripleString &oldTriple, TripleString &newTriple){ return false; }
 };
 
 }

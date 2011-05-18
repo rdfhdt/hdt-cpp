@@ -1,17 +1,45 @@
 /*
  * UintStream.hpp
  *
- *  Created on: 10/05/2011
+ *  Created on: 07/03/2011
  *      Author: mck
  */
 
-#ifndef UINTSTREAM_HPP_
-#define UINTSTREAM_HPP_
+#ifndef STREAMELEMENTS_HPP_
+#define STREAMELEMENTS_HPP_
 
-#include "StreamElements.hpp"
+#include <vector>
+#include <iostream>
 
 namespace hdt {
 
+class IteratorUint {
+public:
+	virtual bool hasNext() {
+		return false;
+	}
+
+	virtual unsigned int next() {
+		return 0;
+	}
+};
+
+class VectorIterator : public IteratorUint {
+private:
+	std::vector<unsigned int> &vector;
+	unsigned int pos;
+
+public:
+	VectorIterator(std::vector<unsigned int> &v) : vector(v), pos(0) {
+	}
+
+	bool hasNext(){
+		return pos<vector.size();
+	}
+	unsigned int next(){
+		return vector[pos++];
+	}
+};
 
 #if 0
 // Example of Iterator using c++ vector
@@ -36,13 +64,10 @@ public:
 #endif
 
 
-class UintStream : public StreamElements {
-private:
-	std::vector<unsigned int> vector;
+class StreamElements {
 
 public:
-	UintStream();
-	virtual ~UintStream();
+	virtual ~StreamElements() { }
 
 	/**
 	 * Adds elementss to the stream
@@ -50,7 +75,7 @@ public:
 	 * @param elements
 	 *            The elements to be added to the stream
 	 */
-	void add(IteratorUint &elements);
+	virtual void add(IteratorUint &elements)=0;
 
 	/**
 	 * Gets the element in a specific position
@@ -59,16 +84,21 @@ public:
 	 *            The position of the element to be returned
 	 * @return int
 	 */
-	unsigned int get(unsigned int position);
+	virtual unsigned int get(unsigned int position)=0;
 
 	/**
 	 * Gets the total number of elements in the stream
 	 *
 	 * @return int
 	 */
-	unsigned int getNumberOfElements();
+	virtual unsigned int getNumberOfElements()=0;
 
-	unsigned int size();
+	/**
+	 * Returns the size of the stream in bytes
+	 *
+	 * @return int
+	 */
+	virtual unsigned int size()=0;
 
 	/**
 	 * Saves the stream to an OutputStream
@@ -77,7 +107,7 @@ public:
 	 *            The OutputStream to be saved to
 	 * @throws IOException
 	 */
-	void save(std::ostream &output);
+	virtual void save(std::ostream &output)=0;
 
 	/**
 	 * Loads a stream from an InputStream
@@ -85,9 +115,9 @@ public:
 	 * @param input
 	 *            The InputStream to load from
 	 */
-	void load(std::istream &input);
+	virtual void load(std::istream &input)=0;
 };
 
 }
 
-#endif /* UINTSTREAM_HPP_ */
+#endif /* STREAMELEMENTS_HPP_ */

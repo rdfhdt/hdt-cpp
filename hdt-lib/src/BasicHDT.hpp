@@ -13,11 +13,12 @@
 
 namespace hdt {
 
-class BasicHDT : public ModifiableHDT {
+
+class BasicHDT : public HDT {
 private:
 	Header *header;
 	Dictionary *dictionary;
-	ModifiableTriples *triples;
+	Triples *triples;
 	HDTSpecification spec;
 
 	void createComponents();
@@ -28,6 +29,69 @@ public:
 	BasicHDT(HDTSpecification &spec);
 
 	virtual ~BasicHDT();
+
+	/**
+	 *
+	 */
+	Header &getHeader();
+
+	/**
+	 *
+	 */
+	Dictionary &getDictionary();
+
+	/**
+	 *
+	 */
+	Triples &getTriples();
+
+	/*
+	 * @param input
+	 * @param specification
+	 */
+	void loadFromRDF(std::istream &input, RDFNotation notation);
+
+	/**
+	 * @param input
+	 */
+	void loadFromHDT(std::istream &input);
+
+	/**
+	 * @param output
+	 * @param notation
+	 */
+	void saveToRDF(std::ostream &output, RDFNotation notation);
+
+	/**
+	 * @param output
+	 */
+	void saveToHDT(std::ostream &output);
+
+	/**
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 * @return
+	 */
+	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+};
+
+
+class BasicModifiableHDT : public ModifiableHDT {
+private:
+	Header *header;
+	Dictionary *dictionary;
+	ModifiableTriples *triples;
+	HDTSpecification spec;
+
+	void createComponents();
+
+public:
+	BasicModifiableHDT();
+
+	BasicModifiableHDT(HDTSpecification &spec);
+
+	virtual ~BasicModifiableHDT();
 
 	/**
 	 *
@@ -95,17 +159,6 @@ public:
 	virtual void remove(TripleString &triples);
 
 	virtual void remove(IteratorTripleString *triples);
-
-	/**
-	 * Updates a triple with new components
-	 *
-	 * @param oldTriple
-	 *            The triple to be replaced
-	 * @param newTriple
-	 *            The triple to replace the old one
-	 * @return boolean
-	 */
-	virtual bool edit(TripleString &oldTriple, TripleString &newTriple);
 
 };
 

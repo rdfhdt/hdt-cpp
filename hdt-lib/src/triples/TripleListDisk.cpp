@@ -182,7 +182,7 @@ void TripleListDisk::load(ModifiableTriples & input)
 	stopProcessing();
 }
 
-void TripleListDisk::load(std::istream & input, Header & header)
+void TripleListDisk::load(std::istream & input, ControlInformation &controlInformation)
 {
 	input.read((char *)tripleHead, sizeof(TripleListHeader));
 
@@ -201,7 +201,7 @@ void TripleListDisk::load(std::istream & input, Header & header)
 
 
 
-bool TripleListDisk::save(std::ostream & output)
+bool TripleListDisk::save(std::ostream & output, ControlInformation &controlInformation)
 {
 	cout << "Saving triples: " << tripleHead->numValidTriples << endl;
 
@@ -325,15 +325,6 @@ bool TripleListDisk::remove(IteratorTripleID *triples)
 	}
 }
 
-bool TripleListDisk::edit(TripleID & oldTriple, TripleID & newTriple)
-{
-	remove(oldTriple);
-	startProcessing();
-	insert(newTriple);
-	stopProcessing();
-}
-
-
 
 #if 0
 // Not used yet
@@ -429,16 +420,15 @@ void TripleListDisk::setOrder(TripleComponentOrder order)
 ///// ITERATOR
 
 void TripleListDiskIterator::doFetch() {
-
 	do {
 		nextv = triples->getTripleID(pos);
 		pos++;
-	} while(pos<=triples->tripleHead->numTotalTriples && (invalidTriple(nextv) || !nextv->match(pattern)));
+	} while(pos<=triples->tripleHead->numTotalTriples && (!nextv->isValid() || !nextv->match(pattern)));
 
 	hasNextv= pos<=triples->tripleHead->numTotalTriples;
 }
 
-TripleListDiskIterator::TripleListDiskIterator(TripleListDisk *t, TripleID &p) : triples(t), pattern(p), hasNextv(true) {
+TripleListDiskIterator::TripleListDiskIterator(TripleListDisk *t, TripleID p) : triples(t), pattern(p), hasNextv(true) {
 	doFetch();
 }
 

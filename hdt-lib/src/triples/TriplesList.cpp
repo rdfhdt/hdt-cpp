@@ -35,73 +35,93 @@
 
 #include "TriplesList.hpp"
 #include "TriplesComparator.hpp"
+#include "../util/StopWatch.hpp"
 
 #include <algorithm>
 
 
 namespace hdt {
 
-TriplesList::TriplesList()
+TriplesList::TriplesList() : numValidTriples(0)
 {
-	// TODO Auto-generated constructor stub
-} // TriplesList()
+}
 
 TriplesList::~TriplesList()
 {
-	// TODO Auto-generated destructor stub
-} // ~TriplesList()
 
-// From Triples
+}
 
-IteratorTripleID *TriplesList::search(const TripleID &pattern)
+IteratorTripleID *TriplesList::search(TripleID &pattern)
 {
-	std::vector<TripleID>::iterator it = this->arrayOfTriples.begin();
-	return new IteratorTripleID(it, pattern);
-} // search()
+	return new TriplesListIterator(this,pattern);
+}
 
-float TriplesList::cost(const TripleID &pattern)
+float TriplesList::cost(TripleID &pattern)
 {
 	// TODO: Theoretically define this with the team
 	throw "Not implemented";
-} // cost()
+}
 
 unsigned int TriplesList::getNumberOfElements()
 {
-	return (unsigned int) this->arrayOfTriples.size();
-} // getNumberOfElements()
+	return numValidTriples;
+}
 
 unsigned int TriplesList::size()
 {
-	return (unsigned int) this->arrayOfTriples.size()*sizeof(TripleID);
-	//return (unsigned int) this->getNumberOfElements()*sizeof(TripleID);
-} // size()
+	return numValidTriples*sizeof(TripleID);
+}
 
-bool TriplesList::save(const std::ostream &output)
+bool TriplesList::save(std::ostream &output, ControlInformation &controlInformation)
 {
-	// TODO: Revise & fix
+	controlInformation.clear();
+	controlInformation.setUint("numTriples", numValidTriples);
+	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesList");
+	controlInformation.save(output);
 
-	for( unsigned int i = 0; i < this->getNumberOfElements(); i++ ) {
-		TripleID &tid = this->getTripleID(i);
-		if ( !tid.isValid() ) {
-			//cout << "Write: " << tid << " " << *tid << endl;
-			//output.write(tid, sizeof(TripleID));
+	for( unsigned int i = 0; i < arrayOfTriples.size(); i++ ) {
+		if ( arrayOfTriples[i].isValid() ) {
+			output.write((char *)&arrayOfTriples[i], sizeof(TripleID));
 		}
 	}
 
 	return true;
 }
 
-void TriplesList::load(const std::istream &input, const Header &header)
+void TriplesList::load(std::istream &input, ControlInformation &controlInformation)
 {
-	// TODO
+	unsigned int totalTriples = controlInformation.getUint("numTriples");
+
+	cout << "Reading total number of triples: " << totalTriples << endl;
+
+	unsigned int numRead=0;
+	TripleID readTriple;
+
+	while(input.good() && numRead<totalTriples) {
+		input.read((char *)&readTriple, sizeof(TripleID));
+		arrayOfTriples.push_back(readTriple);
+		numRead++;
+		numValidTriples++;
+	}
+	cout << "Succesfully read triples: " << numRead << endl;
 }
 
-void TriplesList::load(const ModifiableTriples &input)
+void TriplesList::load(ModifiableTriples &input)
 {
-	// TODO
+	TripleID all(0,0,0);
+
+	IteratorTripleID *it = input.search(all);
+
+	while(it->hasNext()) {
+		TripleID triple = it->next();
+
+		this->insert(triple);
+	}
+
+	delete it;
 }
 
-void TriplesList::populateHeader(const Header &header)
+void TriplesList::populateHeader(Header &header)
 {
 	// TODO
 }
@@ -113,120 +133,151 @@ void TriplesList::startProcessing()
 
 void TriplesList::stopProcessing()
 {
-	// TODO
+	cout << "Sorting triples" << endl;
+	StopWatch st;
+	this->sort(SPO);
+	cout << "Triples sorted in " << st << endl;
+
+	cout << "Removing duplicate triples" << endl;
+	st.reset();
+	this->removeDuplicates();
+	cout << "Removed duplicate triples in " << st << endl;
 }
 
 
 // From ModifiableTriples
 
-bool TriplesList::insert(const TripleID &triple)
+bool TriplesList::insert(TripleID &triple)
 {
-	// Saving the size of the list of triples before inserting anything
-	unsigned int size = this->arrayOfTriples.size();
-
 	// Add the triple
 	arrayOfTriples.push_back(triple);
-
-	// Verify the triple has been added (sort of assert...)
-	if (this->arrayOfTriples.size() != (size+1)) {
-		return false;
-	}
-	// TODO: Retrieve the last triple added and compare it with the parameter
+	numValidTriples++;
 
 	return true;
-} // insert()
+}
 
 bool TriplesList::insert(IteratorTripleID *triples)
 {
-	// Supporting counter for the assert
-	unsigned int counter = 0;
-
-	// Saving the size of the list of triples before inserting anything
-	unsigned int size = this->arrayOfTriples.size();
-
-	// Add all triples
 	while( triples->hasNext() ) {
-		this->arrayOfTriples.push_back(triples->next());
-		counter++;
-	}
-
-	// Verify the triples have been added (sort of assert...)
-	if (this->arrayOfTriples.size() != (size+counter)) {
-		return false;
+		arrayOfTriples.push_back(triples->next());
+		numValidTriples++;
 	}
 
 	return true;
-} // insert()
+}
 
 bool TriplesList::remove(TripleID &pattern)
 {
-	bool isMatch = true;
-
-	// Iterator at the beginning of the vector
-	vector<TripleID>::iterator it = this->arrayOfTriples.begin();
-
-	// Iterate through the vector until a match is found
-	while ( isMatch = it->match(pattern) ) {
-		it++;
+	bool removed=false;
+	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
+		TripleID *tid = &arrayOfTriples[i];
+		if (tid->match(pattern)) {
+			tid->clear();
+			numValidTriples--;
+			removed=true;
+		}
 	}
-
-	// Check whether there has been a match or not
-	if (!isMatch) {
-		this->arrayOfTriples.erase(it);
-		return true;
-	}
-
-	return false;
-} // remove()
+	return removed;
+}
 
 bool TriplesList::remove(IteratorTripleID *pattern)
 {
-	// TODO: Revise... this isMatch logic... I don't like it
-	bool isMatch = false;
+	bool removed = false;
+	vector<TripleID> allPat;
 
-	while( pattern->hasNext() ) {
-		TripleID tmp = pattern->next();
-		isMatch = remove(tmp);
+	while(pattern->hasNext()) {
+		allPat.push_back(pattern->next());
 	}
 
-	return isMatch;
-} // remove()
-
-bool TriplesList::edit(TripleID &oldTriple, TripleID &newTriple)
-{
-	// Iterator at the beginning of the vector
-	vector<TripleID>::iterator it = this->arrayOfTriples.begin();
-
-
-	// TODO: Check that we don't go too far, otherwise we will get out of bounds... check with end() of vector
-	// Iterate through the vector until a match is found
-	while ( it != this->arrayOfTriples.end() && *it != oldTriple ) {
-		it++;
+	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
+		TripleID *tid = &arrayOfTriples[i];
+		for(int j=0; j<allPat.size(); j++) {
+			if (tid->match(allPat[i])) {
+				tid->clear();
+				numValidTriples--;
+				removed = true;
+			}
+		}
 	}
-
-	if ( it != this->arrayOfTriples.end() ) {
-		// Replace old values with new ones
-		it->replace(newTriple);
-		return true;
-	}
-
-	return false;
-
-} // edit()
+	return removed;
+}
 
 void TriplesList::sort(TripleComponentOrder order)
 {
 	std::sort(this->arrayOfTriples.begin(), this->arrayOfTriples.end(), TriplesComparator(order));
-} // sort()
+}
+
 
 void TriplesList::setOrder(TripleComponentOrder order)
 {
 	this->order = order;
-} // setOrder()
 
-TripleID& TriplesList::getTripleID(unsigned int i)
+
+}
+
+TripleID* TriplesList::getTripleID(unsigned int i)
 {
-	return this->arrayOfTriples[i];
-} // getTripleID()
+	return &this->arrayOfTriples[i];
+}
+
+void TriplesList::removeDuplicates() {
+
+	if(arrayOfTriples.size()<=1)
+		return;
+
+	TripleID *previous = &arrayOfTriples[0];
+	unsigned int numduplicates = 0;
+	StopWatch st;
+
+	for(unsigned int i=1; i<arrayOfTriples.size(); i++) {
+		TripleID *tid = &arrayOfTriples[i];
+		if(*previous == *tid) {
+			//cout << "Compare: " << previous << " "<<*previous << endl << " New: " << tid << " "<<*tid << endl;
+			tid->clear();
+			numValidTriples--;
+			numduplicates++;
+		} else {
+			previous = tid;
+		}
+	}
+
+	cout << "Removed "<< numduplicates << " duplicates in " << st << endl;
+}
+
+
+// ITERATOR
+
+void TriplesListIterator::doFetch() {
+	do {
+		nextv = triples->getTripleID(pos);
+		pos++;
+	} while(pos<=triples->arrayOfTriples.size() && (!nextv->isValid() || !nextv->match(pattern)));
+
+	hasNextv= pos<=triples->arrayOfTriples.size();
+}
+
+TriplesListIterator::TriplesListIterator(TriplesList *t, TripleID p) : triples(t), pattern(p), hasNextv(true), pos(0) {
+	doFetch();
+}
+
+TriplesListIterator::~TriplesListIterator(){
+
+}
+
+bool TriplesListIterator::hasNext() {
+	return hasNextv;
+}
+
+TripleID TriplesListIterator::next() {
+	TripleID previousv = *nextv;
+	doFetch();
+	return previousv;
+}
+
+
+
+
+
+
 
 } // hdt{}

@@ -40,6 +40,7 @@
 #include <HDTEnums.hpp>
 #include <SingleTriple.hpp>
 #include <Header.hpp>
+#include <ControlInformation.hpp>
 
 #include <iostream>
 #include <iterator>
@@ -50,7 +51,7 @@ namespace hdt {
 class ModifiableTriples;
 
 /**
- * Interface that defines readonly access to a set of triples. It allows loading a saving from a file. Asking the number of
+ * Interface that defines readonly access to a set of triples. It allows loading a saving from a file.
  */
 
 class Triples {
@@ -93,7 +94,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	virtual bool save(std::ostream &output)=0;
+	virtual bool save(std::ostream &output, ControlInformation &ci)=0;
 
 	/**
 	 *
@@ -107,7 +108,7 @@ public:
 	 * @param input
 	 * @return
 	 */
-	virtual void load(std::istream &input, Header &header)=0;
+	virtual void load(std::istream &input, ControlInformation &ci)=0;
 
 	/**
 	 * Populates the header
@@ -117,16 +118,6 @@ public:
 	 */
 	virtual void populateHeader(Header &header)=0;
 
-	/**
-	 *  Called before inserting a set of triples
-	 *
-	 */
-	virtual void startProcessing()=0;
-
-	/**
-	 * Called after all triples have been inserted.
-	 */
-	virtual void stopProcessing()=0;
 }; // Triples{}
 
 /**
@@ -160,17 +151,6 @@ public:
 	virtual bool remove(IteratorTripleID *pattern)=0;
 
 	/**
-	 * Updates a triple with new components
-	 *
-	 * @param oldTriple
-	 *            The triple to be replaced
-	 * @param newTriple
-	 *            The triple to replace the old one
-	 * @return boolean
-	 */
-	virtual bool edit(TripleID &oldTriple, TripleID &newTriple)=0;
-
-	/**
 	 * Sorts the triples based on an order(TripleComponentOrder)
 	 *
 	 * @param order
@@ -186,6 +166,16 @@ public:
 	 */
 	virtual void setOrder(TripleComponentOrder order)=0;
 
+	/**
+	 *  Called before inserting a set of triples
+	 *
+	 */
+	virtual void startProcessing()=0;
+
+	/**
+	 * Called after all triples have been inserted.
+	 */
+	virtual void stopProcessing()=0;
 };
 
 }

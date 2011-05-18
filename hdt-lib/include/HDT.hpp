@@ -99,7 +99,7 @@ public:
 	 */
 
 	/**
-	 * Search all patterns that match the specified pattern.
+	 * Search all triples that match the specified pattern.
 	 * @param subject
 	 * @param predicate
 	 * @param object
@@ -130,17 +130,6 @@ public:
 	virtual void remove(TripleString &triples) = 0;
 
 	virtual void remove(IteratorTripleString *triples) = 0;
-
-	/**
-	 * Updates a triple with new components
-	 *
-	 * @param oldTriple
-	 *            The triple to be replaced
-	 * @param newTriple
-	 *            The triple to replace the old one
-	 * @return boolean
-	 */
-	virtual bool edit(TripleString &oldTriple, TripleString &newTriple) = 0;
 };
 
 }

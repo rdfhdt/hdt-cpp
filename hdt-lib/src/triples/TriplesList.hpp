@@ -42,9 +42,12 @@ namespace hdt {
 
 class TriplesList : public ModifiableTriples {
 	private:
+		ControlInformation controlInformation;
 		std::vector<TripleID> arrayOfTriples;
 		TripleComponentOrder order;
+		unsigned int numValidTriples;
 
+		void removeDuplicates();
 	public:
 		TriplesList();
 		virtual ~TriplesList();
@@ -57,7 +60,7 @@ class TriplesList : public ModifiableTriples {
 	     * @param pattern
 	     * @return
 	     */
-		IteratorTripleID *search(const TripleID &pattern);
+		IteratorTripleID *search(TripleID &pattern);
 
 		/**
 		 * Calculates the cost to retrieve a specific pattern
@@ -65,7 +68,7 @@ class TriplesList : public ModifiableTriples {
 	     * @param triple
 	     * @return
 	     */
-		float cost(const TripleID &triple);
+		float cost(TripleID &triple);
 
 		/**
 	     * Returns the number of triples contained
@@ -85,7 +88,7 @@ class TriplesList : public ModifiableTriples {
 	     * @param output
 	     * @return
 	     */
-		bool save(const std::ostream &output);
+		bool save(std::ostream &output, ControlInformation &controlInformation);
 
 		/**
 	     * Loads triples from a file
@@ -93,9 +96,9 @@ class TriplesList : public ModifiableTriples {
 	     * @param input
 	     * @return
 	     */
-		void load(const std::istream &input, const Header &header);
+		void load(std::istream &input, ControlInformation &controlInformation);
 
-		void load(const ModifiableTriples &input);
+		void load(ModifiableTriples &input);
 
 		/**
 		 * Populates the header
@@ -103,7 +106,7 @@ class TriplesList : public ModifiableTriples {
 		 * @param header
 		 * @return
 		 */
-		void populateHeader(const Header &header);
+		void populateHeader(Header &header);
 
 		/**
 		 * TODO Define and decide on return type (bool?)
@@ -123,7 +126,7 @@ class TriplesList : public ModifiableTriples {
 		 * @param triples The triples to be inserted
 		 * @return boolean
 		 */
-		bool insert(const TripleID &triple);
+		bool insert(TripleID &triple);
 
 		bool insert(IteratorTripleID *triples);
 
@@ -137,15 +140,6 @@ class TriplesList : public ModifiableTriples {
 		bool remove(TripleID &pattern);
 
 		bool remove(IteratorTripleID *pattern);
-
-		/**
-		 * Updates a triple with new components
-		 *
-		 * @param oldTriple The triple to be replaced
-		 * @param newTriple The triple to replace the old one
-		 * @return boolean
-		 */
-		bool edit(TripleID &oldTriple, TripleID &newTriple);
 
 		/**
 		 * Sorts the triples based on an order(TripleComponentOrder)
@@ -168,9 +162,30 @@ class TriplesList : public ModifiableTriples {
 		 * @param i
 		 * @return
 		 */
-		TripleID &getTripleID(unsigned int i);
+		TripleID *getTripleID(unsigned int i);
 
+		friend class TriplesListIterator;
 };
+
+
+class TriplesListIterator : public IteratorTripleID {
+private:
+	TriplesList *triples;
+	TripleID *nextv, pattern;
+	bool hasNextv;
+	unsigned int pos;
+
+	void doFetch();
+
+public:
+	TriplesListIterator(TriplesList *triples, TripleID pattern);
+	virtual ~TriplesListIterator();
+
+	bool hasNext();
+
+	TripleID next();
+};
+
 
 } // hdt{}
 

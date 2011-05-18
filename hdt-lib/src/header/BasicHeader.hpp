@@ -16,7 +16,7 @@ namespace hdt {
 class BasicHeader : public Header {
 private:
 	HDTSpecification spec;
-	HDT *hdt;	// Delegates on HDT for operations.
+	ModifiableHDT *hdt;	// Delegates on HDT for operations.
 
 public:
 	BasicHeader();
@@ -52,17 +52,6 @@ public:
 	void remove(TripleString &triples);
 
 	void remove(IteratorTripleString *triples);
-
-	/**
-	 * Updates a triple with new components
-	 *
-	 * @param oldTriple
-	 *            The triple to be replaced
-	 * @param newTriple
-	 *            The triple to replace the old one
-	 * @return boolean
-	 */
-	bool edit(TripleString &oldTriple, TripleString &newTriple);
 };
 
 }

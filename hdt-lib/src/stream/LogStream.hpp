@@ -1,48 +1,21 @@
 /*
- * UintStream.hpp
+ * LogStream.hpp
  *
- *  Created on: 10/05/2011
+ *  Created on: 17/05/2011
  *      Author: mck
  */
 
-#ifndef UINTSTREAM_HPP_
-#define UINTSTREAM_HPP_
+#ifndef LOGSTREAM_HPP_
+#define LOGSTREAM_HPP_
 
 #include "StreamElements.hpp"
 
 namespace hdt {
 
-
-#if 0
-// Example of Iterator using c++ vector
-class IteratorUintVector : public IteratorUint{
-private:
-	std::vector<unsigned int> &vector;
-	unsigned int idx;
-
+class LogStream : public StreamElements {
 public:
-	IteratorUintVector(std::vector<unsigned int> &v) : vector(v), idx(0) { }
-
-	virtual ~IteratorUintVector() {	}
-
-	virtual bool hasNext() {
-		return idx<vector.size();
-	}
-
-	virtual unsigned int next() {
-		return vector[idx++];
-	}
-};
-#endif
-
-
-class UintStream : public StreamElements {
-private:
-	std::vector<unsigned int> vector;
-
-public:
-	UintStream();
-	virtual ~UintStream();
+	LogStream();
+	virtual ~LogStream();
 
 	/**
 	 * Adds elementss to the stream
@@ -90,4 +63,4 @@ public:
 
 }
 
-#endif /* UINTSTREAM_HPP_ */
+#endif /* LOGSTREAM_HPP_ */

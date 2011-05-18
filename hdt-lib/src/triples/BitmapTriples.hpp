@@ -1,30 +1,34 @@
 /*
- * PlainTriples.h
+ * BitmapTriples.hpp
  *
- *  Created on: 02/03/2011
+ *  Created on: 12/05/2011
  *      Author: mck
  */
 
-#ifndef PLAINTRIPLES_
-#define PLAINTRIPLES_
+#ifndef BITMAPTRIPLES_HPP_
+#define BITMAPTRIPLES_HPP_
 
 #include <Triples.hpp>
 
 #include "../stream/UintStream.hpp"
 
+#include <libcdsBasics.h>
+#include <BitSequenceRG.h>
+#include <BitString.h>
+
 namespace hdt {
 
-class PlainTriples : public Triples {
-
+class BitmapTriples : public Triples {
 private:
 	ControlInformation controlInformation;
-	StreamElements *subjects, *predicates, *objects;
-
-	TripleID getTripleID(unsigned int pos);
-
+	StreamElements *masterStream, *slaveStream;
+	cds_static::BitSequence *bitmapY;
+	cds_static::BitSequence *bitmapZ;
+	unsigned int numTriples;
+	TripleComponentOrder order;
 public:
-	PlainTriples();
-	~PlainTriples();
+	BitmapTriples();
+	virtual ~BitmapTriples();
 
 	/**
 	 * Returns a vector of triples matching the pattern
@@ -60,52 +64,44 @@ public:
 	bool save(std::ostream &output, ControlInformation &controlInformation);
 
 	/**
-     * Loads triples from a file
-     *
-     * @param input
-     * @return
-     */
+	 * Loads triples from a file
+	 *
+	 * @param input
+	 * @return
+	 */
 	void load(std::istream &input, ControlInformation &controlInformation);
 
 	void load(ModifiableTriples &triples);
 
 	void populateHeader(Header &header);
 
-	friend class PlainTriplesIterator;
+	friend class BitmapTriplesIterator;
 };
 
-
-class PlainTriplesIterator : public IteratorTripleID {
+class BitmapTriplesIterator : public IteratorTripleID {
 private:
-	PlainTriples *triples;
+	BitmapTriples *triples;
 	TripleID nextv, pattern;
 	bool hasNextv;
-	unsigned int pos;
+	unsigned int numTriple;
+	unsigned int masterPos, slavePos;
+	unsigned int bitYpos, bitZpos;
+
+	unsigned int x, y, z;
 
 	void doFetch();
+	void readTriple();
 public:
-	PlainTriplesIterator(PlainTriples *pt, TripleID &pat);
-	virtual ~PlainTriplesIterator();
-
+	BitmapTriplesIterator(BitmapTriples *pt, TripleID &pat);
+	virtual ~BitmapTriplesIterator();
 
 	bool hasNext();
 
 	TripleID next();
 };
 
-
-class ComponentIterator : public IteratorUint {
-private:
-	TripleComponentRole role;
-	IteratorTripleID *it;
-
-public:
-	ComponentIterator(IteratorTripleID *iterator, TripleComponentRole component);
-
-	bool hasNext();
-	unsigned int next();
-};
-
 }
 
-#endif /* PLAINTRIPLES_ */
+
+
+#endif /* BITMAPTRIPLES_HPP_ */

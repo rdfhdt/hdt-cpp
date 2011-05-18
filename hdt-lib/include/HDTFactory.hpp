@@ -33,6 +33,12 @@ public:
 	 * @return HDT
 	 */
 	static HDT *createBasicHDT(HDTSpecification &specification);
+
+	static ModifiableHDT *createModifiableHDT(HDTSpecification &specification);
+
+	static Triples *readTriples(ControlInformation &controlInformation);
+	static Dictionary *readDictionary(ControlInformation &controlInformation);
+
 };
 }
 

@@ -1,12 +1,12 @@
 /*
- * PlainTriples.h
+ * CompactTriples.hpp
  *
- *  Created on: 02/03/2011
+ *  Created on: 11/05/2011
  *      Author: mck
  */
 
-#ifndef PLAINTRIPLES_
-#define PLAINTRIPLES_
+#ifndef COMPACTTRIPLES_HPP_
+#define COMPACTTRIPLES_HPP_
 
 #include <Triples.hpp>
 
@@ -14,17 +14,16 @@
 
 namespace hdt {
 
-class PlainTriples : public Triples {
+class CompactTriples : public Triples  {
 
 private:
-	ControlInformation controlInformation;
-	StreamElements *subjects, *predicates, *objects;
-
-	TripleID getTripleID(unsigned int pos);
+	StreamElements *masterStream, *slaveStream;
+	unsigned int numTriples;
+	TripleComponentOrder order;
 
 public:
-	PlainTriples();
-	~PlainTriples();
+	CompactTriples();
+	virtual ~CompactTriples();
 
 	/**
 	 * Returns a vector of triples matching the pattern
@@ -60,33 +59,36 @@ public:
 	bool save(std::ostream &output, ControlInformation &controlInformation);
 
 	/**
-     * Loads triples from a file
-     *
-     * @param input
-     * @return
-     */
+	 * Loads triples from a file
+	 *
+	 * @param input
+	 * @return
+	 */
 	void load(std::istream &input, ControlInformation &controlInformation);
 
 	void load(ModifiableTriples &triples);
 
 	void populateHeader(Header &header);
 
-	friend class PlainTriplesIterator;
+	friend class CompactTriplesIterator;
 };
 
-
-class PlainTriplesIterator : public IteratorTripleID {
+class CompactTriplesIterator : public IteratorTripleID {
 private:
-	PlainTriples *triples;
+	CompactTriples *triples;
 	TripleID nextv, pattern;
 	bool hasNextv;
-	unsigned int pos;
+	unsigned int numTriple;
+	unsigned int masterPos;
+	unsigned int slavePos;
+
+	unsigned int x, y, z;
 
 	void doFetch();
+	void readTriple();
 public:
-	PlainTriplesIterator(PlainTriples *pt, TripleID &pat);
-	virtual ~PlainTriplesIterator();
-
+	CompactTriplesIterator(CompactTriples *pt, TripleID &pat);
+	virtual ~CompactTriplesIterator();
 
 	bool hasNext();
 
@@ -94,18 +96,7 @@ public:
 };
 
 
-class ComponentIterator : public IteratorUint {
-private:
-	TripleComponentRole role;
-	IteratorTripleID *it;
-
-public:
-	ComponentIterator(IteratorTripleID *iterator, TripleComponentRole component);
-
-	bool hasNext();
-	unsigned int next();
-};
-
 }
 
-#endif /* PLAINTRIPLES_ */
+
+#endif /* COMPACTTRIPLES_HPP_ */

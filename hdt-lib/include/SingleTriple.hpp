@@ -28,23 +28,9 @@ class TripleID
 		}
 
 		TripleID(unsigned int subject, unsigned int predicate, unsigned int object) {
-
-			if ( subject != 0) {
-				this->subject = subject;
-				if ( predicate != 0 ) {
-					this->predicate = predicate;
-					if ( object != 0 ) {
-						this->object = object;
-					} else {
-						throw "Supplied object is not valid";
-					}
-				} else {
-					throw "Supplied predicate is not valid";
-				}
-			} else {
-				throw "Supplied subject is not valid";
-			}
-
+			this->subject = subject;
+			this->predicate = predicate;
+			this->object = object;
 		} // TripleID()
 
 		~TripleID() {
@@ -92,7 +78,6 @@ class TripleID
 		 * @return boolean
 		 */
 		bool operator==(TripleID &operand) {
-
 			// Subject comparison
 			if (this->subject != operand.subject) {
 				return false;
@@ -107,9 +92,7 @@ class TripleID
 			if (this->predicate != operand.predicate) {
 				return false;
 			}
-
 			return true;
-
 		} // ==()
 
 		/**
@@ -119,9 +102,7 @@ class TripleID
 		 * @return boolean
 		 */
 		bool operator!=(TripleID &operand) {
-
 			return !(this->operator==(operand));
-
 		} // !=()
 
 		/**
@@ -191,7 +172,7 @@ class TripleID
 		 */
 		bool isValid() {
 			return !(this->subject == 0 || this->predicate == 0 || this->object == 0);
-		} // validate()
+		}
 
 };
 
@@ -254,6 +235,31 @@ class TripleString
 
 		bool hasEmpty() {
 			return subject == "" || predicate == "" || object == "";
+		}
+
+		void read(std::string line){
+	        size_t pos_a = 0, pos_b;
+
+	        // Reads the subject
+	        pos_b = line.find(" ", pos_a);
+	        subject = line.substr(pos_a, pos_b - pos_a);
+	        if(subject[0]=='?')
+	        	subject = "";
+	        pos_a = pos_b + 1;
+
+	        // Reads the predicate
+	        pos_b = line.find(" ", pos_a);
+	        predicate = line.substr(pos_a, pos_b - pos_a);
+	        if(predicate[0]=='?')
+	        	predicate = "";
+	        pos_a = pos_b + 1;
+
+	        // Reads the predicate
+	        pos_b = line.find(" ", pos_a);
+	        object = line.substr(pos_a, pos_b - pos_a);
+	        if(object[0]=='?')
+	        	object = "";
+	        pos_a = pos_b;
 		}
 
 }; // TripleString{}
