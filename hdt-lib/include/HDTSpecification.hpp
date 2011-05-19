@@ -54,6 +54,7 @@ namespace hdt {
 		HDTSpecification(std::string &filename);
 		~HDTSpecification();
 
+		void setOptions(std::string options);
 		std::string get(std::string key);
 		void set(std::string key, std::string value);
 	};

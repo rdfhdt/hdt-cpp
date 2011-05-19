@@ -16,10 +16,16 @@ HDTSpecification::HDTSpecification() {
 }
 
 HDTSpecification::HDTSpecification(std::string &filename) {
-	PropertyUtil::read(filename.c_str(), map);
+	if(filename!=""){
+		PropertyUtil::read(filename.c_str(), map);
+	}
 }
 
 HDTSpecification::~HDTSpecification() {
+
+}
+
+void HDTSpecification::setOptions(std::string options) {
 
 }
 
