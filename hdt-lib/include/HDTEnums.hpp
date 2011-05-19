@@ -37,83 +37,89 @@
 #ifndef HDT_ENUMS_
 #define HDT_ENUMS_
 
+#include <string.h>
+
 namespace hdt {
 
-	enum TripleComponentRole
-	{
-		SUBJECT,	/** Subject */
-		PREDICATE,	/** Predicate */
-		OBJECT		/** Object */
-	};
+enum TripleComponentRole
+{
+	SUBJECT,	/** Subject */
+	PREDICATE,	/** Predicate */
+	OBJECT		/** Object */
+};
 
-	enum DictionarySection
-	{
-		SHARED_SUBJECT,
-		NOT_SHARED_SUBJECT,
-		SHARED_OBJECT,
-		NOT_SHARED_OBJECT,
-		NOT_SHARED_PREDICATE
-	};
+enum DictionarySection
+{
+	SHARED_SUBJECT,
+	NOT_SHARED_SUBJECT,
+	SHARED_OBJECT,
+	NOT_SHARED_OBJECT,
+	NOT_SHARED_PREDICATE
+};
 
-	enum Mapping
-	{
-		MAPPING1,
-		MAPPING2
-	};
+enum Mapping
+{
+	MAPPING1,
+	MAPPING2
+};
 
-	enum TripleComponentOrder {
-		/**
-		 * Subject, predicate, object
+enum TripleComponentOrder {
+	/**
+		 * Unknown order
 		 */
-		SPO,
-		/**
-		 * Subject, object, predicate
-		 */
-		SOP,
-		/**
-		 * Predicate, subject, object
-		 */
-		PSO,
-		/**
-		 * Predicate, object, subject
-		 */
-		POS,
-		/**
-		 * Object, subject, predicate
-		 */
-		OSP,
-		/**
-		 * Object, predicate, subject
-		 */
-		OPS
-	};
+	Unknown,
+	/**
+	 * Subject, predicate, object
+	 */
+	SPO,
+	/**
+	 * Subject, object, predicate
+	 */
+	SOP,
+	/**
+	 * Predicate, subject, object
+	 */
+	PSO,
+	/**
+	 * Predicate, object, subject
+	 */
+	POS,
+	/**
+	 * Object, subject, predicate
+	 */
+	OSP,
+	/**
+	 * Object, predicate, subject
+	 */
+	OPS
+};
 
-	enum RDFNotation {
-		/**
-		 * XML notation
-		 *
-		 * @see <a href="http://en.wikipedia.org/wiki/RDF/XML">Wikipedia</a>
-		 */
-		XML,
-		/**
-		 * N-TRIPLES notation
-		 *
-		 * @see <a href="http://en.wikipedia.org/wiki/N-Triples">Wikipedia</a>
-		 */
-		NTRIPLE,
-		/**
-		 * TURTLE notation
-		 *
-		 * @see <a href="http://en.wikipedia.org/wiki/Turtle_(syntax)">Wikipedia</a>
-		 */
-		TURTLE,
-		/**
-		 * Notation 3 notation
-		 *
-		 * @see <a href="http://en.wikipedia.org/wiki/Notation_3">Wikipedia</a>
-		 */
-		N3
-	};
+enum RDFNotation {
+	/**
+	 * XML notation
+	 *
+	 * @see <a href="http://en.wikipedia.org/wiki/RDF/XML">Wikipedia</a>
+	 */
+	XML,
+	/**
+	 * N-TRIPLES notation
+	 *
+	 * @see <a href="http://en.wikipedia.org/wiki/N-Triples">Wikipedia</a>
+	 */
+	NTRIPLE,
+	/**
+	 * TURTLE notation
+	 *
+	 * @see <a href="http://en.wikipedia.org/wiki/Turtle_(syntax)">Wikipedia</a>
+	 */
+	TURTLE,
+	/**
+	 * Notation 3 notation
+	 *
+	 * @see <a href="http://en.wikipedia.org/wiki/Notation_3">Wikipedia</a>
+	 */
+	N3
+};
 }
 
 #endif

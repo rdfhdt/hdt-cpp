@@ -12,9 +12,20 @@ namespace hdt {
 
 
 BitmapTriples::BitmapTriples() : numTriples(0), order(SPO) {
-	masterStream = new UintStream();
-	slaveStream = new UintStream();
+	masterStream = StreamElements::getStream(spec.get("stream.y"));
+	slaveStream = StreamElements::getStream(spec.get("stream.z"));
 }
+
+BitmapTriples::BitmapTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
+	std::string orderStr = spec.get("triples.component.order");
+	order= parseOrder(orderStr.c_str());
+
+	masterStream = StreamElements::getStream(spec.get("stream.y"));
+	slaveStream = StreamElements::getStream(spec.get("stream.z"));
+}
+
+
+
 
 BitmapTriples::~BitmapTriples() {
 	delete masterStream;
@@ -44,7 +55,7 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 	// First triple
 	if(it->hasNext()) {
 		TripleID triple = it->next();
-		cout << "111> " << triple << endl;
+		//cout << "111> " << triple << endl;
 
 		UnorderedTriple *ut = reinterpret_cast<UnorderedTriple *>(&triple);
 		swapComponentOrder(ut, SPO, order);
@@ -62,8 +73,7 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 	// Rest of the triples
 	while(it->hasNext()) {
 		TripleID triple = it->next();
-		if(numTriples<20)
-			cout << "111> " << triple << endl;
+		//if(numTriples<20) cout << "111> " << triple << endl;
 
 		UnorderedTriple *ut = reinterpret_cast<UnorderedTriple *>(&triple);
 		swapComponentOrder(ut, SPO, order);
@@ -112,23 +122,7 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 	masterStream->add(itY);
 	slaveStream->add(itZ);
 
-	BitString *bsy = new BitString(bitY.size());
-	for(unsigned int i=0;i<bitY.size();i++) {
-		bsy->setBit(i, bitY[i]);
-	}
-
-	BitString *bsz = new BitString(bitZ.size());
-	for(unsigned int i=0;i<bitZ.size();i++) {
-		bsz->setBit(i, bitZ[i]);
-	}
-
-	bitY.clear();
-	bitZ.clear();
-
-	bitmapY = new cds_static::BitSequenceRG(*bsy, 20);
-	bitmapZ = new cds_static::BitSequenceRG(*bsz, 20);
-
-#if 1
+#if 0
 	// Debug Adjacency Lists
 	cout << "Y" << vectorY.size() << "): ";
 	for(unsigned int i=0;i<20 && i<masterStream->getNumberOfElements();i++){
@@ -155,6 +149,21 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 	cout << endl;
 #endif
 
+	BitString *bsy = new BitString(bitY.size());
+	for(unsigned int i=0;i<bitY.size();i++) {
+		bsy->setBit(i, bitY[i]);
+	}
+
+	BitString *bsz = new BitString(bitZ.size());
+	for(unsigned int i=0;i<bitZ.size();i++) {
+		bsz->setBit(i, bitZ[i]);
+	}
+
+	bitY.clear();
+	bitZ.clear();
+
+	bitmapY = new cds_static::BitSequenceRG(*bsy, 20);
+	bitmapZ = new cds_static::BitSequenceRG(*bsz, 20);
 }
 
 void BitmapTriples::populateHeader(Header &header) {
@@ -172,6 +181,8 @@ bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 	controlInformation.setUint("numTriples", getNumberOfElements());
 	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesBitmap");
 	controlInformation.setUint("componentOrder", order);
+	controlInformation.set("stream.y", masterStream->getType());
+	controlInformation.set("stream.z", slaveStream->getType());
 	controlInformation.save(output);
 
 	// Fixme: Bitmap directly on istream/ostream??
@@ -187,6 +198,15 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 {
 	numTriples = controlInformation.getUint("numTriples");
 	order = (TripleComponentOrder) controlInformation.getUint("componentOrder");
+
+	std::string typeY = controlInformation.get("stream.y");
+	std::string typeZ = controlInformation.get("stream.z");
+
+	delete masterStream;
+	delete slaveStream;
+
+	masterStream = StreamElements::getStream(typeY);
+	slaveStream = StreamElements::getStream(typeZ);
 
 	// Fixme: Bitmap directly on istream/ostream??
 	ifstream *in = dynamic_cast<ifstream *>(&input);

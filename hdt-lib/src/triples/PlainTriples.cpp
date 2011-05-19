@@ -6,14 +6,23 @@
  */
 
 #include "PlainTriples.hpp"
+#include "TripleOrderConvert.hpp"
 
 namespace hdt {
 
-PlainTriples::PlainTriples() {
-	// TODO Auto-generated constructor stub
-	subjects = new UintStream();
-	predicates = new UintStream();
-	objects = new UintStream();
+PlainTriples::PlainTriples() : order(Unknown) {
+	subjects = StreamElements::getStream(spec.get("stream.x"));
+	predicates = StreamElements::getStream(spec.get("stream.y"));
+	objects = StreamElements::getStream(spec.get("stream.z"));
+}
+
+PlainTriples::PlainTriples(HDTSpecification &specification) : spec(specification) {
+	subjects = StreamElements::getStream(spec.get("stream.x"));
+	predicates = StreamElements::getStream(spec.get("stream.y"));
+	objects = StreamElements::getStream(spec.get("stream.z"));
+
+	std::string orderStr = spec.get("triples.component.order");
+	order = parseOrder(orderStr.c_str());
 }
 
 PlainTriples::~PlainTriples() {
@@ -25,8 +34,6 @@ PlainTriples::~PlainTriples() {
 float PlainTriples::cost(TripleID & triple)
 {
 }
-
-
 
 void PlainTriples::load(ModifiableTriples &triples) {
 	TripleID all(0,0,0);
@@ -61,6 +68,10 @@ bool PlainTriples::save(std::ostream & output, ControlInformation &controlInform
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
 	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesPlain");
+	controlInformation.setUint("triples.component.order", order);
+	controlInformation.set("stream.x", subjects->getType());
+	controlInformation.set("stream.y", predicates->getType());
+	controlInformation.set("stream.z", objects->getType());
 	controlInformation.save(output);
 
 	subjects->save(output);
@@ -70,7 +81,20 @@ bool PlainTriples::save(std::ostream & output, ControlInformation &controlInform
 
 void PlainTriples::load(std::istream &input, ControlInformation &controlInformation)
 {
-	unsigned int numItems = controlInformation.getUint("numTriples");
+	unsigned int numTriples = controlInformation.getUint("numTriples");
+	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
+
+	std::string typeSubjects = controlInformation.get("stream.x");
+	std::string typePredicates = controlInformation.get("stream.y");
+	std::string typeObjects = controlInformation.get("stream.z");
+
+	delete subjects;
+	delete predicates;
+	delete objects;
+
+	subjects = StreamElements::getStream(typeSubjects);
+	predicates = StreamElements::getStream(typePredicates);
+	objects = StreamElements::getStream(typeObjects);
 
 	subjects->load(input);
 	predicates->load(input);
@@ -106,6 +130,7 @@ PlainTriplesIterator::~PlainTriplesIterator() {
 void PlainTriplesIterator::doFetch() {
 	do {
 		nextv = triples->getTripleID(pos);
+		//cout << nextv << endl;
 		pos++;
 	} while(pos<=triples->getNumberOfElements() && (!nextv.isValid() || !nextv.match(pattern)));
 

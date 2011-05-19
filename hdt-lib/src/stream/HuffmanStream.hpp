@@ -1,34 +1,34 @@
 /*
- * LogStream.hpp
+ * HuffmanStream.hpp
  *
- *  Created on: 17/05/2011
+ *  Created on: 19/05/2011
  *      Author: mck
  */
 
-#ifndef LOGSTREAM_HPP_
-#define LOGSTREAM_HPP_
+#ifndef HUFFMANSTREAM_HPP_
+#define HUFFMANSTREAM_HPP_
 
 #include "StreamElements.hpp"
 
-#include <Array.h>
+#include "../huffman/Huffman.h"
 
 namespace hdt {
 
-class LogStream : public StreamElements {
+class HuffmanStream : public StreamElements {
 
 private:
-	cds_utils::Array *array;
+	std::vector<unsigned int> vectorPlain;
+	URICompressed::Huffman *huffman;
 
 public:
-	LogStream();
-	virtual ~LogStream();
+	HuffmanStream();
+	virtual ~HuffmanStream();
 
-	/**
-	 * Adds elementss to the stream
-	 *
-	 * @param elements
-	 *            The elements to be added to the stream
-	 */
+	/* Adds elementss to the stream
+	*
+	* @param elements
+	*            The elements to be added to the stream
+	*/
 	void add(IteratorUint &elements);
 
 	/**
@@ -71,4 +71,6 @@ public:
 
 }
 
-#endif /* LOGSTREAM_HPP_ */
+
+
+#endif /* HUFFMANSTREAM_HPP_ */

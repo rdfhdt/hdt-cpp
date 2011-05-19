@@ -86,6 +86,8 @@ public:
 	 *            The InputStream to load from
 	 */
 	void load(std::istream &input);
+
+	std::string getType();
 };
 
 }

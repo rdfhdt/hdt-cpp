@@ -34,9 +34,7 @@ PlainDictionary::PlainDictionary() {
 	this->mapping = MAPPING1;
 }
 
-PlainDictionary::PlainDictionary(HDTSpecification &spec) {
-	this->spec = spec;
-
+PlainDictionary::PlainDictionary(HDTSpecification &specification) : spec(specification) {
 	if(spec.get("dictionary.mapping")=="mapping2") {
 		this->mapping = MAPPING2;
 	} else {

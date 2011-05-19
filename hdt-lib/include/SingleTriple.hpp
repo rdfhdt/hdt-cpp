@@ -66,7 +66,7 @@ class TripleID
 		} //clear()
 
 		friend std::ostream &operator<<(std::ostream &stream, const TripleID &ts) {
-			stream << "TripleID: "<< ts.subject << ", "<< ts.predicate <<", "<< ts.object;
+			stream << ts.subject << ", "<< ts.predicate <<", "<< ts.object;
 
 			return stream;
 		}
@@ -220,7 +220,7 @@ class TripleString
 		}
 
 		friend std::ostream &operator<<(std::ostream &stream, const TripleString &ts) {
-			stream << "TripleString: "<< ts.subject << ", "<< ts.predicate <<", "<< ts.object;
+			stream << ts.subject << ", "<< ts.predicate <<", "<< ts.object;
 
 			return stream;
 		}

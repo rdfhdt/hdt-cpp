@@ -19,6 +19,14 @@ BasicHeader::BasicHeader() {
 	hdt = HDTFactory::createModifiableHDT(spec);
 }
 
+BasicHeader::BasicHeader(HDTSpecification &specification) : spec(specification) {
+	// FIXME: Specify best HDT types for header using spec.
+
+	spec.set("noheader", "true");
+
+	hdt = HDTFactory::createModifiableHDT(spec);
+}
+
 BasicHeader::~BasicHeader() {
 	delete hdt;
 }

@@ -12,8 +12,16 @@ namespace hdt {
 
 
 CompactTriples::CompactTriples() : numTriples(0), order(SPO) {
-	masterStream = new UintStream();
-	slaveStream = new UintStream();
+	masterStream = StreamElements::getStream(spec.get("stream.y"));
+	slaveStream = StreamElements::getStream(spec.get("stream.z"));
+}
+
+CompactTriples::CompactTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
+	std::string orderStr = spec.get("triples.component.order");
+	order= parseOrder(orderStr.c_str());
+
+	masterStream = StreamElements::getStream(spec.get("stream.y"));
+	slaveStream = StreamElements::getStream(spec.get("stream.z"));
 }
 
 CompactTriples::~CompactTriples() {
@@ -44,6 +52,7 @@ void CompactTriples::load(ModifiableTriples &triples) {
 
 		UnorderedTriple *ut = reinterpret_cast<UnorderedTriple *>(&triple);
 		swapComponentOrder(ut, SPO, order);
+		//cout << "222> " << triple << endl;
 
 		lastX = x = ut->x;
 		lastY = y = ut->y;
@@ -62,6 +71,7 @@ void CompactTriples::load(ModifiableTriples &triples) {
 
 		UnorderedTriple *ut = reinterpret_cast<UnorderedTriple *>(&triple);
 		swapComponentOrder(ut, SPO, order);
+		//cout << "222> " << triple << endl;
 
 		x = ut->x;
 		y = ut->y;
@@ -127,7 +137,9 @@ bool CompactTriples::save(std::ostream & output, ControlInformation &controlInfo
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
 	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesCompact");
-	controlInformation.setUint("componentOrder", order);
+	controlInformation.setUint("triples.component.order", order);
+	controlInformation.set("stream.y", masterStream->getType());
+	controlInformation.set("stream.z", slaveStream->getType());
 	controlInformation.save(output);
 
 	masterStream->save(output);
@@ -137,7 +149,16 @@ bool CompactTriples::save(std::ostream & output, ControlInformation &controlInfo
 void CompactTriples::load(std::istream &input, ControlInformation &controlInformation)
 {
 	numTriples = controlInformation.getUint("numTriples");
-	order = (TripleComponentOrder) controlInformation.getUint("componentOrder");
+	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
+
+	std::string typeY = controlInformation.get("stream.y");
+	std::string typeZ = controlInformation.get("stream.z");
+
+	delete masterStream;
+	delete slaveStream;
+
+	masterStream = StreamElements::getStream(typeY);
+	slaveStream = StreamElements::getStream(typeZ);
 
 	masterStream->load(input);
 	slaveStream->load(input);

@@ -46,6 +46,9 @@ TriplesList::TriplesList() : numValidTriples(0)
 {
 }
 
+TriplesList::TriplesList(HDTSpecification &specification) : numValidTriples(0), spec(specification) {
+}
+
 TriplesList::~TriplesList()
 {
 
@@ -133,15 +136,7 @@ void TriplesList::startProcessing()
 
 void TriplesList::stopProcessing()
 {
-	cout << "Sorting triples" << endl;
-	StopWatch st;
-	this->sort(SPO);
-	cout << "Triples sorted in " << st << endl;
 
-	cout << "Removing duplicate triples" << endl;
-	st.reset();
-	this->removeDuplicates();
-	cout << "Removed duplicate triples in " << st << endl;
 }
 
 

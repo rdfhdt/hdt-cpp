@@ -8,8 +8,6 @@
 #include <HDT.hpp>
 #include <HDTFactory.hpp>
 
-#include "dataset.h"
-
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -20,8 +18,11 @@ using namespace std;
 
 int main(int argc, char **argv) {
 	//string dataset = "naplesplus";
-	string dataset = DATASET;
-	//string dataset = "test";
+	string dataset = "test";
+
+	if(argc==2) {
+		dataset = argv[1];
+	}
 
 	string headFileName = "data/"+dataset+".H";
 	string dictFileName = "data/"+dataset+".D";

@@ -41,28 +41,6 @@ public:
 	}
 };
 
-#if 0
-// Example of Iterator using c++ vector
-class IteratorUintVector : public IteratorUint{
-private:
-	std::vector<unsigned int> &vector;
-	unsigned int idx;
-
-public:
-	IteratorUintVector(std::vector<unsigned int> &v) : vector(v), idx(0) { }
-
-	virtual ~IteratorUintVector() {	}
-
-	virtual bool hasNext() {
-		return idx<vector.size();
-	}
-
-	virtual unsigned int next() {
-		return vector[idx++];
-	}
-};
-#endif
-
 
 class StreamElements {
 
@@ -116,6 +94,10 @@ public:
 	 *            The InputStream to load from
 	 */
 	virtual void load(std::istream &input)=0;
+
+	virtual std::string getType()=0;
+
+	static StreamElements *getStream(std::string type);
 };
 
 }

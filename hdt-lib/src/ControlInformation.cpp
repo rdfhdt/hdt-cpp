@@ -69,7 +69,7 @@ void ControlInformation::load(std::istream &in) {
 			if(pos!=std::string::npos) {
 				std::string property = all.substr(0, pos);
 				std::string value = all.substr(pos+1);
-				std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
+				//std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
 				map[property] = value;
 			}
 		}

@@ -9,65 +9,90 @@
 
 namespace hdt {
 
-LogStream::LogStream() {
-	// TODO Auto-generated constructor stub
+LogStream::LogStream() : array(NULL) {
 
 }
 
 LogStream::~LogStream() {
-	// TODO Auto-generated destructor stub
+	if(array!=NULL)
+		delete array;
 }
 
 
 unsigned int LogStream::get(unsigned int position)
 {
-	return 0;
+	if(array==NULL)
+		return 0;
+
+	if(position >= array->getLength()) {
+		return 0;
+	} else {
+		return array->getField(position);
+	}
 }
 
 void LogStream::add(IteratorUint &elements)
 {
+	std::vector<unsigned int> vector;
+	unsigned int max = 0;
 
+	while(elements.hasNext()) {
+		unsigned int element = elements.next();
+		vector.push_back(element);
+		max = element > max ? max : element;
+	}
+
+	if(array!=NULL) {
+		delete array;
+		array=NULL;
+	}
+
+	array = new cds_utils::Array(vector, 0);
 }
 
 void LogStream::load(std::istream & input)
 {
-#if 0
-	unsigned int numRead=0;
-	unsigned int numElements;
-	unsigned int readItem;
-	input.read((char *)&numElements, sizeof(unsigned int));
+	std::ifstream *in = dynamic_cast<std::ifstream *>(&input);
 
-	vector.reserve(numElements);
-
-	while(input.good() && numRead<numElements) {
-		input.read((char *) &readItem, sizeof(unsigned int));
-		vector.push_back(readItem);
-		numRead++;
+	if(array!=NULL){
+		delete array;
+		array=NULL;
 	}
-#endif
+
+	array = new cds_utils::Array(*in);
+
+	cout << "Read Array: Elements: " << array->getLength() << " Max: " << array->getMax() << endl;
+
 }
-
-
 
 void LogStream::save(std::ostream & output)
 {
-	unsigned int numElements = getNumberOfElements();
+	if(array==NULL)
+		return;
 
-	output.write((char *)&numElements, sizeof(unsigned int));
+	std::ofstream *out = dynamic_cast<std::ofstream *>(&output);
 
-	// FIXME
+	array->save(*out);
 }
-
-
 
 unsigned int LogStream::getNumberOfElements()
 {
+	if(array!=NULL)
+		return array->getLength();
 	return 0;
 }
 
 unsigned int LogStream::size()
 {
+	if(array!=NULL)
+		return array->getSize();
+
 	return 0;
+}
+
+std::string LogStream::getType()
+{
+	return "http://purl.org/HDT/hdt#streamLog";
 }
 
 }

@@ -9,6 +9,7 @@
 #define BITMAPTRIPLES_HPP_
 
 #include <Triples.hpp>
+#include <HDTSpecification.hpp>
 
 #include "../stream/UintStream.hpp"
 
@@ -21,6 +22,7 @@ namespace hdt {
 class BitmapTriples : public Triples {
 private:
 	ControlInformation controlInformation;
+	HDTSpecification spec;
 	StreamElements *masterStream, *slaveStream;
 	cds_static::BitSequence *bitmapY;
 	cds_static::BitSequence *bitmapZ;
@@ -28,6 +30,7 @@ private:
 	TripleComponentOrder order;
 public:
 	BitmapTriples();
+	BitmapTriples(HDTSpecification &specification);
 	virtual ~BitmapTriples();
 
 	/**

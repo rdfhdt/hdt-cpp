@@ -158,6 +158,8 @@ public:
 	 */
 	virtual void sort(TripleComponentOrder order)=0;
 
+	virtual void removeDuplicates()=0;
+
 	/**
 	 * Sets a type of order(TripleComponentOrder)
 	 *

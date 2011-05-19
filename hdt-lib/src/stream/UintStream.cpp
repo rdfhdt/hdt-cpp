@@ -11,12 +11,10 @@
 namespace hdt {
 
 UintStream::UintStream() {
-	// TODO Auto-generated constructor stub
 
 }
 
 UintStream::~UintStream() {
-	// TODO Auto-generated destructor stub
 }
 
 unsigned int UintStream::get(unsigned int position)
@@ -49,8 +47,6 @@ void UintStream::load(std::istream & input)
 	}
 }
 
-
-
 void UintStream::save(std::ostream & output)
 {
 	unsigned int numElements = vector.size();
@@ -60,8 +56,6 @@ void UintStream::save(std::ostream & output)
 	output.write((char *)&vector[0], sizeof(unsigned int)*numElements);
 }
 
-
-
 unsigned int UintStream::getNumberOfElements()
 {
 	return vector.size();
@@ -70,6 +64,11 @@ unsigned int UintStream::getNumberOfElements()
 unsigned int UintStream::size()
 {
 	return vector.size()*sizeof(unsigned int);
+}
+
+std::string UintStream::getType()
+{
+	return "http://purl.org/HDT/hdt#streamInteger";
 }
 
 }

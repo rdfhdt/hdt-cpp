@@ -8,8 +8,6 @@
 #include <HDT.hpp>
 #include <HDTFactory.hpp>
 
-#include "dataset.h"
-
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -19,8 +17,11 @@ using namespace hdt;
 using namespace std;
 
 int main(int argc, char **argv) {
-	string dataset = DATASET;
-	//string dataset = "test";
+	string dataset = "test";
+
+	if(argc==2) {
+		dataset = argv[1];
+	}
 
 	string headFileName = "data/"+dataset+".H";
 	string dictFileName = "data/"+dataset+".D";
@@ -49,6 +50,8 @@ int main(int argc, char **argv) {
 	ofstream out;
 	out.open(rdfOutFileName.c_str());
 	hdt->saveToRDF(out, N3);
+
+	//hdt->saveToRDF(cout, N3);
 
 	delete hdt;
 }

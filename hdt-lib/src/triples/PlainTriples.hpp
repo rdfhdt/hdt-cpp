@@ -9,8 +9,11 @@
 #define PLAINTRIPLES_
 
 #include <Triples.hpp>
+#include <HDTSpecification.hpp>
+
 
 #include "../stream/UintStream.hpp"
+#include "../stream/LogStream.hpp"
 
 namespace hdt {
 
@@ -18,12 +21,15 @@ class PlainTriples : public Triples {
 
 private:
 	ControlInformation controlInformation;
+	HDTSpecification spec;
+	TripleComponentOrder order;
 	StreamElements *subjects, *predicates, *objects;
 
 	TripleID getTripleID(unsigned int pos);
 
 public:
 	PlainTriples();
+	PlainTriples(HDTSpecification &spec);
 	~PlainTriples();
 
 	/**

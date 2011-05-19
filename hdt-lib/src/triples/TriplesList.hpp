@@ -37,12 +37,15 @@
 #define TRIPLESLIST_H_
 
 #include <Triples.hpp>
+#include <HDTSpecification.hpp>
 
 namespace hdt {
 
 class TriplesList : public ModifiableTriples {
 	private:
 		ControlInformation controlInformation;
+		HDTSpecification spec;
+
 		std::vector<TripleID> arrayOfTriples;
 		TripleComponentOrder order;
 		unsigned int numValidTriples;
@@ -50,6 +53,7 @@ class TriplesList : public ModifiableTriples {
 		void removeDuplicates();
 	public:
 		TriplesList();
+		TriplesList(HDTSpecification &specification);
 		virtual ~TriplesList();
 
 		// From Triples

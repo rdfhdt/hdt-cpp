@@ -20,6 +20,7 @@ private:
 
 public:
 	BasicHeader();
+	BasicHeader(HDTSpecification &specification);
 	virtual ~BasicHeader();
 	bool save(std::ostream &output);
 	void load(std::istream &input);

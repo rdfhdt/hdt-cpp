@@ -22,7 +22,7 @@ tools/%: tools/%.cpp $(OBJECTS) $(HEADERS)
 	@echo " [HDT] Compiling tool $<"
 	@$(CPP) $(INCLUDES) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) ${LIB} libhdt.a 
 
-tools: libhdt $(TOOLS) tools/dataset.h
+tools: libhdt $(TOOLS)
 	@echo " [HDT] Compiling tools"
 
 examples/%: examples/%.cpp $(OBJECTS) $(HEADERS)

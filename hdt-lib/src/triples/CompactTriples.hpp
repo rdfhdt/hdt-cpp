@@ -9,6 +9,7 @@
 #define COMPACTTRIPLES_HPP_
 
 #include <Triples.hpp>
+#include <HDTSpecification.hpp>
 
 #include "../stream/UintStream.hpp"
 
@@ -17,12 +18,14 @@ namespace hdt {
 class CompactTriples : public Triples  {
 
 private:
+	HDTSpecification spec;
 	StreamElements *masterStream, *slaveStream;
 	unsigned int numTriples;
 	TripleComponentOrder order;
 
 public:
 	CompactTriples();
+	CompactTriples(HDTSpecification &specification);
 	virtual ~CompactTriples();
 
 	/**

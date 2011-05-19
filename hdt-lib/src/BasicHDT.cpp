@@ -48,6 +48,7 @@
 #include "triples/PlainTriples.hpp"
 #include "triples/CompactTriples.hpp"
 #include "triples/BitmapTriples.hpp"
+#include "triples/TripleOrderConvert.hpp"
 
 #include "ControlInformation.hpp"
 #include "RDFParserN3.hpp"
@@ -76,32 +77,31 @@ BasicHDT::~BasicHDT() {
 }
 
 void BasicHDT::createComponents() {
-	std::string dictType = spec.get("dictionary.type");
-	std::string triplesType = spec.get("triples.type");
-	std::string triplesComponentOrder = spec.get("triples.component.order");
-
-	// FIXME: SELECT
+	// HEADER
 	if(spec.get("noheader")=="true") {
 		header = new EmptyHeader();
 	} else {
-		header = new BasicHeader();
+		header = new BasicHeader(spec);
 	}
-	dictionary = new PlainDictionary();
 
-	/// FIXME: SELECT
+	// DICTIONARY
+	std::string dictType = spec.get("dictionary.type");
+	dictionary = new PlainDictionary(spec);
 
+	// TRIPLES
+	std::string triplesType = spec.get("triples.type");
 	if(triplesType=="http://purl.org/HDT/hdt#triplesBitmap") {
-		triples = new BitmapTriples();
+		triples = new BitmapTriples(spec);
 	} else if(triplesType=="http://purl.org/HDT/hdt#triplesCompact") {
-		triples = new CompactTriples();
+		triples = new CompactTriples(spec);
 	} else if(triplesType=="http://purl.org/HDT/hdt#triplesPlain") {
-		triples = new PlainTriples();
+		triples = new PlainTriples(spec);
 	} else if(triplesType=="http://purl.org/HDT/hdt#triplesList") {
-		triples = new CompactTriples();
+		triples = new TriplesList(spec);
 	} else if(triplesType=="http://purl.org/HDT/hdt#triplesListDisk") {
 		triples = new TripleListDisk();
 	} else {
-		triples = new BitmapTriples();
+		triples = new BitmapTriples(spec);
 	}
 }
 
@@ -130,8 +130,7 @@ IteratorTripleString *BasicHDT::search(const char *subject, const char *predicat
 	try {
 		TripleID tid(dictionary->tripleStringtoTripleID(ts));
 
-		cout << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
-
+		//cout << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
 		IteratorTripleID *iterID = triples->search(tid);
 
 		BasicIteratorTripleString *iterator = new BasicIteratorTripleString(dictionary, iterID);
@@ -175,7 +174,7 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
 
-	ModifiableTriples *triplesList = new TriplesList();
+	ModifiableTriples *triplesList = new TriplesList(spec);
 	st.reset();
 	triplesList->startProcessing();
 	while(parser.hasNext()) {
@@ -183,10 +182,26 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 		//std::cout << ts << std::endl;
 
 		TripleID ti = dictionary->tripleStringtoTripleID(ts);
-
 		triplesList->insert(ti);
+
+		//std::cout << ti << std::endl;
 	}
 	triplesList->stopProcessing();
+
+	// SORT
+	cout << "Sorting triples" << endl;
+	TripleComponentOrder order = parseOrder(spec.get("triples.component.order").c_str());
+	if(order==Unknown){
+		order = SPO;
+	}
+	st.reset();
+	triplesList->sort(order);
+	cout << "Triples sorted in " << st << endl;
+
+	cout << "Removing duplicate triples" << endl;
+	st.reset();
+	triplesList->removeDuplicates();
+	cout << "Removed duplicate triples in " << st << endl;
 
 	// Convert to final Triples
 	triples->load(*triplesList);

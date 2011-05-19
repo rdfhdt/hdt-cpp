@@ -20,6 +20,7 @@ public:
 	unsigned int z;
 };
 
+TripleComponentOrder parseOrder(const char *str);
 void swapComponentOrder(UnorderedTriple *triple, TripleComponentOrder parsing, TripleComponentOrder to);
 
 
