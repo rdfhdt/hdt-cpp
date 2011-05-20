@@ -231,7 +231,7 @@ unsigned int BitmapTriples::size()
 
 /// ITERATOR
 BitmapTriplesIterator::BitmapTriplesIterator(BitmapTriples *pt, TripleID &pat)
-		: triples(pt), numTriple(0), masterPos(0), slavePos(0), bitYpos(0), bitZpos(0), pattern(pat) {
+		: triples(pt), numTriple(0), masterPos(0), slavePos(0), nextY(0), nextZ(0), posY(0), posZ(0), pattern(pat) {
 
 	doFetch();
 }
@@ -248,27 +248,29 @@ void BitmapTriplesIterator::readTriple() {
 		y = triples->masterStream->get(masterPos++);
 		z = triples->slaveStream->get(slavePos++);
 
-		bool bitY = triples->bitmapY->access(bitYpos++);
-		bool bitZ = triples->bitmapZ->access(bitZpos++);
+		nextY = triples->bitmapY->selectNext1(nextY);
+		nextZ = triples->bitmapZ->selectNext1(nextZ);
 	} else {
 		z = triples->slaveStream->get(slavePos++);
-		bool bitZ = triples->bitmapZ->access(bitZpos++);
+		posZ++;
 
-		if(bitZ) {
-			bitZ = triples->bitmapZ->access(bitZpos++);
+		if(posZ==nextZ) {
+			posZ++;
+			nextZ = triples->bitmapZ->selectNext1(posZ);
 
+			posY++;
 			y = triples->masterStream->get(masterPos++);
-			bool bitY = triples->bitmapY->access(bitYpos++);
 
-			if(bitY) {
-				bitY = triples->bitmapY->access(bitYpos++);
+			if(posY==nextY) {
+				posY++;
+				nextY = triples->bitmapY->selectNext1(posY);
 
 				x++;
 			}
 		}
 	}
 
-	//cout << numTriple << "/" << triples->numTriples << "  "<< x << ", " << y << ", " << z << endl;
+	cout << numTriple << "/" << triples->numTriples << "  "<< x << ", " << y << ", " << z << endl;
 
 	nextv.setSubject(x);
 	nextv.setPredicate(y);

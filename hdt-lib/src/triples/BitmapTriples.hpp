@@ -88,7 +88,9 @@ private:
 	bool hasNextv;
 	unsigned int numTriple;
 	unsigned int masterPos, slavePos;
-	unsigned int bitYpos, bitZpos;
+
+	size_t nextY, nextZ;
+	size_t posY, posZ;
 
 	unsigned int x, y, z;
 
