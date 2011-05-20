@@ -17,7 +17,11 @@ HDTSpecification::HDTSpecification() {
 
 HDTSpecification::HDTSpecification(std::string &filename) {
 	if(filename!=""){
-		PropertyUtil::read(filename.c_str(), map);
+		try {
+			PropertyUtil::read(filename.c_str(), map);
+		} catch (char *except) {
+			std::cerr << "WARNING: Could not read config file, using default options." << std::endl;
+		}
 	}
 }
 

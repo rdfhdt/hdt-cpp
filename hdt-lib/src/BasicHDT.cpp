@@ -153,7 +153,7 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 	RDFParserN3 parser(input);
 
 	// Generate Dictionary
-	cout << "Generate Dictionary "<< endl;
+	cout << "Generate Dictionary... "<< endl;
 
 	StopWatch st;
 	dictionary->startProcessing();
@@ -167,10 +167,10 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 	}
 	dictionary->stopProcessing();
 	dictionary->populateHeader(*header);
-	cout << dictionary->numberOfElements() << " entries added in " << st << endl;
+	cout << dictionary->numberOfElements() << " entries added in " << st << endl << endl;
 
 	// Generate Triples
-	cout << "Generating triples "<< endl;
+	cout << "Generating triples... "<< endl;
 	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
 
@@ -188,27 +188,20 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 	}
 	triplesList->stopProcessing();
 
-	// SORT
-	cout << "Sorting triples" << endl;
+	// SORT & Duplicates
 	TripleComponentOrder order = parseOrder(spec.get("triples.component.order").c_str());
 	if(order==Unknown){
 		order = SPO;
 	}
-	st.reset();
 	triplesList->sort(order);
-	cout << "Triples sorted in " << st << endl;
-
-	cout << "Removing duplicate triples" << endl;
-	st.reset();
 	triplesList->removeDuplicates();
-	cout << "Removed duplicate triples in " << st << endl;
 
 	// Convert to final Triples
 	triples->load(*triplesList);
 	delete triplesList;
 
 	triples->populateHeader(*header);
-	cout << triples->getNumberOfElements() << " triples added in " << st << endl;
+	cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
 void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
@@ -258,21 +251,6 @@ void BasicHDT::saveToHDT(std::ostream & output)
 	triples->save(output, controlInformation);
 	cout << "Triples saved in " << st << endl;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

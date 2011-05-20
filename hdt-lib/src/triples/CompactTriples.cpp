@@ -19,6 +19,8 @@ CompactTriples::CompactTriples() : numTriples(0), order(SPO) {
 CompactTriples::CompactTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
 	std::string orderStr = spec.get("triples.component.order");
 	order= parseOrder(orderStr.c_str());
+	if(order==Unknown)
+		order = SPO;
 
 	masterStream = StreamElements::getStream(spec.get("stream.y"));
 	slaveStream = StreamElements::getStream(spec.get("stream.z"));

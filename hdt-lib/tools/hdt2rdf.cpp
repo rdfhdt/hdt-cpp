@@ -16,42 +16,69 @@
 using namespace hdt;
 using namespace std;
 
-int main(int argc, char **argv) {
-	string dataset = "test";
+void help() {
+	cout << "$ hdt2rdf [options] <HDT input file> <RDF output file> " << endl;
+	cout << "\t-h\t\t\tThis help" << endl;
+	cout << "\t-f\t<format>\tRDF Format of the output" << endl;
+	//cout << "\t-v\tVerbose output" << endl;
 
-	if(argc==2) {
-		dataset = argv[1];
+}
+
+int main(int argc, char **argv) {
+	int c;
+	string format, inputFile, outputFile;
+
+	while( (c = getopt(argc,argv,"f:"))!=-1) {
+		switch(c) {
+		case 'f':
+			format = optarg;
+			cout << "Format: " << format << endl;
+			break;
+		default:
+			cout << "ERROR: Unknown option" << endl;
+			help();
+			return 1;
+		}
 	}
 
-	string headFileName = "data/"+dataset+".H";
-	string dictFileName = "data/"+dataset+".D";
-	string triplesFileName = "data/"+dataset+".T";
-	string hdtFileName = "data/"+dataset+".hdt";
-	string rdfOutFileName = "data/"+dataset+".hdt.n3";
+	if(argc-optind<2) {
+		cout << "ERROR: You must supply an input and output" << endl << endl;
+		help();
+		return 1;
+	}
+
+	inputFile = argv[optind];
+	outputFile = argv[optind+1];
+
+	if(inputFile=="") {
+		cout << "ERROR: You must supply an HDT input file" << endl << endl;
+		help();
+		return 1;
+	}
+
+	if(outputFile=="") {
+		cout << "ERROR: You must supply an RDF output file" << endl << endl;
+		help();
+		return 1;
+	}
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
-	ifstream in;
+	try {
+		ifstream in(inputFile.c_str());
+		hdt->loadFromHDT(in);
+		in.close();
 
-	in.open(hdtFileName.c_str());
-	hdt->loadFromHDT(in);
-
-	/*in.open(dictFileName.c_str());
-	Dictionary &dict = hdt->getDictionary();
-	dict.load(in, hdt->getHeader());
-	in.close();
-
-	in.open(triplesFileName.c_str());
-	Triples &triples = hdt->getTriples();
-	triples.load(in, hdt->getHeader());
-	in.close();
-	*/
-
-	ofstream out;
-	out.open(rdfOutFileName.c_str());
-	hdt->saveToRDF(out, N3);
-
-	//hdt->saveToRDF(cout, N3);
+		if(outputFile!="-") {
+			ofstream out(outputFile.c_str());
+			hdt->saveToRDF(out, N3);
+			out.close();
+		} else {
+			hdt->saveToRDF(cout, N3);
+		}
+	} catch (char *exception) {
+		cerr << "ERROR: " << exception << endl;
+	}
 
 	delete hdt;
 }

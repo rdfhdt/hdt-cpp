@@ -60,9 +60,6 @@ void LogStream::load(std::istream & input)
 	}
 
 	array = new cds_utils::Array(*in);
-
-	cout << "Read Array: Elements: " << array->getLength() << " Max: " << array->getMax() << endl;
-
 }
 
 void LogStream::save(std::ostream & output)

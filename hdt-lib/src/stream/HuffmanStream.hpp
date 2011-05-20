@@ -17,6 +17,7 @@ namespace hdt {
 class HuffmanStream : public StreamElements {
 
 private:
+	// FIXME: Make a version where the compressed version is kept in memory and uncompressed on demand.
 	std::vector<unsigned int> vectorPlain;
 	URICompressed::Huffman *huffman;
 

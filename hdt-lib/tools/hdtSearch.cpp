@@ -16,60 +16,104 @@
 using namespace hdt;
 using namespace std;
 
-int main(int argc, char **argv) {
-	//string dataset = "naplesplus";
-	string dataset = "test";
 
-	if(argc==2) {
-		dataset = argv[1];
+void help() {
+	cout << "$ hdtSearch [options] <hdtfile> " << endl;
+	cout << "\t-h\t\t\tThis help" << endl;
+	cout << "\t-q\t<query>\tLaunch query and exit." << endl;
+	cout << "\t-o\t<output>\tSave query output to file." << endl;
+
+	//cout << "\t-v\tVerbose output" << endl;
+}
+
+
+int main(int argc, char **argv) {
+	int c;
+	string query, inputFile, outputFile;
+
+	while( (c = getopt(argc,argv,"hq:o:"))!=-1) {
+		switch(c) {
+		case 'h':
+			help();
+			break;
+		case 'q':
+			query = optarg;
+			break;
+		case 'o':
+			outputFile = optarg;
+			break;
+		default:
+			cout << "ERROR: Unknown option" << endl;
+			help();
+			return 1;
+		}
 	}
 
-	string headFileName = "data/"+dataset+".H";
-	string dictFileName = "data/"+dataset+".D";
-	string triplesFileName = "data/"+dataset+".T";
-	string hdtFileName = "data/"+dataset+".hdt";
-	string rdfOutFileName = "data/"+dataset+".hdt.n3";
+	if(argc-optind<1) {
+		cout << "ERROR: You must supply an HDT File" << endl << endl;
+		help();
+		return 1;
+	}
+
+	inputFile = argv[optind];
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
-	ifstream in;
-
-	in.open(hdtFileName.c_str());
+	ifstream in(inputFile.c_str());
 	hdt->loadFromHDT(in);
-
-	/*in.open(dictFileName.c_str());
-	Dictionary &dict = hdt->getDictionary();
-	dict.load(in, hdt->getHeader());
 	in.close();
 
-	in.open(triplesFileName.c_str());
-	Triples &triples = hdt->getTriples();
-	triples.load(in, hdt->getHeader());
-	in.close();
-	*/
+	if(query!="") {
 
-	char line[1024*10];
-	TripleString tripleString;
+		ostream *out;
+		ofstream outF;
 
-	cout << ">> ";
-	while(cin.getline(line, 1024*10)) {
+		if(outputFile!="") {
+			outF.open(outputFile.c_str());
+			out = &outF;
+		} else {
+			out = &cout;
+		}
 
-		tripleString.read(line);
-		cout << "Query: " << tripleString << endl;
+		TripleString tripleString;
+		tripleString.read(query);
 
 		IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
 
-		unsigned int numTriples = 0;
 		while(it->hasNext()) {
 			TripleString ts = it->next();
-
-			cout << ts << endl;
-			numTriples++;
+			*out << ts << endl;
 		}
 		delete it;
-		cout << numTriples << " results shown." << endl;
+
+		if(outputFile!="") {
+			outF.close();
+		}
+
+	} else {
+		TripleString tripleString;
+		char line[1024*10];
 
 		cout << ">> ";
+		while(cin.getline(line, 1024*10)) {
+
+			tripleString.read(line);
+			cout << "Query: " << tripleString << endl;
+
+			IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
+
+			unsigned int numTriples = 0;
+			while(it->hasNext()) {
+				TripleString ts = it->next();
+
+				cout << ts << endl;
+				numTriples++;
+			}
+			delete it;
+			cout << numTriples << " results shown." << endl;
+
+			cout << ">> ";
+		}
 	}
 
 	delete hdt;

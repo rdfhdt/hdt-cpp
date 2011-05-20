@@ -145,13 +145,11 @@ void PlainDictionary::startProcessing()
 
 void PlainDictionary::stopProcessing()
 {
-	std::cout << "End processing: " << std::endl;
 	this->split();
-	std::cout << "Splitted" << std::endl;
+	//std::cout << "Splitted" << std::endl;
 	this->lexicographicSort();
-	std::cout << "Sorted" << std::endl;
-
-	dumpSizes(cout);
+	//std::cout << "Sorted" << std::endl;
+	//dumpSizes(cout);
 }
 
 void PlainDictionary::load(std::istream & input, ControlInformation &ci)

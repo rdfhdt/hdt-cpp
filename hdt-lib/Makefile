@@ -47,4 +47,5 @@ doc:
 clean:
 	@echo " [CLN] Removing object files"
 	@rm -f $(OBJECTS) $(EXAMPLES) $(TOOLS) libhdt.a *~
+	@rm -Rf tools/*dSYM examples/*dSYM
 

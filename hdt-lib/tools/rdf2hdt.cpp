@@ -19,14 +19,15 @@ using namespace hdt;
 using namespace std;
 
 void help() {
-	cout << "$ rdf2hdt [options] <input> <output> " << endl;
+	cout << "$ rdf2hdt [options] <rdf input file> <hdt output file> " << endl;
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-H\t<header>\tSave Header in separate file" << endl;
 	cout << "\t-D\t<dictionary>\tSave Dictionary in separate file" << endl;
 	cout << "\t-T\t<triples>\tSave Triples in separate file" << endl;
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
 	cout << "\t-o\t<options>\tHDT Additional options (option1:value1;option2:value2;...)" << endl;
-	cout << "\t-v\tVerbose output" << endl;
+	cout << "\t-f\t<format>\tFormat of the RDF input (N3, Turtle, RDF-XML)" << endl;
+	//cout << "\t-v\tVerbose output" << endl;
 }
 
 int main(int argc, char **argv) {
@@ -38,9 +39,10 @@ int main(int argc, char **argv) {
 	bool verbose=false;
 	string configFile;
 	string options;
+	string rdfFormat;
 
 	int c;
-	while( (c = getopt(argc,argv,"H:D:T:c:o:v"))!=-1) {
+	while( (c = getopt(argc,argv,"H:D:T:c:o:vf:"))!=-1) {
 		switch(c) {
 		case 'H':
 			headerFile = optarg;
@@ -65,8 +67,14 @@ int main(int argc, char **argv) {
 		case 'v':
 			verbose = true;
 			break;
+		case 'f':
+			rdfFormat = optarg;
+			cout << "RDF format: " << rdfFormat << endl;
+			break;
 		default:
-			cout << "Unknown option: " << c << endl;
+			cout << "ERROR: Unknown option" << endl;
+			help();
+			return 1;
 		}
 	}
 
@@ -84,61 +92,64 @@ int main(int argc, char **argv) {
 	outputFile = argv[optind+1];
 
 	if(inputFile=="") {
-		cout << "ERROR: You must supply an input file" << endl << endl;
+		cout << "ERROR: You must supply an RDF input file" << endl << endl;
 		help();
 		return 1;
 	}
 
 	if(outputFile=="") {
-		cout << "ERROR: You must supply an input file" << endl << endl;
+		cout << "ERROR: You must supply an HDT output file" << endl << endl;
 		help();
 		return 1;
 	}
 
-	cout << "Convert " << inputFile << " to " << outputFile << endl;
-
 	// Process
 	HDTSpecification spec(configFile);
-	spec.setOptions(options);
 
+	spec.setOptions(options);
 	HDT *hdt = HDTFactory::createBasicHDT(spec);
 
-	// Read RDF
-	ifstream in(inputFile.c_str());
-	hdt->loadFromRDF(in, N3);
-	in.close();
+	try {
+		// Read RDF
+		ifstream in(inputFile.c_str());
+		hdt->loadFromRDF(in, N3);
+		in.close();
 
-	ofstream out;
+		ofstream out;
 
-	// Save HDT
-	out.open(outputFile.c_str());
-	hdt->saveToHDT(out);
-	out.close();
-
-	// Save header
-	if(headerFile!="") {
-		Header &header = hdt->getHeader();
-		out.open(headerFile.c_str());
-		header.save(out);
+		// Save HDT
+		out.open(outputFile.c_str());
+		hdt->saveToHDT(out);
 		out.close();
-	}
 
-	ControlInformation controlInformation;
+		// Save header
+		if(headerFile!="") {
+			Header &header = hdt->getHeader();
+			out.open(headerFile.c_str());
+			header.save(out);
+			out.close();
+		}
 
-	// Save dictionary
-	if(dictionaryFile!="") {
-		Dictionary &dictionary = hdt->getDictionary();
-		out.open(dictionaryFile.c_str());
-		dictionary.save(out, controlInformation);
-		out.close();
-	}
+		ControlInformation controlInformation;
 
-	// Save triples
-	if(triplesFile!=""){
-		Triples &triples = hdt->getTriples();
-		out.open(triplesFile.c_str());
-		triples.save(out, controlInformation);
-		out.close();
+		// Save dictionary
+		if(dictionaryFile!="") {
+			Dictionary &dictionary = hdt->getDictionary();
+			out.open(dictionaryFile.c_str());
+			dictionary.save(out, controlInformation);
+			out.close();
+		}
+
+		// Save triples
+		if(triplesFile!=""){
+			Triples &triples = hdt->getTriples();
+			out.open(triplesFile.c_str());
+			triples.save(out, controlInformation);
+			out.close();
+		}
+
+	} catch (char *exception) {
+		cerr << "ERROR: " << exception << endl;
 	}
 
 	delete hdt;
