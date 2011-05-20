@@ -5,6 +5,8 @@
  *      Author: mck
  */
 
+#include <sstream>
+
 #include <HDTSpecification.hpp>
 #include "util/propertyutil.h"
 
@@ -30,7 +32,18 @@ HDTSpecification::~HDTSpecification() {
 }
 
 void HDTSpecification::setOptions(std::string options) {
+	std::istringstream strm(options);
+	std::string singleOption;
+	while(getline(strm, singleOption, ';') ){
+		size_t pos = singleOption.find(':');
 
+		if(pos!=std::string::npos) {
+			std::string property = singleOption.substr(0, pos);
+			std::string value = singleOption.substr(pos+1);
+			//std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
+			map[property] = value;
+		}
+	}
 }
 
 std::string HDTSpecification::get(std::string key) {
