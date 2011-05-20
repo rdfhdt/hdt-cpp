@@ -270,7 +270,7 @@ void BitmapTriplesIterator::readTriple() {
 		}
 	}
 
-	cout << numTriple << "/" << triples->numTriples << "  "<< x << ", " << y << ", " << z << endl;
+	//cout << numTriple << "/" << triples->numTriples << "  "<< x << ", " << y << ", " << z << endl;
 
 	nextv.setSubject(x);
 	nextv.setPredicate(y);
