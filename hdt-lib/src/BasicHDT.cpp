@@ -418,7 +418,6 @@ void BasicModifiableHDT::insert(IteratorTripleString *triples)
 
 void BasicModifiableHDT::remove(TripleString & triple)
 {
-	// Fixme: Only if modifiable triples.
 	TripleID tid = dictionary->tripleStringtoTripleID(triple);
 	triples->remove(tid);
 

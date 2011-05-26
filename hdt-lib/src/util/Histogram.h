@@ -122,7 +122,7 @@ public:
 	 * @return void
 	 */
 	void dumpStr(ostream &outfile) {
-		int maxfreq = 0;
+		unsigned int maxfreq = 0;
 		for (unsigned int i = 0; i < nBins && i <= maxValue; i++) {
 			outfile << i << "  " << freq[i] << endl;
 			maxfreq = freq[i] > maxfreq ? freq[i] : maxfreq;

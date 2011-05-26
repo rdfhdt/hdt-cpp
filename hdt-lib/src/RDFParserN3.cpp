@@ -26,8 +26,8 @@ TripleString RDFParserN3::next() {
 	using namespace std;
 
 	int pos = 0;
-	int firstIndex = 0;
-	int lastIndex = 0;
+	size_t firstIndex = 0;
+	size_t lastIndex = 0;
 	bool errorParsing = false;
 
 	vector<string> node(3);
@@ -117,7 +117,7 @@ TripleString RDFParserN3::next() {
 		else {
 			// else it is a parsing error
 			lastIndex = line.find(" ");
-			for (int j = 0; j < lastIndex; j++) {
+			for (size_t j = 0; j < lastIndex; j++) {
 				if (!isdigit(line.at(j)) && line.at(j) != '.' && line.at(j)
 						!= ',') {
 					errorParsing = true;

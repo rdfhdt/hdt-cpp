@@ -278,8 +278,8 @@ class TripleString
 			//TODO
 		}
 
-		IteratorTripleID(std::vector<TripleID>::iterator &it, const TripleID &pattern)
-			: iterator(it), pattern(pattern) { }
+		IteratorTripleID(std::vector<TripleID>::iterator &it, const TripleID &pat)
+			: pattern(pat), iterator(it) { }
 
 		~IteratorTripleID() {
 			//delete iterator;
