@@ -80,6 +80,7 @@ bool TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", numValidTriples);
 	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesList");
+	controlInformation.setUint("triples.component.order", order);
 	controlInformation.save(output);
 
 	for( unsigned int i = 0; i < arrayOfTriples.size(); i++ ) {
@@ -93,6 +94,7 @@ bool TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 
 void TriplesList::load(std::istream &input, ControlInformation &controlInformation)
 {
+	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
 	unsigned int totalTriples = controlInformation.getUint("numTriples");
 
 	cout << "Reading total number of triples: " << totalTriples << endl;

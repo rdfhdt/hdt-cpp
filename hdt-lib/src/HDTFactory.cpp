@@ -59,7 +59,7 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 	} else if(triplesType=="http://purl.org/HDT/hdt#triplesPlain") {
 		return new PlainTriples();
 	} else if(triplesType=="http://purl.org/HDT/hdt#triplesList") {
-		return new CompactTriples();
+		return new TriplesList();
 	} else if(triplesType=="http://purl.org/HDT/hdt#triplesListDisk") {
 		return new TripleListDisk();
 	}
