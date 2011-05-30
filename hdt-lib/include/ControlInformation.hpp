@@ -18,6 +18,9 @@ namespace hdt {
 typedef std::map<std::string, std::string> PropertyMap;
 typedef PropertyMap::iterator PropertyMapIt;
 
+/**
+ * Represents the header saved at the begining of each HDT block when serialized.
+ */
 class ControlInformation {
 
 public:
@@ -27,26 +30,68 @@ public:
 	PropertyMap map;
 
 public:
+	/**
+	 * Create empty ControlInformation
+	 * @return
+	 */
 	ControlInformation();
 	virtual ~ControlInformation();
 
+	/** Serialize a ControlInformation to a stream
+	 * @param out
+	 */
 	void save(std::ostream &out);
-	void load(std::istream &in);
-	void clear();
 
+	/**
+	 * Load ControlInformation from a stream.
+	 * @param in
+	 */
+	void load(std::istream &in);
+
+	/** Get a property of the ControlInformation
+	 * @param key
+	 * @return
+	 */
 	std::string get(std::string key);
+
+	/** Get a property of the ControlInformation as unsigned int
+	 * @param key
+	 * @return
+	 */
 	unsigned int getUint(std::string key);
+
+	/**
+	 * Set a property of the ControlInformation
+	 * @param key
+	 * @param value
+	 */
 	void set(std::string key, std::string value);
+
+	/**
+	 * Set a property of the ControlInformation as unsigned int
+	 * @param key
+	 * @param value
+	 */
 	void setUint(std::string key, unsigned int value);
 
-	void setVersion(unsigned short version);
+	/** Clear the ControlInformation, removing all properties.
+	 */
+	void clear();
+
+	/** Get the HDT version */
 	unsigned short getVersion();
+	/** Set the HDT version */
+	void setVersion(unsigned short version);
 
-	void setDictionary(bool dict);
+	/** Get whether this ControlInformation represents a dictionary */
 	bool getDictionary();
+	/** Set whether this ControlInformation represents a dictionary */
+	void setDictionary(bool dict);
 
-	void setTriples(bool trip);
+	/** Get whether this ControlInformation represents Triples */
 	bool getTriples();
+	/** Set whether this ControlInformation represents Triples */
+	void setTriples(bool trip);
 };
 
 }

@@ -46,6 +46,11 @@
 
 namespace hdt {
 
+/**
+ * Main HDT class. Represents an abstract access to a HDT object.
+ * It provides methods to get the Dictionary, Header and Triples.
+ * It also allows to search for simple triple patterns.
+ */
 class HDT : public RDFAccess
 {
 public:
@@ -109,26 +114,39 @@ public:
 
 };
 
+
+/**
+ * ModifiableHDT is a HDT that provides read/write operations. In addition to read operations,
+ * it allows to insert and remove triples.
+ */
 class ModifiableHDT : public HDT {
 public:
 
 	virtual ~ModifiableHDT(){ }
 
 	/**
-	 *
-	 * @param triples
+	 * Insert a single triple to the HDT.
+	 * @param triple Triple to be added.
 	 */
 	virtual void insert(TripleString &triple) = 0;
 
-	virtual void insert(IteratorTripleString *triple) = 0;
+	/**
+	 * Insert a set of triples to the HDT.
+	 * @param triples Iterator to a set of triples to be added.
+	 */
+	virtual void insert(IteratorTripleString *triples) = 0;
 
 	/**
-	 * Deletes with pattern matching
+	 * Remove a set of triples that match the specified pattern.
 	 *
 	 * @param triples
 	 */
 	virtual void remove(TripleString &triples) = 0;
 
+	/**
+	 * Remove all triples that match any of the specified patterns.
+	 * @param triples
+	 */
 	virtual void remove(IteratorTripleString *triples) = 0;
 };
 

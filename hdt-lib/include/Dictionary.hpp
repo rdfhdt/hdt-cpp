@@ -57,14 +57,16 @@ public:
 
 	/**
 	 * Fetch the string associated to the specified ID as the triple role.
+	 * If the ID does not exist, it throws an exception.
 	 * @param id ID to be fetched
 	 * @param role Triple Role (Subject, Predicate, Object) to be fetched.
-	 * @return
+	 * @return The string associated to that ID.
 	 */
 	virtual std::string idToString(unsigned int id, TripleComponentRole role)=0;
 
 	/**
-	 * Fetch the ID assigned to the supplied string as the triple role
+	 * Fetch the ID assigned to the supplied string as the triple role.
+	 * If the ID does not exist, it throws an exception.
 	 * @param str String to be converted.
 	 * @param role Triple Role (Subject, Predicate, Object) to be fetched.
 	 * @return ID of the specified String
@@ -73,7 +75,7 @@ public:
 
 	/**
 	 * Convert a TripleString object to a TripleID, using the dictionary to perform the conversion.
-	 *
+	 * If any of the components do not exist in the dictionary, it throws an exception.
 	 * @param tripleString TripleString to be converted.
 	 * @return resulting TripleID
 	 */
@@ -81,6 +83,7 @@ public:
 
 	/**
 	 * Convert a TripleID object to a TripleString, using the dictionary to perform the conversion.
+	 * If any of the components do not exist in the dictionary, it throws an exception.
 	 * @param tripleID TripleID to be converted.
 	 * @return resultant TripleSTring
 	 */
@@ -92,14 +95,28 @@ public:
 	 */
 	virtual unsigned int numberOfElements()=0;
 
+	/* Return the number of different subjects of the current dictionary. */
 	virtual unsigned int getNsubjects()=0;
+
+	/* Return the number of diferent predicates of the current dictionary */
 	virtual unsigned int getNpredicates()=0;
+
+	/* Return the number of different objects of the current dictionary */
 	virtual unsigned int getNobjects()=0;
+
+	/* Return the number of shared subjects-objects of the current dictionary */
 	virtual unsigned int getSsubobj()=0;
 
+	/* Return the maximum id assigned to the overall dictionary. */
 	virtual unsigned int getMaxID()=0;
+
+	/* Return the maximum subject ID of the dictionary. */
 	virtual unsigned int getMaxSubjectID()=0;
+
+	/* Return the maximum predicate ID of the dictionary. */
 	virtual unsigned int getMaxPredicateID()=0;
+
+	/* Return the maximum object ID of the dictionary. */
 	virtual unsigned int getMaxObjectID()=0;
 
 	/**
@@ -109,16 +126,17 @@ public:
 	virtual void populateHeader(Header &header)=0;
 
 	/**
-	 * Save the current dictionary to a stream, using a custom format.
+	 * Save the current dictionary to a stream, using the format from the standard.
 	 * @param output
 	 * @return
 	 */
 	virtual bool save(std::ostream &output, ControlInformation &ci)=0;
 
 	/**
-	 * Load dictionary information from a stream. The dictionary may fetch properties from the supplied header.
-	 * @param input
-	 * @param header
+	 * Load dictionary information from a stream.
+	 * The dictionary may fetch properties from the supplied ControlInformation.
+	 * @param input Input stream to read the data.
+	 * @param ci ControlInformation with the specified properties.
 	 */
 	virtual void load(std::istream &input, ControlInformation &ci)=0;
 

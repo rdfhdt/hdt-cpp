@@ -14,8 +14,6 @@
 namespace hdt {
 
 /**
- * Header of the HDT
- *
  * Describes the Header of any HDT.
  */
 class Header : public RDFStorage {
@@ -25,10 +23,6 @@ public:
 
 	virtual bool save(std::ostream &output)=0;
 	virtual void load(std::istream &input)=0;
-
-	/*
-	 * FROM RDFAccess
-	 */
 
 	/**
 	 * Search a Triple Pattern.
@@ -55,7 +49,7 @@ public:
 	 *
 	 * @param triples Iterator of Triples
 	 */
-	virtual void insert(IteratorTripleString *triple) = 0;
+	virtual void insert(IteratorTripleString *triples) = 0;
 
 	/**
 	 * Removes from the collection all triples that match the supplied Triple pattern.
@@ -71,7 +65,6 @@ public:
 	 * @param triples Iterator of TripleString indicating the triple patterns to be removed.
 	 */
 	virtual void remove(IteratorTripleString *triples) = 0;
-
 };
 
 }

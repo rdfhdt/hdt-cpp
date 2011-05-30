@@ -41,6 +41,9 @@
 
 namespace hdt {
 
+/**
+ * Specifies the rol of a component.
+ */
 enum TripleComponentRole
 {
 	SUBJECT,	/** Subject */
@@ -65,8 +68,8 @@ enum Mapping
 
 enum TripleComponentOrder {
 	/**
-		 * Unknown order
-		 */
+	 * Unknown order
+	 */
 	Unknown,
 	/**
 	 * Subject, predicate, object

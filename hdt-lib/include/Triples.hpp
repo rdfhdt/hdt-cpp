@@ -6,8 +6,6 @@
  *                     Mario Arias
  * All rights reserved.
  *
- * TODO: Define me
- *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -61,10 +59,12 @@ public:
 	}
 
 	/**
-	 * Returns a vector of triples matching the pattern
+	 * Allows to search a pattern of triples.
+	 *
+	 * The returned iterator must be cleaned using C++ "delete" keyword.
 	 *
 	 * @param pattern
-	 * @return
+	 * @return Iterator of TripleID matching the specified pattern.
 	 */
 	virtual IteratorTripleID *search(TripleID &pattern)=0;
 
@@ -84,12 +84,12 @@ public:
 	virtual unsigned int getNumberOfElements()=0;
 
 	/**
-	 * Returns size in bytes
+	 * Returns size in bytes of the overall structure.
 	 */
 	virtual unsigned int size()=0;
 
 	/**
-	 * Saves the triples
+	 * Serialize the triples to a stream in implementation-specific format.
 	 *
 	 * @param output
 	 * @return
@@ -97,13 +97,13 @@ public:
 	virtual bool save(std::ostream &output, ControlInformation &ci)=0;
 
 	/**
-	 *
+	 * Generate triples structure from other triples structure.
 	 * @param input
 	 */
 	virtual void load(ModifiableTriples &input)=0;
 
 	/**
-	 * Load triples from a file
+	 * Read the triples from a stream, using the same implementation-specific format.
 	 *
 	 * @param input
 	 * @return
@@ -111,7 +111,7 @@ public:
 	virtual void load(std::istream &input, ControlInformation &ci)=0;
 
 	/**
-	 * Populates the header
+	 * Adds all known information about the triples to the Header.
 	 *
 	 * @param header
 	 * @return

@@ -6,8 +6,6 @@
  *                     Mario Arias
  * All rights reserved.
  *
- * TODO: Define me
- *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -44,20 +42,39 @@ typedef std::map<std::string, std::string> PropertyMap;
 
 namespace hdt {
 
-	class HDTSpecification
-	{
-	private:
-		PropertyMap map;
+/**
+ * Provides a specification of all the properties of a HDT to be built.
+ */
 
-	public:
-		HDTSpecification();
-		HDTSpecification(std::string &filename);
-		~HDTSpecification();
+class HDTSpecification
+{
+private:
+	PropertyMap map;
 
-		void setOptions(std::string options);
-		std::string get(std::string key);
-		void set(std::string key, std::string value);
-	};
+public:
+	/**
+	 * Create empty specification.
+	 * @return
+	 */
+	HDTSpecification();
+
+	/**
+	 * Create new specification, reading the properties from a file name.
+	 * @param filename
+	 * @return
+	 */
+	HDTSpecification(std::string &filename);
+	~HDTSpecification();
+
+	/** Add a set of options using the syntax property1:value1;property2:value2 */
+	void setOptions(std::string options);
+
+	/** Get the value of a property */
+	std::string get(std::string key);
+
+	/** Set the value of a property */
+	void set(std::string key, std::string value);
+};
 
 }
 

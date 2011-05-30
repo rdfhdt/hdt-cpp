@@ -12,8 +12,13 @@
 
 namespace hdt {
 
+/**
+ * Interface that provides read/search access to a set of triples.
+ */
+
 class RDFAccess {
 	/**
+	 * Returns an iterator over all results matching the provided triple pattern.
 	 * @param subject
 	 * @param predicate
 	 * @param object
@@ -32,31 +37,30 @@ public:
 	virtual ~RDFStorage() { }
 
 	/**
-	 * @param subject
-	 * @param predicate
-	 * @param object
-	 * @return
-	 */
-	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object) = 0;
-
-	/**
-	 *
-	 * @param triples
+	 * Insert a new triple to the store.
+	 * @param triple
 	 */
 	virtual void insert(TripleString &triple) = 0;
 
+	/**
+	 * Insert a set of triples to the store, as specified in the iterator.
+	 * @param triple
+	 */
 	virtual void insert(IteratorTripleString *triple) = 0;
 
 	/**
-	 * Deletes with pattern matching
+	 * Removes the set of triples that match the specified pattern.
 	 *
 	 * @param triples
 	 */
-	virtual void remove(TripleString &triples) = 0;
+	virtual void remove(TripleString &triple) = 0;
 
+	/**
+	 * Removes the set of triples that match any of the specified patterns.
+	 * @param triples
+	 */
 	virtual void remove(IteratorTripleString *triples) = 0;
 };
-
 
 }
 

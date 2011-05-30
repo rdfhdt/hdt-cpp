@@ -15,299 +15,405 @@
 using namespace std;
 
 namespace hdt {
+
+/**
+ * Represents a single triple, where the subject, predicate, and object components are
+ * represented using integer IDs after applying the dictionary conversion.
+ */
 class TripleID
 {
-	private:
-		unsigned int subject;
-		unsigned int predicate;
-		unsigned int object;
+private:
+	unsigned int subject;
+	unsigned int predicate;
+	unsigned int object;
 
-	public:
+public:
 
-		TripleID() {
+	/**
+	 * Create empty TripleID.
+	 * @return
+	 */
+	TripleID() {
+	}
+
+	/**
+	 * Create a new TripleID initialized using the supplied subject, predicate, object.
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 * @return
+	 */
+	TripleID(unsigned int subject, unsigned int predicate, unsigned int object) {
+		this->subject = subject;
+		this->predicate = predicate;
+		this->object = object;
+	}
+
+	~TripleID() {
+	}
+
+	/**
+	 * Get the Subject component of this tripleID.
+	 * @return
+	 */
+	unsigned int getSubject() {
+		return subject;
+	}
+
+	/**
+	 * Set the Subject component of this tripleID.
+	 * @return
+	 */
+	void setSubject(unsigned int subject) {
+		this->subject = subject;
+	}
+
+	/**
+	 * Get the Predicate component of this tripleID.
+	 * @return
+	 */
+	unsigned  getPredicate() {
+		return this->predicate;
+	}
+
+	/**
+	 * Set the Predicate component of this tripleID.
+	 * @return
+	 */
+	void setPredicate(unsigned int predicate) {
+		this->predicate = predicate;
+	}
+
+	/**
+	 * Get the Object component of this tripleID.
+	 * @return
+	 */
+	unsigned int getObject() {
+		return this->object;
+	}
+
+	/**
+	 * Set the Object component of this tripleID.
+	 * @return
+	 */
+	void setObject(unsigned int object) {
+		this->object = object;
+	}
+
+	/**
+	 * Clear all components of the TripleID to zero values.
+	 */
+	void clear() {
+		this->subject = 0;
+		this->predicate = 0;
+		this->object = 0;
+	}
+
+	/**
+	 * Serialize this TripleID to a stream.
+	 * @param stream Stream to serialize
+	 * @param ti TripleID
+	 * @return
+	 */
+	friend std::ostream &operator<<(std::ostream &stream, const TripleID &ti) {
+		stream << ti.subject << ", "<< ti.predicate <<", "<< ti.object;
+
+		return stream;
+	}
+
+	/**
+	 * Compares two triples
+	 *
+	 * @param operand The operand to compare with
+	 * @return boolean
+	 */
+	bool operator==(TripleID &operand) {
+		// Subject comparison
+		if (this->subject != operand.subject) {
+			return false;
 		}
 
-		TripleID(unsigned int subject, unsigned int predicate, unsigned int object) {
-			this->subject = subject;
-			this->predicate = predicate;
-			this->object = object;
-		} // TripleID()
-
-		~TripleID() {
+		// Object comparison (since subject was successful)
+		if (this->object != operand.object) {
+			return false;
 		}
 
-		unsigned int getSubject() {
-			return subject;
+		// Predicate comparison (since subject and object were successful)
+		if (this->predicate != operand.predicate) {
+			return false;
 		}
-		void setSubject(unsigned int subject) {
-			this->subject = subject;
-		}
+		return true;
+	}
 
-		unsigned  getPredicate() {
-			return this->predicate;
-		}
+	/**
+	 * Checks wether two TripleID instances are different.
+	 *
+	 * @param operand The operand to compare with
+	 * @return boolean
+	 */
+	bool operator!=(TripleID &operand) {
+		return !(this->operator==(operand));
+	} // !=()
 
-		void setPredicate(unsigned int predicate) {
-			this->predicate = predicate;
-		}
+	/**
+	 * Compares two triples and returns -1, 0 or 1, stablishing an order.
+	 *
+	 * @param other
+	 * @return
+	 */
+	int compare(TripleID &other) {
+		int result = this->subject - other.subject;
 
-		unsigned int getObject() {
-			return this->object;
-		}
-
-		void setObject(unsigned int object) {
-			this->object = object;
-		}
-
-		void clear() {
-			this->subject = 0;
-			this->predicate = 0;
-			this->object = 0;
-		} //clear()
-
-		friend std::ostream &operator<<(std::ostream &stream, const TripleID &ts) {
-			stream << ts.subject << ", "<< ts.predicate <<", "<< ts.object;
-
-			return stream;
-		}
-
-		/**
-		 * Compares two triples
-		 *
-		 * @param operand The operand to compare with
-		 * @return boolean
-		 */
-		bool operator==(TripleID &operand) {
-			// Subject comparison
-			if (this->subject != operand.subject) {
-				return false;
-			}
-
-			// Object comparison (since subject was successful)
-			if (this->object != operand.object) {
-				return false;
-			}
-
-			// Predicate comparison (since subject and object were successful)
-			if (this->predicate != operand.predicate) {
-				return false;
-			}
-			return true;
-		} // ==()
-
-		/**
-		 * Inverts the comparison of two triples
-		 *
-		 * @param operand The operand to compare with
-		 * @return boolean
-		 */
-		bool operator!=(TripleID &operand) {
-			return !(this->operator==(operand));
-		} // !=()
-
-		/**
-		 * Compares two triples and returns -1, 0 or 1
-		 *
-		 * @param other
-		 * @return
-		 */
-		int compare(TripleID &operand) {
-
-			int result = this->subject - operand.subject;
-
+		if(result==0) {
+			result = this->predicate - other.predicate;
 			if(result==0) {
-				result = this->predicate - operand.predicate;
-				if(result==0) {
-					return this->object - operand.object;
-				} else {
-					return result;
-				}
+				return this->object - other.object;
 			} else {
 				return result;
 			}
+		} else {
+			return result;
 		}
+	}
 
-		/**
-		 * Match a triple to a pattern of TripleID. 0 acts as a wildcard
-		 *
-		 * @param pattern The pattern to match against
-		 * @return boolean
-		 */
-		bool match(TripleID &pattern) {
+	/**
+	 * Check wether this subject matches the supplied pattern.
+	 * The special value 0 acts as wildcard and means "any".
+	 *
+	 * @param pattern The pattern to match against
+	 * @return boolean
+	 */
+	bool match(TripleID &pattern) {
+		unsigned int subject = pattern.getSubject();
+		unsigned int object = pattern.getObject();
+		unsigned int predicate = pattern.getPredicate();
 
-			// Save triple components
-			unsigned int subject = pattern.getSubject();
-			unsigned int object = pattern.getObject();
-			unsigned int predicate = pattern.getPredicate();
-
-			if (subject == 0 || subject == this->subject) {
-				if (object == 0 || object == this->object) {
-					if (predicate == 0 || predicate == this->predicate) {
-						return true;
-					}
+		if (subject == 0 || subject == this->subject) {
+			if (object == 0 || object == this->object) {
+				if (predicate == 0 || predicate == this->predicate) {
+					return true;
 				}
 			}
-
-			return false;
-
-		} // match()
-
-		/**
-		 * Replaces the contents of a triple with the provided replacement
-		 *
-		 * @param replacement
-		 */
-		void replace(TripleID &replacement) {
-
-			this->subject = replacement.getSubject();
-			this->object = replacement.getObject();
-			this->predicate = replacement.getPredicate();
-
-		} // replace()
-
-		/**
-		 * Validates the contents of a triple
-		 *
-		 * @return boolean
-		 */
-		bool isValid() {
-			return !(this->subject == 0 || this->predicate == 0 || this->object == 0);
 		}
 
+		return false;
+	}
+
+	/**
+	 * Replaces the contents of a triple with the provided replacement
+	 *
+	 * @param replacement
+	 */
+	void replace(TripleID &replacement) {
+		this->subject = replacement.getSubject();
+		this->object = replacement.getObject();
+		this->predicate = replacement.getPredicate();
+	} // replace()
+
+	/**
+	 * Check wether a TripleID is valid. i.e. all of the components are non-zero.
+	 *
+	 * @return boolean
+	 */
+	bool isValid() {
+		return !(this->subject == 0 || this->predicate == 0 || this->object == 0);
+	}
 };
 
+
+/**
+ * Represents a Triple where any of the componets subject,predicate,object are strings.
+ */
 class TripleString
 {
-	private:
-		std::string subject;
-		std::string predicate;
-		std::string object;
+private:
+	std::string subject;
+	std::string predicate;
+	std::string object;
 
-	public:
-		TripleString() {
+public:
+	/**
+	 * Create empty TripleString.
+	 * @return
+	 */
+	TripleString() {
+	}
 
-		}
+	/** Create TripleString with the supplied components.
+	 *
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 * @return
+	 */
+	TripleString(std::string subject, std::string predicate, std::string object) {
+		this->subject = subject;
+		this->predicate = predicate;
+		this->object = object;
+	}
 
-		TripleString(std::string subject, std::string predicate, std::string object) {
-			this->subject = subject;
-			this->predicate = predicate;
-			this->object = object;
-		}
+	~TripleString() {
 
-		~TripleString() {
+	}
 
-		}
+	/**
+	 * Get Subject.
+	 * @return
+	 */
+	std::string &getSubject() {
+		return subject;
+	}
 
-		std::string &getSubject() {
-			return subject;
-		}
-		void setSubject(std::string &subject) {
-			this->subject = subject;
-		}
+	/**
+	 * Set Subject.
+	 * @param subject
+	 */
+	void setSubject(std::string &subject) {
+		this->subject = subject;
+	}
 
-		std::string &getPredicate() {
-			return predicate;
-		}
-		void setPredicate(std::string &predicate) {
-			this->predicate = predicate;
-		}
+	/**
+	 * Get Predicate.
+	 * @return
+	 */
+	std::string &getPredicate() {
+		return predicate;
+	}
 
-		std::string &getObject() {
-			return object;
-		}
-		void setObject(std::string &object) {
-			this->object = object;
-		}
+	/** Set Predicate
+	 *
+	 * @param predicate
+	 */
+	void setPredicate(std::string &predicate) {
+		this->predicate = predicate;
+	}
 
-		friend std::ostream &operator<<(std::ostream &stream, const TripleString &ts) {
-			stream << ts.subject << ", "<< ts.predicate <<", "<< ts.object;
+	/**
+	 * Get Object.
+	 * @return
+	 */
+	std::string &getObject() {
+		return object;
+	}
 
-			return stream;
-		}
+	/**
+	 * Set Object.
+	 * @param object
+	 */
+	void setObject(std::string &object) {
+		this->object = object;
+	}
 
-		void clear() {
-			subject = predicate = object = "";
-		}
+	/**
+	 * Serialize TripleString to a stream.
+	 * @param stream
+	 * @param ts
+	 * @return
+	 */
+	friend std::ostream &operator<<(std::ostream &stream, const TripleString &ts) {
+		stream << ts.subject << ", "<< ts.predicate <<", "<< ts.object;
 
-		bool isEmpty() {
-			return subject == "" && predicate == "" && object == "";
-		}
+		return stream;
+	}
 
-		bool hasEmpty() {
-			return subject == "" || predicate == "" || object == "";
-		}
+	/**
+	 * Clear all components to the empty String "";
+	 */
+	void clear() {
+		subject = predicate = object = "";
+	}
 
-		void read(std::string line){
-	        size_t pos_a = 0, pos_b;
+	/**
+	 * Check wether all components of the TripleString are empty.
+	 * @return
+	 */
+	bool isEmpty() {
+		return subject == "" && predicate == "" && object == "";
+	}
 
-	        // Reads the subject
-	        pos_b = line.find(" ", pos_a);
-	        subject = line.substr(pos_a, pos_b - pos_a);
-	        if(subject[0]=='?')
-	        	subject = "";
-	        pos_a = pos_b + 1;
+	/**
+	 * Check wether any of the components of the TripleString is empty.
+	 * @return
+	 */
+	bool hasEmpty() {
+		return subject == "" || predicate == "" || object == "";
+	}
 
-	        // Reads the predicate
-	        pos_b = line.find(" ", pos_a);
-	        predicate = line.substr(pos_a, pos_b - pos_a);
-	        if(predicate[0]=='?')
-	        	predicate = "";
-	        pos_a = pos_b + 1;
+	/**
+	 * Read a TripleString from a stream, where each component is represented using an empty space.
+	 * @param line
+	 */
+	void read(std::string line){
+		size_t pos_a = 0, pos_b;
 
-	        // Reads the predicate
-	        pos_b = line.find(" ", pos_a);
-	        object = line.substr(pos_a, pos_b - pos_a);
-	        if(object[0]=='?')
-	        	object = "";
-	        pos_a = pos_b;
-		}
+		// Reads the subject
+		pos_b = line.find(" ", pos_a);
+		subject = line.substr(pos_a, pos_b - pos_a);
+		if(subject[0]=='?')
+			subject = "";
+		pos_a = pos_b + 1;
 
-}; // TripleString{}
+		// Reads the predicate
+		pos_b = line.find(" ", pos_a);
+		predicate = line.substr(pos_a, pos_b - pos_a);
+		if(predicate[0]=='?')
+			predicate = "";
+		pos_a = pos_b + 1;
 
- class IteratorTripleID {
+		// Reads the predicate
+		pos_b = line.find(" ", pos_a);
+		object = line.substr(pos_a, pos_b - pos_a);
+		if(object[0]=='?')
+			object = "";
+		pos_a = pos_b;
+	}
+};
 
 
- 	private:
-	    /** The TripleID pattern to match against */
-	    TripleID pattern;
-	    /** The iterator of TripleID */
-	    std::vector<TripleID>::iterator iterator;
 
- 	public:
-		IteratorTripleID() {
-			//TODO
-		}
 
-		IteratorTripleID(std::vector<TripleID>::iterator &it, const TripleID &pat)
-			: pattern(pat), iterator(it) { }
+class IteratorTripleID {
+private:
+	/** The TripleID pattern to match against */
+	TripleID pattern;
+	/** The iterator of TripleID */
+	std::vector<TripleID>::iterator iterator;
 
-		~IteratorTripleID() {
-			//delete iterator;
-			//TODO
-		}
+public:
+	IteratorTripleID() {
+		//TODO
+	}
 
-		virtual bool hasNext() {
- 			return false;
- 		}
+	IteratorTripleID(std::vector<TripleID>::iterator &it, const TripleID &pat)
+	: pattern(pat), iterator(it) { }
 
- 		virtual TripleID next() {
- 			// TODO: Return a copy or a pointer to a TripleID?
- 			TripleID id;
- 			return id;
- 		}
- };
+	~IteratorTripleID() {
+		//delete iterator;
+		//TODO
+	}
 
- class IteratorTripleString {
- 	public:
- 		virtual bool hasNext() {
- 			return false;
- 		}
- 		virtual TripleString next() {
- 			// TODO: Return a copy or a pointer to a TripleString?
- 			TripleString ts;
- 			return ts;
- 		}
- };
+	virtual bool hasNext() {
+		return false;
+	}
+
+	virtual TripleID next() {
+		// TODO: Return a copy or a pointer to a TripleID?
+		TripleID id;
+		return id;
+	}
+};
+
+class IteratorTripleString {
+public:
+	virtual bool hasNext() {
+		return false;
+	}
+	virtual TripleString next() {
+		// TODO: Return a copy or a pointer to a TripleString?
+		TripleString ts;
+		return ts;
+	}
+};
 }
 
 #endif /* SINGLETRIPLE_HPP_ */
