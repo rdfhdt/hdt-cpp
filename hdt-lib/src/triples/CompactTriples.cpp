@@ -111,14 +111,14 @@ void CompactTriples::load(ModifiableTriples &triples) {
 #if 0
 	// Debug Adjacency Lists
 	cout << "Y" << vectorY.size() << "): ";
-	for(unsigned int i=0;i<masterStream->getNumberOfElements();i++){
-		cout << masterStream->get(i) << " ";
+	for(unsigned int i=0;i<streamY->getNumberOfElements();i++){
+		cout << streamY->get(i) << " ";
 	}
 	cout << endl;
 
 	cout << "Z" << vectorZ.size() << "): ";
-	for(unsigned int i=0;i<slaveStream->getNumberOfElements();i++){
-		cout << slaveStream->get(i) << " ";
+	for(unsigned int i=0;i<streamZ->getNumberOfElements();i++){
+		cout << streamZ->get(i) << " ";
 	}
 	cout << endl;
 #endif
@@ -150,6 +150,11 @@ bool CompactTriples::save(std::ostream & output, ControlInformation &controlInfo
 
 void CompactTriples::load(std::istream &input, ControlInformation &controlInformation)
 {
+	std::string codification = controlInformation.get("codification");
+	if(codification != "http://purl.org/HDT/hdt#triplesCompact") {
+		throw "Unexpected CompactTriples format";
+	}
+
 	numTriples = controlInformation.getUint("numTriples");
 	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
 

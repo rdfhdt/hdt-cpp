@@ -662,6 +662,13 @@ void PlainDictionary::updateID(unsigned int oldid, unsigned int newid, Dictionar
 
 void PlainDictionary::populateHeader(Header & header)
 {
+	string subject = "<http://www.rdfhdt.org/hdtfile>";
+	string predicate = "<http://www.rdfhdt.org/dictionaryType>";
+	string object = "http://purl.org/HDT/hdt#dictionaryPlain";
+
+	TripleString ts(subject, predicate, object);
+
+	header.insert(ts);
 }
 
 void PlainDictionary::dumpSizes(ostream &out) {

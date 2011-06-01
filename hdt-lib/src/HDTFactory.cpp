@@ -9,6 +9,8 @@
 #include "BasicHDT.hpp"
 #include <HDTFactory.hpp>
 
+#include "header/BasicHeader.hpp"
+
 #include "dictionary/PlainDictionary.hpp"
 
 #include "triples/TriplesList.hpp"
@@ -83,6 +85,25 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 	/// else...
 
 	throw "Dictionary Implementation not available";
+}
+
+Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
+
+#if 0
+	if(!controlInformation.getHeader())
+		throw "Trying to get Dictionary from Non-Dictionary section";
+#endif
+
+	string type = controlInformation.get("codification");
+
+	if(type=="http://purl.org/HDT/hdt#headerPlain") {
+		return new BasicHeader();
+	}
+	/// else...
+	/// else...
+
+	// FIXME: No header
+	//throw "Header Implementation not available";
 }
 
 }

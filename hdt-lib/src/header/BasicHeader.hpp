@@ -22,12 +22,8 @@ public:
 	BasicHeader();
 	BasicHeader(HDTSpecification &specification);
 	virtual ~BasicHeader();
-	bool save(std::ostream &output);
-	void load(std::istream &input);
-
-	/*
-	 * FROM RDFAccess
-	 */
+	bool save(std::ostream &output, ControlInformation &ci);
+	void load(std::istream &input, ControlInformation &ci);
 
 	/**
 	 * @param subject

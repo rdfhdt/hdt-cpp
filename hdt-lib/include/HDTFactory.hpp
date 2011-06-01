@@ -43,6 +43,13 @@ public:
 	 */
 	static ModifiableHDT *createModifiableHDT(HDTSpecification &specification);
 
+	/** Returns the instance of Header as specified in the ControlInformation
+	 *
+	 * @param controlInformation
+	 * @return
+	 */
+	static Header *readHeader(ControlInformation &controlInformation);
+
 	/** Returns the instance of Dictionary as specified in the ControlInformation
 	 *
 	 * @param controlInformation

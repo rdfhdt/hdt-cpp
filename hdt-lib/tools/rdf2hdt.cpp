@@ -122,15 +122,15 @@ int main(int argc, char **argv) {
 		hdt->saveToHDT(out);
 		out.close();
 
+		ControlInformation controlInformation;
+
 		// Save header
 		if(headerFile!="") {
 			Header &header = hdt->getHeader();
 			out.open(headerFile.c_str());
-			header.save(out);
+			header.save(out, controlInformation);
 			out.close();
 		}
-
-		ControlInformation controlInformation;
 
 		// Save dictionary
 		if(dictionaryFile!="") {

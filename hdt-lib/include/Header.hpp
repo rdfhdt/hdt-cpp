@@ -9,6 +9,7 @@
 #define HEADER_
 
 #include <RDF.hpp>
+#include <ControlInformation.hpp>
 #include <iostream>
 
 namespace hdt {
@@ -21,8 +22,8 @@ class Header : public RDFStorage {
 public:
 	virtual ~Header() { }
 
-	virtual bool save(std::ostream &output)=0;
-	virtual void load(std::istream &input)=0;
+	virtual bool save(std::ostream &output, ControlInformation &ci)=0;
+	virtual void load(std::istream &input, ControlInformation &ci)=0;
 
 	/**
 	 * Search a Triple Pattern.

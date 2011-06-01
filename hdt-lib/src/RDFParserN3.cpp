@@ -19,7 +19,8 @@ RDFParserN3::~RDFParserN3() {
 
 
 bool RDFParserN3::hasNext() {
-	return getline(input, line);
+	getline(input, line);
+	return line!="";
 }
 
 TripleString RDFParserN3::next() {

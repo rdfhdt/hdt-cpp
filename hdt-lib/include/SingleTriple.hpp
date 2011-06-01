@@ -116,7 +116,7 @@ public:
 	 * @return
 	 */
 	friend std::ostream &operator<<(std::ostream &stream, const TripleID &ti) {
-		stream << ti.subject << ", "<< ti.predicate <<", "<< ti.object;
+		stream << ti.subject << " "<< ti.predicate <<" "<< ti.object;
 
 		return stream;
 	}
@@ -311,7 +311,7 @@ public:
 	 * @return
 	 */
 	friend std::ostream &operator<<(std::ostream &stream, const TripleString &ts) {
-		stream << ts.subject << ", "<< ts.predicate <<", "<< ts.object;
+		stream << ts.subject << " "<< ts.predicate <<" "<< ts.object;
 
 		return stream;
 	}

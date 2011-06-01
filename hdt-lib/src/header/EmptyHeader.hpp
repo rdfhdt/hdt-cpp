@@ -18,8 +18,8 @@ class EmptyHeader : public Header {
 public:
 	EmptyHeader() { }
 	virtual ~EmptyHeader(){ }
-	bool save(std::ostream &output){ return true; }
-	void load(std::istream &input){ }
+	bool save(std::ostream &output, ControlInformation &ci){ return true; }
+	void load(std::istream &input, ControlInformation &ci){ }
 
 	IteratorTripleString *search(const char *subject, const char *predicate, const char *object){
 		return new IteratorTripleString();

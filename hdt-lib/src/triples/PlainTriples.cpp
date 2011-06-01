@@ -130,9 +130,10 @@ PlainTriplesIterator::~PlainTriplesIterator() {
 void PlainTriplesIterator::doFetch() {
 	do {
 		nextv = triples->getTripleID(pos);
-		//cout << nextv << endl;
 		pos++;
 	} while(pos<=triples->getNumberOfElements() && (!nextv.isValid() || !nextv.match(pattern)));
+
+	cout << nextv << endl;
 
 	hasNextv= pos<=triples->getNumberOfElements();
 }

@@ -31,19 +31,23 @@ BasicHeader::~BasicHeader() {
 	delete hdt;
 }
 
-void BasicHeader::load(std::istream & input)
+void BasicHeader::load(std::istream & input, ControlInformation &controlInformation)
 {
-	unsigned int triples;
-	input.read((char *)&triples, sizeof(unsigned int));
+	std::string codification = controlInformation.get("codification");
+	if(codification != "http://purl.org/HDT/hdt#headerPlain") {
+		throw "Unexpected BasicHeader format";
+	}
+
 	hdt->loadFromRDF(input, N3);
 }
 
-bool BasicHeader::save(std::ostream & output)
+bool BasicHeader::save(std::ostream & output, ControlInformation &controlInformation)
 {
-	unsigned int triples = hdt->getTriples().getNumberOfElements();
-
-	output.write((const char *)&triples, sizeof(unsigned int));
+	controlInformation.clear();
+	controlInformation.set("codification", "http://purl.org/HDT/hdt#headerPlain");
+	controlInformation.save(output);
 	hdt->saveToRDF(output, NTRIPLE);
+	output << endl;
 }
 
 void BasicHeader::insert(TripleString & triple)

@@ -17,15 +17,17 @@
 #include <BitSequenceRG.h>
 #include <BitString.h>
 
+#include "../stream/AdjacencyList.hpp"
+#include "TripleOrderConvert.hpp"
+
 namespace hdt {
 
 class BitmapTriples : public Triples {
 private:
 	ControlInformation controlInformation;
 	HDTSpecification spec;
-	StreamElements *masterStream, *slaveStream;
-	cds_static::BitSequence *bitmapY;
-	cds_static::BitSequence *bitmapZ;
+	StreamElements *streamY, *streamZ;
+	cds_static::BitSequence *bitmapY, *bitmapZ;
 	unsigned int numTriples;
 	TripleComponentOrder order;
 public:
@@ -78,30 +80,35 @@ public:
 
 	void populateHeader(Header &header);
 
-	friend class BitmapTriplesIterator;
+	friend class BitmapTriplesSearchIterator;
 };
 
-class BitmapTriplesIterator : public IteratorTripleID {
+class BitmapTriplesSearchIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
-	TripleID nextv, pattern;
-	bool hasNextv;
-	unsigned int numTriple;
-	unsigned int masterPos, slavePos;
+	TripleID pattern;
+	unsigned int patX, patY, patZ;
 
-	size_t nextY, nextZ;
-	size_t posY, posZ;
-
+	AdjacencyList adjY, adjZ;
+	unsigned int posY, posZ;
+	unsigned int nextY, nextZ;
 	unsigned int x, y, z;
 
-	void doFetch();
+	TripleID nextv;
+	bool hasNextv;
+
+	bool goThroughAll;
+
+	void findFirst();
 	void readTriple();
+	void doFetch();
+
+	void updateOutput();
+
 public:
-	BitmapTriplesIterator(BitmapTriples *pt, TripleID &pat);
-	virtual ~BitmapTriplesIterator();
+	BitmapTriplesSearchIterator(BitmapTriples *triples, TripleID &pat);
 
 	bool hasNext();
-
 	TripleID next();
 };
 

@@ -78,11 +78,15 @@ BasicHDT::~BasicHDT() {
 
 void BasicHDT::createComponents() {
 	// HEADER
+#if 0
 	if(spec.get("noheader")=="true") {
 		header = new EmptyHeader();
 	} else {
 		header = new BasicHeader(spec);
 	}
+#else
+	header = new EmptyHeader();
+#endif
 
 	// DICTIONARY
 	std::string dictType = spec.get("dictionary.type");
@@ -216,16 +220,24 @@ void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
 
 void BasicHDT::loadFromHDT(std::istream & input)
 {
+	//delete header;
 	delete dictionary;
 	delete triples;
 
-	//header->load(input);
 	ControlInformation controlInformation;
-	controlInformation.load(input);
 
+	// Load header
+	//controlInformation.load(input);
+	//header = HDTFactory::readHeader(controlInformation);
+	//header->load(input, controlInformation);
+
+	//Load Dictionary.
+	controlInformation.clear();
+	controlInformation.load(input);
 	dictionary = HDTFactory::readDictionary(controlInformation);
 	dictionary->load(input, controlInformation);
 
+	// Load Triples
 	controlInformation.clear();
 	controlInformation.load(input);
 	triples = HDTFactory::readTriples(controlInformation);
@@ -234,12 +246,17 @@ void BasicHDT::loadFromHDT(std::istream & input)
 
 void BasicHDT::saveToHDT(std::ostream & output)
 {
+	StopWatch st;
 	ControlInformation controlInformation;
 
-	//header->save(output);
+	cout << "Saving header" << endl;
+	st.reset();
+	//controlInformation.setHeader(true);
+	//header->save(output, controlInformation);
+	cout << "Header saved in " << st << endl;
 
 	cout << "Saving dictionary" << endl;
-	StopWatch st;
+	st.reset();
 	controlInformation.setDictionary(true);
 	dictionary->save(output, controlInformation);
 	cout << "Dictionary saved in " << st << endl;

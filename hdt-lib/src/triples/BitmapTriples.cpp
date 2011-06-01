@@ -6,14 +6,13 @@
  */
 
 #include "BitmapTriples.hpp"
-#include "TripleOrderConvert.hpp"
 
 namespace hdt {
 
 
 BitmapTriples::BitmapTriples() : numTriples(0), order(SPO) {
-	masterStream = StreamElements::getStream(spec.get("stream.y"));
-	slaveStream = StreamElements::getStream(spec.get("stream.z"));
+	streamY = StreamElements::getStream(spec.get("stream.y"));
+	streamZ = StreamElements::getStream(spec.get("stream.z"));
 }
 
 BitmapTriples::BitmapTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
@@ -22,16 +21,16 @@ BitmapTriples::BitmapTriples(HDTSpecification &specification) : numTriples(0), s
 	if(order==Unknown)
 		order = SPO;
 
-	masterStream = StreamElements::getStream(spec.get("stream.y"));
-	slaveStream = StreamElements::getStream(spec.get("stream.z"));
+	streamY = StreamElements::getStream(spec.get("stream.y"));
+	streamZ = StreamElements::getStream(spec.get("stream.z"));
 }
 
 
 
 
 BitmapTriples::~BitmapTriples() {
-	delete masterStream;
-	delete slaveStream;
+	delete streamY;
+	delete streamZ;
 }
 
 
@@ -121,20 +120,20 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 	VectorIterator itY(vectorY);
 	VectorIterator itZ(vectorZ);
 
-	masterStream->add(itY);
-	slaveStream->add(itZ);
+	streamY->add(itY);
+	streamZ->add(itZ);
 
 #if 0
 	// Debug Adjacency Lists
 	cout << "Y" << vectorY.size() << "): ";
-	for(unsigned int i=0;i<20 && i<masterStream->getNumberOfElements();i++){
-		cout << masterStream->get(i) << " ";
+	for(unsigned int i=0;i<20 && i<streamY->getNumberOfElements();i++){
+		cout << streamY->get(i) << " ";
 	}
 	cout << endl;
 
 	cout << "Z" << vectorZ.size() << "): ";
-	for(unsigned int i=0;i<20 && i<slaveStream->getNumberOfElements();i++){
-		cout << slaveStream->get(i) << " ";
+	for(unsigned int i=0;i<20 && i<streamZ->getNumberOfElements();i++){
+		cout << streamZ->get(i) << " ";
 	}
 	cout << endl;
 
@@ -174,7 +173,7 @@ void BitmapTriples::populateHeader(Header &header) {
 
 IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 {
-	return new BitmapTriplesIterator(this, pattern);
+	return new BitmapTriplesSearchIterator(this, pattern);
 }
 
 bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInformation)
@@ -183,8 +182,8 @@ bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 	controlInformation.setUint("numTriples", getNumberOfElements());
 	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesBitmap");
 	controlInformation.setUint("componentOrder", order);
-	controlInformation.set("stream.y", masterStream->getType());
-	controlInformation.set("stream.z", slaveStream->getType());
+	controlInformation.set("stream.y", streamY->getType());
+	controlInformation.set("stream.z", streamZ->getType());
 	controlInformation.save(output);
 
 	// Fixme: Bitmap directly on istream/ostream??
@@ -192,8 +191,8 @@ bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 	bitmapY->save(*out);
 	bitmapZ->save(*out);
 
-	masterStream->save(output);
-	slaveStream->save(output);
+	streamY->save(output);
+	streamZ->save(output);
 }
 
 void BitmapTriples::load(std::istream &input, ControlInformation &controlInformation)
@@ -204,19 +203,19 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	std::string typeY = controlInformation.get("stream.y");
 	std::string typeZ = controlInformation.get("stream.z");
 
-	delete masterStream;
-	delete slaveStream;
+	delete streamY;
+	delete streamZ;
 
-	masterStream = StreamElements::getStream(typeY);
-	slaveStream = StreamElements::getStream(typeZ);
+	streamY = StreamElements::getStream(typeY);
+	streamZ = StreamElements::getStream(typeZ);
 
 	// Fixme: Bitmap directly on istream/ostream??
 	ifstream *in = dynamic_cast<ifstream *>(&input);
 	bitmapY = cds_static::BitSequence::load(*in);
 	bitmapZ = cds_static::BitSequence::load(*in);
 
-	masterStream->load(input);
-	slaveStream->load(input);
+	streamY->load(input);
+	streamZ->load(input);
 }
 
 unsigned int BitmapTriples::getNumberOfElements()
@@ -226,79 +225,143 @@ unsigned int BitmapTriples::getNumberOfElements()
 
 unsigned int BitmapTriples::size()
 {
-	return bitmapY->getSize()+bitmapZ->getSize()+masterStream->size()+slaveStream->size();
+	return bitmapY->getSize()+bitmapZ->getSize()+streamY->size()+streamZ->size();
 }
 
 /// ITERATOR
-BitmapTriplesIterator::BitmapTriplesIterator(BitmapTriples *pt, TripleID &pat)
-		: triples(pt), numTriple(0), masterPos(0), slavePos(0), nextY(0), nextZ(0), posY(0), posZ(0), pattern(pat) {
+BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, TripleID &pat) :
+		triples(trip),
+		pattern(pat),
+		adjY(trip->streamY, trip->bitmapY),
+		adjZ(trip->streamZ, trip->bitmapZ)
+{
+	// Convert pattern to local order.
+	UnorderedTriple *unorderedPattern = reinterpret_cast<UnorderedTriple *>(&pattern);
+	swapComponentOrder(unorderedPattern, SPO, triples->order);
+	patX = unorderedPattern->x;
+	patY = unorderedPattern->y;
+	patZ = unorderedPattern->z;
 
-	doFetch();
-}
+	try {
+		// Find position of the first matching pattern.
+		findFirst();
 
-BitmapTriplesIterator::~BitmapTriplesIterator() {
-
-}
-
-void BitmapTriplesIterator::readTriple() {
-	bool bitY, bitZ;
-
-	if(numTriple==0) {
-		x = 1;
-		y = triples->masterStream->get(masterPos++);
-		z = triples->slaveStream->get(slavePos++);
-
-		nextY = triples->bitmapY->selectNext1(nextY);
-		nextZ = triples->bitmapZ->selectNext1(nextZ);
-	} else {
-		z = triples->slaveStream->get(slavePos++);
-		posZ++;
-
-		if(posZ==nextZ) {
-			posZ++;
-			nextZ = triples->bitmapZ->selectNext1(posZ);
-
-			posY++;
-			y = triples->masterStream->get(masterPos++);
-
-			if(posY==nextY) {
-				posY++;
-				nextY = triples->bitmapY->selectNext1(posY);
-
-				x++;
-			}
+		// If first not found, go through all to find one.
+		if(!nextv.match(pattern)) {
+			doFetch();
 		}
+	} catch (char *ex) {
+		// If exception thrown, the selected triple could not be found.
+		hasNextv = false;
 	}
+}
 
-	//cout << numTriple << "/" << triples->numTriples << "  "<< x << ", " << y << ", " << z << endl;
-
+void BitmapTriplesSearchIterator::updateOutput() {
+	// Convert local order to SPO
 	nextv.setSubject(x);
 	nextv.setPredicate(y);
 	nextv.setObject(z);
-
 	UnorderedTriple *trip = reinterpret_cast<UnorderedTriple *>(&nextv);
 	swapComponentOrder(trip, triples->order, SPO);
 
-	numTriple++;
+	// Check termination condition.
+	hasNextv = (posY <= adjY.getSize()) && (posZ <= adjZ.getSize());
 
-	hasNextv = (numTriple<=triples->numTriples);
+	if(!goThroughAll) {
+		hasNextv = hasNextv && nextv.match(pattern);
+	}
 }
 
-void BitmapTriplesIterator::doFetch() {
+void BitmapTriplesSearchIterator::findFirst()
+{
+
+#if 0
+	cout << "AdjY: " << endl;
+	adjY.dump();
+	cout << "AdjZ: " << endl;
+	adjZ.dump();
+	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+#endif
+
+	goThroughAll = false;
+
+	if(patX!=0) {
+		// S X X
+		if(patY!=0) {
+			// S P X
+			posY = adjY.find(patX-1, patY);
+			if(patZ!=0) {
+				// S P O
+				posZ = adjZ.find(posY,patZ);
+			} else {
+				// S P ?
+				posZ = adjZ.find(posY);
+			}
+		} else {
+			// S ? X
+			goThroughAll = patZ!=0;
+
+			posY = adjY.find(patX-1);
+			posZ = adjZ.find(posY);
+		}
+		nextY = adjY.last(patX-1)+1;
+		nextZ = adjZ.last(posY)+1;
+		x = patX;
+	} else {
+		// ? X X
+		x = 1;
+		posY=0;
+		posZ=0;
+		nextY = adjY.last(0)+1;
+		nextZ = adjZ.last(0)+1;
+		goThroughAll = true;
+	}
+
+#if 0
+	cout << "Found pos: " << posY << ", " << posZ << endl;
+	cout << "Next: " << nextY << ", " << nextZ << endl;
+#endif
+
+	y = adjY.get(posY++);
+	z = adjZ.get(posZ++);
+
+	updateOutput();
+}
+
+void BitmapTriplesSearchIterator::readTriple() {
+    z = adjZ.get(posZ++);
+
+	if(posZ==nextZ+1) {
+		y = adjY.get(posY++);
+		nextZ = adjZ.find(posY);
+
+		if(posY==nextY+1) {
+			x++;
+			nextY = adjY.find(x);
+		}
+	}
+
+	updateOutput();
+}
+
+void BitmapTriplesSearchIterator::doFetch() {
 	do {
 		readTriple();
 	} while(hasNextv && (!nextv.isValid() || !nextv.match(pattern)));
 }
 
-bool BitmapTriplesIterator::hasNext() {
+bool BitmapTriplesSearchIterator::hasNext()
+{
 	return hasNextv;
 }
 
-TripleID BitmapTriplesIterator::next() {
+TripleID BitmapTriplesSearchIterator::next()
+{
 	TripleID ret = nextv;
+	//cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
 	doFetch();
+
 	return ret;
 }
-
 
 }
