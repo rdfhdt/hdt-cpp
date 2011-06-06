@@ -1,8 +1,8 @@
- HDT IT! prototype v.0.7 2010. All rights reserved.***
+ HDT IT! prototype v.0.8 2011. All rights reserved.***
     University of Valladolid (Spain)
 
     This is an experimental prototype. Contacting the authors:
-    Javier D. Fernandez & Miguel A. Martinez-Prieto
+    Javier D. Fernandez & Miguel A. Martinez-Prieto & Mario Arias
     ETIyT. Departamento de Informatica.
     Camino del Cementerio s/n
     47011 Valladolid (Spain)
@@ -12,47 +12,126 @@
 Overview
 =================
 
-HDT-It! 0.7 is a C++ tool performing this process. It is a free software / Open Source C tool that makes use of Raptor library to provide a set of parsers and serializers between HDT and the main RDF syntaxes. It also provides a basic querying interface
+HDT-It! 0.8 is a C++ tool that implements the W3C Submission (http://www.w3.org/Submission/2011/03/) of the RDF HDT (Header-Dictionary-Triples) binary format for publishing and exchanging RDF data at large scale. Its compact representation allows storing RDF in fewer space, providing at the same time direct access to the stored information. This is achieved by depicting the RDF graph in terms of three main components: Header, Dictionary and Triples. The Header includes extensible metadata required to describe the RDF data set and details of its internals. The Dictionary organizes the vocabulary of strings present in the RDF graph by assigning numerical IDs to each different string. The Triples component comprises the pure structure of the underlying graph in a compressed form.
 
-RDF HDT (Header-Dictionary-Triples) is a format for publishing and exchanging RDF data at large scale. RDF HDT represents RDF in a compact manner, natively supporting splitting huge RDF graphs into several chunks. It is designed to allow high compression rates. This is achieved by organizing and representing the RDF graph in terms of three main components: Header, Dictionary and Triples structure. The Header includes extensible metadata required to describe the RDF data set and its organization. The Dictionary organizes all vocabulary present in the RDF graph in a manner that permits rapid search and high levels of compression. The Triples component comprises the pure structure of the underlying graph in a compressed form.
+It provides two components:
+- C++ Library: Provides an API to use HDT files programmatically. It allows creating HDT files from RDF and converting HDT files back to RDF. It also provides a Search interface to find triples that match a specific triple pattern.
+- Command line tools. Allow to convert between RDF and HDT, and also perform searches against HDT files.
+
+Compiling
+=================
+Dependencies: *Libcds (http://libcds.recoded.cl/)
+	      *(Optional) Raptor RDF Parser Library v.1.4  (for more information see: http://http://librdf.org/raptor/)
+		Note: Without Raptor the library is only capable of importing and exporting RDF in N3 format.
+			
+Configuration: Edit the Makefile to set the LIBCDSPATH variable pointing to the directory where you extracted and compiled Libcds.
+
+Compile: Run `make` to launch the compile process.
 
 
-Basic Installation
+Command line tools
 =================
 
-   Briefly, the shell command 'make' in src folder should install this program.
+The tool provides three main command line tools:
 
-   Dependencies: Raptor RDF Parser Library v.1.4  (for more information see: http://http://librdf.org/raptor/)
-                 Libcds (included with the program)
+** The tool rdf2hdt converts an RDF file to HDT format. The format of the input file will be N3 by default, altough it can be set by using the "-f" flag. It is also possible to fine tune the internal format of the HDT file using a configfile. Several configfile examples are provided under the directory "presets" of the distributions. Also, the header, dictionary and triples components can be saved separately using the "-H -D -T" flags respectively.
 
-Execution
-=================
-
-./hdt [Options]
-        -p --parse <config_file>              Parse data set within the given <config_file>
-        -l --load <file>                      Load HDT structure into memory. Access triples console if serialize command is not given
-            -s --serialize [format]           Serialize the loaded HDT representation to a given format: ntriples (default), rdfxml, turtle, rdfxml-abbrev, rdfxml-xmp, atom, json-triples, json, dot
-            -o --output <file>                   Serialize output (output.rdf by default)
-        -h --help                             Show this help
-        -c --console                          Entering console mode
+$ rdf2hdt [options] <rdf input file> <hdt output file> 
+	-h			This help
+	-H	<header>	Save Header in separate file
+	-D	<dictionary>	Save Dictionary in separate file
+	-T	<triples>	Save Triples in separate file
+	-c	<configfile>	HDT Config options file
+	-o	<options>	HDT Additional options (option1:value1;option2:value2;...)
+	-f	<format>	Format of the RDF input (N3, Turtle, RDF-XML)
 
 
-Example
+** The tool hdt2rdf converts an HDT file back to RDF in the specified format. If not format specified, N3 will be used.
+
+$ hdt2rdf [options] <HDT input file> <RDF output file> 
+	-h			This help
+	-f	<format>	RDF Format of the output
+
+
+** The tool hdtSearch allows to search triple patterns against an HDT file. For example, to list all patterns, one can use the "? ? ?" query. To search all information about <myns:subject1> one can use "<myns:subject1> ? ?"
+
+$ hdtSearch [options] <hdtfile> 
+	-h			This help
+	-q	<query>	Launch query and exit.
+	-o	<output>	Save query output to file.
+
+
+
+Tool Usage example
 =================
 
 After installation, run:
 
-$> ./hdt -p ../test.config
+$ tools/rdf2hdt -c presets/bitmaplog data/test.n3 data/test.hdt
 # This creates the HDT representation
 
-$>./hdt -l ../examples/test
-#This loads the HDT representation and gives you access to the loading console
+$ tools/hdt2rdf data/test.hdt data/test.hdtexport.n3
+# This converts back the HDT to RDF.
+
+$ tools/hdtSearch data/test.hdt
+
+>> ? ? ?
+<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri4>
+<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri5>
+<http://example.org/uri1> <http://example.org/predicate1> "literal1"
+<http://example.org/uri1> <http://example.org/predicate1> "literalA"
+<http://example.org/uri1> <http://example.org/predicate1> "literalB"
+<http://example.org/uri1> <http://example.org/predicate1> "literalC"
+<http://example.org/uri1> <http://example.org/predicate2> <http://example.org/uri3>
+<http://example.org/uri1> <http://example.org/predicate2> <http://example.org/uriA3>
+<http://example.org/uri2> <http://example.org/predicate1> "literal1"
+9 results shown.
+
+>> <http://example.org/uri3> ? ?
+<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri4>
+<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri5>
+2 results shown.
+
+>> exit
 
 
 
-Limitations and BUGS
+USING THE LIBRARY
 =================
 
-03/12/2010:
-	- Final Huffman/PPM/GZIP... compression must be made manually over the HDT representation.  
-	- Escaping sequences problems in raptor serializer
+* Creating an HDT file.
+
+#include <fstream>
+#include <HDT.hpp>
+#include <HDTFactory.hpp>
+
+using namespace std;
+using namespace hdt;
+
+int main() {
+	HDTSpecification spec(configFile);
+	spec.setOptions(options);
+
+	HDT *hdt = HDTFactory::createHDT(spec);
+
+	// Read RDF
+	ifstream in(inputFile);
+	hdt->loadFromRDF(in, N3);
+
+	// Save HDT
+	hdt->saveToHDT(outHDT);
+
+	// Export back RDF
+	hdt->saveToRDF(outRDF, N3);
+
+	// Search pattern ("" means any)
+	IteratorTripleString *iterator = hdt->search("<http://example.org/uri3>","","");
+
+	while(it->hasNext()) {
+		TripleString triple = it->next();
+		cout << "Result: " << triple.getSubject() << ", " << triple.getPredicate() << ", " << triple.getObject() << endl;
+	}
+
+	delete iterator;
+	delete hdt;
+}
