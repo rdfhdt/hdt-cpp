@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#include <HDTVocabulary.hpp>
 #include <iostream>
 #include "UintStream.hpp"
 
@@ -68,7 +69,7 @@ unsigned int UintStream::size()
 
 std::string UintStream::getType()
 {
-	return "http://purl.org/HDT/hdt#streamInteger";
+	return HDTVocabulary::STREAM_TYPE_INTEGER;
 }
 
 }

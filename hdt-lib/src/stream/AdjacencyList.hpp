@@ -28,6 +28,8 @@ public:
 	size_t find(size_t x);
 	size_t find(size_t x, size_t y);
 
+	size_t findListIndex(size_t globalpos);
+
 	size_t last(size_t x);
 
 	size_t countListsX();

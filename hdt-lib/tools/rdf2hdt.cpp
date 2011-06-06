@@ -107,11 +107,14 @@ int main(int argc, char **argv) {
 	HDTSpecification spec(configFile);
 
 	spec.setOptions(options);
-	HDT *hdt = HDTFactory::createBasicHDT(spec);
+	HDT *hdt = HDTFactory::createHDT(spec);
 
 	try {
 		// Read RDF
 		ifstream in(inputFile.c_str());
+		if(!in.good()){
+			throw "Could not open input file.";
+		}
 		hdt->loadFromRDF(in, N3);
 		in.close();
 
@@ -119,6 +122,9 @@ int main(int argc, char **argv) {
 
 		// Save HDT
 		out.open(outputFile.c_str());
+		if(!out.good()){
+			throw "Could not open output file.";
+		}
 		hdt->saveToHDT(out);
 		out.close();
 
@@ -128,6 +134,9 @@ int main(int argc, char **argv) {
 		if(headerFile!="") {
 			Header &header = hdt->getHeader();
 			out.open(headerFile.c_str());
+			if(!out.good()){
+				throw "Could not open Header file.";
+			}
 			header.save(out, controlInformation);
 			out.close();
 		}
@@ -136,6 +145,9 @@ int main(int argc, char **argv) {
 		if(dictionaryFile!="") {
 			Dictionary &dictionary = hdt->getDictionary();
 			out.open(dictionaryFile.c_str());
+			if(!out.good()){
+				throw "Could not open Dictionary file.";
+			}
 			dictionary.save(out, controlInformation);
 			out.close();
 		}
@@ -144,6 +156,9 @@ int main(int argc, char **argv) {
 		if(triplesFile!=""){
 			Triples &triples = hdt->getTriples();
 			out.open(triplesFile.c_str());
+			if(!out.good()){
+				throw "Could not open Triples file.";
+			}
 			triples.save(out, controlInformation);
 			out.close();
 		}

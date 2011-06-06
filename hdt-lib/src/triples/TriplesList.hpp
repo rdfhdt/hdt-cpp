@@ -110,7 +110,7 @@ class TriplesList : public ModifiableTriples {
 		 * @param header
 		 * @return
 		 */
-		void populateHeader(Header &header);
+		void populateHeader(Header &header, string rootNode);
 
 		/**
 		 * TODO Define and decide on return type (bool?)

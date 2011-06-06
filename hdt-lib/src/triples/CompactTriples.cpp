@@ -5,6 +5,8 @@
  *      Author: mck
  */
 
+#include <HDTVocabulary.hpp>
+
 #include "CompactTriples.hpp"
 #include "TripleOrderConvert.hpp"
 
@@ -12,8 +14,8 @@ namespace hdt {
 
 
 CompactTriples::CompactTriples() : numTriples(0), order(SPO) {
-	masterStream = StreamElements::getStream(spec.get("stream.y"));
-	slaveStream = StreamElements::getStream(spec.get("stream.z"));
+	streamY = StreamElements::getStream(spec.get("stream.y"));
+	streamZ = StreamElements::getStream(spec.get("stream.z"));
 }
 
 CompactTriples::CompactTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
@@ -22,13 +24,13 @@ CompactTriples::CompactTriples(HDTSpecification &specification) : numTriples(0),
 	if(order==Unknown)
 		order = SPO;
 
-	masterStream = StreamElements::getStream(spec.get("stream.y"));
-	slaveStream = StreamElements::getStream(spec.get("stream.z"));
+	streamY = StreamElements::getStream(spec.get("stream.y"));
+	streamZ = StreamElements::getStream(spec.get("stream.z"));
 }
 
 CompactTriples::~CompactTriples() {
-	delete masterStream;
-	delete slaveStream;
+	delete streamY;
+	delete streamZ;
 }
 
 
@@ -105,8 +107,8 @@ void CompactTriples::load(ModifiableTriples &triples) {
 	VectorIterator itY(vectorY);
 	VectorIterator itZ(vectorZ);
 
-	masterStream->add(itY);
-	slaveStream->add(itZ);
+	streamY->add(itY);
+	streamZ->add(itZ);
 
 #if 0
 	// Debug Adjacency Lists
@@ -125,8 +127,12 @@ void CompactTriples::load(ModifiableTriples &triples) {
 
 }
 
-void CompactTriples::populateHeader(Header &header) {
-
+void CompactTriples::populateHeader(Header &header, string rootNode) {
+	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_COMPACT);
+	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
 }
 
 IteratorTripleID *CompactTriples::search(TripleID & pattern)
@@ -138,20 +144,20 @@ bool CompactTriples::save(std::ostream & output, ControlInformation &controlInfo
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesCompact");
+	controlInformation.set("codification", HDTVocabulary::TRIPLES_TYPE_COMPACT);
 	controlInformation.setUint("triples.component.order", order);
-	controlInformation.set("stream.y", masterStream->getType());
-	controlInformation.set("stream.z", slaveStream->getType());
+	controlInformation.set("stream.y", streamY->getType());
+	controlInformation.set("stream.z", streamZ->getType());
 	controlInformation.save(output);
 
-	masterStream->save(output);
-	slaveStream->save(output);
+	streamY->save(output);
+	streamZ->save(output);
 }
 
 void CompactTriples::load(std::istream &input, ControlInformation &controlInformation)
 {
 	std::string codification = controlInformation.get("codification");
-	if(codification != "http://purl.org/HDT/hdt#triplesCompact") {
+	if(codification != HDTVocabulary::TRIPLES_TYPE_COMPACT) {
 		throw "Unexpected CompactTriples format";
 	}
 
@@ -161,14 +167,14 @@ void CompactTriples::load(std::istream &input, ControlInformation &controlInform
 	std::string typeY = controlInformation.get("stream.y");
 	std::string typeZ = controlInformation.get("stream.z");
 
-	delete masterStream;
-	delete slaveStream;
+	delete streamY;
+	delete streamZ;
 
-	masterStream = StreamElements::getStream(typeY);
-	slaveStream = StreamElements::getStream(typeZ);
+	streamY = StreamElements::getStream(typeY);
+	streamZ = StreamElements::getStream(typeZ);
 
-	masterStream->load(input);
-	slaveStream->load(input);
+	streamY->load(input);
+	streamZ->load(input);
 }
 
 unsigned int CompactTriples::getNumberOfElements()
@@ -178,7 +184,7 @@ unsigned int CompactTriples::getNumberOfElements()
 
 unsigned int CompactTriples::size()
 {
-	return masterStream->size()+slaveStream->size();
+	return streamY->size()+streamZ->size();
 }
 
 /// ITERATOR
@@ -195,18 +201,18 @@ CompactTriplesIterator::~CompactTriplesIterator() {
 void CompactTriplesIterator::readTriple() {
 	if(numTriple==0) {
 		x = 1;
-		y = triples->masterStream->get(masterPos++);
-		z = triples->slaveStream->get(slavePos++);
+		y = triples->streamY->get(masterPos++);
+		z = triples->streamZ->get(slavePos++);
 	} else {
-		z = triples->slaveStream->get(slavePos++);
+		z = triples->streamZ->get(slavePos++);
 
 		if(z==0) {
-			z = triples->slaveStream->get(slavePos++);
+			z = triples->streamZ->get(slavePos++);
 
-			y = triples->masterStream->get(masterPos++);
+			y = triples->streamY->get(masterPos++);
 
 			if(y==0) {
-				y = triples->masterStream->get(masterPos++);
+				y = triples->streamY->get(masterPos++);
 				x++;
 			}
 		}

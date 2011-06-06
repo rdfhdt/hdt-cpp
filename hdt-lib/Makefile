@@ -1,5 +1,5 @@
 
-LIBCDSPATH = ../libcds
+LIBCDSPATH = ../libcds-v1.0.7
 
 CPP=g++
 CPPFLAGS=

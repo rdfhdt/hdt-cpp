@@ -93,7 +93,7 @@ public:
 	unsigned int getMaxPredicateID();
 	unsigned int getMaxObjectID();
 
-	void populateHeader(Header &header);
+	void populateHeader(Header &header, string rootNode);
 	bool save(std::ostream &output, ControlInformation &ci);
 	void load(std::istream &input, ControlInformation &ci);
 

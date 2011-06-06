@@ -218,6 +218,17 @@ public:
 	bool isValid() {
 		return !(this->subject == 0 || this->predicate == 0 || this->object == 0);
 	}
+
+	/**
+	 * Get
+	 */
+	std::string getPatternString(){
+		std::string tmp;
+		tmp.append(subject==0 ? "?" : "S");
+		tmp.append(predicate==0 ? "?" : "P");
+		tmp.append(object==0 ? "?" : "O");
+		return tmp;
+	}
 };
 
 

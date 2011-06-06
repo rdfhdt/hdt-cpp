@@ -116,7 +116,7 @@ public:
 	 * @param header
 	 * @return
 	 */
-	virtual void populateHeader(Header &header)=0;
+	virtual void populateHeader(Header &header, string rootNode)=0;
 
 }; // Triples{}
 

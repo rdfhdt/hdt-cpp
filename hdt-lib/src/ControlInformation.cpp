@@ -14,6 +14,7 @@ namespace hdt {
 
 #define TRIPLES_BIT 1
 #define DICTIONARY_BIT 2
+#define HEADER_BIT 4
 
 ControlInformation::ControlInformation() : version(0), components(0) {
 	// TODO Auto-generated constructor stub
@@ -138,6 +139,20 @@ void ControlInformation::setDictionary(bool dict)
 bool ControlInformation::getDictionary()
 {
 	return this->components & DICTIONARY_BIT;
+}
+
+void ControlInformation::setHeader(bool dict)
+{
+	if(dict) {
+		this->components |= HEADER_BIT;
+	} else {
+		this->components &= ~HEADER_BIT;
+	}
+}
+
+bool ControlInformation::getHeader()
+{
+	return this->components & HEADER_BIT;
 }
 
 }

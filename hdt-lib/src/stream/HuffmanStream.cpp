@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#include <HDTVocabulary.hpp>
 #include "HuffmanStream.hpp"
 
 namespace hdt {
@@ -116,7 +117,7 @@ unsigned int HuffmanStream::size()
 
 std::string HuffmanStream::getType()
 {
-	return "http://purl.org/HDT/hdt#streamHuffman";
+	return HDTVocabulary::STREAM_TYPE_HUFFMAN;
 }
 
 }

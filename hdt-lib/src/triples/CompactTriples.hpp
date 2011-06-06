@@ -19,7 +19,7 @@ class CompactTriples : public Triples  {
 
 private:
 	HDTSpecification spec;
-	StreamElements *masterStream, *slaveStream;
+	StreamElements *streamY, *streamZ;
 	unsigned int numTriples;
 	TripleComponentOrder order;
 
@@ -71,7 +71,7 @@ public:
 
 	void load(ModifiableTriples &triples);
 
-	void populateHeader(Header &header);
+	void populateHeader(Header &header, string rootNode);
 
 	friend class CompactTriplesIterator;
 };

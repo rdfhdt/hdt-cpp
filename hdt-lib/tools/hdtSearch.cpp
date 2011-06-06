@@ -59,64 +59,71 @@ int main(int argc, char **argv) {
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
-	ifstream in(inputFile.c_str());
-	hdt->loadFromHDT(in);
-	in.close();
+	try {
+		ifstream in(inputFile.c_str());
+		hdt->loadFromHDT(in);
+		in.close();
 
-	if(query!="") {
+		if(query!="") {
 
-		ostream *out;
-		ofstream outF;
+			ostream *out;
+			ofstream outF;
 
-		if(outputFile!="") {
-			outF.open(outputFile.c_str());
-			out = &outF;
-		} else {
-			out = &cout;
-		}
+			if(outputFile!="") {
+				outF.open(outputFile.c_str());
+				out = &outF;
+			} else {
+				out = &cout;
+			}
 
-		TripleString tripleString;
-		tripleString.read(query);
-
-		IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
-
-		while(it->hasNext()) {
-			TripleString ts = it->next();
-			*out << ts << endl;
-		}
-		delete it;
-
-		if(outputFile!="") {
-			outF.close();
-		}
-
-	} else {
-		TripleString tripleString;
-		char line[1024*10];
-
-		cout << ">> ";
-		while(cin.getline(line, 1024*10)) {
-
-			tripleString.read(line);
-			cout << "Query: " << tripleString << endl;
+			TripleString tripleString;
+			tripleString.read(query);
 
 			IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
 
-			unsigned int numTriples = 0;
 			while(it->hasNext()) {
 				TripleString ts = it->next();
-
-				cout << ts << endl;
-				numTriples++;
+				*out << ts << endl;
 			}
 			delete it;
-			cout << numTriples << " results shown." << endl;
+
+			if(outputFile!="") {
+				outF.close();
+			}
+
+		} else {
+			TripleString tripleString;
+			char line[1024*10];
 
 			cout << ">> ";
-		}
-	}
+			while(cin.getline(line, 1024*10)) {
+				if(line==""||line=="exit"||line=="quit") {
+					break;
+				}
 
-	delete hdt;
+				tripleString.read(line);
+				cout << "Query: " << tripleString << endl;
+
+				IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
+
+				unsigned int numTriples = 0;
+				while(it->hasNext()) {
+					TripleString ts = it->next();
+
+					cout << ts << endl;
+					numTriples++;
+				}
+				delete it;
+				cout << numTriples << " results shown." << endl;
+
+				cout << ">> ";
+			}
+		}
+
+		delete hdt;
+	} catch (char *e) {
+		cout << "ERROR: " << e << endl;
+	}
 }
 
 

@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 	std::string outputFileName = "data/test.n3.T";
 
 	HDTSpecification hdtspec;
-	HDT *hdt = HDTFactory::createBasicHDT(hdtspec);
+	HDT *hdt = HDTFactory::createHDT(hdtspec);
 
 	ifstream in(inputFileName.c_str());
 	hdt->loadFromRDF(in, N3);

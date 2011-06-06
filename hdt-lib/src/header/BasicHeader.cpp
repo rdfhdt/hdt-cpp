@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#include <HDTVocabulary.hpp>
 #include <HDTFactory.hpp>
 
 #include "BasicHeader.hpp"
@@ -34,7 +35,7 @@ BasicHeader::~BasicHeader() {
 void BasicHeader::load(std::istream & input, ControlInformation &controlInformation)
 {
 	std::string codification = controlInformation.get("codification");
-	if(codification != "http://purl.org/HDT/hdt#headerPlain") {
+	if(codification != HDTVocabulary::HEADER_PLAIN) {
 		throw "Unexpected BasicHeader format";
 	}
 
@@ -44,7 +45,7 @@ void BasicHeader::load(std::istream & input, ControlInformation &controlInformat
 bool BasicHeader::save(std::ostream & output, ControlInformation &controlInformation)
 {
 	controlInformation.clear();
-	controlInformation.set("codification", "http://purl.org/HDT/hdt#headerPlain");
+	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);
 	controlInformation.save(output);
 	hdt->saveToRDF(output, NTRIPLE);
 	output << endl;

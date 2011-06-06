@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#include <HDTVocabulary.hpp>
 #include "LogStream.hpp"
 
 namespace hdt {
@@ -89,7 +90,7 @@ unsigned int LogStream::size()
 
 std::string LogStream::getType()
 {
-	return "http://purl.org/HDT/hdt#streamLog";
+	return HDTVocabulary::STREAM_TYPE_LOG;
 }
 
 }

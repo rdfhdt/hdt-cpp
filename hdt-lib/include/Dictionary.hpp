@@ -123,7 +123,7 @@ public:
 	 * Add to the supplied header all relevant information about the current Dictionary
 	 * @param header
 	 */
-	virtual void populateHeader(Header &header)=0;
+	virtual void populateHeader(Header &header, string rootNode)=0;
 
 	/**
 	 * Save the current dictionary to a stream, using the format from the standard.

@@ -30,9 +30,11 @@ size_t AdjacencyList::find(size_t x) {
 size_t AdjacencyList::find(size_t x, size_t y) {
 	size_t begin = find(x);
 	size_t end = last(x);
-	if(end-begin == 0)
-		return begin;
 	return binSearch(y, begin, end);
+}
+
+size_t AdjacencyList::findListIndex(size_t globalpos) {
+	return bitmap->rank1(globalpos);
 }
 
 size_t AdjacencyList::last(size_t x) {

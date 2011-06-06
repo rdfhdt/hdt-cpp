@@ -6,10 +6,13 @@
  */
 
 #include <HDT.hpp>
-#include "BasicHDT.hpp"
+#include <HDTVocabulary.hpp>
 #include <HDTFactory.hpp>
 
+#include "BasicHDT.hpp"
+
 #include "header/BasicHeader.hpp"
+#include "header/PlainHeader.hpp"
 
 #include "dictionary/PlainDictionary.hpp"
 
@@ -18,6 +21,7 @@
 #include "triples/PlainTriples.hpp"
 #include "triples/CompactTriples.hpp"
 #include "triples/BitmapTriples.hpp"
+#include "triples/FOQTriples.hpp"
 
 
 using namespace hdt;
@@ -31,9 +35,15 @@ HDT *HDTFactory::createDefaultHDT()
 	return h;
 }
 
-HDT *HDTFactory::createBasicHDT(HDTSpecification &spec)
+HDT *HDTFactory::createHDT(HDTSpecification &spec)
 {
 	BasicHDT *h = new BasicHDT(spec);
+	return h;
+}
+
+HDT *HDTFactory::createDefaultModifiableHDT()
+{
+	BasicModifiableHDT *h = new BasicModifiableHDT();
 	return h;
 }
 
@@ -44,66 +54,52 @@ ModifiableHDT *HDTFactory::createModifiableHDT(HDTSpecification &spec)
 }
 
 Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
-
-#if 1
 	if(!controlInformation.getTriples())
 		throw "Trying to get Triples from Non-Triples section";
-#endif
 
 	std::string triplesType = controlInformation.get("codification");
 
-	/// FIXME: SELECT
-
-	if(triplesType=="http://purl.org/HDT/hdt#triplesBitmap") {
+	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		return new BitmapTriples();
-	} else if(triplesType=="http://purl.org/HDT/hdt#triplesCompact") {
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_COMPACT) {
 		return new CompactTriples();
-	} else if(triplesType=="http://purl.org/HDT/hdt#triplesPlain") {
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
 		return new PlainTriples();
-	} else if(triplesType=="http://purl.org/HDT/hdt#triplesList") {
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
 		return new TriplesList();
-	} else if(triplesType=="http://purl.org/HDT/hdt#triplesListDisk") {
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		return new TripleListDisk();
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_FOQ) {
+		return new FOQTriples();
 	}
 
 	throw "Triples Implementation not available";
 }
 
 Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
-
-#if 1
 	if(!controlInformation.getDictionary())
 		throw "Trying to get Dictionary from Non-Dictionary section";
-#endif
 
 	string type = controlInformation.get("codification");
 
-	if(type=="http://purl.org/HDT/hdt#dictionaryPlain") {
+	if(type==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		return new PlainDictionary();
 	}
-	/// else...
-	/// else...
 
 	throw "Dictionary Implementation not available";
 }
 
 Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
-
-#if 0
 	if(!controlInformation.getHeader())
 		throw "Trying to get Dictionary from Non-Dictionary section";
-#endif
 
 	string type = controlInformation.get("codification");
 
-	if(type=="http://purl.org/HDT/hdt#headerPlain") {
-		return new BasicHeader();
+	if(type==HDTVocabulary::HEADER_PLAIN) {
+		return new PlainHeader();
 	}
-	/// else...
-	/// else...
 
-	// FIXME: No header
-	//throw "Header Implementation not available";
+	throw "Header Implementation not available";
 }
 
 }

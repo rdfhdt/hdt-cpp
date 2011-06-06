@@ -1,48 +1,27 @@
 /*
- * UintStream.hpp
+ * WaveletStream.hpp
  *
- *  Created on: 10/05/2011
+ *  Created on: 17/05/2011
  *      Author: mck
  */
 
-#ifndef UINTSTREAM_HPP_
-#define UINTSTREAM_HPP_
+#ifndef WAVELETSTREAM_HPP_
+#define WAVELETSTREAM_HPP_
 
 #include "StreamElements.hpp"
 
+#include <WaveletTreeNoptrs.h>
+
 namespace hdt {
 
+class WaveletStream : public StreamElements {
 
-#if 0
-// Example of Iterator using c++ vector
-class IteratorUintVector : public IteratorUint{
 private:
-	std::triples<unsigned int> &triples;
-	unsigned int idx;
+	cds_static::Sequence *sequence;
 
 public:
-	IteratorUintVector(std::triples<unsigned int> &v) : triples(v), idx(0) { }
-
-	virtual ~IteratorUintVector() {	}
-
-	virtual bool hasNext() {
-		return idx<triples.size();
-	}
-
-	virtual unsigned int next() {
-		return triples[idx++];
-	}
-};
-#endif
-
-
-class UintStream : public StreamElements {
-private:
-	std::vector<unsigned int> vector;
-
-public:
-	UintStream();
-	virtual ~UintStream();
+	WaveletStream();
+	virtual ~WaveletStream();
 
 	/**
 	 * Adds elementss to the stream
@@ -88,8 +67,11 @@ public:
 	void load(std::istream &input);
 
 	std::string getType();
+
+	size_t rank(unsigned int symbol, size_t pos);
+	size_t select(unsigned int symbol, size_t pos);
 };
 
 }
 
-#endif /* UINTSTREAM_HPP_ */
+#endif /* WAVELETSTREAM_HPP_ */

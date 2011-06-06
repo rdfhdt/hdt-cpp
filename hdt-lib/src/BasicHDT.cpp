@@ -36,11 +36,13 @@
 
 #include <string>
 
+#include <HDTVocabulary.hpp>
 #include <HDTFactory.hpp>
 
 #include "BasicHDT.hpp"
 #include "header/BasicHeader.hpp"
 #include "header/EmptyHeader.hpp"
+#include "header/PlainHeader.hpp"
 #include "dictionary/PlainDictionary.hpp"
 
 #include "triples/TriplesList.hpp"
@@ -48,6 +50,7 @@
 #include "triples/PlainTriples.hpp"
 #include "triples/CompactTriples.hpp"
 #include "triples/BitmapTriples.hpp"
+#include "triples/FOQTriples.hpp"
 #include "triples/TripleOrderConvert.hpp"
 
 #include "ControlInformation.hpp"
@@ -85,7 +88,7 @@ void BasicHDT::createComponents() {
 		header = new BasicHeader(spec);
 	}
 #else
-	header = new EmptyHeader();
+	header = new PlainHeader();
 #endif
 
 	// DICTIONARY
@@ -94,16 +97,18 @@ void BasicHDT::createComponents() {
 
 	// TRIPLES
 	std::string triplesType = spec.get("triples.type");
-	if(triplesType=="http://purl.org/HDT/hdt#triplesBitmap") {
+	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		triples = new BitmapTriples(spec);
-	} else if(triplesType=="http://purl.org/HDT/hdt#triplesCompact") {
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_COMPACT) {
 		triples = new CompactTriples(spec);
-	} else if(triplesType=="http://purl.org/HDT/hdt#triplesPlain") {
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
 		triples = new PlainTriples(spec);
-	} else if(triplesType=="http://purl.org/HDT/hdt#triplesList") {
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
 		triples = new TriplesList(spec);
-	} else if(triplesType=="http://purl.org/HDT/hdt#triplesListDisk") {
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		triples = new TripleListDisk();
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_FOQ) {
+		triples = new FOQTriples();
 	} else {
 		triples = new BitmapTriples(spec);
 	}
@@ -170,7 +175,7 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 		dictionary->insert(ts.getObject(), OBJECT);
 	}
 	dictionary->stopProcessing();
-	dictionary->populateHeader(*header);
+	dictionary->populateHeader(*header, "http://purl.org/hdt/dictionary"); // FIXME: Assing appropiate rootnode.
 	cout << dictionary->numberOfElements() << " entries added in " << st << endl << endl;
 
 	// Generate Triples
@@ -204,7 +209,7 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 	triples->load(*triplesList);
 	delete triplesList;
 
-	triples->populateHeader(*header);
+	triples->populateHeader(*header, "http://purl.org/hdt/triples");
 	cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
@@ -220,16 +225,16 @@ void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
 
 void BasicHDT::loadFromHDT(std::istream & input)
 {
-	//delete header;
+	delete header;
 	delete dictionary;
 	delete triples;
 
 	ControlInformation controlInformation;
 
 	// Load header
-	//controlInformation.load(input);
-	//header = HDTFactory::readHeader(controlInformation);
-	//header->load(input, controlInformation);
+	controlInformation.load(input);
+	header = HDTFactory::readHeader(controlInformation);
+	header->load(input, controlInformation);
 
 	//Load Dictionary.
 	controlInformation.clear();
@@ -251,8 +256,8 @@ void BasicHDT::saveToHDT(std::ostream & output)
 
 	cout << "Saving header" << endl;
 	st.reset();
-	//controlInformation.setHeader(true);
-	//header->save(output, controlInformation);
+	controlInformation.setHeader(true);
+	header->save(output, controlInformation);
 	cout << "Header saved in " << st << endl;
 
 	cout << "Saving dictionary" << endl;
@@ -359,7 +364,7 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 		dictionary->insert(ts.getObject(), OBJECT);
 	}
 	dictionary->stopProcessing();
-	dictionary->populateHeader(*header);
+	dictionary->populateHeader(*header, "http://purl.org/hdt/dictionary");
 	cout << dictionary->numberOfElements() << " entries added in " << st << endl;
 
 	// Generate Triples
@@ -378,7 +383,7 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 		triples->insert(ti);
 	}
 	triples->stopProcessing();
-	triples->populateHeader(*header);
+	triples->populateHeader(*header, "http://purl.org/hdt/triples");
 	cout << triples->getNumberOfElements() << " triples added in " << st << endl;
 }
 

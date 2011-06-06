@@ -33,6 +33,8 @@
  *
  */
 
+#include <HDTVocabulary.hpp>
+
 #include "TriplesList.hpp"
 #include "TriplesComparator.hpp"
 #include "../util/StopWatch.hpp"
@@ -42,11 +44,11 @@
 
 namespace hdt {
 
-TriplesList::TriplesList() : numValidTriples(0)
+TriplesList::TriplesList() : numValidTriples(0), order(Unknown)
 {
 }
 
-TriplesList::TriplesList(HDTSpecification &specification) : numValidTriples(0), spec(specification) {
+TriplesList::TriplesList(HDTSpecification &specification) : numValidTriples(0), spec(specification), order(Unknown) {
 }
 
 TriplesList::~TriplesList()
@@ -79,7 +81,7 @@ bool TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", numValidTriples);
-	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesList");
+	controlInformation.set("codification", HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST);
 	controlInformation.setUint("triples.component.order", order);
 	controlInformation.save(output);
 
@@ -126,19 +128,19 @@ void TriplesList::load(ModifiableTriples &input)
 	delete it;
 }
 
-void TriplesList::populateHeader(Header &header)
+void TriplesList::populateHeader(Header &header, string rootNode)
 {
-	// TODO
+	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST);
+	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
 }
 
 void TriplesList::startProcessing()
 {
-	// TODO
 }
 
 void TriplesList::stopProcessing()
 {
-
 }
 
 
@@ -147,6 +149,7 @@ void TriplesList::stopProcessing()
 bool TriplesList::insert(TripleID &triple)
 {
 	// Add the triple
+	order = Unknown;
 	arrayOfTriples.push_back(triple);
 	numValidTriples++;
 
@@ -159,6 +162,7 @@ bool TriplesList::insert(IteratorTripleID *triples)
 		arrayOfTriples.push_back(triples->next());
 		numValidTriples++;
 	}
+	order = Unknown;
 
 	return true;
 }
@@ -201,7 +205,11 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 
 void TriplesList::sort(TripleComponentOrder order)
 {
-	std::sort(this->arrayOfTriples.begin(), this->arrayOfTriples.end(), TriplesComparator(order));
+	if(this->order != order) {
+		cout << "TriplesList::sort: " << order << endl;
+		std::sort(arrayOfTriples.begin(), arrayOfTriples.end(), TriplesComparator(order));
+		this->order = order;
+	}
 }
 
 
@@ -222,23 +230,23 @@ void TriplesList::removeDuplicates() {
 	if(arrayOfTriples.size()<=1)
 		return;
 
-	TripleID *previous = &arrayOfTriples[0];
-	unsigned int numduplicates = 0;
+	if(order==Unknown){
+		throw "Cannot remove duplicates on unordered triples";
+	}
+
+	unsigned int j = 0;
 	StopWatch st;
 
 	for(unsigned int i=1; i<arrayOfTriples.size(); i++) {
-		TripleID *tid = &arrayOfTriples[i];
-		if(*previous == *tid) {
-			//cout << "Compare: " << previous << " "<<*previous << endl << " New: " << tid << " "<<*tid << endl;
-			tid->clear();
-			numValidTriples--;
-			numduplicates++;
-		} else {
-			previous = tid;
+		if(arrayOfTriples[i] != arrayOfTriples[j]) {
+			j++;
+			arrayOfTriples[j] = arrayOfTriples[i];
 		}
 	}
 
-	cout << "Removed "<< numduplicates << " duplicates in " << st << endl;
+	cout << "Removed "<< arrayOfTriples.size()-j-1 << " duplicates in " << st << endl;
+
+	arrayOfTriples.resize(j+1);
 }
 
 

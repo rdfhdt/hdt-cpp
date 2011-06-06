@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 
 	// Set HDT specifications
 	HDTSpecification hdtspec;
-	HDT *hdt = HDTFactory::createBasicHDT(hdtspec);
+	HDT *hdt = HDTFactory::createHDT(hdtspec);
 
 	// Load data from file
 	ifstream in(inputFileName.c_str());

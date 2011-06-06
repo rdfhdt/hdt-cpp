@@ -23,7 +23,7 @@ private:
 	ControlInformation controlInformation;
 	HDTSpecification spec;
 	TripleComponentOrder order;
-	StreamElements *subjects, *predicates, *objects;
+	StreamElements *streamX, *streamY, *streamZ;
 
 	TripleID getTripleID(unsigned int pos);
 
@@ -75,7 +75,7 @@ public:
 
 	void load(ModifiableTriples &triples);
 
-	void populateHeader(Header &header);
+	void populateHeader(Header &header, string rootNode);
 
 	friend class PlainTriplesIterator;
 };

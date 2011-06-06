@@ -83,9 +83,14 @@ public:
 	/** Set the HDT version */
 	void setVersion(unsigned short version);
 
-	/** Get whether this ControlInformation represents a dictionary */
+	/** Get whether this ControlInformation represents a Header */
+	bool getHeader();
+	/** Set whether this ControlInformation represents a Header */
+	void setHeader(bool dict);
+
+	/** Get whether this ControlInformation represents a Dictionary */
 	bool getDictionary();
-	/** Set whether this ControlInformation represents a dictionary */
+	/** Set whether this ControlInformation represents a Dictionary */
 	void setDictionary(bool dict);
 
 	/** Get whether this ControlInformation represents Triples */

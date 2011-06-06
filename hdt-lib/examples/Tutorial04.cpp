@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 	string specFile("data/config.properties");
 
 	HDTSpecification spec(specFile);
-	HDT *hdt = HDTFactory::createBasicHDT(spec);
+	HDT *hdt = HDTFactory::createHDT(spec);
 
 	ifstream in(inputFileName.c_str());
 

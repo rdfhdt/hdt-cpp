@@ -10,6 +10,8 @@
 #include "PlainDictionary.hpp"
 #include "../util/Histogram.h"
 
+#include <HDTVocabulary.hpp>
+
 namespace hdt {
 
 /* DICTIONARY ENTRY */
@@ -256,7 +258,7 @@ string intToStr(int val) {
 
 bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation)
 {
-	controlInformation.set("codification", "http://purl.org/HDT/hdt#dictionaryPlain");
+	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 	controlInformation.set("format", "text/plain");
 	controlInformation.setUint("$elements", numberOfElements());
 
@@ -660,15 +662,17 @@ void PlainDictionary::updateID(unsigned int oldid, unsigned int newid, Dictionar
 	}
 }
 
-void PlainDictionary::populateHeader(Header & header)
+void PlainDictionary::populateHeader(Header &header, string rootNode)
 {
-	string subject = "<http://www.rdfhdt.org/hdtfile>";
-	string predicate = "<http://www.rdfhdt.org/dictionaryType>";
-	string object = "http://purl.org/HDT/hdt#dictionaryPlain";
-
-	TripleString ts(subject, predicate, object);
-
-	header.insert(ts);
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, HDTVocabulary::DICTIONARY_TYPE_PLAIN);
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSUBJECTS, getNsubjects());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMPREDICATES, getNpredicates());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMOBJECTS, getNobjects());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSHARED, getSsubobj());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXSUBJECTID, getMaxSubjectID());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXPREDICATEID, getMaxPredicateID());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXOBJECTTID, getMaxObjectID());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAPPING, getMapping());
 }
 
 void PlainDictionary::dumpSizes(ostream &out) {

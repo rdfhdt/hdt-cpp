@@ -7,6 +7,8 @@
 
 #include "BitmapTriples.hpp"
 
+#include <HDTVocabulary.hpp>
+
 namespace hdt {
 
 
@@ -41,6 +43,8 @@ float BitmapTriples::cost(TripleID & triple)
 
 
 void BitmapTriples::load(ModifiableTriples &triples) {
+	triples.sort(order);
+
 	TripleID all(0,0,0);
 
 	IteratorTripleID *it = triples.search(all);
@@ -167,20 +171,30 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 	bitmapZ = new cds_static::BitSequenceRG(*bsz, 20);
 }
 
-void BitmapTriples::populateHeader(Header &header) {
-
+void BitmapTriples::populateHeader(Header &header, string rootNode) {
+	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_BITMAP);
+	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
 }
 
 IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 {
-	return new BitmapTriplesSearchIterator(this, pattern);
+	std::string patternString = pattern.getPatternString();
+
+	if(order==SPO && patternString=="?P?" && streamY->getType() == HDTVocabulary::STREAM_TYPE_WAVELET) {
+		return new MiddleWaveletIterator(this, pattern);
+	} else {
+		return new BitmapTriplesSearchIterator(this, pattern);
+	}
 }
 
 bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInformation)
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesBitmap");
+	controlInformation.set("codification", HDTVocabulary::TRIPLES_TYPE_BITMAP);
 	controlInformation.setUint("componentOrder", order);
 	controlInformation.set("stream.y", streamY->getType());
 	controlInformation.set("stream.z", streamZ->getType());
@@ -358,10 +372,155 @@ bool BitmapTriplesSearchIterator::hasNext()
 TripleID BitmapTriplesSearchIterator::next()
 {
 	TripleID ret = nextv;
-	//cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
+	cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
 	doFetch();
 
 	return ret;
 }
+
+
+
+
+
+
+
+
+
+MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat) :
+		triples(trip),
+		pattern(pat),
+		adjY(trip->streamY, trip->bitmapY),
+		adjZ(trip->streamZ, trip->bitmapZ),
+		predicateOcurrence(1),
+		wavelet(reinterpret_cast<WaveletStream *>(trip->streamY))
+{
+	// Convert pattern to local order.
+	UnorderedTriple *unorderedPattern = reinterpret_cast<UnorderedTriple *>(&pattern);
+	swapComponentOrder(unorderedPattern, SPO, triples->order);
+	patX = unorderedPattern->x;
+	patY = unorderedPattern->y;
+	patZ = unorderedPattern->z;
+
+	try {
+		// Find position of the first matching pattern.
+		findFirst();
+
+		// If first not found, go through all to find one.
+		if(!nextv.match(pattern)) {
+			doFetch();
+		}
+	} catch (char *ex) {
+		// If exception thrown, the selected triple could not be found.
+		hasNextv = false;
+	}
+}
+
+void MiddleWaveletIterator::updateOutput() {
+	// Convert local order to SPO
+	nextv.setSubject(x);
+	nextv.setPredicate(y);
+	nextv.setObject(z);
+	UnorderedTriple *trip = reinterpret_cast<UnorderedTriple *>(&nextv);
+	swapComponentOrder(trip, triples->order, SPO);
+
+	// Check termination condition.
+	hasNextv = (posY <= adjY.getSize()) && (posZ <= adjZ.getSize());
+
+	if(predicateOcurrence==numOcurrences && posZ == nextZ-1) {
+		hasNextv = false;
+	}
+}
+
+void MiddleWaveletIterator::findFirst()
+{
+
+#if 1
+	cout << "AdjY: " << endl;
+	adjY.dump();
+	cout << "AdjZ: " << endl;
+	adjZ.dump();
+	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+#endif
+
+	numOcurrences = wavelet->rank(patY, wavelet->getNumberOfElements());
+
+	cout << "Predicate ocurs " << numOcurrences << " times" << endl;
+
+	for(unsigned int i=1;i<=numOcurrences;i++){
+		unsigned int pos = wavelet->select(patY, i);
+		cout << "Occurrence " << i << " => " << pos << " Value: " << adjY.get(pos) << endl;
+
+		unsigned int tx = adjY.findListIndex(i);
+		unsigned int ty = adjY.get(pos);
+
+		unsigned int iniz = adjY.find(pos);
+		unsigned int endz = iniz+adjY.countItemsY(pos);
+
+		cout << tx << ", " << ty << "[" << iniz << "," << endz << "]" << endl;
+		for(unsigned int j=iniz; j<=endz; j++) {
+			unsigned int tz = adjZ.get(j);
+			cout << tx <<", " << ty << ", " << tz << endl;
+		}
+	}
+
+	posY = wavelet->select(patY, predicateOcurrence++);
+	posZ = adjZ.find(posY);
+
+	nextZ = adjZ.last(posY)+1;
+
+#if 1
+	cout << "Found pos: " << posY << ", " << posZ << endl;
+	cout << "NextZ: " << nextZ << endl;
+#endif
+
+	x = adjY.findListIndex(posY);
+	y = adjY.get(posY);
+	z = adjZ.get(posZ++);
+
+	updateOutput();
+}
+
+void MiddleWaveletIterator::readTriple() {
+
+	if(posZ==nextZ && predicateOcurrence<numOcurrences) {
+		posY = wavelet->select(patY, predicateOcurrence++);
+		cout << "\t" << predicateOcurrence-1 << " PosY = " << posY << endl;
+		posZ = adjZ.find(posY);
+		nextZ = adjZ.last(posY)+1;
+
+		x = adjY.findListIndex(posY);
+		y = adjY.get(posY);
+	}
+
+	z = adjZ.get(posZ++);
+
+	updateOutput();
+}
+
+void MiddleWaveletIterator::doFetch() {
+	do {
+		readTriple();
+	} while(hasNextv && (!nextv.isValid() || !nextv.match(pattern)));
+}
+
+bool MiddleWaveletIterator::hasNext()
+{
+	return hasNextv;
+}
+
+TripleID MiddleWaveletIterator::next()
+{
+	TripleID ret = nextv;
+	cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
+	doFetch();
+	cout << "\tHasNext: " << hasNextv << endl;
+
+	return ret;
+}
+
+
+
+
+
 
 }

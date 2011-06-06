@@ -11,6 +11,7 @@
 #include <RDF.hpp>
 #include <ControlInformation.hpp>
 #include <iostream>
+#include <sstream>
 
 namespace hdt {
 
@@ -44,6 +45,28 @@ public:
 	 * @param triples New triple to be added.
 	 */
 	virtual void insert(TripleString &triple) = 0;
+
+	/**
+	 * Insert a triple to the collection.
+	 *
+	 * @param triples New triple to be added.
+	 */
+	void insert(string subject, string predicate, string object) {
+		TripleString ts(subject, predicate, object);
+		insert(ts);
+	}
+
+	/**
+	 * Insert a triple to the collection.
+	 *
+	 * @param triples New triple to be added.
+	 */
+	void insert(string subject, string predicate, int object) {
+		stringstream st;
+		st << object;
+		TripleString ts(subject, predicate, "\""+st.str()+"\"^^<http://www.w3.org/2001/XMLSchema#integer>");
+		insert(ts);
+	}
 
 	/**
 	 * Insert a set of triples, as specified in the iterator.

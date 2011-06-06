@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#include <HDTVocabulary.hpp>
 
 #include "TripleListDisk.hpp"
 
@@ -234,8 +235,11 @@ void TripleListDisk::stopProcessing()
 	cout << "TripleListDisk Stop processing: Triples=" << tripleHead->numValidTriples<< endl;
 }
 
-void TripleListDisk::populateHeader(Header &header)
+void TripleListDisk::populateHeader(Header &header, string rootNode)
 {
+	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK);
+	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
 }
 
 unsigned int TripleListDisk::getNumberOfElements()

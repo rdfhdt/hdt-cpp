@@ -34,7 +34,13 @@ public:
 	 * Creates a BasicHDT with the suplied specification
 	 * @return HDT
 	 */
-	static HDT *createBasicHDT(HDTSpecification &specification);
+	static HDT *createHDT(HDTSpecification &specification);
+
+	/**
+	 * Creates a default HDT
+	 * @return HDT
+	 */
+	static ModifiableHDT *createDefaultModifiableHDT();
 
 	/** Create a ModifiableHDT that satisfies the specified specification.
 	 *

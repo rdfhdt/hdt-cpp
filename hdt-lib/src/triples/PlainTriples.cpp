@@ -5,30 +5,32 @@
  *      Author: mck
  */
 
+#include <HDTVocabulary.hpp>
+
 #include "PlainTriples.hpp"
 #include "TripleOrderConvert.hpp"
 
 namespace hdt {
 
 PlainTriples::PlainTriples() : order(Unknown) {
-	subjects = StreamElements::getStream(spec.get("stream.x"));
-	predicates = StreamElements::getStream(spec.get("stream.y"));
-	objects = StreamElements::getStream(spec.get("stream.z"));
+	streamX = StreamElements::getStream(spec.get("stream.x"));
+	streamY = StreamElements::getStream(spec.get("stream.y"));
+	streamZ = StreamElements::getStream(spec.get("stream.z"));
 }
 
 PlainTriples::PlainTriples(HDTSpecification &specification) : spec(specification) {
-	subjects = StreamElements::getStream(spec.get("stream.x"));
-	predicates = StreamElements::getStream(spec.get("stream.y"));
-	objects = StreamElements::getStream(spec.get("stream.z"));
+	streamX = StreamElements::getStream(spec.get("stream.x"));
+	streamY = StreamElements::getStream(spec.get("stream.y"));
+	streamZ = StreamElements::getStream(spec.get("stream.z"));
 
 	std::string orderStr = spec.get("triples.component.order");
 	order = parseOrder(orderStr.c_str());
 }
 
 PlainTriples::~PlainTriples() {
-	delete subjects;
-	delete predicates;
-	delete objects;
+	delete streamX;
+	delete streamY;
+	delete streamZ;
 }
 
 float PlainTriples::cost(TripleID & triple)
@@ -40,22 +42,27 @@ void PlainTriples::load(ModifiableTriples &triples) {
 
 	IteratorTripleID *itS = triples.search(all);
 	ComponentIterator subjIt(itS, SUBJECT);
-	subjects->add(subjIt);
+	streamX->add(subjIt);
 	delete itS;
 
 	IteratorTripleID *itP = triples.search(all);
 	ComponentIterator predIt(itS, PREDICATE);
-	predicates->add(predIt);
+	streamY->add(predIt);
 	delete itP;
 
 	IteratorTripleID *itO = triples.search(all);
 	ComponentIterator objIt(itS, OBJECT);
-	objects->add(objIt);
+	streamZ->add(objIt);
 	delete itO;
 }
 
-void PlainTriples::populateHeader(Header &header) {
-
+void PlainTriples::populateHeader(Header &header, string rootNode) {
+	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_PLAIN);
+	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMX_TYPE, streamX->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
 }
 
 IteratorTripleID *PlainTriples::search(TripleID & pattern)
@@ -67,16 +74,16 @@ bool PlainTriples::save(std::ostream & output, ControlInformation &controlInform
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("codification", "http://purl.org/HDT/hdt#triplesPlain");
+	controlInformation.set("codification", HDTVocabulary::TRIPLES_TYPE_PLAIN);
 	controlInformation.setUint("triples.component.order", order);
-	controlInformation.set("stream.x", subjects->getType());
-	controlInformation.set("stream.y", predicates->getType());
-	controlInformation.set("stream.z", objects->getType());
+	controlInformation.set("stream.x", streamX->getType());
+	controlInformation.set("stream.y", streamY->getType());
+	controlInformation.set("stream.z", streamZ->getType());
 	controlInformation.save(output);
 
-	subjects->save(output);
-	predicates->save(output);
-	objects->save(output);
+	streamX->save(output);
+	streamY->save(output);
+	streamZ->save(output);
 }
 
 void PlainTriples::load(std::istream &input, ControlInformation &controlInformation)
@@ -88,31 +95,31 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 	std::string typePredicates = controlInformation.get("stream.y");
 	std::string typeObjects = controlInformation.get("stream.z");
 
-	delete subjects;
-	delete predicates;
-	delete objects;
+	delete streamX;
+	delete streamY;
+	delete streamZ;
 
-	subjects = StreamElements::getStream(typeSubjects);
-	predicates = StreamElements::getStream(typePredicates);
-	objects = StreamElements::getStream(typeObjects);
+	streamX = StreamElements::getStream(typeSubjects);
+	streamY = StreamElements::getStream(typePredicates);
+	streamZ = StreamElements::getStream(typeObjects);
 
-	subjects->load(input);
-	predicates->load(input);
-	objects->load(input);
+	streamX->load(input);
+	streamY->load(input);
+	streamZ->load(input);
 }
 
 unsigned int PlainTriples::getNumberOfElements()
 {
-	return subjects->getNumberOfElements();
+	return streamX->getNumberOfElements();
 }
 
 unsigned int PlainTriples::size()
 {
-	return subjects->size()+predicates->size()+objects->size();
+	return streamX->size()+streamY->size()+streamZ->size();
 }
 
 TripleID PlainTriples::getTripleID(unsigned int pos) {
-	TripleID triple(subjects->get(pos), predicates->get(pos), objects->get(pos));
+	TripleID triple(streamX->get(pos), streamY->get(pos), streamZ->get(pos));
 	return triple;
 }
 

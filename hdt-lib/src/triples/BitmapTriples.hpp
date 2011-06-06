@@ -11,7 +11,7 @@
 #include <Triples.hpp>
 #include <HDTSpecification.hpp>
 
-#include "../stream/UintStream.hpp"
+#include "../stream/WaveletStream.hpp"
 
 #include <libcdsBasics.h>
 #include <BitSequenceRG.h>
@@ -78,9 +78,10 @@ public:
 
 	void load(ModifiableTriples &triples);
 
-	void populateHeader(Header &header);
+	void populateHeader(Header &header, string rootNode);
 
 	friend class BitmapTriplesSearchIterator;
+	friend class MiddleWaveletIterator;
 };
 
 class BitmapTriplesSearchIterator : public IteratorTripleID {
@@ -107,6 +108,35 @@ private:
 
 public:
 	BitmapTriplesSearchIterator(BitmapTriples *triples, TripleID &pat);
+
+	bool hasNext();
+	TripleID next();
+};
+
+class MiddleWaveletIterator : public IteratorTripleID {
+private:
+	BitmapTriples *triples;
+	TripleID pattern;
+
+	AdjacencyList adjY, adjZ;
+	WaveletStream *wavelet;
+	unsigned int patX, patY, patZ;
+	unsigned int posY, posZ;
+	unsigned int predicateOcurrence, numOcurrences;
+	unsigned int nextY, nextZ;
+	unsigned int x, y, z;
+
+	TripleID nextv;
+	bool hasNextv;
+
+	void findFirst();
+	void readTriple();
+	void doFetch();
+
+	void updateOutput();
+
+public:
+	MiddleWaveletIterator(BitmapTriples *triples, TripleID &pat);
 
 	bool hasNext();
 	TripleID next();

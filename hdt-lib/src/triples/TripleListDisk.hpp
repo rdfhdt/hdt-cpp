@@ -22,6 +22,7 @@ struct TripleListHeader {
 
 class TripleListDisk : public ModifiableTriples {
 private:
+	TripleComponentOrder order;
 	unsigned int capacity;
 
 	char *pointer;
@@ -99,7 +100,7 @@ public:
 	void load(std::istream &input, ControlInformation &controlInformation);
 
 
-	void populateHeader(Header &header);
+	void populateHeader(Header &header, string rootNode);
 
 	void startProcessing();
 
