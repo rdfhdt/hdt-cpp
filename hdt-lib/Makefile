@@ -13,7 +13,6 @@ LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib
 
 OBJECTS=$(patsubst %.cpp,%.o, $(wildcard src/*.cpp) $(wildcard src/**/*.cpp))
 HEADERS=$(wildcard include/*.hpp) $(wildcard src/*.hpp) $(wildcard include/*.h) $(wildcard src/*.h)
-EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
 TOOLS=$(patsubst %.cpp,%, $(wildcard tools/*.cpp))
 
 all: libhdt tools
@@ -24,13 +23,6 @@ tools/%: tools/%.cpp $(OBJECTS) $(HEADERS)
 
 tools: libhdt $(TOOLS)
 	@echo " [HDT] Compiling tools"
-
-examples/%: examples/%.cpp $(OBJECTS) $(HEADERS)
-	@echo " [HDT] Compiling example $<"
-	@$(CPP) $(INCLUDES) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) ${LIB} libhdt.a 
-
-examples: libhdt $(EXAMPLES)
-	@echo " [HDT] Compiling examples"
 
 %.o: %.cpp $(HEADERS)
 	@echo " [HDT] Compiling $<"
@@ -46,6 +38,6 @@ doc:
 	
 clean:
 	@echo " [CLN] Removing object files"
-	@rm -f $(OBJECTS) $(EXAMPLES) $(TOOLS) libhdt.a *~
-	@rm -Rf tools/*dSYM examples/*dSYM
+	@rm -f $(OBJECTS) $(TOOLS) libhdt.a *~
+	@rm -Rf tools/*dSYM
 
