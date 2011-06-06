@@ -66,11 +66,17 @@ int main(int argc, char **argv) {
 
 	try {
 		ifstream in(inputFile.c_str());
+		if(!in.good()){
+			throw "Could not open input file.";
+		}
 		hdt->loadFromHDT(in);
 		in.close();
 
 		if(outputFile!="-") {
 			ofstream out(outputFile.c_str());
+			if(!in.good()){
+				throw "Could not write to output file.";
+			}
 			hdt->saveToRDF(out, N3);
 			out.close();
 		} else {

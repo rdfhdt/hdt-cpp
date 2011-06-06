@@ -61,6 +61,9 @@ int main(int argc, char **argv) {
 
 	try {
 		ifstream in(inputFile.c_str());
+		if(!in.good()){
+			throw "Could not open input file.";
+		}
 		hdt->loadFromHDT(in);
 		in.close();
 
