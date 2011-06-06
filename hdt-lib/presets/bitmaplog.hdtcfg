@@ -1,0 +1,7 @@
+header.type = http://purl.org/HDT/hdt#headerSimple
+triples.type = http://purl.org/HDT/hdt#triplesBitmap
+dictionary.type = http://purl.org/HDT/hdt#dictionaryPlain
+stream.x = http://purl.org/HDT/hdt#streamLog
+stream.y = http://purl.org/HDT/hdt#streamLog
+stream.z = http://purl.org/HDT/hdt#streamLog
+triples.component.order = SPO 
