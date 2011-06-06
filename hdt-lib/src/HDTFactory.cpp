@@ -41,7 +41,7 @@ HDT *HDTFactory::createHDT(HDTSpecification &spec)
 	return h;
 }
 
-HDT *HDTFactory::createDefaultModifiableHDT()
+ModifiableHDT *HDTFactory::createDefaultModifiableHDT()
 {
 	BasicModifiableHDT *h = new BasicModifiableHDT();
 	return h;
