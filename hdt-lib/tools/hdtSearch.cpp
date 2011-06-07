@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include "../src/lm_access/gzstream.hpp"
+#include "../src/util/StopWatch.hpp"
 
 using namespace hdt;
 using namespace std;
@@ -22,6 +23,7 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-q\t<query>\tLaunch query and exit." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
+	cout << "\t-m\t\tDo not show results, just measure query time." << endl;
 
 	//cout << "\t-v\tVerbose output" << endl;
 }
@@ -30,8 +32,9 @@ void help() {
 int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
+	bool measure = false;
 
-	while( (c = getopt(argc,argv,"hq:o:"))!=-1) {
+	while( (c = getopt(argc,argv,"hq:o:m"))!=-1) {
 		switch(c) {
 		case 'h':
 			help();
@@ -41,6 +44,9 @@ int main(int argc, char **argv) {
 			break;
 		case 'o':
 			outputFile = optarg;
+			break;
+		case 'm':
+			measure = true;
 			break;
 		default:
 			cout << "ERROR: Unknown option" << endl;
@@ -109,15 +115,19 @@ int main(int argc, char **argv) {
 
 				IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
 
+				StopWatch st;
 				unsigned int numTriples = 0;
 				while(it->hasNext()) {
 					TripleString ts = it->next();
 
-					cout << ts << endl;
+					if(!measure) {
+						cout << ts << endl;
+					}
+
 					numTriples++;
 				}
 				delete it;
-				cout << numTriples << " results shown." << endl;
+				cout << numTriples << " results in " << st << endl;
 
 				cout << ">> ";
 			}
