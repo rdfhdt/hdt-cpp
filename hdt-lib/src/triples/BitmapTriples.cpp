@@ -372,7 +372,7 @@ bool BitmapTriplesSearchIterator::hasNext()
 TripleID BitmapTriplesSearchIterator::next()
 {
 	TripleID ret = nextv;
-	cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
+	//cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
 	doFetch();
 
 	return ret;
