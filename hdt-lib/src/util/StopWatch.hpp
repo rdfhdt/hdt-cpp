@@ -15,13 +15,11 @@
 
 class StopWatch {
 private:
-	//unsigned long ini, end;
-
 	struct timeval user1, user2;
 	struct timeval system1, system2;
 	struct timeval real1, real2;
 
-	std::string toHuman(unsigned long long time);
+
 	unsigned long long difference(time_t s1, time_t s2, suseconds_t us1, suseconds_t us2);
 public:
 	StopWatch();
@@ -45,6 +43,8 @@ public:
 	std::string stopUserStr();
 	std::string stopSystemStr();
 	std::string stopRealStr();
+
+	static std::string toHuman(unsigned long long time);
 
 	friend std::ostream &operator<<(std::ostream &stream, StopWatch &sw);
 };
