@@ -21,8 +21,8 @@ private:
 	struct timeval system1, system2;
 	struct timeval real1, real2;
 
-	std::string toHuman(time_t tot_secs, suseconds_t tot_usecs);
-
+	std::string toHuman(unsigned long long time);
+	unsigned long long difference(time_t s1, time_t s2, suseconds_t us1, suseconds_t us2);
 public:
 	StopWatch();
 	~StopWatch();
@@ -30,13 +30,21 @@ public:
 	void reset();
 	void stop();
 
-	std::string stopUser();
-	std::string stopSystem();
-	std::string stopReal();
+	unsigned long long getUser();
+	unsigned long long getSystem();
+	unsigned long long getReal();
 
-	std::string getUser();
-	std::string getSystem();
-	std::string getReal();
+	std::string getUserStr();
+	std::string getSystemStr();
+	std::string getRealStr();
+
+	unsigned long long stopUser();
+	unsigned long long stopSystem();
+	unsigned long long stopReal();
+
+	std::string stopUserStr();
+	std::string stopSystemStr();
+	std::string stopRealStr();
 
 	friend std::ostream &operator<<(std::ostream &stream, StopWatch &sw);
 };
