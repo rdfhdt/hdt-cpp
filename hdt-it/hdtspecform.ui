@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HDTSpecForm</class>
+ <widget class="QDialog" name="HDTSpecForm">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>462</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Import RDF File to HDT</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>RDF Input File</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLineEdit" name="rdfInputFile"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="inputFileButton">
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="rdfInputCombo">
+          <item>
+           <property name="text">
+            <string>N3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TURTLE</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>NTRIPLES</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RDF-XML</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="headerBox">
+       <property name="title">
+        <string>Header</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="1" column="1">
+         <widget class="QComboBox" name="headerTypeCombo">
+          <item>
+           <property name="text">
+            <string>Plain</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="headerTypeLabel">
+          <property name="text">
+           <string>Type:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="dictionaryBox">
+       <property name="title">
+        <string>Dictionary</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelDictionaryType">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Type:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="dictionaryTypeCombo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <item>
+           <property name="text">
+            <string>Plain</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="triplesBox">
+       <property name="title">
+        <string>Triples</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="triplesTypeLabel">
+          <property name="text">
+           <string>Type:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="triplesTypeCombo">
+          <item>
+           <property name="text">
+            <string>BitmapTriples</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TriplesList</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PlainTriples</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>CompactTriples</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="triplesOrderCombo">
+          <item>
+           <property name="text">
+            <string>SPO</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>SOP</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PSO</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>POS</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>OSP</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>OPS</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="triplesOrderLabel">
+          <property name="text">
+           <string>Order</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="streamXcombo">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string>LogStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>IntegerStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HuffmanStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WaveletStream</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="streamYcombo">
+          <item>
+           <property name="text">
+            <string>LogStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>IntegerStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HuffmanStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WaveletStream</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QComboBox" name="streamZcombo">
+          <item>
+           <property name="text">
+            <string>LogStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>IntegerStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>HuffmanStream</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>WaveletStream</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="streamXlabel">
+          <property name="text">
+           <string>StreamX:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="streamYlabel">
+          <property name="text">
+           <string>StreamY:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="streamZlabel">
+          <property name="text">
+           <string>StreamZ:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>HDTSpecForm</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>HDTSpecForm</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
