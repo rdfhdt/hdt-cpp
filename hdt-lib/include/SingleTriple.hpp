@@ -56,7 +56,7 @@ public:
 	 * Get the Subject component of this tripleID.
 	 * @return
 	 */
-	unsigned int getSubject() {
+	inline unsigned int getSubject() {
 		return subject;
 	}
 
@@ -64,7 +64,7 @@ public:
 	 * Set the Subject component of this tripleID.
 	 * @return
 	 */
-	void setSubject(unsigned int subject) {
+	inline void setSubject(unsigned int subject) {
 		this->subject = subject;
 	}
 
@@ -72,7 +72,7 @@ public:
 	 * Get the Predicate component of this tripleID.
 	 * @return
 	 */
-	unsigned  getPredicate() {
+	inline unsigned  getPredicate() {
 		return this->predicate;
 	}
 
@@ -80,7 +80,7 @@ public:
 	 * Set the Predicate component of this tripleID.
 	 * @return
 	 */
-	void setPredicate(unsigned int predicate) {
+	inline void setPredicate(unsigned int predicate) {
 		this->predicate = predicate;
 	}
 
@@ -88,7 +88,7 @@ public:
 	 * Get the Object component of this tripleID.
 	 * @return
 	 */
-	unsigned int getObject() {
+	inline unsigned int getObject() {
 		return this->object;
 	}
 
@@ -96,7 +96,7 @@ public:
 	 * Set the Object component of this tripleID.
 	 * @return
 	 */
-	void setObject(unsigned int object) {
+	inline void setObject(unsigned int object) {
 		this->object = object;
 	}
 
@@ -183,7 +183,7 @@ public:
 	 * @param pattern The pattern to match against
 	 * @return boolean
 	 */
-	bool match(TripleID &pattern) {
+	inline bool match(TripleID &pattern) {
 		unsigned int subject = pattern.getSubject();
 		unsigned int object = pattern.getObject();
 		unsigned int predicate = pattern.getPredicate();
@@ -215,7 +215,7 @@ public:
 	 *
 	 * @return boolean
 	 */
-	bool isValid() {
+	inline bool isValid() {
 		return !(this->subject == 0 || this->predicate == 0 || this->object == 0);
 	}
 
@@ -384,31 +384,12 @@ public:
 
 
 class IteratorTripleID {
-private:
-	/** The TripleID pattern to match against */
-	TripleID pattern;
-	/** The iterator of TripleID */
-	std::vector<TripleID>::iterator iterator;
-
 public:
-	IteratorTripleID() {
-		//TODO
-	}
-
-	IteratorTripleID(std::vector<TripleID>::iterator &it, const TripleID &pat)
-	: pattern(pat), iterator(it) { }
-
-	~IteratorTripleID() {
-		//delete iterator;
-		//TODO
-	}
-
 	virtual bool hasNext() {
 		return false;
 	}
 
 	virtual TripleID next() {
-		// TODO: Return a copy or a pointer to a TripleID?
 		TripleID id;
 		return id;
 	}
@@ -420,7 +401,6 @@ public:
 		return false;
 	}
 	virtual TripleString next() {
-		// TODO: Return a copy or a pointer to a TripleString?
 		TripleString ts;
 		return ts;
 	}
