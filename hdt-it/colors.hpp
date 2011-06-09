@@ -15,7 +15,7 @@
 #define RDF_POINT_SIZE 1.5
 #else
 #define TEXT_COLOR 1.0, 1.0, 1.0, 1.0
-#define CROSS_COLOR 0.0, 0.0, 0.0, 1.0
+#define CROSS_COLOR 1.0, 1.0, 1.0, 1.0
 #define TEXT_BACKGROUND_COLOR 0.0, 0.0, 0.0, 0.7
 #define BACKGROUND_COLOR 0, 0, 0, 1
 #define SHARED_AREA_COLOR 0.1, 0.1, 0.1, 1.0

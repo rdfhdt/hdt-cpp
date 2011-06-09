@@ -40,6 +40,8 @@ public:
     void setScreenSize(int width, int height);
     void applyTransform();
 
+    bool isFrontView();
+
 public slots:
     void setFrontView();
     void setLeftView();

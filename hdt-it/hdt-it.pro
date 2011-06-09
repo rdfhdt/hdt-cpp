@@ -16,7 +16,13 @@ SOURCES += main.cpp\
     hdtspecform.cpp \
     fps.cpp \
     Color.cpp \
-    Camera.cpp
+    Camera.cpp \
+    StopWatch.cpp \
+    qclearlineedit.cpp \
+    qresulttableview.cpp \
+    searchresultsmodel.cpp \
+    triplecomponentmodel.cpp \
+    hdtmanager.cpp
 
 HEADERS  += hdtit.hpp \
     matrixviewwidget.hpp \
@@ -25,7 +31,13 @@ HEADERS  += hdtit.hpp \
     Color.h \
     Camera.h \
     constants.h \
-    colors.hpp
+    colors.hpp \
+    StopWatch.hpp \
+    qclearlineedit.hpp \
+    qresulttableview.hpp \
+    searchresultsmodel.hpp \
+    triplecomponentmodel.hpp \
+    hdtmanager.hpp
 
 FORMS    += hdtit.ui \
     hdtspecform.ui
@@ -33,3 +45,6 @@ FORMS    += hdtit.ui \
 INCLUDEPATH += ../hdt-lib/include/
 
 LIBS += ../libcds-v1.0.7/lib/libcds.a ../hdt-lib/libhdt.a
+
+RESOURCES += \
+    hdtresources.qrc

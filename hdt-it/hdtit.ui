@@ -37,10 +37,10 @@
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0">
              <item row="1" column="1">
-              <widget class="QLineEdit" name="subjectPatternEdit"/>
+              <widget class="QClearLineEdit" name="subjectPatternEdit"/>
              </item>
              <item row="2" column="1">
-              <widget class="QLineEdit" name="predicatePatternEdit"/>
+              <widget class="QClearLineEdit" name="predicatePatternEdit"/>
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="subjectLabel">
@@ -57,7 +57,7 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QLineEdit" name="objectPatternEdit"/>
+              <widget class="QClearLineEdit" name="objectPatternEdit"/>
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="objectLabel">
@@ -66,46 +66,17 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
-              <widget class="QPushButton" name="allSubjectButton">
-               <property name="text">
-                <string>All</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QPushButton" name="allPredicateButton">
-               <property name="text">
-                <string>All</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
-              <widget class="QPushButton" name="allObjectButton">
-               <property name="text">
-                <string>All</string>
-               </property>
-              </widget>
-             </item>
              <item row="4" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout">
-               <item>
-                <widget class="QPushButton" name="searchPatternButton">
-                 <property name="text">
-                  <string>Search</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="randomTripleButton">
-                 <property name="text">
-                  <string>Random Triple</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <layout class="QHBoxLayout" name="horizontalLayout"/>
              </item>
             </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="numResultsLabel">
+             <property name="text">
+              <string>No results.</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -115,6 +86,36 @@
           <property name="currentIndex">
            <number>0</number>
           </property>
+          <widget class="QWidget" name="tab_2">
+           <attribute name="title">
+            <string>Stats</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="statsLabel">
+              <property name="text">
+               <string>Not open.</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_3">
+           <attribute name="title">
+            <string>Subjects</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QTableView" name="subjectView"/>
+            </item>
+           </layout>
+          </widget>
           <widget class="QWidget" name="tab">
            <attribute name="title">
             <string>Predicates</string>
@@ -156,21 +157,44 @@
              </layout>
             </item>
             <item>
-             <widget class="QListView" name="listView"/>
+             <widget class="QListView" name="predicateView"/>
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="tab_2">
+          <widget class="QWidget" name="tab_4">
            <attribute name="title">
-            <string>Stats</string>
+            <string>Objects</string>
            </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QTableView" name="objectView"/>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="MatrixViewWidget" name="matrixView" native="true"/>
+      <widget class="QTabWidget" name="resultTabs">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="tabSearchResults">
+        <attribute name="title">
+         <string>Search Results</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QResultTableView" name="resultsTable"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="MatrixViewWidget" name="matrixView">
+        <attribute name="title">
+         <string>Matrix View</string>
+        </attribute>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -329,6 +353,16 @@
     <slot>set3Dview()</slot>
    </slots>
   </customwidget>
+  <customwidget>
+   <class>QClearLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qclearlineedit.hpp</header>
+  </customwidget>
+  <customwidget>
+   <class>QResultTableView</class>
+   <extends>QTableView</extends>
+   <header>qresulttableview.hpp</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -339,8 +373,8 @@
    <slot>selectAllPredicates()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>365</y>
+     <x>135</x>
+     <y>337</y>
     </hint>
     <hint type="destinationlabel">
      <x>462</x>
@@ -355,60 +389,12 @@
    <slot>selectNonePredicates()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>378</x>
-     <y>365</y>
+     <x>135</x>
+     <y>337</y>
     </hint>
     <hint type="destinationlabel">
      <x>462</x>
      <y>227</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>allSubjectButton</sender>
-   <signal>clicked()</signal>
-   <receiver>subjectPatternEdit</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>357</x>
-     <y>106</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>287</x>
-     <y>105</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>allPredicateButton</sender>
-   <signal>clicked()</signal>
-   <receiver>predicatePatternEdit</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>353</x>
-     <y>136</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>303</x>
-     <y>141</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>allObjectButton</sender>
-   <signal>clicked()</signal>
-   <receiver>objectPatternEdit</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>349</x>
-     <y>169</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>323</x>
-     <y>189</y>
     </hint>
    </hints>
   </connection>
@@ -419,28 +405,12 @@
    <slot>setMinimumPredicateCount(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>142</x>
-     <y>342</y>
+     <x>95</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel">
      <x>473</x>
      <y>273</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>matrixView</sender>
-   <signal>maxPredicateCountChanged(int)</signal>
-   <receiver>predicateCountSlider</receiver>
-   <slot>setMaximum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>457</x>
-     <y>167</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>332</x>
-     <y>342</y>
     </hint>
    </hints>
   </connection>
@@ -451,12 +421,124 @@
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>85</x>
-     <y>330</y>
+     <x>95</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel">
-     <x>96</x>
-     <y>303</y>
+     <x>95</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>subjectPatternEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>HDTit</receiver>
+   <slot>updateSearchPattern()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>predicatePatternEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>HDTit</receiver>
+   <slot>updateSearchPattern()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>objectPatternEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>HDTit</receiver>
+   <slot>updateSearchPattern()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>objectView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>HDTit</receiver>
+   <slot>setPatternObject(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>191</x>
+     <y>383</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>subjectView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>HDTit</receiver>
+   <slot>setPatternSubject(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>65</x>
+     <y>299</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>predicateView</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>HDTit</receiver>
+   <slot>setPatternPredicate(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>65</x>
+     <y>310</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resultsTable</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>HDTit</receiver>
+   <slot>setPatternGlobal(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>537</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>261</y>
     </hint>
    </hints>
   </connection>

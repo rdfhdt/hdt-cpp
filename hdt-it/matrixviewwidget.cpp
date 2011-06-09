@@ -3,141 +3,20 @@
 #include <Color.h>
 #include <fstream>
 
-#define BUF_SIZE 1024
-
 MatrixViewWidget::MatrixViewWidget(QWidget *parent) :
-    QGLWidget(parent),
-    hdt(NULL),
-    searchPattern(0,0,0)
+    QGLWidget(parent)
 {
-    predicateModel = new PredicateModel(this, this, hdt::PREDICATE);
     setMouseTracking(true);
     connect(&camera, SIGNAL(cameraChanged()), (QObject *)this, SLOT(updateGL()));
 }
 
 MatrixViewWidget::~MatrixViewWidget() {
-    closeHDT();
-    delete predicateModel;
+
 }
 
-void MatrixViewWidget::updateOnHDTChanged()
+void MatrixViewWidget::setManager(HDTManager *hdtManager)
 {
-    activePredicate.resize(hdt->getDictionary().getNpredicates(), true);
-
-    triples.clear();
-
-    predicateCount.clear();
-    predicateCount.resize(hdt->getDictionary().getNpredicates(), 0);
-    maxPredicateCount = 0;
-
-    hdt::Triples &t = hdt->getTriples();
-    hdt::TripleID pattern(0,0,0);
-
-    hdt::IteratorTripleID *it = t.search(pattern);
-    while(it->hasNext()) {
-        hdt::TripleID tid = it->next();
-
-        triples.push_back(tid);
-        predicateCount[tid.getPredicate()-1]++;
-
-        if(maxPredicateCount<predicateCount[tid.getPredicate()-1]) {
-            maxPredicateCount = predicateCount[tid.getPredicate()-1];
-        }
-    }
-    delete it;
-
-    predicateModel->notifyLayoutChanged();
-    this->updateGL();
-
-    emit maxPredicateCountChanged(maxPredicateCount);
-    emit datasetChanged();
-}
-
-void MatrixViewWidget::openHDTFile(QString file)
-{
-    std::ifstream in(file.toAscii());
-
-    if(in.good()) {
-        closeHDT();
-
-        hdt = hdt::HDTFactory::createDefaultHDT();
-        hdt->loadFromHDT(in);
-        in.close();
-
-        updateOnHDTChanged();
-    } else {
-        QMessageBox::critical(0, "File Error", "Could not open file: "+file);
-    }
-}
-
-void MatrixViewWidget::saveHDTFile(QString file)
-{
-    if(hdt!=NULL) {
-        ofstream out;
-
-        // Save HDT
-        out.open(file.toAscii());
-        if(out.good()){
-            try {
-                hdt->saveToHDT(out);
-            } catch (char *e) {
-                QMessageBox::critical(0, "HDT Save Error", e);
-            }
-            out.close();
-        } else {
-            QMessageBox::critical(0, "File Error", "Could not open file: "+file);
-        }
-
-    }
-}
-
-void MatrixViewWidget::importRDFFile(QString file, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
-{
-    std::ifstream in(file.toAscii());
-
-    if(in.good()) {
-        closeHDT();
-
-        hdt = hdt::HDTFactory::createHDT(spec);
-        hdt->loadFromRDF(in, notation);
-        in.close();
-
-        updateOnHDTChanged();
-    } else {
-        QMessageBox::critical(0, "File Error", "Could not open file: "+file);
-    }
-}
-
-void MatrixViewWidget::exportRDFFile(QString file, hdt::RDFNotation notation)
-{
-    if(hdt!=NULL) {
-        ofstream out;
-
-        // Save HDT
-        out.open(file.toAscii());
-        if(out.good()){
-            try {
-                hdt->saveToRDF(out, notation);
-            } catch (char *e) {
-                QMessageBox::critical(0, "RDF Export Error", e);
-            }
-            out.close();
-        } else {
-            QMessageBox::critical(0, "File Error", "Could not open file: "+file);
-        }
-    }
-}
-
-
-void MatrixViewWidget::closeHDT()
-{
-    if(hdt!=NULL) {
-        activePredicate.clear();
-        delete hdt;
-        predicateModel->notifyLayoutChanged();
-        hdt = NULL;
-        emit datasetChanged();
-    }
+    this->hdtmanager = hdtManager;
 }
 
 Camera & MatrixViewWidget::getCamera()
@@ -155,26 +34,10 @@ void MatrixViewWidget::initializeGL()
 
 }
 
-void MatrixViewWidget::paintGL()
+void MatrixViewWidget::paintShared()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    unsigned int nshared = hdtmanager->getHDT()->getDictionary().getSsubobj();
 
-    if(hdt==NULL) {
-        return;
-    }
-
-    glLoadIdentity();
-
-    camera.applyTransform();
-
-    unsigned int nsubjects = hdt->getDictionary().getMaxSubjectID();
-    unsigned int nobjects = hdt->getDictionary().getMaxObjectID(); //dictionary->getNobjects();
-    unsigned int npredicates = hdt->getDictionary().getMaxPredicateID();
-    unsigned int nshared = hdt->getDictionary().getSsubobj();
-
-    glScalef(1.0f / (float) nobjects, 1.0f / (float) nsubjects, 1.0f / (float) npredicates);
-
-    // Draw shared area
     glColor4f(SHARED_AREA_COLOR);
     glBegin(GL_QUADS);
     glVertex3f(0, 0, 0);
@@ -189,18 +52,25 @@ void MatrixViewWidget::paintGL()
     glVertex3f(nshared, nshared, 0);
     glVertex3f(nshared, 0, 0);
     glEnd();
+}
+
+void MatrixViewWidget::paintScales()
+{
+    hdt::Dictionary &dict = hdtmanager->getHDT()->getDictionary();
+    unsigned int nsubjects = dict.getMaxSubjectID();
+    unsigned int nobjects = dict.getMaxObjectID();
+    unsigned int npredicates = dict.getMaxPredicateID();
 
     // Draw subject scale
-    for (unsigned int i = 0; i <= nsubjects; i += nsubjects / 15) {
-        char str[BUF_SIZE];
+    for (unsigned int i = 0; i <= nsubjects; i += 1+nsubjects / 15) {
+        QString str;
         if (nsubjects > 20000) {
-            snprintf(str, BUF_SIZE, " %uK", i / 1000);
+            str.append(QString("%1K").arg(i/1000));
         } else {
-            snprintf(str, BUF_SIZE, " %u", i);
+            str.append(QString("%1").arg(i));
         }
-        //texto(str, 0, i + nsubjects * 0.01, 0);
         glColor4f(TEXT_COLOR);
-        this->renderText(0, i+nsubjects*0.01, 0, str);
+        this->renderText(0.0, i+nsubjects*0.01, 0, str);
 
         glColor4f(GRID_COLOR);
         glBegin(GL_LINES);
@@ -212,17 +82,15 @@ void MatrixViewWidget::paintGL()
     }
 
     // Draw object scale
-    for (unsigned int i = 0; i <= nobjects; i += nobjects / 15) {
-        char str[BUF_SIZE];
+    for (unsigned int i = 0; i <= nobjects; i += 1+ nobjects / 15) {
+        QString str;
         if (nobjects > 20000) {
-            snprintf(str, BUF_SIZE, " %uK", i / 1000);
+            str.append(QString("%1K").arg(i/1000));
         } else {
-            snprintf(str, BUF_SIZE, " %u", i);
+            str.append(QString("%1").arg(i));
         }
-
-        //texto(str, i, nsubjects * 0.01, 0);
         glColor4f(TEXT_COLOR);
-        this->renderText(i, 0, 0, str);
+        this->renderText(i, 0.0, 0, str);
 
         glColor4f(GRID_COLOR);
         glBegin(GL_LINES);
@@ -234,12 +102,11 @@ void MatrixViewWidget::paintGL()
     }
 
     // Draw predicate scale
-    for (unsigned int i = 0; i <= npredicates; i += npredicates / 10) {
-        char str[BUF_SIZE];
-        snprintf(str, BUF_SIZE, " %u", i);
+    for (unsigned int i = 0; i <= npredicates; i += 1+npredicates / 10) {
+        QString str = QString::number(i);
         //texto(str, 0, 0, i);
         glColor4f(TEXT_COLOR);
-        this->renderText(0, 0, i, tr(str), QFont(), 2000);
+        this->renderText(0, 0, i, str, QFont(), 2000);
 
         glColor4f(GRID_COLOR);
         glBegin(GL_LINES);
@@ -284,58 +151,145 @@ void MatrixViewWidget::paintGL()
     renderText(0, nsubjects * 1.04, 0, "Subjects");
     renderText(nobjects * 1.05, 0, 0, "Objects");
     renderText(-nsubjects*1.01, 0, npredicates*1.05, "Predicates");
+}
 
-    // RENDER POINTS
-
-    glPointSize(RDF_POINT_SIZE);
+void MatrixViewWidget::paintPoints()
+{
+    if(hdtmanager->getSearchResultsModel()->getNumResults()>100) {
+        glPointSize(RDF_POINT_SIZE);
+    } else {
+        glPointSize(3.0);
+    }
 
     glBegin(GL_POINTS);
 
-#if 1
-    hdt::TripleID all(0,0,0);
-    hdt::IteratorTripleID *it = hdt->getTriples().search(searchPattern);
 
-    while(it->hasNext()) {
-        hdt::TripleID tid = it->next();
+    if(hdtmanager->getSearchResultsModel()->getNumResults()<20000) {
+
+        hdt::TripleID all(0,0,0);
+        hdt::IteratorTripleID *it = hdtmanager->getHDT()->getTriples().search(hdtmanager->getSearchPattern());
+
         Color c;
         ColorRamp2 cr;
-        cr.apply(&c, tid.getPredicate(), 1, npredicates);
+        while(it->hasNext()) {
+            hdt::TripleID tid = it->next();
 
-        if(activePredicate[tid.getPredicate()-1]) {
+            cr.apply(&c, tid.getPredicate(), 1, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
 
-        } else {
-            c.r = c.r/4;
-            c.g = c.g/4;
-            c.b = c.b/4;
+            if(hdtmanager->isPredicateActive(tid.getPredicate()-1)) {
+
+            } else {
+                c.r = c.r/4;
+                c.g = c.g/4;
+                c.b = c.b/4;
+            }
+            glColor4f(c.r, c.g, c.b, c.a);
+            glVertex3f((float)tid.getObject(), (float)tid.getSubject(), (float)tid.getPredicate());
+
         }
-        glColor4f(c.r, c.g, c.b, c.a);
-        glVertex3f((float)tid.getObject(), (float)tid.getSubject(), (float)tid.getPredicate());
+        delete it;
 
-    }
-    delete it;
-#else
+    } else {
 
-    for(unsigned int i=0;i<triples.size();i++) {
-        hdt::TripleID *tid = &triples[i];
-        Color c;
-        ColorRamp2 cr;
-        cr.apply(&c, tid->getPredicate(), 1, npredicates);
+        for(unsigned int i=0;i<triples.size();i++) {
+            hdt::TripleID *tid = &triples[i];
 
-        if(activePredicate[tid->getPredicate()-1]) {
+            if(tid->match(hdtmanager->getSearchPattern())) {
+                Color c;
+                ColorRamp2 cr;
+                cr.apply(&c, tid->getPredicate(), 1, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
 
-        } else {
-            c.r = c.r/4;
-            c.g = c.g/4;
-            c.b = c.b/4;
+                if(hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
+
+                } else {
+                    c.r = c.r/4;
+                    c.g = c.g/4;
+                    c.b = c.b/4;
+                }
+                glColor4f(c.r, c.g, c.b, c.a);
+                glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
+            }
         }
-        glColor4f(c.r, c.g, c.b, c.a);
-        glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
-
     }
-
-#endif
-
     glEnd();
+}
+
+
+
+void MatrixViewWidget::paintSelected()
+{
+    hdt::TripleID selectedTriple = hdtmanager->getSelectedTriple();
+
+    // Draw selected triple
+    if (selectedTriple.isValid()) {
+        unsigned int nsubjects = hdtmanager->getHDT()->getDictionary().getMaxSubjectID();
+        unsigned int npredicates = hdtmanager->getHDT()->getDictionary().getMaxPredicateID();
+        unsigned int nobjects = hdtmanager->getHDT()->getDictionary().getMaxObjectID();
+
+        float x = selectedTriple.getObject();
+        float y = selectedTriple.getSubject();
+        float z = selectedTriple.getPredicate();
+
+        glColor4f(CROSS_COLOR);
+        glBegin(GL_LINES);
+#if 0
+        // Draw X
+        GLfloat sizex = nobjects / 100;
+        GLfloat sizey = nsubjects / 100;
+        glVertex3f(x - sizex, y - sizey, z);
+        glVertex3f(x + sizex, y + sizey, z);
+        glVertex3f(x - sizex, y + sizey, z);
+        glVertex3f(x + sizex, y - sizey, z);
+#else
+        // Draw +
+        glVertex3f(0, y, z);
+        glVertex3f(nobjects, y, z);
+        glVertex3f(x, 0, z);
+        glVertex3f(x, nsubjects, z);
+#endif
+        glEnd();
+
+        // Draw point
+        glPointSize(5);
+        glBegin(GL_POINTS);
+        Color c;
+        ColorRamp2 cr;
+        cr.apply(&c, z, 1, npredicates);
+        glColor4f(c.r, c.g, c.b, c.a);
+        glVertex3f(x, y, z);
+        glEnd();
+    }
+}
+
+void MatrixViewWidget::paintGL()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    if(hdtmanager->getHDT()==NULL) {
+        return;
+    }
+
+    glLoadIdentity();
+
+    camera.applyTransform();
+
+    unsigned int nsubjects = hdtmanager->getHDT()->getDictionary().getMaxSubjectID();
+    unsigned int nobjects = hdtmanager->getHDT()->getDictionary().getMaxObjectID();
+    unsigned int npredicates = hdtmanager->getHDT()->getDictionary().getMaxPredicateID();
+
+    glScalef(1.0f / (float) nobjects, 1.0f / (float) nsubjects, 1.0f / (float) npredicates);
+
+    // PAINT SHARED AREA
+    paintShared();
+
+    // RENDER SCALES
+    paintScales();
+
+    // RENDER POINTS
+    paintPoints();
+
+    // RENDER SELECTED
+    paintSelected();
 }
 
 void MatrixViewWidget::resizeGL(int w, int h)
@@ -362,25 +316,29 @@ void MatrixViewWidget::mouseReleaseEvent(QMouseEvent *event)
         std::cout << "Mouse CLICK" << std::endl;
         if(buttonClick & Qt::LeftButton) {
             std::cout << "Left Mouse CLICK" << std::endl;
+            if(hdtmanager->getSelectedTriple().isValid()) {
+                hdtmanager->selectPredicate(hdtmanager->getSelectedTriple().getPredicate());
+            }
         } else if (buttonClick & Qt::RightButton) {
             std::cout << "Right Mouse CLICK" << std::endl;
+            hdtmanager->selectAllPredicates();
         }
     }
 }
 
 void MatrixViewWidget::unProject(int x, int y, double *outx, double *outy, double *outz)
 {
-    if(hdt==NULL)
-        return;
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
     camera.applyTransform();
 
-    glScalef(1.0f / (float) hdt->getDictionary().getNobjects(),
-             1.0f / (float) hdt->getDictionary().getNsubjects(),
-             1.0f / (float) hdt->getDictionary().getNpredicates());
+    hdt::Dictionary &dict = hdtmanager->getHDT()->getDictionary();
+
+    glScalef(1.0f / (float) dict.getMaxObjectID(),
+             1.0f / (float) dict.getMaxSubjectID(),
+             1.0f / (float) dict.getMaxPredicateID());
 
     // UnProject
     GLint viewport[4];
@@ -394,9 +352,51 @@ void MatrixViewWidget::unProject(int x, int y, double *outx, double *outy, doubl
     glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
     glGetDoublev(GL_PROJECTION_MATRIX, projection);
     glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &wz);
-    printf("Orig: %f %f %f\n", wx, wy, wz);
+    //printf("Orig: %f %f %f\n", wx, wy, wz);
     gluUnProject(wx, wy, 0, modelview, projection, viewport, outx, outy, outz);
-    printf("Dest: %f %f %f\n", *outx, *outy, *outz);
+    //printf("Dest: %f %f %f\n", *outx, *outy, *outz);
+}
+
+unsigned long long inline DIST(unsigned long long x1, unsigned long long x2,
+                unsigned long long y1, unsigned long long y2) {
+        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+}
+
+void MatrixViewWidget::selectTriple(int subject, int predicate, int object)
+{
+    if(triples.size()==0) {
+        hdtmanager->clearSelectedTriple();
+        return;
+    }
+
+    hdt::TripleID *best = &triples[0];
+    unsigned int bestpos = 0;
+    unsigned long long bestdist = DIST(triples[0].getSubject(), subject, triples[0].getObject(), object);
+
+    for (unsigned int i = 0; i < triples.size(); i ++) {
+        if (triples[i].match(hdtmanager->getSearchPattern()) && hdtmanager->isPredicateActive(triples[i].getPredicate()-1)) {
+            unsigned long long dist = DIST(triples[i].getSubject(), subject, triples[i].getObject(), object);
+
+            if (dist < bestdist) {
+                best = &triples[i];
+                bestdist = dist;
+                bestpos = i;
+//                printf("1New %u, %u, %u, Dist: %u Pos: %u\n", best->getSubject(), best->getPredicate(), best->getObject(), bestdist, bestpos);
+            }
+        }
+    }
+//    printf("Found: %u, %u, %u, Dist: %llu\n", best->getSubject(), best->getPredicate(), best->getObject(), bestdist);
+
+    hdtmanager->setSelectedTriple( *best );
+}
+
+QString cleanString(string in) {
+    if(in.size()>150) {
+        QString str = in.substr(0, 147).c_str();
+        str.append("...");
+        return str;
+    }
+    return in.c_str();
 }
 
 void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
@@ -421,13 +421,35 @@ void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
         emit cameraChanged();
     }
 
-    GLdouble x, y, z;
-    this->unProject(event->x(), event->y(), &x, &y, &z);
+    if(hdtmanager->getHDT()==NULL)
+        return;
 
-    QString coordinate = QString("S: %1\nP: %2\nO: %3").arg((int)x).arg((int)z).arg((int)y);
+    if(!camera.isFrontView()) {
+        hdtmanager->clearSelectedTriple();
+        return;
+    }
+
+    GLdouble subject, predicate, object;
+    this->unProject(event->x(), event->y(), &object, &subject, &predicate);
 
     QToolTip::hideText();
-    QToolTip::showText(this->mapToGlobal(event->pos()), coordinate);
+
+    hdt::Dictionary &dictionary = hdtmanager->getHDT()->getDictionary();
+    if ( (subject > 0 && subject < dictionary.getMaxSubjectID()) &&
+         (object > 0 && object <= dictionary.getMaxObjectID())
+       ) {
+        this->selectTriple(subject,predicate, object);
+
+        QString subjStr = cleanString(dictionary.idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT));
+        QString predStr = cleanString(dictionary.idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE));
+        QString objStr = cleanString(dictionary.idToString(hdtmanager->getSelectedTriple().getObject(), hdt::OBJECT));
+        QString coordinate = QString("S: %1\nP: %2\nO: %3").arg(subjStr).arg(predStr).arg(objStr);
+        QToolTip::showText(this->mapToGlobal(event->pos()), coordinate);
+    } else {
+        hdtmanager->clearSelectedTriple();
+    }
+
+    updateGL();
 }
 
 
@@ -447,7 +469,7 @@ void MatrixViewWidget::wheelEvent( QWheelEvent* e )
 
 QSize MatrixViewWidget::minimumSizeHint() const
 {
-    return QSize(200,200);
+    return QSize(300,150);
 }
 
 QSize MatrixViewWidget::sizeHint() const
@@ -455,155 +477,39 @@ QSize MatrixViewWidget::sizeHint() const
     return QSize(800,600);
 }
 
-PredicateModel * MatrixViewWidget::getPredicateModel()
+void MatrixViewWidget::reloadHDTInfo()
 {
-    return predicateModel;
-}
+    triples.clear();
 
-void MatrixViewWidget::selectAllPredicates()
-{
-    cout << "selectAllPredicates" << endl;
-    for(unsigned int i=0;i<activePredicate.size();i++) {
-        activePredicate[i] = true;
+    if(hdtmanager->getHDT()==NULL) {
+        return;
     }
-    predicateModel->itemsChanged(0, activePredicate.size());
+
+    hdt::Triples &t = hdtmanager->getHDT()->getTriples();
+    hdt::TripleID pattern(0,0,0);
+
+    unsigned int increment = t.getNumberOfElements()/100000;
+    increment = increment < 1 ? 1 : increment;
+
+    hdt::IteratorTripleID *it = t.search(pattern);
+    unsigned int count = 0;
+    while(it->hasNext()) {
+        hdt::TripleID tid = it->next();
+        count++;
+
+        if( (count%increment) == 0) {
+            triples.push_back(tid);
+        }
+    }
+    delete it;
+
+    cout << "Rendering: " << triples.size() << " points.";
+
     updateGL();
 }
 
-void MatrixViewWidget::selectNonePredicates()
-{
-    cout << "selectNonePredicates" << endl;
-    cout << "selectAllPredicates" << endl;
-    for(unsigned int i=0;i<activePredicate.size();i++) {
-        activePredicate[i] = false;
-    }
-    predicateModel->itemsChanged(0, activePredicate.size());
-    updateGL();
-}
-
-void MatrixViewWidget::setSearchPattern(hdt::TripleString pattern)
-{
-    try {
-        searchPattern = hdt->getDictionary().tripleStringtoTripleID(pattern);
-        cout << "Search Pattern ID: " << searchPattern << endl;
-    } catch (char *exception){
-        cout << "Exception" << endl;
-    }
-}
-
-void MatrixViewWidget::setMinimumPredicateCount(int count)
-{
-    //count = count * maxPredicateCount / 100;
-
-    for(unsigned int i=0;i<activePredicate.size();i++) {
-        //cout << "PredicateCount: " << i << " => " << predicateCount[i] << endl;
-        activePredicate[i] = predicateCount[i]>=count;
-    }
-
-    this->updateGL();
-    predicateModel->itemsChanged(0, activePredicate.size());
-}
 
 
-int MatrixViewWidget::getMaxPredicateCount()
-{
-    return maxPredicateCount;
-}
-
-
-PredicateModel::PredicateModel(QObject *parent, MatrixViewWidget *view, hdt::TripleComponentRole compRole) : matrixView(view), tripleComponentRole(compRole)
-{
-
-}
-
-int PredicateModel::rowCount(const QModelIndex &parent) const
-{
-    //cout << "Row Count" << endl;
-
-    if(matrixView->hdt != NULL) {
-        hdt::Dictionary &dict = matrixView->hdt->getDictionary();
-        switch(tripleComponentRole) {
-        case hdt::SUBJECT:
-            return dict.getNsubjects();
-        case hdt::PREDICATE:
-            return dict.getNpredicates();
-        case hdt::OBJECT:
-            return dict.getNobjects();
-        }
-    }
-    return 0;
-}
-
-int PredicateModel::columnCount(const QModelIndex &parent) const
-{
-    return 1;
-}
-
-QVariant PredicateModel::data(const QModelIndex &index, int role) const
-{
-    if(matrixView->hdt == NULL) {
-        return QVariant();
-    }
-
-    switch(role) {
-    case Qt::DisplayRole:
-    {
-        hdt::Dictionary &d = matrixView->hdt->getDictionary();
-        //cout << "Data: " << index.row()+1 << endl;
-        return d.idToString(index.row()+1, tripleComponentRole).c_str();
-    }
-    case Qt::FontRole:
-    {
-        QFont font;
-        font.setPointSize(10);
-        return font;
-    }
-    case Qt::CheckStateRole:
-        if(tripleComponentRole==hdt::PREDICATE) {
-            return matrixView->activePredicate[index.row()] ? Qt::Checked : Qt::Unchecked;
-        }
-    }
-    return QVariant();
-}
-
-bool PredicateModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-    if(matrixView->hdt == NULL) {
-        return false;
-    }
-
-    cout << "SetData" << endl;
-    switch(role) {
-        case Qt::CheckStateRole:
-        if(tripleComponentRole==hdt::PREDICATE) {
-            matrixView->activePredicate[index.row()] = value.toBool();
-            matrixView->updateGL();
-        }
-    }
-    return true;
-}
-
-Qt::ItemFlags PredicateModel::flags(const QModelIndex &index) const
-{
-    //cout << "Flags" << endl;
-    if(tripleComponentRole == hdt::PREDICATE) {
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
-    } else {
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    }
-}
-
-void PredicateModel::itemsChanged(unsigned int ini, unsigned fin)
-{
-    QModelIndex first = createIndex(ini, 1);
-    QModelIndex last = createIndex(fin, 1);
-    emit dataChanged(first, last);
-}
-
-void PredicateModel::notifyLayoutChanged()
-{
-    emit layoutChanged();
-}
 
 
 

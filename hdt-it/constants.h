@@ -8,7 +8,6 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
-
 #define RDFVIS_FONT GLUT_BITMAP_HELVETICA_12
 #define TIMER_DELAY 50
 #define WIDTH 1024

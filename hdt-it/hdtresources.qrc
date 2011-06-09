@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>editreset.png</file>
+    </qresource>
+</RCC>
