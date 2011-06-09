@@ -73,6 +73,8 @@ public:
 
 	void populateHeader(Header &header, string rootNode);
 
+	string getType();
+
 	friend class CompactTriplesIterator;
 };
 

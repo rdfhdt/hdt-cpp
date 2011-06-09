@@ -81,7 +81,7 @@ public:
 	TripleID tripleStringtoTripleID(TripleString &tripleString);
 	TripleString tripleIDtoTripleString(TripleID &tripleID);
 
-	unsigned int numberOfElements();
+	unsigned int getNumberOfElements();
 
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();
@@ -102,6 +102,8 @@ public:
 
 	void startProcessing();
 	void stopProcessing();
+
+	string getType();
 
 // Private methods
 private:

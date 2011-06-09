@@ -172,11 +172,15 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 }
 
 void BitmapTriples::populateHeader(Header &header, string rootNode) {
-	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_BITMAP);
+	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, getType());
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
+}
+
+string BitmapTriples::getType() {
+	return HDTVocabulary::TRIPLES_TYPE_BITMAP;
 }
 
 IteratorTripleID *BitmapTriples::search(TripleID & pattern)
@@ -194,7 +198,7 @@ bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("codification", HDTVocabulary::TRIPLES_TYPE_BITMAP);
+	controlInformation.set("codification", getType());
 	controlInformation.setUint("componentOrder", order);
 	controlInformation.set("stream.y", streamY->getType());
 	controlInformation.set("stream.z", streamZ->getType());

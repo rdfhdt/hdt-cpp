@@ -93,7 +93,7 @@ public:
 	 *
 	 * @return
 	 */
-	virtual unsigned int numberOfElements()=0;
+	virtual unsigned int getNumberOfElements()=0;
 
 	/* Return the number of different subjects of the current dictionary. */
 	virtual unsigned int getNsubjects()=0;
@@ -156,6 +156,8 @@ public:
 	 * Function to be called right after we are done inserting entries, to perform any possible final cleanup.
 	 */
 	virtual void stopProcessing()=0;
+
+	virtual string getType()=0;
 }; // IDictionary{}
 
 } // dictionary{}

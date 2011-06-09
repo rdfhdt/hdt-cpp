@@ -50,6 +50,10 @@ bool PlainHeader::save(std::ostream & output, ControlInformation &controlInforma
 	output << endl;
 }
 
+unsigned int PlainHeader::getNumberOfElements() {
+	return triples.size();
+}
+
 void PlainHeader::insert(TripleString & triple)
 {
 	triples.push_back(triple);

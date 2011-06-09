@@ -27,6 +27,13 @@ public:
 	virtual void load(std::istream &input, ControlInformation &ci)=0;
 
 	/**
+	 * Returns the number of triples
+	 *
+	 * @return
+	 */
+	virtual unsigned int getNumberOfElements()=0;
+
+	/**
 	 * Search a Triple Pattern.
 	 *
 	 * Searches all triples that match the supplied Triple Pattern. The pattern is composed by
@@ -64,7 +71,8 @@ public:
 	void insert(string subject, string predicate, int object) {
 		stringstream st;
 		st << object;
-		TripleString ts(subject, predicate, "\""+st.str()+"\"^^<http://www.w3.org/2001/XMLSchema#integer>");
+		//TripleString ts(subject, predicate, "\""+st.str()+"\"^^<http://www.w3.org/2001/XMLSchema#integer>");
+		TripleString ts(subject, predicate, st.str());
 		insert(ts);
 	}
 

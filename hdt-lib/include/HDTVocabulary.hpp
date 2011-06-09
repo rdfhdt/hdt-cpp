@@ -44,8 +44,8 @@ namespace HDTVocabulary {
 	const std::string TRIPLES_STREAMZ_TYPE = HDT_TRIPLES+"streamZ>";
 
 	// Triples types
-	const std::string TRIPLES_TYPE_TRIPLESLIST = HDT_TRIPLES+"TriplesList>";
-	const std::string TRIPLES_TYPE_TRIPLESLISTDISK = HDT_TRIPLES+"TriplesListDisk>";
+	const std::string TRIPLES_TYPE_TRIPLESLIST = HDT_TRIPLES+"List>";
+	const std::string TRIPLES_TYPE_TRIPLESLISTDISK = HDT_TRIPLES+"ListDisk>";
 	const std::string TRIPLES_TYPE_PLAIN = HDT_TRIPLES+"Plain>";
 	const std::string TRIPLES_TYPE_COMPACT = HDT_TRIPLES+"Compact>";
 	const std::string TRIPLES_TYPE_BITMAP = HDT_TRIPLES+"Bitmap>";

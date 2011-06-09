@@ -26,6 +26,13 @@ public:
 	void load(std::istream &input, ControlInformation &ci);
 
 	/**
+	 * Returns the number of triples
+	 *
+	 * @return
+	 */
+	unsigned int getNumberOfElements();
+
+	/**
 	 * @param subject
 	 * @param predicate
 	 * @param object

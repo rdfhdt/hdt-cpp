@@ -118,6 +118,7 @@ public:
 	 */
 	virtual void populateHeader(Header &header, string rootNode)=0;
 
+	virtual string getType()=0;
 }; // Triples{}
 
 /**

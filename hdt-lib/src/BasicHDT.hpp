@@ -49,23 +49,23 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	void loadFromRDF(std::istream &input, RDFNotation notation);
+	void loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
 	 */
-	void loadFromHDT(std::istream &input);
+	void loadFromHDT(std::istream &input, ProgressListener *listener = NULL);
 
 	/**
 	 * @param output
 	 * @param notation
 	 */
-	void saveToRDF(std::ostream &output, RDFNotation notation);
+	void saveToRDF(std::ostream &output, RDFNotation notation, ProgressListener *listener = NULL);
 
 	/**
 	 * @param output
 	 */
-	void saveToHDT(std::ostream &output);
+	void saveToHDT(std::ostream &output, ProgressListener *listener = NULL);
 
 	/**
 	 * @param subject
@@ -112,23 +112,23 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	void loadFromRDF(std::istream &input, RDFNotation notation);
+	void loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
 	 */
-	void loadFromHDT(std::istream &input);
+	void loadFromHDT(std::istream &input, ProgressListener *listener = NULL);
 
 	/**
 	 * @param output
 	 * @param notation
 	 */
-	void saveToRDF(std::ostream &output, RDFNotation notation);
+	void saveToRDF(std::ostream &output, RDFNotation notation, ProgressListener *listener = NULL);
 
 	/**
 	 * @param output
 	 */
-	void saveToHDT(std::ostream &output);
+	void saveToHDT(std::ostream &output, ProgressListener *listener = NULL);
 
 
 	/*

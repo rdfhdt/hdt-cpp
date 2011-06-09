@@ -46,6 +46,12 @@
 
 namespace hdt {
 
+class ProgressListener {
+public:
+	virtual void notifyProgress(float level, const char *section)=0;
+};
+
+
 /**
  * Main HDT class. Represents an abstract access to a HDT object.
  * It provides methods to get the Dictionary, Header and Triples.
@@ -77,26 +83,26 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	virtual void loadFromRDF(std::istream &input, RDFNotation notation) = 0;
+	virtual void loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener = NULL) = 0;
 
 	/**
 	 * Load an HDT file from a stream.
 	 * @param input
 	 */
-	virtual void loadFromHDT(std::istream &input) = 0;
+	virtual void loadFromHDT(std::istream &input, ProgressListener *listener = NULL) = 0;
 
 	/**
 	 * Export the current HDT to RDF in the specified notation.
 	 * @param output
 	 * @param notation
 	 */
-	virtual void saveToRDF(std::ostream &output, RDFNotation notation) = 0;
+	virtual void saveToRDF(std::ostream &output, RDFNotation notation, ProgressListener *listener = NULL) = 0;
 
 	/**
 	 * Save the current HDT into a stream in a compact manner.
 	 * @param output
 	 */
-	virtual void saveToHDT(std::ostream &output) = 0;
+	virtual void saveToHDT(std::ostream &output, ProgressListener *listener = NULL) = 0;
 
 
 	/*

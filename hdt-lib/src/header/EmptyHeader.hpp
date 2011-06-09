@@ -21,6 +21,15 @@ public:
 	bool save(std::ostream &output, ControlInformation &ci){ return true; }
 	void load(std::istream &input, ControlInformation &ci){ }
 
+	/**
+	 * Returns the number of triples
+	 *
+	 * @return
+	 */
+	unsigned int getNumberOfElements() {
+		return 0;
+	}
+
 	IteratorTripleString *search(const char *subject, const char *predicate, const char *object){
 		return new IteratorTripleString();
 	}

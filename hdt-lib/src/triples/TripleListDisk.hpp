@@ -106,6 +106,7 @@ public:
 
 	void stopProcessing();
 
+	string getType();
 
 
 

@@ -3,8 +3,8 @@ LIBCDSPATH = ../libcds-v1.0.7
 
 CPP=g++
 CPPFLAGS=
-#FLAGS=-O9 -Wno-deprecated 
-FLAGS=-g -Wno-deprecated  #-Wall
+FLAGS=-O9 -Wno-deprecated 
+#FLAGS=-g -Wno-deprecated  #-Wall
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include
 LDFLAGS=-lstdc++ -lraptor -lz
 DOXYGEN=doxygen

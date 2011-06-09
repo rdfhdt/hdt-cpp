@@ -118,6 +118,10 @@ unsigned int PlainTriples::size()
 	return streamX->size()+streamY->size()+streamZ->size();
 }
 
+string PlainTriples::getType() {
+	return HDTVocabulary::TRIPLES_TYPE_PLAIN;
+}
+
 TripleID PlainTriples::getTripleID(unsigned int pos) {
 	TripleID triple(streamX->get(pos), streamY->get(pos), streamZ->get(pos));
 	return triple;

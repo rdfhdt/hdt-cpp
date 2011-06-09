@@ -51,6 +51,10 @@ bool BasicHeader::save(std::ostream & output, ControlInformation &controlInforma
 	output << endl;
 }
 
+unsigned int BasicHeader::getNumberOfElements() {
+	return hdt->getTriples().getNumberOfElements();
+}
+
 void BasicHeader::insert(TripleString & triple)
 {
 	hdt->insert(triple);

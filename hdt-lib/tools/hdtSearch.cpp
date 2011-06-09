@@ -21,9 +21,9 @@ using namespace std;
 void help() {
 	cout << "$ hdtSearch [options] <hdtfile> " << endl;
 	cout << "\t-h\t\t\tThis help" << endl;
-	cout << "\t-q\t<query>\tLaunch query and exit." << endl;
+	cout << "\t-q\t<query>\t\tLaunch query and exit." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
-	cout << "\t-m\t\tDo not show results, just measure query time." << endl;
+	cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
 
 	//cout << "\t-v\tVerbose output" << endl;
 }

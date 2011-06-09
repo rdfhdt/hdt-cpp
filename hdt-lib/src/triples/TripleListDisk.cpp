@@ -421,6 +421,11 @@ void TripleListDisk::setOrder(TripleComponentOrder order)
 {
 }
 
+
+string TripleListDisk::getType() {
+	return HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK;
+}
+
 ///// ITERATOR
 
 void TripleListDiskIterator::doFetch() {

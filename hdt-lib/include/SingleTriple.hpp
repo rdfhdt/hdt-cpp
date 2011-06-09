@@ -56,7 +56,7 @@ public:
 	 * Get the Subject component of this tripleID.
 	 * @return
 	 */
-	inline unsigned int getSubject() {
+	inline unsigned int getSubject() const {
 		return subject;
 	}
 
@@ -72,7 +72,7 @@ public:
 	 * Get the Predicate component of this tripleID.
 	 * @return
 	 */
-	inline unsigned  getPredicate() {
+	inline unsigned getPredicate() const {
 		return this->predicate;
 	}
 
@@ -88,7 +88,7 @@ public:
 	 * Get the Object component of this tripleID.
 	 * @return
 	 */
-	inline unsigned int getObject() {
+	inline unsigned int getObject() const {
 		return this->object;
 	}
 
@@ -210,13 +210,22 @@ public:
 		this->predicate = replacement.getPredicate();
 	} // replace()
 
+        /**
+         * Check wether a TripleID is empty. i.e. all of the components are zero.
+         *
+         * @return boolean
+         */
+        inline bool isEmpty() const {
+            return !(this->subject != 0 || this->predicate != 0 | this->object != 0);
+        }
+
 	/**
 	 * Check wether a TripleID is valid. i.e. all of the components are non-zero.
 	 *
 	 * @return boolean
 	 */
-	inline bool isValid() {
-		return !(this->subject == 0 || this->predicate == 0 || this->object == 0);
+	inline bool isValid() const {
+                return this->subject != 0 && this->predicate != 0 && this->object != 0;
 	}
 
 	/**
@@ -338,7 +347,7 @@ public:
 	 * Check wether all components of the TripleString are empty.
 	 * @return
 	 */
-	bool isEmpty() {
+	bool isEmpty() const {
 		return subject == "" && predicate == "" && object == "";
 	}
 
@@ -346,7 +355,7 @@ public:
 	 * Check wether any of the components of the TripleString is empty.
 	 * @return
 	 */
-	bool hasEmpty() {
+	bool hasEmpty() const {
 		return subject == "" || predicate == "" || object == "";
 	}
 

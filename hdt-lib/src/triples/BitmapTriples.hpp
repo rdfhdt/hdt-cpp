@@ -80,6 +80,8 @@ public:
 
 	void populateHeader(Header &header, string rootNode);
 
+	string getType();
+
 	friend class BitmapTriplesSearchIterator;
 	friend class MiddleWaveletIterator;
 };

@@ -183,7 +183,7 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci)
 	updateIDs();
 }
 
-unsigned int PlainDictionary::numberOfElements()
+unsigned int PlainDictionary::getNumberOfElements()
 {
 	return subjects_shared.size() + subjects_not_shared.size() + objects_not_shared.size() + predicates.size();
 }
@@ -260,7 +260,7 @@ bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 {
 	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 	controlInformation.set("format", "text/plain");
-	controlInformation.setUint("$elements", numberOfElements());
+	controlInformation.setUint("$elements", getNumberOfElements());
 
 	controlInformation.setUint("$subjects", getNsubjects());
 	controlInformation.setUint("$objects", getNobjects());
@@ -777,6 +777,10 @@ void PlainDictionary::dumpStats(string &output) {
 
 	histoBlank.end();
 	histoBlank.dump(output.c_str(), "Blank");
+}
+
+string PlainDictionary::getType() {
+	return HDTVocabulary::DICTIONARY_TYPE_PLAIN;
 }
 
 

@@ -187,6 +187,10 @@ unsigned int CompactTriples::size()
 	return streamY->size()+streamZ->size();
 }
 
+string CompactTriples::getType() {
+	return HDTVocabulary::TRIPLES_TYPE_COMPACT;
+}
+
 /// ITERATOR
 CompactTriplesIterator::CompactTriplesIterator(CompactTriples *pt, TripleID &pat)
 		: triples(pt), numTriple(0), masterPos(0), slavePos(0), pattern(pat) {

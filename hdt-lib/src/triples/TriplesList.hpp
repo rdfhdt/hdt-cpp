@@ -122,6 +122,8 @@ class TriplesList : public ModifiableTriples {
 		 */
 		void stopProcessing();
 
+		string getType();
+
 		// From ModifiableTriples
 
 		/**

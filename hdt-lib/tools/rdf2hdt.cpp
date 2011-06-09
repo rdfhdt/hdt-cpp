@@ -30,6 +30,15 @@ void help() {
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
+class ConvertProgress : public ProgressListener {
+
+public:
+    void notifyProgress(float level, const char *section) {
+    	cout << "Progress: " << level << " " << section << endl;
+	}
+
+};
+
 int main(int argc, char **argv) {
 	string inputFile;
 	string outputFile;
@@ -104,6 +113,7 @@ int main(int argc, char **argv) {
 	}
 
 	// Process
+	ConvertProgress progress;
 	HDTSpecification spec(configFile);
 
 	spec.setOptions(options);
@@ -115,7 +125,7 @@ int main(int argc, char **argv) {
 		if(!in.good()){
 			throw "Could not open input file.";
 		}
-		hdt->loadFromRDF(in, N3);
+		hdt->loadFromRDF(in, N3, &progress);
 		in.close();
 
 		ofstream out;
@@ -125,7 +135,7 @@ int main(int argc, char **argv) {
 		if(!out.good()){
 			throw "Could not open output file.";
 		}
-		hdt->saveToHDT(out);
+		hdt->saveToHDT(out, &progress);
 		out.close();
 
 		ControlInformation controlInformation;

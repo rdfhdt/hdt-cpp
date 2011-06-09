@@ -152,31 +152,45 @@ IteratorTripleString *BasicHDT::search(const char *subject, const char *predicat
 
 
 
-void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
+void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener)
 {
 	// FIXME: Add other parsers.
 	if(notation!=N3) {
 		throw "Not implemented: Only parsing available: N3";
 	}
 
+	long begin = input.tellg();
+	input.seekg(0, ios::end);
+	long end = input.tellg();
+	input.seekg(0, ios::beg);
+
 	RDFParserN3 parser(input);
 
 	// Generate Dictionary
 	cout << "Generate Dictionary... "<< endl;
 
+	unsigned int numtriples = 0;
 	StopWatch st;
 	dictionary->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
+		numtriples++;
 		//std::cout << ts << std::endl;
 
 		dictionary->insert(ts.getSubject(), SUBJECT);
 		dictionary->insert(ts.getPredicate(), PREDICATE);
 		dictionary->insert(ts.getObject(), OBJECT);
+
+		if(listener!=NULL && (numtriples % 10000)==0 ){
+			listener->notifyProgress(input.tellg()*49/end, "Generating Dictionary");
+		}
+	}
+	if(listener!=NULL){
+		listener->notifyProgress(49, "Organizing Dictionary");
 	}
 	dictionary->stopProcessing();
-	dictionary->populateHeader(*header, "http://purl.org/hdt/dictionary"); // FIXME: Assing appropiate rootnode.
-	cout << dictionary->numberOfElements() << " entries added in " << st << endl << endl;
+	dictionary->populateHeader(*header, "<http://purl.org/hdt/dictionary>"); // FIXME: Assing appropiate rootnode.
+	cout << dictionary->getNumberOfElements() << " entries added in " << st << endl << endl;
 
 	// Generate Triples
 	cout << "Generating triples... "<< endl;
@@ -193,7 +207,9 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 		TripleID ti = dictionary->tripleStringtoTripleID(ts);
 		triplesList->insert(ti);
 
-		//std::cout << ti << std::endl;
+		if(listener!=NULL && ((triplesList->getNumberOfElements() % 10000)==0)){
+			listener->notifyProgress( (triplesList->getNumberOfElements()*90)/numtriples, "Generating Triples");
+		}
 	}
 	triplesList->stopProcessing();
 
@@ -202,18 +218,29 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 	if(order==Unknown){
 		order = SPO;
 	}
+
+	if(listener!=NULL){
+		listener->notifyProgress( 92, "Sorting Triples");
+	}
 	triplesList->sort(order);
+
+	if(listener!=NULL){
+		listener->notifyProgress( 95, "Removing duplicate Triples");
+	}
 	triplesList->removeDuplicates();
 
+	if(listener!=NULL){
+		listener->notifyProgress( 98, "Convert to final format");
+	}
 	// Convert to final Triples
 	triples->load(*triplesList);
 	delete triplesList;
 
-	triples->populateHeader(*header, "http://purl.org/hdt/triples");
+	triples->populateHeader(*header, "<http://purl.org/hdt/triples>");
 	cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
-void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
+void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation, ProgressListener *listener)
 {
 	RDFSerializerN3 serializer(output);
 
@@ -223,7 +250,7 @@ void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation)
 }
 
 
-void BasicHDT::loadFromHDT(std::istream & input)
+void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 {
 	delete header;
 	delete dictionary;
@@ -249,7 +276,7 @@ void BasicHDT::loadFromHDT(std::istream & input)
 	triples->load(input, controlInformation);
 }
 
-void BasicHDT::saveToHDT(std::ostream & output)
+void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 {
 	StopWatch st;
 	ControlInformation controlInformation;
@@ -341,7 +368,7 @@ IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char
 
 
 
-void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation)
+void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener)
 {
 	// FIXME: Add other parsers.
 	if(notation!=N3) {
@@ -353,25 +380,32 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 	// Generate Dictionary
 	cout << "Generate Dictionary "<< endl;
 
+	unsigned int numtriples = 0;
 	StopWatch st;
 	dictionary->startProcessing();
 	while(parser.hasNext()) {
 		TripleString ts = parser.next();
+		numtriples++;
 		//std::cout << ts << std::endl;
 
 		dictionary->insert(ts.getSubject(), SUBJECT);
 		dictionary->insert(ts.getPredicate(), PREDICATE);
 		dictionary->insert(ts.getObject(), OBJECT);
+
+		if(listener!=NULL /*&& (numtriples % 1000)==0*/ ){
+			listener->notifyProgress(0, "Generating Dictionary");
+		}
 	}
 	dictionary->stopProcessing();
 	dictionary->populateHeader(*header, "http://purl.org/hdt/dictionary");
-	cout << dictionary->numberOfElements() << " entries added in " << st << endl;
+	cout << dictionary->getNumberOfElements() << " entries added in " << st << endl;
 
 	// Generate Triples
 	cout << "Generating triples "<< endl;
 	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
 
+	unsigned int count = 0;
 	st.reset();
 	triples->startProcessing();
 	while(parser.hasNext()) {
@@ -381,13 +415,18 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation)
 		TripleID ti = dictionary->tripleStringtoTripleID(ts);
 
 		triples->insert(ti);
+
+		if(listener!=NULL /*&& (count % 1000)==0)*/){
+			listener->notifyProgress( (count*100.0)/numtriples, "Generating Triples");
+		}
+		count++;
 	}
 	triples->stopProcessing();
 	triples->populateHeader(*header, "http://purl.org/hdt/triples");
 	cout << triples->getNumberOfElements() << " triples added in " << st << endl;
 }
 
-void BasicModifiableHDT::saveToRDF(std::ostream & output, RDFNotation notation)
+void BasicModifiableHDT::saveToRDF(std::ostream & output, RDFNotation notation, ProgressListener *listener)
 {
 	RDFSerializerN3 serializer(output);
 
@@ -397,7 +436,7 @@ void BasicModifiableHDT::saveToRDF(std::ostream & output, RDFNotation notation)
 }
 
 
-void BasicModifiableHDT::loadFromHDT(std::istream & input)
+void BasicModifiableHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 {
 	//header->load(input);
 	ControlInformation controlInformation;
@@ -409,7 +448,7 @@ void BasicModifiableHDT::loadFromHDT(std::istream & input)
 	triples->load(input, controlInformation);
 }
 
-void BasicModifiableHDT::saveToHDT(std::ostream & output)
+void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 {
 	ControlInformation controlInformation;
 

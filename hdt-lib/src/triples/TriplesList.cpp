@@ -99,8 +99,6 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
 	unsigned int totalTriples = controlInformation.getUint("numTriples");
 
-	cout << "Reading total number of triples: " << totalTriples << endl;
-
 	unsigned int numRead=0;
 	TripleID readTriple;
 
@@ -110,7 +108,6 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 		numRead++;
 		numValidTriples++;
 	}
-	cout << "Succesfully read triples: " << numRead << endl;
 }
 
 void TriplesList::load(ModifiableTriples &input)
@@ -143,6 +140,9 @@ void TriplesList::stopProcessing()
 {
 }
 
+string TriplesList::getType() {
+	return HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST;
+}
 
 // From ModifiableTriples
 
