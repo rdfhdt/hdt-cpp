@@ -27,7 +27,9 @@ private:
     TripleComponentModel *objectModel;
     SearchResultsModel *searchResultsModel;
     vector<bool> activePredicate;
+    vector<unsigned int> subjectCount;
     vector<unsigned int> predicateCount;
+    vector<unsigned int> objectCount;
     unsigned int maxPredicateCount;
     hdt::TripleID searchPatternID;
     vector<hdt::TripleID> triples;
@@ -57,7 +59,7 @@ public:
     void setPredicateActive(int i, bool b);
 
     hdt::TripleID &getSearchPattern();
-    void setSearchPattern(hdt::TripleString pattern);
+    void setSearchPattern(hdt::TripleString &pattern);
 
     QString getStatistics();
 
@@ -87,8 +89,6 @@ public:
     Wrapper(hdt::HDT *hdt, std::ifstream &in, hdt::RDFNotation &notation, QProgressDialog *dialog);
     void execute();
     void notifyProgress(float level, const char *section);
-signals:
-    void hdtProcessFinished();
 };
 
 

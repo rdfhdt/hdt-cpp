@@ -9,6 +9,10 @@ QT       += core gui opengl
 TARGET = hdt-it
 TEMPLATE = app
 
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O9
+QMAKE_CFLAGS_RELEASE -= -O2
+QMAKE_CFLAGS_RELEASE += -O9
 
 SOURCES += main.cpp\
         hdtit.cpp \

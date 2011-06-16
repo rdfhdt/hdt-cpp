@@ -1,15 +1,14 @@
 #include "triplecomponentmodel.hpp"
 
 
-TripleComponentModel::TripleComponentModel(QObject *parent, HDTManager *view, hdt::TripleComponentRole compRole) : hdtManager(view), tripleComponentRole(compRole)
+TripleComponentModel::TripleComponentModel(QObject *parent, HDTManager *view, hdt::TripleComponentRole compRole) :
+    hdtManager(view), tripleComponentRole(compRole)
 {
 
 }
 
 int TripleComponentModel::rowCount(const QModelIndex &parent) const
 {
-    //cout << "Row Count" << endl;
-
     if(hdtManager->getHDT() != NULL) {
         hdt::Dictionary &dict = hdtManager->getHDT()->getDictionary();
         switch(tripleComponentRole) {
@@ -39,15 +38,14 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
     {
         hdt::Dictionary &d = hdtManager->getHDT()->getDictionary();
-        //cout << "Data: " << index.row()+1 << endl;
         return d.idToString(index.row()+1, tripleComponentRole).c_str();
     }
-    /*case Qt::FontRole:
+    case Qt::FontRole:
     {
         QFont font;
         font.setPointSize(10);
         return font;
-    }*/
+    }
     case Qt::CheckStateRole:
         if(tripleComponentRole==hdt::PREDICATE) {
             return hdtManager->isPredicateActive(index.row()) ? Qt::Checked : Qt::Unchecked;
@@ -67,7 +65,6 @@ bool TripleComponentModel::setData(const QModelIndex &index, const QVariant &val
         case Qt::CheckStateRole:
         if(tripleComponentRole==hdt::PREDICATE) {
             hdtManager->setPredicateActive(index.row(), value.toBool());
-            // FIXME: Notify Redraw
         }
     }
     return true;

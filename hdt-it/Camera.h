@@ -41,11 +41,13 @@ public:
     void applyTransform();
 
     bool isFrontView();
+    bool isLeftView();
+    bool isTopView();
+    bool is3DView();
 
 public slots:
     void setFrontView();
     void setLeftView();
-    void setRightView();
     void setTopView();
     void set3DView();
 

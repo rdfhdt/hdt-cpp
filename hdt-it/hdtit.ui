@@ -83,12 +83,18 @@
         </item>
         <item>
          <widget class="QTabWidget" name="tabWidget">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_2">
            <attribute name="title">
-            <string>Stats</string>
+            <string>Info</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
@@ -194,6 +200,11 @@
          <string>Matrix View</string>
         </attribute>
        </widget>
+       <widget class="QWidget" name="tab_5">
+        <attribute name="title">
+         <string>Statistics</string>
+        </attribute>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -263,11 +274,17 @@
    </property>
   </action>
   <action name="actionSaveHDT">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save HDT</string>
    </property>
   </action>
   <action name="actionExportRDF">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Export RDF</string>
    </property>
@@ -366,70 +383,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>selectAllPredicatesButton</sender>
-   <signal>clicked()</signal>
-   <receiver>matrixView</receiver>
-   <slot>selectAllPredicates()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>135</x>
-     <y>337</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>462</x>
-     <y>227</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>selectNoneButton</sender>
-   <signal>clicked()</signal>
-   <receiver>matrixView</receiver>
-   <slot>selectNonePredicates()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>135</x>
-     <y>337</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>462</x>
-     <y>227</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>predicateCountSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>matrixView</receiver>
-   <slot>setMinimumPredicateCount(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>95</x>
-     <y>299</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>473</x>
-     <y>273</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>predicateCountSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>numPredicateCount</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>95</x>
-     <y>299</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>95</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>subjectPatternEdit</sender>
    <signal>textChanged(QString)</signal>

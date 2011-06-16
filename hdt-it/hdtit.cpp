@@ -27,6 +27,9 @@ HDTit::HDTit(QWidget *parent) :
 
     connect(ui->matrixView,SIGNAL(cameraChanged()), this, SLOT(set3Dview()));
     connect(hdtManager, SIGNAL(datasetChanged()), ui->matrixView, SLOT(reloadHDTInfo()));
+    connect(hdtManager, SIGNAL(predicatesChanged()), ui->matrixView, SLOT(updateGL()));
+    connect(ui->selectAllPredicatesButton, SIGNAL(clicked()), hdtManager, SLOT(selectAllPredicates()));
+    connect(ui->selectNoneButton, SIGNAL(clicked()), hdtManager, SLOT(selectNonePredicates()));
 
     QString file = tr("/Users/mck/workspace-cpp/hdt-lib/data/nytimes.hdt");
     //openHDTFile(file);
@@ -53,12 +56,27 @@ void HDTit::updateSearchPattern()
     //ui->resultsTable->resizeColumnsToContents();
     //ui->resultsTable->resizeRowsToContents();
     ui->matrixView->updateGL();
+
+    ui->subjectView->selectRow(hdtManager->getSearchPattern().getSubject()-1);
+    ui->objectView->selectRow(hdtManager->getSearchPattern().getObject()-1);
 }
 
 void HDTit::openHDTFile(QString &file)
 {
     hdtManager->openHDTFile(file);
 
+    hdtChanged(file);
+}
+
+void HDTit::importRDFFile(QString &file, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
+{
+    hdtManager->importRDFFile(file, notation, spec);
+
+    hdtChanged(file);
+}
+
+void HDTit::hdtChanged(QString &file)
+{
     ui->predicateCountSlider->setMaximum(hdtManager->getMaxPredicateCount());
     ui->statusBar->showMessage(file);
     ui->statsLabel->setText(hdtManager->getStatistics());
@@ -70,20 +88,9 @@ void HDTit::openHDTFile(QString &file)
     ui->subjectPatternEdit->clear();
     ui->predicatePatternEdit->clear();
     ui->objectPatternEdit->clear();
-}
 
-void HDTit::importRDFFile(QString file, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
-{
-    hdtManager->importRDFFile(file, notation, spec);
-
-    ui->predicateCountSlider->setMaximum(hdtManager->getMaxPredicateCount());
-    ui->statusBar->showMessage(file);
-    ui->statsLabel->setText(hdtManager->getStatistics());
-    ui->numResultsLabel->setText(QString("%1 results found.").arg(hdtManager->getSearchResultsModel()->getNumResults()));
-    ui->numResultsLabel->setText(
-                QString("%1 results found in %2.").arg(hdtManager->getSearchResultsModel()->getNumResults())
-                .arg(hdtManager->getSearchResultsModel()->getTime().c_str())
-                );
+    ui->actionSaveHDT->setEnabled(hdtManager->getHDT()!=NULL);
+    ui->actionExportRDF->setEnabled(hdtManager->getHDT()!=NULL);
 }
 
 
@@ -100,7 +107,6 @@ void HDTit::on_actionImportRDF_triggered()
 {
     HDTSpecForm hdtSpecForm;
     int result = hdtSpecForm.exec();
-    cout << "HDTForm opened: " << result << endl;
     if(result>0) {
         hdt::HDTSpecification spec;
         hdtSpecForm.fillHDTSpecification(spec);
@@ -198,7 +204,7 @@ void HDTit::setPatternObject(QModelIndex index)
 
 void HDTit::setPatternGlobal(QModelIndex index)
 {
-    cout << "Index: " << index.row() << ", " << index.column() << endl;
+    //cout << "Index: " << index.row() << ", " << index.column() << endl;
 
     switch(index.column()) {
     case 0:
@@ -212,3 +218,4 @@ void HDTit::setPatternGlobal(QModelIndex index)
         break;
     }
 }
+

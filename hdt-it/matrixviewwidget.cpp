@@ -8,6 +8,11 @@ MatrixViewWidget::MatrixViewWidget(QWidget *parent) :
 {
     setMouseTracking(true);
     connect(&camera, SIGNAL(cameraChanged()), (QObject *)this, SLOT(updateGL()));
+
+    timer.setInterval(20);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(updateGL()));
+
+    //timer.start();
 }
 
 MatrixViewWidget::~MatrixViewWidget() {
@@ -165,18 +170,16 @@ void MatrixViewWidget::paintPoints()
 
 
     if(hdtmanager->getSearchResultsModel()->getNumResults()<20000) {
-
-        hdt::TripleID all(0,0,0);
         hdt::IteratorTripleID *it = hdtmanager->getHDT()->getTriples().search(hdtmanager->getSearchPattern());
 
         Color c;
         ColorRamp2 cr;
         while(it->hasNext()) {
-            hdt::TripleID tid = it->next();
+            hdt::TripleID *tid = it->next();
 
-            cr.apply(&c, tid.getPredicate(), 1, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
+            cr.apply(&c, tid->getPredicate(), 0, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
 
-            if(hdtmanager->isPredicateActive(tid.getPredicate()-1)) {
+            if(hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
 
             } else {
                 c.r = c.r/4;
@@ -184,7 +187,7 @@ void MatrixViewWidget::paintPoints()
                 c.b = c.b/4;
             }
             glColor4f(c.r, c.g, c.b, c.a);
-            glVertex3f((float)tid.getObject(), (float)tid.getSubject(), (float)tid.getPredicate());
+            glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
 
         }
         delete it;
@@ -197,7 +200,7 @@ void MatrixViewWidget::paintPoints()
             if(tid->match(hdtmanager->getSearchPattern())) {
                 Color c;
                 ColorRamp2 cr;
-                cr.apply(&c, tid->getPredicate(), 1, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
+                cr.apply(&c, tid->getPredicate(), 0, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
 
                 if(hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
 
@@ -254,7 +257,7 @@ void MatrixViewWidget::paintSelected()
         glBegin(GL_POINTS);
         Color c;
         ColorRamp2 cr;
-        cr.apply(&c, z, 1, npredicates);
+        cr.apply(&c, z, 0, npredicates);
         glColor4f(c.r, c.g, c.b, c.a);
         glVertex3f(x, y, z);
         glEnd();
@@ -294,14 +297,14 @@ void MatrixViewWidget::paintGL()
 
 void MatrixViewWidget::resizeGL(int w, int h)
 {
-    std::cout << "Widget resize: " << w << ", " << h << std::endl;
+    //std::cout << "Widget resize: " << w << ", " << h << std::endl;
     camera.setScreenSize(w,h);
     this->updateGL();
 }
 
 void MatrixViewWidget::mousePressEvent(QMouseEvent *event)
 {
-    std::cout << event->type() << "DOW Btn: "<< event->buttons() << " Mod: " << event->modifiers() << "   " << event->x() << ", " << event->y() << std::endl;
+    //std::cout << event->type() << "DOW Btn: "<< event->buttons() << " Mod: " << event->modifiers() << "   " << event->x() << ", " << event->y() << std::endl;
 
     lastClickX = lastX = event->x();
     lastClickY = lastY = event->y();
@@ -310,17 +313,17 @@ void MatrixViewWidget::mousePressEvent(QMouseEvent *event)
 
 void MatrixViewWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    std::cout << event->type() << "REL Btn: "<< event->buttons() << " Mod: " << event->modifiers() << "   " << event->x() << ", " << event->y() << std::endl;
+    //std::cout << event->type() << "REL Btn: "<< event->buttons() << " Mod: " << event->modifiers() << "   " << event->x() << ", " << event->y() << std::endl;
 
     if(event->x()==lastClickX && event->y()==lastClickY) {
-        std::cout << "Mouse CLICK" << std::endl;
+        //std::cout << "Mouse CLICK" << std::endl;
         if(buttonClick & Qt::LeftButton) {
-            std::cout << "Left Mouse CLICK" << std::endl;
+            //std::cout << "Left Mouse CLICK" << std::endl;
             if(hdtmanager->getSelectedTriple().isValid()) {
                 hdtmanager->selectPredicate(hdtmanager->getSelectedTriple().getPredicate());
             }
         } else if (buttonClick & Qt::RightButton) {
-            std::cout << "Right Mouse CLICK" << std::endl;
+            //std::cout << "Right Mouse CLICK" << std::endl;
             hdtmanager->selectAllPredicates();
         }
     }
@@ -457,11 +460,11 @@ void MatrixViewWidget::wheelEvent( QWheelEvent* e )
 {
   int delta = e->delta();
   if (e->orientation() == Qt::Horizontal) {
-      std::cout << "DeltaX: " << delta << std::endl;
+      //std::cout << "DeltaX: " << delta << std::endl;
   } else {
+      //std::cout << "DeltaY: " << delta << std::endl;
       camera.increaseZoom(delta);
       emit cameraChanged();
-      std::cout << "DeltaY: " << delta << std::endl;
   }
 
   e->accept();
@@ -479,6 +482,7 @@ QSize MatrixViewWidget::sizeHint() const
 
 void MatrixViewWidget::reloadHDTInfo()
 {
+    cout << "Reloading HDT Info: " << hdtmanager->getHDT() << endl;
     triples.clear();
 
     if(hdtmanager->getHDT()==NULL) {
@@ -486,24 +490,23 @@ void MatrixViewWidget::reloadHDTInfo()
     }
 
     hdt::Triples &t = hdtmanager->getHDT()->getTriples();
-    hdt::TripleID pattern(0,0,0);
 
     unsigned int increment = t.getNumberOfElements()/100000;
     increment = increment < 1 ? 1 : increment;
 
-    hdt::IteratorTripleID *it = t.search(pattern);
+    hdt::IteratorTripleID *it = t.searchAll();
     unsigned int count = 0;
     while(it->hasNext()) {
-        hdt::TripleID tid = it->next();
+        hdt::TripleID *tid = it->next();
         count++;
 
         if( (count%increment) == 0) {
-            triples.push_back(tid);
+            triples.push_back(*tid);
         }
     }
     delete it;
 
-    cout << "Rendering: " << triples.size() << " points.";
+    cout << "Rendering: " << triples.size() << " points." << endl;
 
     updateGL();
 }

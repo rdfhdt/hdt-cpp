@@ -8,14 +8,8 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
-#define RDFVIS_FONT GLUT_BITMAP_HELVETICA_12
 #define TIMER_DELAY 50
-#define WIDTH 1024
-#define HEIGHT 768
-#define POSX 9
-#define POSY 30
 #define RENDER_NUM_POINTS 100000
-#define BUF_SIZE 250
 
 #define SCREEN
 

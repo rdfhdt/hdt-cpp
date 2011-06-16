@@ -30,22 +30,28 @@ void HDTManager::updateOnHDTChanged()
 {
     activePredicate.resize(hdt->getDictionary().getNpredicates(), true);
 
+    subjectCount.clear();
     predicateCount.clear();
-    predicateCount.resize(hdt->getDictionary().getNpredicates(), 0);
+    objectCount.clear();
+    subjectCount.resize(hdt->getDictionary().getMaxSubjectID(), 0);
+    predicateCount.resize(hdt->getDictionary().getMaxPredicateID(), 0);
+    objectCount.resize(hdt->getDictionary().getMaxObjectID(), 0);
     maxPredicateCount = 0;
 
     hdt::Triples &t = hdt->getTriples();
-    hdt::TripleID pattern(0,0,0);
 
-    hdt::IteratorTripleID *it = t.search(pattern);
+    hdt::IteratorTripleID *it = t.searchAll();
     while(it->hasNext()) {
-        hdt::TripleID tid = it->next();
+        hdt::TripleID *tid = it->next();
 
-        triples.push_back(tid);
-        predicateCount[tid.getPredicate()-1]++;
+        triples.push_back(*tid);
 
-        if(maxPredicateCount<predicateCount[tid.getPredicate()-1]) {
-            maxPredicateCount = predicateCount[tid.getPredicate()-1];
+        subjectCount[tid->getSubject()-1]++;
+        predicateCount[tid->getPredicate()-1]++;
+        objectCount[tid->getObject()-1]++;
+
+        if(maxPredicateCount<predicateCount[tid->getPredicate()-1]) {
+            maxPredicateCount = predicateCount[tid->getPredicate()-1];
         }
     }
     delete it;
@@ -81,7 +87,6 @@ void HDTManager::saveHDTFile(QString file)
 {
     if(hdt!=NULL) {
         ofstream out;
-
         // Save HDT
         out.open(file.toAscii());
         if(out.good()){
@@ -100,7 +105,6 @@ void HDTManager::saveHDTFile(QString file)
         } else {
             QMessageBox::critical(0, "File Error", "Could not open file: "+file);
         }
-
     }
 }
 
@@ -132,18 +136,13 @@ void Wrapper::execute() {
     hdt->loadFromRDF(in, notation, this);
     in.close();
     dialog->close();
-    delete &in;
     delete dialog;
-    emit hdtProcessFinished();
-    delete this;
 }
 
 
 void Wrapper::notifyProgress(float level, const char *section) {
-    cout << "Progress: " << level << " " << section << endl;
     dialog->setValue(level);
     dialog->setLabelText(section);
-    //QCoreApplication::processEvents(QEventLoop::AllEvents, 500);
 }
 
 
@@ -151,23 +150,55 @@ void HDTManager::importRDFFile(QString file, hdt::RDFNotation notation, hdt::HDT
 {
     std::ifstream *in = new std::ifstream(file.toAscii());
 
-    QProgressDialog *dialog = new QProgressDialog("Importing RDF File...","Cancel", 0, 100);
-    dialog->show();
+    QProgressDialog *dialog = new QProgressDialog();
+    dialog->setRange(0,100);
+    dialog->setWindowTitle("Importing RDF File to HDT");
 
     if(in->good()) {
+
+#if 1
         closeHDT();
+
+        hdt::HDT *hdt = hdt::HDTFactory::createHDT(spec);
+
+        Wrapper *wrap = new Wrapper(hdt, *in, notation, dialog);
+
+        //QFutureWatcher<void> futureWatcher;
+
+        //connect(&futureWatcher, SIGNAL(finished()), this, SLOT(updateOnHDTChanged()));
+        //connect(dialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
+        //connect(wrap, SIGNAL(progressChanged(int)), dialog, SLOT(setValue(int)));
+
+        //futureWatcher.setFuture(QtConcurrent::run(wrap, &Wrapper::execute));
+
+        QtConcurrent::run(wrap, &Wrapper::execute);
+        int result = dialog->exec();
+
+        //futureWatcher.waitForFinished();
+
+        cout << "Process finished: " << result << endl;
+
+        delete wrap;
+        delete in;
+
+        if(result==0) {
+            //closeHDT();
+            this->hdt = hdt;
+
+            updateOnHDTChanged();
+        }
+
+        //QtConcurrent::run(hdt, &hdt::HDT::loadFromRDF, in, notation, &notifier);
+#else
+        closeHDT();
+
+        dialog->show();
 
         hdt = hdt::HDTFactory::createHDT(spec);
 
-#if 0
-        Wrapper *wrap = new Wrapper(hdt, *in, notation, dialog);
-        connect(wrap, SIGNAL(hdtProcessFinished()), this, SLOT(updateOnHDTChanged()));
-        QFuture<void> future = QtConcurrent::run(wrap, &Wrapper::execute);
-        //QtConcurrent::run(hdt, &hdt::HDT::loadFromRDF, in, notation, &notifier);
-#else
+        cout << "New HDT Instance: " << hdt << endl;
         hdt->loadFromRDF(*in, notation);
         in->close();
-
         dialog->close();
         delete dialog;
         delete in;
@@ -181,11 +212,9 @@ void HDTManager::importRDFFile(QString file, hdt::RDFNotation notation, hdt::HDT
 
 void HDTManager::exportRDFFile(QString file, hdt::RDFNotation notation)
 {
-    if(hdt!=NULL) {
-        ofstream out;
-
+    if(hdt!=NULL) { 
         // Save HDT
-        out.open(file.toAscii());
+        ofstream out(file.toAscii());
         if(out.good()){
             QProgressDialog *dialog = new QProgressDialog("Exporting RDF File...","Cancel", 0, 100);
             dialog->show();
@@ -214,11 +243,13 @@ void HDTManager::closeHDT()
         hdt = NULL;
 
         // FIXME: Connect using signals??
+#if 1
         subjectModel->notifyLayoutChanged();
         predicateModel->notifyLayoutChanged();
         objectModel->notifyLayoutChanged();
 
         emit datasetChanged();
+#endif
     }
 }
 
@@ -279,7 +310,7 @@ void HDTManager::selectPredicate(unsigned int pred)
 }
 
 
-void HDTManager::setSearchPattern(hdt::TripleString pattern)
+void HDTManager::setSearchPattern(hdt::TripleString &pattern)
 {
     if(hdt==NULL) {
         return;
@@ -287,6 +318,11 @@ void HDTManager::setSearchPattern(hdt::TripleString pattern)
 
     try {
         searchPatternID = hdt->getDictionary().tripleStringtoTripleID(pattern);
+        if(searchPatternID.getPredicate()!=0) {
+            selectPredicate(searchPatternID.getPredicate());
+        } else {
+            selectAllPredicates();
+        }
         cout << "Search Pattern ID: " << searchPatternID << endl;
         searchResultsModel->update();
     } catch (char *exception){

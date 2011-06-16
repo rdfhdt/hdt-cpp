@@ -26,6 +26,7 @@ class MatrixViewWidget : public QGLWidget
     Q_OBJECT
 
 private:
+    QTimer timer;
     Camera camera;
     int lastX, lastY, lastClickX, lastClickY, buttonClick;
     HDTManager *hdtmanager;

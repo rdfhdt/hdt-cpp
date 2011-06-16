@@ -40,13 +40,14 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
         case 2:
             return d.idToString(currentTriple.getObject(), hdt::OBJECT).c_str();
         }
+        break;
     }
-    /*case Qt::FontRole:
+    case Qt::FontRole:
     {
         QFont font;
         font.setPointSize(10);
         return font;
-    }*/
+    }
 
     }
     return QVariant();
@@ -69,8 +70,12 @@ QVariant SearchResultsModel::headerData(int section, Qt::Orientation orientation
                 return "Object";
             }
         } else {
-            return QString::number(section);
+            return QString::number(section+1);
         }
+        break;
+    }
+    case Qt::SizeHintRole:
+    {
     }
     }
 
@@ -86,7 +91,7 @@ void SearchResultsModel::resetIterator()
     if(hdtManager->getHDT() != NULL) {
         triples = hdtManager->getHDT()->getTriples().search(hdtManager->getSearchPattern());
         if(triples->hasNext()) {
-            currentTriple = triples->next();
+            currentTriple = *triples->next();
         }
     } else {
         triples = NULL;
@@ -127,7 +132,7 @@ void SearchResultsModel::findTriple(unsigned int index)
     }
 
     while( currentIndex<index && triples->hasNext()) {
-        currentTriple = triples->next();
+        currentTriple = *triples->next();
         currentIndex++;
     }
 }

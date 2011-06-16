@@ -139,11 +139,6 @@ void Camera::setLeftView()
     setRotation(90,0);
 }
 
-void Camera::setRightView()
-{
-    setRotation(-90,0);
-}
-
 void Camera::setTopView()
 {
     setRotation(0,90);
@@ -157,5 +152,20 @@ void Camera::set3DView()
 bool Camera::isFrontView()
 {
     return rotx==0 && roty==0;
+}
+
+bool Camera::isLeftView()
+{
+    return rotx==90 && roty==0;
+}
+
+bool Camera::isTopView()
+{
+    return rotx==0 && roty==90;
+}
+
+bool Camera::is3DView()
+{
+    return rotx==-45 && roty==45;
 }
 
