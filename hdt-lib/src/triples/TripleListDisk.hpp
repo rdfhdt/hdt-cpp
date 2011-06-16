@@ -86,10 +86,10 @@ public:
 	 * @param output
 	 * @return
 	 */
-	bool save(std::ostream &output, ControlInformation &controlInformation);
+	bool save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 
-	void load(ModifiableTriples &input);
+	void load(ModifiableTriples &input, ProgressListener *listener = NULL);
 
 	/**
 	 * Loads triples from a file
@@ -97,7 +97,7 @@ public:
 	 * @param input
 	 * @return
 	 */
-	void load(std::istream &input, ControlInformation &controlInformation);
+	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 
 	void populateHeader(Header &header, string rootNode);
@@ -156,7 +156,7 @@ public:
 class TripleListDiskIterator : public IteratorTripleID {
 private:
 	TripleListDisk *triples;
-	TripleID *nextv, pattern;
+	TripleID *nextv, pattern, ret;
 	bool hasNextv;
 	unsigned int pos;
 
@@ -168,7 +168,7 @@ public:
 
 	bool hasNext();
 
-	TripleID next();
+	TripleID *next();
 };
 
 

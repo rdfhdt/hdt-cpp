@@ -11,6 +11,8 @@
 #include <Triples.hpp>
 #include <HDTSpecification.hpp>
 
+#include "TripleIterators.hpp"
+
 #include "../stream/UintStream.hpp"
 
 namespace hdt {
@@ -59,7 +61,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	bool save(std::ostream &output, ControlInformation &controlInformation);
+	bool save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 	/**
 	 * Loads triples from a file
@@ -67,9 +69,9 @@ public:
 	 * @param input
 	 * @return
 	 */
-	void load(std::istream &input, ControlInformation &controlInformation);
+	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
-	void load(ModifiableTriples &triples);
+	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
 
 	void populateHeader(Header &header, string rootNode);
 
@@ -78,28 +80,18 @@ public:
 	friend class CompactTriplesIterator;
 };
 
-class CompactTriplesIterator : public IteratorTripleID {
+class CompactTriplesIterator : public PreFetchIteratorTripleID {
 private:
 	CompactTriples *triples;
-	TripleID nextv, pattern;
-	bool hasNextv;
-	unsigned int numTriple;
-	unsigned int masterPos;
-	unsigned int slavePos;
-
+	unsigned int pos;
+	unsigned int numTriple, masterPos, slavePos;
 	unsigned int x, y, z;
 
-	void doFetch();
-	void readTriple();
 public:
 	CompactTriplesIterator(CompactTriples *pt, TripleID &pat);
-	virtual ~CompactTriplesIterator();
 
-	bool hasNext();
-
-	TripleID next();
+	void getNextTriple();
 };
-
 
 }
 

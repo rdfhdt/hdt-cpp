@@ -33,14 +33,14 @@ bool DictionaryEntry::cmpID(DictionaryEntry *c1, DictionaryEntry *c2) {
 
 
 PlainDictionary::PlainDictionary() {
-	this->mapping = MAPPING1;
+	this->mapping = MAPPING2;
 }
 
 PlainDictionary::PlainDictionary(HDTSpecification &specification) : spec(specification) {
-	if(spec.get("dictionary.mapping")=="mapping2") {
-		this->mapping = MAPPING2;
-	} else {
+	if(spec.get("dictionary.mapping")=="mapping1") {
 		this->mapping = MAPPING1;
+	} else {
+		this->mapping = MAPPING2;
 	}
 }
 
@@ -108,28 +108,21 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 	}
 }
 
-TripleString PlainDictionary::tripleIDtoTripleString(TripleID &tripleID)
+void PlainDictionary::tripleIDtoTripleString(TripleID &tripleID, TripleString &ts)
 {
-	std::string s = idToString(tripleID.getSubject(), SUBJECT);
-	std::string p = idToString(tripleID.getPredicate(), PREDICATE);
-	std::string o = idToString(tripleID.getObject(), OBJECT);
-
-	TripleString ts(s,p,o);
-	return ts;
+	string s = idToString(tripleID.getSubject(), SUBJECT);
+	string p = idToString(tripleID.getPredicate(), PREDICATE);
+	string o = idToString(tripleID.getObject(), OBJECT);
+	ts.setSubject(s);
+	ts.setPredicate(p);
+	ts.setObject(o);
 }
 
-TripleID PlainDictionary::tripleStringtoTripleID(TripleString &tripleString)
+void PlainDictionary::tripleStringtoTripleID(TripleString &tripleString, TripleID &tid)
 {
-
-	std::string ss = tripleString.getSubject();
-	std::string pp = tripleString.getPredicate();
-	std::string oo = tripleString.getObject();
-	unsigned int s = stringToId(ss, SUBJECT);
-	unsigned int p = stringToId(pp, PREDICATE);
-	unsigned int o = stringToId(oo, OBJECT);
-
-	TripleID tid(s,p,o);
-	return tid;
+	tid.setSubject(stringToId(tripleString.getSubject(), SUBJECT));
+	tid.setPredicate(stringToId(tripleString.getPredicate(), PREDICATE));
+	tid.setObject(stringToId(tripleString.getObject(), OBJECT));
 }
 
 void PlainDictionary::startProcessing()
@@ -154,12 +147,14 @@ void PlainDictionary::stopProcessing()
 	//dumpSizes(cout);
 }
 
-void PlainDictionary::load(std::istream & input, ControlInformation &ci)
+void PlainDictionary::load(std::istream & input, ControlInformation &ci, ProgressListener *listener)
 {
 	std::string line;
 	unsigned char region = 1;
 
 	startProcessing();
+
+	this->mapping = ci.getUint("$mapping");
 
 	while(region<5 && getline(input, line)) {
 		//std::cout << line << std::endl;
@@ -256,7 +251,7 @@ string intToStr(int val) {
 	return out.str();
 }
 
-bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation)
+bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 	controlInformation.set("format", "text/plain");
@@ -271,6 +266,8 @@ bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 	controlInformation.setUint("$maxsubjectid",getMaxSubjectID());
 	controlInformation.setUint("$maxpredicateid", getMaxPredicateID());
 	controlInformation.setUint("$maxobjectid", getMaxObjectID());
+
+	controlInformation.setUint("$mapping", this->mapping);
 
 	controlInformation.save(output);
 

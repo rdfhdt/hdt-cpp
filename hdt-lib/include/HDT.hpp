@@ -38,6 +38,7 @@
 #include <RDF.hpp>
 #include <HDTSpecification.hpp>
 #include <HDTEnums.hpp>
+#include <HDTListener.hpp>
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
@@ -45,11 +46,6 @@
 #include <istream>
 
 namespace hdt {
-
-class ProgressListener {
-public:
-	virtual void notifyProgress(float level, const char *section)=0;
-};
 
 
 /**

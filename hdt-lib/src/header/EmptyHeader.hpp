@@ -18,8 +18,8 @@ class EmptyHeader : public Header {
 public:
 	EmptyHeader() { }
 	virtual ~EmptyHeader(){ }
-	bool save(std::ostream &output, ControlInformation &ci){ return true; }
-	void load(std::istream &input, ControlInformation &ci){ }
+	bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL){ return true; }
+	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL){ }
 
 	/**
 	 * Returns the number of triples

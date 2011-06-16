@@ -172,7 +172,7 @@ bool invalidTriple(TripleID *triple) {
 	return triple->getSubject()==0 || triple->getPredicate()==0 || triple->getObject()==0;
 }
 
-void TripleListDisk::load(ModifiableTriples & input)
+void TripleListDisk::load(ModifiableTriples & input, ProgressListener *listener)
 {
 	TripleID all(0,0,0);
 	IteratorTripleID *it = input.search(all);
@@ -183,7 +183,7 @@ void TripleListDisk::load(ModifiableTriples & input)
 	stopProcessing();
 }
 
-void TripleListDisk::load(std::istream & input, ControlInformation &controlInformation)
+void TripleListDisk::load(std::istream & input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	input.read((char *)tripleHead, sizeof(TripleListHeader));
 
@@ -202,7 +202,7 @@ void TripleListDisk::load(std::istream & input, ControlInformation &controlInfor
 
 
 
-bool TripleListDisk::save(std::ostream & output, ControlInformation &controlInformation)
+bool TripleListDisk::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	cout << "Saving triples: " << tripleHead->numValidTriples << endl;
 
@@ -292,8 +292,8 @@ bool TripleListDisk::insert(TripleID &triple)
 bool TripleListDisk::insert(IteratorTripleID *triples)
 {
 	while(triples->hasNext()) {
-		TripleID triple = triples->next();
-		insert(triple);
+		TripleID *triple = triples->next();
+		insert(*triple);
 	}
 }
 
@@ -316,7 +316,7 @@ bool TripleListDisk::remove(IteratorTripleID *triples)
 	vector<TripleID> allPat;
 
 	while(triples->hasNext()) {
-		allPat.push_back(triples->next());
+		allPat.push_back(*triples->next());
 	}
 
 	for(tid=arrayTriples; tid<arrayTriples+tripleHead->numTotalTriples; tid++) {
@@ -449,10 +449,10 @@ bool TripleListDiskIterator::hasNext() {
 	return hasNextv;
 }
 
-TripleID TripleListDiskIterator::next() {
-	TripleID previousv = *nextv;
+TripleID *TripleListDiskIterator::next() {
+	ret = *nextv;
 	doFetch();
-	return previousv;
+	return &ret;
 }
 
 

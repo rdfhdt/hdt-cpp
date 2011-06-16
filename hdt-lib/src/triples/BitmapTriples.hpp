@@ -66,7 +66,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	bool save(std::ostream &output, ControlInformation &controlInformation);
+	bool save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 	/**
 	 * Loads triples from a file
@@ -74,9 +74,9 @@ public:
 	 * @param input
 	 * @return
 	 */
-	void load(std::istream &input, ControlInformation &controlInformation);
+	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
-	void load(ModifiableTriples &triples);
+	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
 
 	void populateHeader(Header &header, string rootNode);
 
@@ -89,16 +89,15 @@ public:
 class BitmapTriplesSearchIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
-	TripleID pattern;
+	TripleID pattern, nextTriple, returnTriple;
+	bool hasMoreTriples;
+
 	unsigned int patX, patY, patZ;
 
 	AdjacencyList adjY, adjZ;
 	unsigned int posY, posZ;
 	unsigned int nextY, nextZ;
 	unsigned int x, y, z;
-
-	TripleID nextv;
-	bool hasNextv;
 
 	bool goThroughAll;
 
@@ -112,13 +111,20 @@ public:
 	BitmapTriplesSearchIterator(BitmapTriples *triples, TripleID &pat);
 
 	bool hasNext();
-	TripleID next();
+	TripleID *next();
 };
+
+
+
+
+
+
 
 class MiddleWaveletIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
-	TripleID pattern;
+	TripleID nextTriple, pattern, returnTriple;
+	bool hasMoreTriples;
 
 	AdjacencyList adjY, adjZ;
 	WaveletStream *wavelet;
@@ -127,9 +133,6 @@ private:
 	unsigned int predicateOcurrence, numOcurrences;
 	unsigned int nextY, nextZ;
 	unsigned int x, y, z;
-
-	TripleID nextv;
-	bool hasNextv;
 
 	void findFirst();
 	void readTriple();
@@ -141,7 +144,7 @@ public:
 	MiddleWaveletIterator(BitmapTriples *triples, TripleID &pat);
 
 	bool hasNext();
-	TripleID next();
+	TripleID *next();
 };
 
 }

@@ -22,7 +22,7 @@ namespace hdt {
  */
 class TripleID
 {
-private:
+protected:
 	unsigned int subject;
 	unsigned int predicate;
 	unsigned int object;
@@ -97,6 +97,12 @@ public:
 	 * @return
 	 */
 	inline void setObject(unsigned int object) {
+		this->object = object;
+	}
+
+	inline void setAll(unsigned int subject, unsigned int predicate, unsigned int object) {
+		this->subject = subject;
+		this->predicate = predicate;
 		this->object = object;
 	}
 
@@ -389,29 +395,25 @@ public:
 	}
 };
 
-
-
-
 class IteratorTripleID {
 public:
 	virtual bool hasNext() {
 		return false;
 	}
 
-	virtual TripleID next() {
-		TripleID id;
-		return id;
+	virtual TripleID *next() {
+		return NULL;
 	}
 };
+
 
 class IteratorTripleString {
 public:
 	virtual bool hasNext() {
 		return false;
 	}
-	virtual TripleString next() {
-		TripleString ts;
-		return ts;
+	virtual TripleString *next() {
+		return NULL;
 	}
 };
 }

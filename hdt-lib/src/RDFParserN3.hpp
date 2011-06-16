@@ -18,13 +18,14 @@ class RDFParserN3 : public RDFParser {
 
 private:
 	std::string line;
+	TripleString ts;
 
 public:
 	RDFParserN3(std::istream &in);
 	virtual ~RDFParserN3();
 
 	bool hasNext();
-	TripleString next();
+	TripleString *next();
 };
 
 }

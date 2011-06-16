@@ -22,7 +22,7 @@ PlainHeader::PlainHeader(HDTSpecification &specification) : spec(specification) 
 PlainHeader::~PlainHeader() {
 }
 
-void PlainHeader::load(std::istream & input, ControlInformation &controlInformation)
+void PlainHeader::load(std::istream & input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	std::string codification = controlInformation.get("codification");
 	if(codification != HDTVocabulary::HEADER_PLAIN) {
@@ -32,12 +32,12 @@ void PlainHeader::load(std::istream & input, ControlInformation &controlInformat
 	RDFParserN3 parser(input);
 
 	while(parser.hasNext()) {
-		TripleString ts = parser.next();
-		triples.push_back(ts);
+		TripleString *ts = parser.next();
+		triples.push_back(*ts);
 	}
 }
 
-bool PlainHeader::save(std::ostream & output, ControlInformation &controlInformation)
+bool PlainHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);
@@ -67,8 +67,8 @@ void PlainHeader::remove(TripleString & triple)
 void PlainHeader::insert(IteratorTripleString *tripit)
 {
 	while(tripit->hasNext()){
-		TripleString next = tripit->next();
-		triples.push_back(next);
+		TripleString *next = tripit->next();
+		triples.push_back(*next);
 	}
 
 }

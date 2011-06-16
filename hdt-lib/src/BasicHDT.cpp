@@ -137,7 +137,8 @@ IteratorTripleString *BasicHDT::search(const char *subject, const char *predicat
 	TripleString ts(subject, predicate, object);
 
 	try {
-		TripleID tid(dictionary->tripleStringtoTripleID(ts));
+		TripleID tid;
+		dictionary->tripleStringtoTripleID(ts, tid);
 
 		//cout << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
 		IteratorTripleID *iterID = triples->search(tid);
@@ -173,15 +174,15 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 	StopWatch st;
 	dictionary->startProcessing();
 	while(parser.hasNext()) {
-		TripleString ts = parser.next();
+		TripleString *ts = parser.next();
 		numtriples++;
 		//std::cout << ts << std::endl;
 
-		dictionary->insert(ts.getSubject(), SUBJECT);
-		dictionary->insert(ts.getPredicate(), PREDICATE);
-		dictionary->insert(ts.getObject(), OBJECT);
+		dictionary->insert(ts->getSubject(), SUBJECT);
+		dictionary->insert(ts->getPredicate(), PREDICATE);
+		dictionary->insert(ts->getObject(), OBJECT);
 
-		if(listener!=NULL && (numtriples % 10000)==0 ){
+		if(listener!=NULL && (numtriples % 20000)==0 ){
 			listener->notifyProgress(input.tellg()*49/end, "Generating Dictionary");
 		}
 	}
@@ -198,17 +199,19 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 	input.seekg(0, std::ios::beg);
 
 	ModifiableTriples *triplesList = new TriplesList(spec);
+	TripleID ti;
 	st.reset();
 	triplesList->startProcessing();
 	while(parser.hasNext()) {
-		TripleString ts = parser.next();
+		TripleString *ts = parser.next();
 		//std::cout << ts << std::endl;
 
-		TripleID ti = dictionary->tripleStringtoTripleID(ts);
+		dictionary->tripleStringtoTripleID(*ts, ti);
+		//cout << "TripleID: " << ti << endl;
 		triplesList->insert(ti);
 
-		if(listener!=NULL && ((triplesList->getNumberOfElements() % 10000)==0)){
-			listener->notifyProgress( (triplesList->getNumberOfElements()*90)/numtriples, "Generating Triples");
+		if(listener!=NULL && ((triplesList->getNumberOfElements() % 20000)==0)){
+			listener->notifyProgress( 50+(triplesList->getNumberOfElements()*40)/numtriples, "Generating Triples");
 		}
 	}
 	triplesList->stopProcessing();
@@ -232,9 +235,18 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 	if(listener!=NULL){
 		listener->notifyProgress( 98, "Convert to final format");
 	}
+
+
+
+
 	// Convert to final Triples
-	triples->load(*triplesList);
-	delete triplesList;
+	if(triples->getType()==triplesList->getType()) {
+		delete triples;
+		triples = triplesList;
+	}else{
+		triples->load(*triplesList);
+		delete triplesList;
+	}
 
 	triples->populateHeader(*header, "<http://purl.org/hdt/triples>");
 	cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
@@ -261,19 +273,19 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	// Load header
 	controlInformation.load(input);
 	header = HDTFactory::readHeader(controlInformation);
-	header->load(input, controlInformation);
+	header->load(input, controlInformation, listener);
 
 	//Load Dictionary.
 	controlInformation.clear();
 	controlInformation.load(input);
 	dictionary = HDTFactory::readDictionary(controlInformation);
-	dictionary->load(input, controlInformation);
+	dictionary->load(input, controlInformation, listener);
 
 	// Load Triples
 	controlInformation.clear();
 	controlInformation.load(input);
 	triples = HDTFactory::readTriples(controlInformation);
-	triples->load(input, controlInformation);
+	triples->load(input, controlInformation, listener);
 }
 
 void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
@@ -284,20 +296,20 @@ void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 	cout << "Saving header" << endl;
 	st.reset();
 	controlInformation.setHeader(true);
-	header->save(output, controlInformation);
+	header->save(output, controlInformation, listener);
 	cout << "Header saved in " << st << endl;
 
 	cout << "Saving dictionary" << endl;
 	st.reset();
 	controlInformation.setDictionary(true);
-	dictionary->save(output, controlInformation);
+	dictionary->save(output, controlInformation, listener);
 	cout << "Dictionary saved in " << st << endl;
 
 	cout << "Saving triples" << endl;
 	st.reset();
 	controlInformation.clear();
 	controlInformation.setTriples(true);
-	triples->save(output, controlInformation);
+	triples->save(output, controlInformation, listener);
 	cout << "Triples saved in " << st << endl;
 }
 
@@ -356,7 +368,8 @@ IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char
 {
 	TripleString ts(subject, predicate, object);
 
-	TripleID tid(dictionary->tripleStringtoTripleID(ts));
+	TripleID tid;
+	dictionary->tripleStringtoTripleID(ts, tid);
 
 //	cout << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
 
@@ -384,13 +397,13 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation, 
 	StopWatch st;
 	dictionary->startProcessing();
 	while(parser.hasNext()) {
-		TripleString ts = parser.next();
+		TripleString *ts = parser.next();
 		numtriples++;
 		//std::cout << ts << std::endl;
 
-		dictionary->insert(ts.getSubject(), SUBJECT);
-		dictionary->insert(ts.getPredicate(), PREDICATE);
-		dictionary->insert(ts.getObject(), OBJECT);
+		dictionary->insert(ts->getSubject(), SUBJECT);
+		dictionary->insert(ts->getPredicate(), PREDICATE);
+		dictionary->insert(ts->getObject(), OBJECT);
 
 		if(listener!=NULL /*&& (numtriples % 1000)==0*/ ){
 			listener->notifyProgress(0, "Generating Dictionary");
@@ -405,14 +418,15 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation, 
 	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
 
+	TripleID ti;
 	unsigned int count = 0;
 	st.reset();
 	triples->startProcessing();
 	while(parser.hasNext()) {
-		TripleString ts = parser.next();
+		TripleString *ts = parser.next();
 		//std::cout << ts << std::endl;
 
-		TripleID ti = dictionary->tripleStringtoTripleID(ts);
+		dictionary->tripleStringtoTripleID(*ts, ti);
 
 		triples->insert(ti);
 
@@ -467,7 +481,8 @@ void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *list
 
 void BasicModifiableHDT::insert(TripleString & triple)
 {
-	TripleID tid = dictionary->tripleStringtoTripleID(triple);
+	TripleID tid;
+	dictionary->tripleStringtoTripleID(triple, tid);
 	triples->insert(tid);
 }
 
@@ -479,7 +494,8 @@ void BasicModifiableHDT::insert(IteratorTripleString *triples)
 
 void BasicModifiableHDT::remove(TripleString & triple)
 {
-	TripleID tid = dictionary->tripleStringtoTripleID(triple);
+	TripleID tid;
+	dictionary->tripleStringtoTripleID(triple, tid);
 	triples->remove(tid);
 
 	// Fixme: Need to remove from dictionary?

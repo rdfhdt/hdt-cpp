@@ -39,6 +39,7 @@
 #include <SingleTriple.hpp>
 #include <Header.hpp>
 #include <ControlInformation.hpp>
+#include <HDTListener.hpp>
 
 #include <iostream>
 #include <iterator>
@@ -68,6 +69,11 @@ public:
 	 */
 	virtual IteratorTripleID *search(TripleID &pattern)=0;
 
+	IteratorTripleID *searchAll() {
+		TripleID all(0,0,0);
+		return search(all);
+	}
+
 	/**
 	 * Calculates the cost to retrieve a specific pattern
 	 *
@@ -94,13 +100,13 @@ public:
 	 * @param output
 	 * @return
 	 */
-	virtual bool save(std::ostream &output, ControlInformation &ci)=0;
+	virtual bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Generate triples structure from other triples structure.
 	 * @param input
 	 */
-	virtual void load(ModifiableTriples &input)=0;
+	virtual void load(ModifiableTriples &input, ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Read the triples from a stream, using the same implementation-specific format.
@@ -108,7 +114,7 @@ public:
 	 * @param input
 	 * @return
 	 */
-	virtual void load(std::istream &input, ControlInformation &ci)=0;
+	virtual void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Adds all known information about the triples to the Header.

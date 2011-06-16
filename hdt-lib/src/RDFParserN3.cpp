@@ -23,7 +23,7 @@ bool RDFParserN3::hasNext() {
 	return line!="";
 }
 
-TripleString RDFParserN3::next() {
+TripleString *RDFParserN3::next() {
 	using namespace std;
 
 	int pos = 0;
@@ -136,22 +136,16 @@ TripleString RDFParserN3::next() {
 		firstIndex = lastIndex + 1;
 	}
 
-	if (errorParsing == true) {
-		char* except =
-				(char*) " :*********** FORMAT ERROR (NOT N3?) ***********";
-		throw except;
-	} else if (pos != 0 && pos != 3) {
-		char* except =
-				(char*) " :*********** FORMAT ERROR (NOT N3?) ***********";
-		throw except;
+	if (errorParsing == true || (pos != 0 && pos != 3)) {
+		cout << line << endl;
+		throw " :*********** FORMAT ERROR (NOT N3?) ***********";
 	}
 
-	TripleString ts;
 	ts.setSubject(node[0]);
 	ts.setPredicate(node[1]);
 	ts.setObject(node[2]);
 
-	return ts;
+	return &ts;
 }
 
 }

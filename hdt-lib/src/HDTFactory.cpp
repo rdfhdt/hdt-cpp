@@ -91,7 +91,7 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 
 Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
 	if(!controlInformation.getHeader())
-		throw "Trying to get Dictionary from Non-Dictionary section";
+		throw "Trying to get Header from Non-Header section";
 
 	string type = controlInformation.get("codification");
 

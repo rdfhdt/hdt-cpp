@@ -91,8 +91,8 @@ int main(int argc, char **argv) {
 			IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
 
 			while(it->hasNext()) {
-				TripleString ts = it->next();
-				*out << ts << endl;
+				TripleString *ts = it->next();
+				*out << *ts << endl;
 			}
 			delete it;
 
@@ -118,10 +118,10 @@ int main(int argc, char **argv) {
 				StopWatch st;
 				unsigned int numTriples = 0;
 				while(it->hasNext()) {
-					TripleString ts = it->next();
+					TripleString *ts = it->next();
 
 					if(!measure) {
-						cout << ts << endl;
+						cout << *ts << endl;
 					}
 
 					numTriples++;

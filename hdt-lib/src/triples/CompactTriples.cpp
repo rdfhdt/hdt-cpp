@@ -40,10 +40,10 @@ float CompactTriples::cost(TripleID & triple)
 
 
 
-void CompactTriples::load(ModifiableTriples &triples) {
-	TripleID all(0,0,0);
+void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener) {
+	triples.sort(order);
 
-	IteratorTripleID *it = triples.search(all);
+	IteratorTripleID *it = triples.searchAll();
 
 	vector<unsigned int> vectorY, vectorZ;
 	unsigned int lastX, lastY, lastZ;
@@ -51,16 +51,13 @@ void CompactTriples::load(ModifiableTriples &triples) {
 
 	// First triple
 	if(it->hasNext()) {
-		TripleID triple = it->next();
-		//cout << "111> " << triple << endl;
+		TripleID *triple = it->next();
 
-		UnorderedTriple *ut = reinterpret_cast<UnorderedTriple *>(&triple);
-		swapComponentOrder(ut, SPO, order);
-		//cout << "222> " << triple << endl;
+		swapComponentOrder(triple, SPO, order);
 
-		lastX = x = ut->x;
-		lastY = y = ut->y;
-		lastZ = z = ut->z;
+		lastX = x = triple->getSubject();
+		lastY = y = triple->getPredicate();
+		lastZ = z = triple->getObject();
 
 		vectorY.push_back(y);
 		vectorZ.push_back(z);
@@ -70,16 +67,15 @@ void CompactTriples::load(ModifiableTriples &triples) {
 
 	// Rest of the triples
 	while(it->hasNext()) {
-		TripleID triple = it->next();
+		TripleID *triple = it->next();
 		//cout << "111> " << triple << endl;
 
-		UnorderedTriple *ut = reinterpret_cast<UnorderedTriple *>(&triple);
-		swapComponentOrder(ut, SPO, order);
+		swapComponentOrder(triple, SPO, order);
 		//cout << "222> " << triple << endl;
 
-		x = ut->x;
-		y = ut->y;
-		z = ut->z;
+		x = triple->getSubject();
+		y = triple->getPredicate();
+		z = triple->getObject();
 
 		if(x!=lastX) {
 			vectorY.push_back(0);
@@ -140,7 +136,7 @@ IteratorTripleID *CompactTriples::search(TripleID & pattern)
 	return new CompactTriplesIterator(this, pattern);
 }
 
-bool CompactTriples::save(std::ostream & output, ControlInformation &controlInformation)
+bool CompactTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
@@ -154,7 +150,7 @@ bool CompactTriples::save(std::ostream & output, ControlInformation &controlInfo
 	streamZ->save(output);
 }
 
-void CompactTriples::load(std::istream &input, ControlInformation &controlInformation)
+void CompactTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	std::string codification = controlInformation.get("codification");
 	if(codification != HDTVocabulary::TRIPLES_TYPE_COMPACT) {
@@ -193,16 +189,13 @@ string CompactTriples::getType() {
 
 /// ITERATOR
 CompactTriplesIterator::CompactTriplesIterator(CompactTriples *pt, TripleID &pat)
-		: triples(pt), numTriple(0), masterPos(0), slavePos(0), pattern(pat) {
+		: triples(pt), numTriple(0), masterPos(0), slavePos(0), PreFetchIteratorTripleID(pat, pt->order) {
 
 	doFetch();
 }
 
-CompactTriplesIterator::~CompactTriplesIterator() {
-
-}
-
-void CompactTriplesIterator::readTriple() {
+void CompactTriplesIterator::getNextTriple() {
+	// Get Triple
 	if(numTriple==0) {
 		x = 1;
 		y = triples->streamY->get(masterPos++);
@@ -221,35 +214,12 @@ void CompactTriplesIterator::readTriple() {
 			}
 		}
 	}
-
-	//cout << numTriple << "/" << triples->numTriples << "  "<< x << ", " << y << ", " << z << endl;
-
-	nextv.setSubject(x);
-	nextv.setPredicate(y);
-	nextv.setObject(z);
-
-	UnorderedTriple *trip = reinterpret_cast<UnorderedTriple *>(&nextv);
-	swapComponentOrder(trip, triples->order, SPO);
-
 	numTriple++;
 
-	hasNextv = (numTriple<=triples->numTriples);
-}
+	nextTriple.setAll(x,y,z);
 
-void CompactTriplesIterator::doFetch() {
-	do {
-		readTriple();
-	} while(hasNextv && (!nextv.isValid() || !nextv.match(pattern)));
-}
-
-bool CompactTriplesIterator::hasNext() {
-	return hasNextv;
-}
-
-TripleID CompactTriplesIterator::next() {
-	TripleID ret = nextv;
-	doFetch();
-	return ret;
+	// Update condition
+	hasMoreTriples = (numTriple<=triples->numTriples);
 }
 
 

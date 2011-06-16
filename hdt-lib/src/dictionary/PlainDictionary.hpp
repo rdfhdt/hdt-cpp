@@ -78,8 +78,8 @@ public:
 	std::string idToString(unsigned int id, TripleComponentRole position);
 	unsigned int stringToId(std::string &str, TripleComponentRole position);
 
-	TripleID tripleStringtoTripleID(TripleString &tripleString);
-	TripleString tripleIDtoTripleString(TripleID &tripleID);
+	void tripleStringtoTripleID(TripleString &tripleString, TripleID &tid);
+	void tripleIDtoTripleString(TripleID &tripleID, TripleString &ts);
 
 	unsigned int getNumberOfElements();
 
@@ -94,8 +94,8 @@ public:
 	unsigned int getMaxObjectID();
 
 	void populateHeader(Header &header, string rootNode);
-	bool save(std::ostream &output, ControlInformation &ci);
-	void load(std::istream &input, ControlInformation &ci);
+	bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
+	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
 
 	void insert(std::string &str, TripleComponentRole position);

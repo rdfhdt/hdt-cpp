@@ -42,12 +42,10 @@ float BitmapTriples::cost(TripleID & triple)
 
 
 
-void BitmapTriples::load(ModifiableTriples &triples) {
+void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener) {
 	triples.sort(order);
 
-	TripleID all(0,0,0);
-
-	IteratorTripleID *it = triples.search(all);
+	IteratorTripleID *it = triples.searchAll();
 
 	vector<unsigned int> vectorY, vectorZ;
 	vector<bool> bitY, bitZ;
@@ -59,15 +57,14 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 
 	// First triple
 	if(it->hasNext()) {
-		TripleID triple = it->next();
-		//cout << "111> " << triple << endl;
+		TripleID *triple = it->next();
+		//cout << "111> " << *triple << endl;
 
-		UnorderedTriple *ut = reinterpret_cast<UnorderedTriple *>(&triple);
-		swapComponentOrder(ut, SPO, order);
+		swapComponentOrder(triple, SPO, order);
 
-		lastX = x = ut->x;
-		lastY = y = ut->y;
-		lastZ = z = ut->z;
+		lastX = x = triple->getSubject();
+		lastY = y = triple->getPredicate();
+		lastZ = z = triple->getObject();
 
 		vectorY.push_back(y);
 		vectorZ.push_back(z);
@@ -77,15 +74,14 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 
 	// Rest of the triples
 	while(it->hasNext()) {
-		TripleID triple = it->next();
-		//if(numTriples<20) cout << "111> " << triple << endl;
+		TripleID *triple = it->next();
+		//cout << "111> " << *triple << endl;
 
-		UnorderedTriple *ut = reinterpret_cast<UnorderedTriple *>(&triple);
-		swapComponentOrder(ut, SPO, order);
+		swapComponentOrder(triple, SPO, order);
 
-		x = ut->x;
-		y = ut->y;
-		z = ut->z;
+		x = triple->getSubject();
+		y = triple->getPredicate();
+		z = triple->getObject();
 
 		if(x!=lastX) {
 			bitY.push_back(0);
@@ -127,7 +123,7 @@ void BitmapTriples::load(ModifiableTriples &triples) {
 	streamY->add(itY);
 	streamZ->add(itZ);
 
-#if 0
+#if 1
 	// Debug Adjacency Lists
 	cout << "Y" << vectorY.size() << "): ";
 	for(unsigned int i=0;i<20 && i<streamY->getNumberOfElements();i++){
@@ -194,7 +190,7 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	}
 }
 
-bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInformation)
+bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
@@ -213,7 +209,7 @@ bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 	streamZ->save(output);
 }
 
-void BitmapTriples::load(std::istream &input, ControlInformation &controlInformation)
+void BitmapTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	numTriples = controlInformation.getUint("numTriples");
 	order = (TripleComponentOrder) controlInformation.getUint("componentOrder");
@@ -254,39 +250,35 @@ BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, Tr
 		adjZ(trip->streamZ, trip->bitmapZ)
 {
 	// Convert pattern to local order.
-	UnorderedTriple *unorderedPattern = reinterpret_cast<UnorderedTriple *>(&pattern);
-	swapComponentOrder(unorderedPattern, SPO, triples->order);
-	patX = unorderedPattern->x;
-	patY = unorderedPattern->y;
-	patZ = unorderedPattern->z;
+	swapComponentOrder(&pattern, SPO, triples->order);
+	patX = pattern.getSubject();
+	patY = pattern.getPredicate();
+	patZ = pattern.getObject();
 
 	try {
 		// Find position of the first matching pattern.
 		findFirst();
 
 		// If first not found, go through all to find one.
-		if(!nextv.match(pattern)) {
+		if(!nextTriple.match(pattern)) {
 			doFetch();
 		}
 	} catch (char *ex) {
 		// If exception thrown, the selected triple could not be found.
-		hasNextv = false;
+		hasMoreTriples = false;
 	}
 }
 
 void BitmapTriplesSearchIterator::updateOutput() {
 	// Convert local order to SPO
-	nextv.setSubject(x);
-	nextv.setPredicate(y);
-	nextv.setObject(z);
-	UnorderedTriple *trip = reinterpret_cast<UnorderedTriple *>(&nextv);
-	swapComponentOrder(trip, triples->order, SPO);
+	nextTriple.setAll(x,y,z);
+	swapComponentOrder(&nextTriple, triples->order, SPO);
 
 	// Check termination condition.
-	hasNextv = (posY <= adjY.getSize()) && (posZ <= adjZ.getSize());
+	hasMoreTriples = (posY <= adjY.getSize()) && (posZ <= adjZ.getSize());
 
 	if(!goThroughAll) {
-		hasNextv = hasNextv && nextv.match(pattern);
+		hasMoreTriples = hasMoreTriples && nextTriple.match(pattern);
 	}
 }
 
@@ -365,27 +357,25 @@ void BitmapTriplesSearchIterator::readTriple() {
 void BitmapTriplesSearchIterator::doFetch() {
 	do {
 		readTriple();
-	} while(hasNextv && (!nextv.isValid() || !nextv.match(pattern)));
+	} while(hasMoreTriples && (!nextTriple.isValid() || !nextTriple.match(pattern)));
 }
 
 bool BitmapTriplesSearchIterator::hasNext()
 {
-	return hasNextv;
+	return hasMoreTriples;
 }
 
-TripleID BitmapTriplesSearchIterator::next()
+TripleID *BitmapTriplesSearchIterator::next()
 {
-	TripleID ret = nextv;
+	// FIXME: Avoid ret.
+	returnTriple = nextTriple;
 	//cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
 	doFetch();
 
-	return ret;
+	//cout << returnTriple << endl;
+
+	return &returnTriple;
 }
-
-
-
-
-
 
 
 
@@ -399,39 +389,36 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
 		wavelet(reinterpret_cast<WaveletStream *>(trip->streamY))
 {
 	// Convert pattern to local order.
-	UnorderedTriple *unorderedPattern = reinterpret_cast<UnorderedTriple *>(&pattern);
-	swapComponentOrder(unorderedPattern, SPO, triples->order);
-	patX = unorderedPattern->x;
-	patY = unorderedPattern->y;
-	patZ = unorderedPattern->z;
+	swapComponentOrder(&pattern, SPO, triples->order);
+	patX = pattern.getSubject();
+	patY = pattern.getPredicate();
+	patZ = pattern.getObject();
 
 	try {
 		// Find position of the first matching pattern.
 		findFirst();
 
 		// If first not found, go through all to find one.
-		if(!nextv.match(pattern)) {
+		if(!nextTriple.match(pattern)) {
 			doFetch();
 		}
 	} catch (char *ex) {
 		// If exception thrown, the selected triple could not be found.
-		hasNextv = false;
+		hasMoreTriples = false;
 	}
 }
 
 void MiddleWaveletIterator::updateOutput() {
 	// Convert local order to SPO
-	nextv.setSubject(x);
-	nextv.setPredicate(y);
-	nextv.setObject(z);
-	UnorderedTriple *trip = reinterpret_cast<UnorderedTriple *>(&nextv);
-	swapComponentOrder(trip, triples->order, SPO);
+	nextTriple.setAll(x,y,z);
+
+	swapComponentOrder(&nextTriple, triples->order, SPO);
 
 	// Check termination condition.
-	hasNextv = (posY <= adjY.getSize()) && (posZ <= adjZ.getSize());
+	hasMoreTriples = (posY <= adjY.getSize()) && (posZ <= adjZ.getSize());
 
 	if(predicateOcurrence==numOcurrences && posZ == nextZ-1) {
-		hasNextv = false;
+		hasMoreTriples = false;
 	}
 }
 
@@ -504,22 +491,23 @@ void MiddleWaveletIterator::readTriple() {
 void MiddleWaveletIterator::doFetch() {
 	do {
 		readTriple();
-	} while(hasNextv && (!nextv.isValid() || !nextv.match(pattern)));
+	} while(hasMoreTriples && (!nextTriple.isValid() || !nextTriple.match(pattern)));
 }
 
 bool MiddleWaveletIterator::hasNext()
 {
-	return hasNextv;
+	return hasMoreTriples;
 }
 
-TripleID MiddleWaveletIterator::next()
+TripleID *MiddleWaveletIterator::next()
 {
-	TripleID ret = nextv;
-	cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
+	// FIXME: Avoid Ret.
+	returnTriple = nextTriple;
+	cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextTriple << endl;
 	doFetch();
-	cout << "\tHasNext: " << hasNextv << endl;
+	cout << "\tHasNext: " << hasMoreTriples << endl;
 
-	return ret;
+	return &returnTriple;
 }
 
 

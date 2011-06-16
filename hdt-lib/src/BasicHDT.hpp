@@ -167,6 +167,7 @@ class BasicIteratorTripleString : public IteratorTripleString {
 private:
 	Dictionary *dict;
 	IteratorTripleID *iterator;
+	TripleString result;
 public:
 	BasicIteratorTripleString(Dictionary *dict, IteratorTripleID *iterator) {
 		this->dict = dict;
@@ -177,9 +178,10 @@ public:
 		return iterator->hasNext();
 	}
 
-	TripleString next() {
-		TripleID tid = iterator->next();
-		return dict->tripleIDtoTripleString(tid);
+	TripleString *next() {
+		TripleID *tid = iterator->next();
+		dict->tripleIDtoTripleString(*tid, result);
+		return &result;
 	}
 };
 

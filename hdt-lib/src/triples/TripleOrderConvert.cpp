@@ -14,39 +14,40 @@ char TripleComponentOrderStr[7][4] = { "Unk", "SPO", "SOP", "PSO", "POS", "OSP",
 TripleComponentOrder parseOrder(const char *str){
 	for(unsigned int i=0;i<7;i++) {
 		if(strcmp(TripleComponentOrderStr[i], str)==0) {
-			return (TripleComponentOrder) i;
-		}
-	}
-	return Unknown;
-}
+			return (TripleComponentOrder)(i);
+            }
+        }
 
-/** Swap
+        return Unknown;
+    }
+
+    /** Swap
  * @param a Description of the param.
  * @param b Description of the param.
  * @return void
  */
-inline void swap(char &a, char &b) {
-	unsigned int tmp;
+    inline void swap(char & a, char & b)
+    {
+        unsigned int tmp;
+        tmp = a;
+        a = b;
+        b = tmp;
+    }
 
-	tmp = a;
-	a = b;
-	b = tmp;
-}
-
-/** Swap
+    /** Swap
  * @param a Description of the param.
  * @param b Description of the param.
  * @return void
  */
-inline void swap(unsigned int &a, unsigned int &b) {
-	unsigned int tmp;
+    inline void swap(unsigned int & a, unsigned int & b)
+    {
+        unsigned int tmp;
+        tmp = a;
+        a = b;
+        b = tmp;
+    }
 
-	tmp = a;
-	a = b;
-	b = tmp;
-}
-
-/*
+    /*
 
 This table reflect the swaps needed to convert from
 a SRC ComponentOrder to a DST ComponentOrder.
@@ -74,39 +75,40 @@ The order of swaps is important, there are five different:
  OPS  xz   xyz1 xyz2 xy   yz
 
  */
+    // swap 1-2
+    //xy xyz1 xyz2
+    bool swap1tab[6][6] = {{0, 0, 1, 1, 1, 0}, {0, 0, 1, 0, 1, 1}, {1, 1, 0, 0, 0, 1}, {1, 0, 0, 0, 1, 0}, {1, 1, 0, 1, 0, 0}, {0, 1, 1, 1, 0, 0}};
+    // swap 1-3
+    // xz xyz1
+    bool swap2tab[6][6] = {{0, 0, 0, 0, 1, 1}, {0, 0, 1, 1, 0, 0}, {0, 0, 0, 0, 1, 1}, {1, 1, 0, 0, 0, 0}, {0, 0, 1, 1, 0, 0}, {1, 1, 0, 0, 0, 0}};
+    // swap 2-3
+    // yz xyz2
+    bool swap3tab[6][6] = {{0, 1, 0, 1, 0, 0}, {1, 0, 0, 0, 0, 1}, {0, 1, 0, 1, 0, 0}, {0, 0, 1, 0, 1, 0}, {1, 0, 0, 0, 0, 1}, {0, 0, 1, 0, 1, 0}};
 
-// swap 1-2
-//xy xyz1 xyz2
-bool swap1tab[6][6] = {
-		{ 0, 0, 1, 1, 1, 0 },
-		{ 0, 0, 1, 0, 1, 1 },
-		{ 1, 1, 0, 0, 0, 1 },
-		{ 1, 0, 0, 0, 1, 0 },
-		{ 1, 1, 0, 1, 0, 0 },
-		{ 0, 1, 1, 1, 0, 0 }
-};
+    /**
+ * Convert parsing
+ * @param triple Triple to convert
+ * @param from Source TripleComponentOrder
+ * @param to Destination TripleComponentOrder
+ */
+    void swapComponentOrder(UnorderedTriple *triple, TripleComponentOrder from, TripleComponentOrder to)
+    {
+        if(from == to)
+            return;
 
-// swap 1-3
-// xz xyz1
-bool swap2tab[6][6] = {
-		{ 0, 0, 0, 0, 1, 1 },
-		{ 0, 0, 1, 1, 0, 0 },
-		{ 0, 0, 0, 0, 1, 1 },
-		{ 1, 1, 0, 0, 0, 0 },
-		{ 0, 0, 1, 1, 0, 0 },
-		{ 1, 1, 0, 0, 0, 0 }
-};
-
-// swap 2-3
-// yz xyz2
-bool swap3tab[6][6] = {
-		{ 0, 1, 0, 1, 0, 0 },
-		{ 1, 0, 0, 0, 0, 1 },
-		{ 0, 1, 0, 1, 0, 0 },
-		{ 0, 0, 1, 0, 1, 0 },
-		{ 1, 0, 0, 0, 0, 1 },
-		{ 0, 0, 1, 0, 1, 0 }
-};
+        bool swap1 = swap1tab[from - 1][to - 1];
+        bool swap2 = swap2tab[from - 1][to - 1];
+        bool swap3 = swap3tab[from - 1][to - 1];
+        if(swap1){
+            swap(triple->x, triple->y);
+        }
+        if(swap2){
+            swap(triple->x, triple->z);
+        }
+        if(swap3){
+            swap(triple->y, triple->z);
+        }
+    }
 
 /**
  * Convert parsing
@@ -114,49 +116,28 @@ bool swap3tab[6][6] = {
  * @param from Source TripleComponentOrder
  * @param to Destination TripleComponentOrder
  */
-void swapComponentOrder(UnorderedTriple *triple, TripleComponentOrder from, TripleComponentOrder to) {
-	if (from == to)
-		return;
+void swapComponentOrder(TripleID *triple, TripleComponentOrder from, TripleComponentOrder to) {
+	swapComponentOrder(reinterpret_cast<UnorderedTriple *>(triple), from, to);
+}
 
-	bool swap1 = swap1tab[from-1][to-1];
-	bool swap2 = swap2tab[from-1][to-1];
-	bool swap3 = swap3tab[from-1][to-1];
-
-	if (swap1) {
-		swap(triple->x, triple->y);
+UnorderedTriple *getUnorderedTriple(TripleComponentOrder type)
+{
+	switch(type) {
+	case Unknown:
+	case SPO:
+		return new UnorderedTripleSPO();
+	case SOP:
+		return new UnorderedTripleSOP();
+	case PSO:
+		return new UnorderedTriplePSO();
+	case POS:
+		return new UnorderedTriplePOS();
+	case OSP:
+		return new UnorderedTripleOSP();
+	case OPS:
+		return new UnorderedTripleOPS();
 	}
-
-	if (swap2) {
-		swap(triple->x, triple->z);
-	}
-
-	if (swap3) {
-		swap(triple->y, triple->z);
-	}
-
-	// Debug Conversion
-#if 0
-	char str[4];
-	strcpy(str, TripleComponentOrderStr[from]);
-
-	cout << "Convert from " << TripleComponentOrderStr[from] << " to " << TripleComponentOrderStr[to] << endl;
-
-	if(swap1) {
-		swap(str[0], str[1]);
-		cout << "\tSwap x y" << endl;
-	}
-
-	if(swap2) {
-		swap(str[0], str[2]);
-		cout << "\tSwap x z" << endl;
-	}
-
-	if(swap3) {
-		swap(str[1], str[2]);
-		cout << "\tSwap y z" << endl;
-	}
-	cout << "Result: "<< str << endl;
-#endif
+	throw "Invalid TripleComponentOrder type";
 }
 
 }

@@ -12,6 +12,7 @@
 #include <ControlInformation.hpp>
 #include <iostream>
 #include <sstream>
+#include <HDTListener.hpp>
 
 namespace hdt {
 
@@ -23,8 +24,8 @@ class Header : public RDFStorage {
 public:
 	virtual ~Header() { }
 
-	virtual bool save(std::ostream &output, ControlInformation &ci)=0;
-	virtual void load(std::istream &input, ControlInformation &ci)=0;
+	virtual bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
+	virtual void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Returns the number of triples

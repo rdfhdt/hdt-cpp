@@ -11,6 +11,8 @@
 #include <Triples.hpp>
 #include <HDTSpecification.hpp>
 
+#include "TripleIterators.hpp"
+
 
 #include "../stream/UintStream.hpp"
 #include "../stream/LogStream.hpp"
@@ -24,8 +26,6 @@ private:
 	HDTSpecification spec;
 	TripleComponentOrder order;
 	StreamElements *streamX, *streamY, *streamZ;
-
-	TripleID getTripleID(unsigned int pos);
 
 public:
 	PlainTriples();
@@ -63,7 +63,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	bool save(std::ostream &output, ControlInformation &controlInformation);
+	bool save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 	/**
      * Loads triples from a file
@@ -71,9 +71,9 @@ public:
      * @param input
      * @return
      */
-	void load(std::istream &input, ControlInformation &controlInformation);
+	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
-	void load(ModifiableTriples &triples);
+	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
 
 	void populateHeader(Header &header, string rootNode);
 
@@ -83,23 +83,18 @@ public:
 };
 
 
-class PlainTriplesIterator : public IteratorTripleID {
+class PlainTriplesIterator : public PreFetchIteratorTripleID {
 private:
 	PlainTriples *triples;
-	TripleID nextv, pattern;
-	bool hasNextv;
 	unsigned int pos;
 
-	void doFetch();
 public:
 	PlainTriplesIterator(PlainTriples *pt, TripleID &pat);
-	virtual ~PlainTriplesIterator();
 
-
-	bool hasNext();
-
-	TripleID next();
+	void getNextTriple();
 };
+
+
 
 
 class ComponentIterator : public IteratorUint {

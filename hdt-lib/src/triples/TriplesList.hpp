@@ -38,161 +38,155 @@
 
 #include <Triples.hpp>
 #include <HDTSpecification.hpp>
+#include "TripleIterators.hpp"
 
 namespace hdt {
 
 class TriplesList : public ModifiableTriples {
-	private:
-		ControlInformation controlInformation;
-		HDTSpecification spec;
+private:
+	ControlInformation controlInformation;
+	HDTSpecification spec;
 
-		std::vector<TripleID> arrayOfTriples;
-		TripleComponentOrder order;
-		unsigned int numValidTriples;
+	std::vector<TripleID> arrayOfTriples;
+	TripleComponentOrder order;
+	unsigned int numValidTriples;
 
-		void removeDuplicates();
-	public:
-		TriplesList();
-		TriplesList(HDTSpecification &specification);
-		virtual ~TriplesList();
+	void removeDuplicates();
+public:
+	TriplesList();
+	TriplesList(HDTSpecification &specification);
+	virtual ~TriplesList();
 
-		// From Triples
+	// From Triples
 
-		/**
-	     * Returns a vector of triples matching the pattern
-	     *
-	     * @param pattern
-	     * @return
-	     */
-		IteratorTripleID *search(TripleID &pattern);
+	/**
+	 * Returns a vector of triples matching the pattern
+	 *
+	 * @param pattern
+	 * @return
+	 */
+	IteratorTripleID *search(TripleID &pattern);
 
-		/**
-		 * Calculates the cost to retrieve a specific pattern
-	     *
-	     * @param triple
-	     * @return
-	     */
-		float cost(TripleID &triple);
+	/**
+	 * Calculates the cost to retrieve a specific pattern
+	 *
+	 * @param triple
+	 * @return
+	 */
+	float cost(TripleID &triple);
 
-		/**
-	     * Returns the number of triples contained
-	     *
-	     * @return
-	     */
-		unsigned int getNumberOfElements();
+	/**
+	 * Returns the number of triples contained
+	 *
+	 * @return
+	 */
+	unsigned int getNumberOfElements();
 
-		/**
-		 * Returns size in bytes
-		 */
-		unsigned int size();
+	/**
+	 * Returns size in bytes
+	 */
+	unsigned int size();
 
-		/**
-	     * Saves the triples
-	     *
-	     * @param output
-	     * @return
-	     */
-		bool save(std::ostream &output, ControlInformation &controlInformation);
+	/**
+	 * Saves the triples
+	 *
+	 * @param output
+	 * @return
+	 */
+	bool save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
-		/**
-	     * Loads triples from a file
-	     *
-	     * @param input
-	     * @return
-	     */
-		void load(std::istream &input, ControlInformation &controlInformation);
+	/**
+	 * Loads triples from a file
+	 *
+	 * @param input
+	 * @return
+	 */
+	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
-		void load(ModifiableTriples &input);
+	void load(ModifiableTriples &input, ProgressListener *listener = NULL);
 
-		/**
-		 * Populates the header
-		 *
-		 * @param header
-		 * @return
-		 */
-		void populateHeader(Header &header, string rootNode);
+	/**
+	 * Populates the header
+	 *
+	 * @param header
+	 * @return
+	 */
+	void populateHeader(Header &header, string rootNode);
 
-		/**
-		 * TODO Define and decide on return type (bool?)
-		 */
-		void startProcessing();
+	/**
+	 * TODO Define and decide on return type (bool?)
+	 */
+	void startProcessing();
 
-		/**
-		 * TODO Define and decide on return type (bool?)
-		 */
-		void stopProcessing();
+	/**
+	 * TODO Define and decide on return type (bool?)
+	 */
+	void stopProcessing();
 
-		string getType();
+	string getType();
 
-		// From ModifiableTriples
+	// From ModifiableTriples
 
-		/**
-		 * Adds one or more triples
-		 *
-		 * @param triples The triples to be inserted
-		 * @return boolean
-		 */
-		bool insert(TripleID &triple);
+	/**
+	 * Adds one or more triples
+	 *
+	 * @param triples The triples to be inserted
+	 * @return boolean
+	 */
+	bool insert(TripleID &triple);
 
-		bool insert(IteratorTripleID *triples);
+	bool insert(IteratorTripleID *triples);
 
-		/**
-		 * Deletes one or more triples according to a pattern
-		 *
-		 * @param pattern
-		 *            The pattern to match against
-		 * @return boolean
-		 */
-		bool remove(TripleID &pattern);
+	/**
+	 * Deletes one or more triples according to a pattern
+	 *
+	 * @param pattern
+	 *            The pattern to match against
+	 * @return boolean
+	 */
+	bool remove(TripleID &pattern);
 
-		bool remove(IteratorTripleID *pattern);
+	bool remove(IteratorTripleID *pattern);
 
-		/**
-		 * Sorts the triples based on an order(TripleComponentOrder)
-		 *
-		 * @param order The order to sort the triples with
-		 */
-		void sort(TripleComponentOrder order);
+	/**
+	 * Sorts the triples based on an order(TripleComponentOrder)
+	 *
+	 * @param order The order to sort the triples with
+	 */
+	void sort(TripleComponentOrder order);
 
-		/**
-		 * Sets a type of order(TripleComponentOrder)
-		 *
-		 * @param order The order to set
-		 */
-		void setOrder(TripleComponentOrder order);
+	/**
+	 * Sets a type of order(TripleComponentOrder)
+	 *
+	 * @param order The order to set
+	 */
+	void setOrder(TripleComponentOrder order);
 
-		// Others
+	// Others
 
-		/**
-		 *
-		 * @param i
-		 * @return
-		 */
-		TripleID *getTripleID(unsigned int i);
+	/**
+	 *
+	 * @param i
+	 * @return
+	 */
+	TripleID *getTripleID(unsigned int i);
 
-		friend class TriplesListIterator;
+	friend class TriplesListIterator;
 };
 
 
-class TriplesListIterator : public IteratorTripleID {
+
+class TriplesListIterator : public PreFetchIteratorTripleID {
 private:
 	TriplesList *triples;
-	TripleID *nextv, pattern;
-	bool hasNextv;
 	unsigned int pos;
 
-	void doFetch();
-
 public:
-	TriplesListIterator(TriplesList *triples, TripleID pattern);
-	virtual ~TriplesListIterator();
-
-	bool hasNext();
-
-	TripleID next();
+	TriplesListIterator(TriplesList *triples, TripleID &pattern);
+	void getNextTriple();
 };
 
 
-} // hdt{}
+}
 
 #endif /* TRIPLESLIST_H_ */

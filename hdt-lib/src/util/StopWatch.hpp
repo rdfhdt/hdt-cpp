@@ -8,22 +8,31 @@
 #ifndef STOPWATCH_HPP_
 #define STOPWATCH_HPP_
 
-#include <sys/time.h>
-#include <sys/resource.h>
+#ifdef WIN32
+#include <windows.h>
+#else
+# include <sys/time.h>
+# include <sys/resource.h>
+#endif
+
 #include <string>
 #include <iostream>
 
 class StopWatch {
 private:
+
+#ifdef WIN32
+	LARGE_INTEGER frequency;
+	LARGE_INTEGER startCount;
+	LARGE_INTEGER endCount;
+#else
 	struct timeval user1, user2;
 	struct timeval system1, system2;
 	struct timeval real1, real2;
+#endif
 
-
-	unsigned long long difference(time_t s1, time_t s2, suseconds_t us1, suseconds_t us2);
 public:
 	StopWatch();
-	~StopWatch();
 
 	void reset();
 	void stop();

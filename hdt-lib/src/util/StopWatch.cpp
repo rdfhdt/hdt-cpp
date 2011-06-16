@@ -13,13 +13,38 @@
 #include "StopWatch.hpp"
 
 StopWatch::StopWatch() {
+#ifdef WIN32
+	QueryPerformanceFrequency(&frequency);
+	startCount.QuadPart = 0;
+	endCount.QuadPart = 0;
+#endif
 	reset();
 }
 
-StopWatch::~StopWatch() {
-
+#ifdef WIN32
+void StopWatch::reset() {
+	QueryPerformanceCounter(&startCount);
 }
 
+void StopWatch::stop() {
+	QueryPerformanceCounter(&endCount);
+}
+
+unsigned long long StopWatch::getUser() {
+	unsigned long long start = startCount.QuadPart * (1000000.0 / frequency.QuadPart);
+	unsigned long long end = endCount.QuadPart * (1000000.0 / frequency.QuadPart);
+	return end - start;
+}
+
+unsigned long long StopWatch::getSystem() {
+	return getUser();
+}
+
+unsigned long long StopWatch::getReal() {
+	return getUser();
+}
+
+#else
 void StopWatch::reset() {
 	struct rusage ru;
 
@@ -39,6 +64,15 @@ void StopWatch::stop() {
 	memcpy(&system2, &ru.ru_stime, sizeof(struct timeval));
 }
 
+unsigned long long difference(time_t s1, time_t s2, suseconds_t us1, suseconds_t us2) {
+	unsigned long long tmp1, tmp2;
+
+	tmp1 = s1 * 1000000 + us1;
+	tmp2 = s2 * 1000000 + us2;
+
+	return tmp1-tmp2;
+}
+
 unsigned long long StopWatch::getUser() {
 	return difference(user2.tv_sec,user1.tv_sec, user2.tv_usec,user1.tv_usec);
 }
@@ -50,6 +84,11 @@ unsigned long long StopWatch::getSystem() {
 unsigned long long StopWatch::getReal() {
 	return difference(real2.tv_sec,real1.tv_sec, real2.tv_usec,real1.tv_usec);
 }
+#endif
+
+
+
+
 
 std::string StopWatch::getUserStr() {
 	return toHuman(getUser());
@@ -96,15 +135,6 @@ std::string StopWatch::stopRealStr() {
 std::ostream &operator<<(std::ostream &stream, StopWatch &sw) {
 	stream << sw.stopRealStr();
 	return stream;
-}
-
-unsigned long long StopWatch::difference(time_t s1, time_t s2, suseconds_t us1, suseconds_t us2) {
-	unsigned long long tmp1, tmp2;
-
-	tmp1 = s1 * 1000000 + us1;
-	tmp2 = s2 * 1000000 + us2;
-
-	return tmp1-tmp2;
 }
 
 std::string StopWatch::toHuman(unsigned long long time) {

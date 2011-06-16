@@ -39,6 +39,7 @@
 #include <string>
 #include <iostream>
 
+#include <HDTListener.hpp>
 #include <SingleTriple.hpp>
 #include <HDTEnums.hpp>
 #include <Header.hpp>
@@ -79,7 +80,7 @@ public:
 	 * @param tripleString TripleString to be converted.
 	 * @return resulting TripleID
 	 */
-	virtual TripleID tripleStringtoTripleID(TripleString &tripleString)=0;
+	virtual void tripleStringtoTripleID(TripleString &tripleString, TripleID &tid)=0;
 
 	/**
 	 * Convert a TripleID object to a TripleString, using the dictionary to perform the conversion.
@@ -87,7 +88,7 @@ public:
 	 * @param tripleID TripleID to be converted.
 	 * @return resultant TripleSTring
 	 */
-	virtual TripleString tripleIDtoTripleString(TripleID &tripleID)=0;
+	virtual void tripleIDtoTripleString(TripleID &tripleID, TripleString &ts)=0;
 
 	/** Number of total elements of the dictionary
 	 *
@@ -130,7 +131,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	virtual bool save(std::ostream &output, ControlInformation &ci)=0;
+	virtual bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Load dictionary information from a stream.
@@ -138,7 +139,7 @@ public:
 	 * @param input Input stream to read the data.
 	 * @param ci ControlInformation with the specified properties.
 	 */
-	virtual void load(std::istream &input, ControlInformation &ci)=0;
+	virtual void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Insert a new entry to the dictionary in the corresponding section according to the role (Subject, Predicate, Object).

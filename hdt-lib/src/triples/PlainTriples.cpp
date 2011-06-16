@@ -12,19 +12,21 @@
 
 namespace hdt {
 
-PlainTriples::PlainTriples() : order(Unknown) {
+PlainTriples::PlainTriples() : order(SPO) {
 	streamX = StreamElements::getStream(spec.get("stream.x"));
 	streamY = StreamElements::getStream(spec.get("stream.y"));
 	streamZ = StreamElements::getStream(spec.get("stream.z"));
 }
 
 PlainTriples::PlainTriples(HDTSpecification &specification) : spec(specification) {
+	std::string orderStr = spec.get("triples.component.order");
+	order = parseOrder(orderStr.c_str());
+	if(order==Unknown)
+			order = SPO;
+
 	streamX = StreamElements::getStream(spec.get("stream.x"));
 	streamY = StreamElements::getStream(spec.get("stream.y"));
 	streamZ = StreamElements::getStream(spec.get("stream.z"));
-
-	std::string orderStr = spec.get("triples.component.order");
-	order = parseOrder(orderStr.c_str());
 }
 
 PlainTriples::~PlainTriples() {
@@ -37,20 +39,20 @@ float PlainTriples::cost(TripleID & triple)
 {
 }
 
-void PlainTriples::load(ModifiableTriples &triples) {
-	TripleID all(0,0,0);
+void PlainTriples::load(ModifiableTriples &triples, ProgressListener *listener) {
+	triples.sort(order);
 
-	IteratorTripleID *itS = triples.search(all);
+	IteratorTripleID *itS = triples.searchAll();
 	ComponentIterator subjIt(itS, SUBJECT);
 	streamX->add(subjIt);
 	delete itS;
 
-	IteratorTripleID *itP = triples.search(all);
+	IteratorTripleID *itP = triples.searchAll();
 	ComponentIterator predIt(itS, PREDICATE);
 	streamY->add(predIt);
 	delete itP;
 
-	IteratorTripleID *itO = triples.search(all);
+	IteratorTripleID *itO = triples.searchAll();
 	ComponentIterator objIt(itS, OBJECT);
 	streamZ->add(objIt);
 	delete itO;
@@ -70,7 +72,7 @@ IteratorTripleID *PlainTriples::search(TripleID & pattern)
 	return new PlainTriplesIterator(this, pattern);
 }
 
-bool PlainTriples::save(std::ostream & output, ControlInformation &controlInformation)
+bool PlainTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
@@ -86,7 +88,7 @@ bool PlainTriples::save(std::ostream & output, ControlInformation &controlInform
 	streamZ->save(output);
 }
 
-void PlainTriples::load(std::istream &input, ControlInformation &controlInformation)
+void PlainTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	unsigned int numTriples = controlInformation.getUint("numTriples");
 	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
@@ -122,42 +124,27 @@ string PlainTriples::getType() {
 	return HDTVocabulary::TRIPLES_TYPE_PLAIN;
 }
 
-TripleID PlainTriples::getTripleID(unsigned int pos) {
-	TripleID triple(streamX->get(pos), streamY->get(pos), streamZ->get(pos));
-	return triple;
-}
-
 
 /// ITERATOR
-
-PlainTriplesIterator::PlainTriplesIterator(PlainTriples *pt, TripleID &pat) : triples(pt), pos(0), pattern(pat) {
+PlainTriplesIterator::PlainTriplesIterator(PlainTriples *pt, TripleID &pat) :
+		triples(pt), pos(0),
+		PreFetchIteratorTripleID(pat, SPO) {
+			// Note: Order is SPO because the order of the streams, not the triples.
 	doFetch();
 }
 
-PlainTriplesIterator::~PlainTriplesIterator() {
+void PlainTriplesIterator::getNextTriple() {
+	// Get Triple
+	nextTriple.setAll(triples->streamX->get(pos), triples->streamY->get(pos), triples->streamZ->get(pos));
+        pos++;
 
+	// Set condition
+	hasMoreTriples = pos<=triples->getNumberOfElements();
 }
 
-void PlainTriplesIterator::doFetch() {
-	do {
-		nextv = triples->getTripleID(pos);
-		pos++;
-	} while(pos<=triples->getNumberOfElements() && (!nextv.isValid() || !nextv.match(pattern)));
 
-	cout << nextv << endl;
 
-	hasNextv= pos<=triples->getNumberOfElements();
-}
 
-bool PlainTriplesIterator::hasNext() {
-	return hasNextv;
-}
-
-TripleID PlainTriplesIterator::next() {
-	TripleID ret = nextv;
-	doFetch();
-	return ret;
-}
 
 
 ComponentIterator::ComponentIterator(IteratorTripleID *iterator, TripleComponentRole component) : role(component), it(iterator)
@@ -166,15 +153,15 @@ ComponentIterator::ComponentIterator(IteratorTripleID *iterator, TripleComponent
 
 unsigned int ComponentIterator::next()
 {
-	TripleID triple = it->next();
+	TripleID *triple = it->next();
 
 	switch(role){
 	case SUBJECT:
-		return triple.getSubject();
+		return triple->getSubject();
 	case PREDICATE:
-		return triple.getPredicate();
+		return triple->getPredicate();
 	case OBJECT:
-		return triple.getObject();
+		return triple->getObject();
 	}
 }
 

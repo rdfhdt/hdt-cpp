@@ -55,92 +55,89 @@ TriplesComparator::~TriplesComparator()
 
 bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 {
-	//TODO: Revise because STL C++ only allows true if o1 > o2, false otherwise...
-
-	int res;
-	TripleID o1 = a;
-	TripleID o2 = b;
+	//TODO: Revise because STL C++ only allows true if a > b, false otherwise...
 	/*
 	﻿ * Components of the triple. Meaning will be given based on the order
 	﻿ * variable, see below
 	﻿ */
-	unsigned int x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
+	unsigned int x1, y1, z1, x2, y2, z2;
 
 	// Some calculations...
 	switch( this->order) {
+		case Unknown:
 		case SPO:
 			// Subjects
-			x1 = o1.getSubject();
-			x2 = o2.getSubject();
+			x1 = a.getSubject();
+			x2 = b.getSubject();
 			// Predicates
-			y1 = o1.getPredicate();
-			y2 = o2.getPredicate();
+			y1 = a.getPredicate();
+			y2 = b.getPredicate();
 			// Objects
-			z1 = o1.getObject();
-			z2 = o2.getObject();
+			z1 = a.getObject();
+			z2 = b.getObject();
 			break;
 		case SOP:
 			// Subjects
-			x1 = o1.getSubject();
-			x2 = o2.getSubject();
+			x1 = a.getSubject();
+			x2 = b.getSubject();
 			// Predicates
-			y1 = o1.getObject();
-			y2 = o2.getObject();
+			y1 = a.getObject();
+			y2 = b.getObject();
 			// Objects
-			z1 = o1.getPredicate();
-			z2 = o2.getPredicate();
+			z1 = a.getPredicate();
+			z2 = b.getPredicate();
 			break;
 		case PSO:
 			// Subjects
-			x1 = o1.getPredicate();
-			x2 = o2.getPredicate();
+			x1 = a.getPredicate();
+			x2 = b.getPredicate();
 			// Predicates
-			y1 = o1.getSubject();
-			y2 = o2.getSubject();
+			y1 = a.getSubject();
+			y2 = b.getSubject();
 			// Objects
-			z1 = o1.getObject();
-			z2 = o2.getObject();
+			z1 = a.getObject();
+			z2 = b.getObject();
 			break;
 		case POS:
 			// Subjects
-			x1 = o1.getPredicate();
-			x2 = o2.getPredicate();
+			x1 = a.getPredicate();
+			x2 = b.getPredicate();
 			// Predicates
-			y1 = o1.getObject();
-			y2 = o2.getObject();
+			y1 = a.getObject();
+			y2 = b.getObject();
 			// Objects
-			z1 = o1.getSubject();
-			z2 = o2.getSubject();
+			z1 = a.getSubject();
+			z2 = b.getSubject();
 			break;
 		case OSP:
 			// Subjects
-			x1 = o1.getObject();
-			x2 = o2.getObject();
+			x1 = a.getObject();
+			x2 = b.getObject();
 			// Predicates
-			y1 = o1.getSubject();
-			y2 = o2.getSubject();
+			y1 = a.getSubject();
+			y2 = b.getSubject();
 			// Objects
-			z1 = o1.getPredicate();
-			z2 = o2.getPredicate();
+			z1 = a.getPredicate();
+			z2 = b.getPredicate();
 			break;
 		case OPS:
 			// Subjects
-			x1 = o1.getObject();
-			x2 = o2.getObject();
+			x1 = a.getObject();
+			x2 = b.getObject();
 			// Predicates
-			y1 = o1.getPredicate();
-			y2 = o2.getPredicate();
+			y1 = a.getPredicate();
+			y2 = b.getPredicate();
 			// Objects
-			z1 = o1.getSubject();
-			z2 = o2.getSubject();
+			z1 = a.getSubject();
+			z2 = b.getSubject();
 			break;
 		default:
-			break;
+			throw "Invalid TripleComponentOrder";
 	}
 
 	// Might as well use TripleID::compare()... right?
 	// Actual comparison
-	res = x1 - x2;
+	int res = x1 - x2;
 	// First component is the same
 	if ( res == 0) {
 		res = y1 - y2;

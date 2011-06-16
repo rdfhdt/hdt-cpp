@@ -18,10 +18,10 @@ RDFSerializerN3::~RDFSerializerN3() {
 void RDFSerializerN3::serialize(IteratorTripleString *it)
 {
 	while(it->hasNext()) {
-		TripleString ts = it->next();
+		TripleString *ts = it->next();
 
-		if(!ts.isEmpty()) {
-			stream << ts.getSubject() << ' ' << ts.getPredicate() << ' ' << ts.getObject() << " ." << endl;
+		if(!ts->isEmpty()) {
+			stream << ts->getSubject() << ' ' << ts->getPredicate() << ' ' << ts->getObject() << " ." << endl;
 		}
 	}
 }

@@ -77,7 +77,7 @@ unsigned int TriplesList::size()
 	return numValidTriples*sizeof(TripleID);
 }
 
-bool TriplesList::save(std::ostream &output, ControlInformation &controlInformation)
+bool TriplesList::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", numValidTriples);
@@ -94,7 +94,7 @@ bool TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 	return true;
 }
 
-void TriplesList::load(std::istream &input, ControlInformation &controlInformation)
+void TriplesList::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
 	unsigned int totalTriples = controlInformation.getUint("numTriples");
@@ -110,16 +110,14 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 	}
 }
 
-void TriplesList::load(ModifiableTriples &input)
+void TriplesList::load(ModifiableTriples &input, ProgressListener *listener)
 {
-	TripleID all(0,0,0);
-
-	IteratorTripleID *it = input.search(all);
+	IteratorTripleID *it = input.searchAll();
 
 	while(it->hasNext()) {
-		TripleID triple = it->next();
+		TripleID *triple = it->next();
 
-		this->insert(triple);
+		this->insert(*triple);
 	}
 
 	delete it;
@@ -159,7 +157,7 @@ bool TriplesList::insert(TripleID &triple)
 bool TriplesList::insert(IteratorTripleID *triples)
 {
 	while( triples->hasNext() ) {
-		arrayOfTriples.push_back(triples->next());
+		arrayOfTriples.push_back(*triples->next());
 		numValidTriples++;
 	}
 	order = Unknown;
@@ -187,7 +185,7 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 	vector<TripleID> allPat;
 
 	while(pattern->hasNext()) {
-		allPat.push_back(pattern->next());
+		allPat.push_back(*pattern->next());
 	}
 
 	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
@@ -207,7 +205,10 @@ void TriplesList::sort(TripleComponentOrder order)
 {
 	if(this->order != order) {
 		cout << "TriplesList::sort: " << order << endl;
+
+		StopWatch st;
 		std::sort(arrayOfTriples.begin(), arrayOfTriples.end(), TriplesComparator(order));
+		cout << "Sorted in " << st << endl;
 		this->order = order;
 	}
 }
@@ -247,42 +248,25 @@ void TriplesList::removeDuplicates() {
 	cout << "Removed "<< arrayOfTriples.size()-j-1 << " duplicates in " << st << endl;
 
 	arrayOfTriples.resize(j+1);
+	numValidTriples = j+1;
 }
 
 
 // ITERATOR
 
-void TriplesListIterator::doFetch() {
-	do {
-		nextv = triples->getTripleID(pos);
-		pos++;
-	} while(pos<=triples->arrayOfTriples.size() && (!nextv->isValid() || !nextv->match(pattern)));
-
-	hasNextv= pos<=triples->arrayOfTriples.size();
-}
-
-TriplesListIterator::TriplesListIterator(TriplesList *t, TripleID p) : triples(t), pattern(p), hasNextv(true), pos(0) {
+TriplesListIterator::TriplesListIterator(TriplesList *t, TripleID &pat) :
+		triples(t), pos(0),
+		PreFetchIteratorTripleID(pat, t->order == Unknown ? SPO : t->order)
+{
 	doFetch();
 }
 
-TriplesListIterator::~TriplesListIterator(){
+void TriplesListIterator::getNextTriple() {
+	 nextTriple = *triples->getTripleID(pos++);
 
-}
-
-bool TriplesListIterator::hasNext() {
-	return hasNextv;
-}
-
-TripleID TriplesListIterator::next() {
-	TripleID previousv = *nextv;
-	doFetch();
-	return previousv;
+	 hasMoreTriples = pos <= triples->getNumberOfElements();
 }
 
 
 
-
-
-
-
-} // hdt{}
+}

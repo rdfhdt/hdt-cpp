@@ -32,7 +32,7 @@ BasicHeader::~BasicHeader() {
 	delete hdt;
 }
 
-void BasicHeader::load(std::istream & input, ControlInformation &controlInformation)
+void BasicHeader::load(std::istream & input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	std::string codification = controlInformation.get("codification");
 	if(codification != HDTVocabulary::HEADER_PLAIN) {
@@ -42,7 +42,7 @@ void BasicHeader::load(std::istream & input, ControlInformation &controlInformat
 	hdt->loadFromRDF(input, N3);
 }
 
-bool BasicHeader::save(std::ostream & output, ControlInformation &controlInformation)
+bool BasicHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);
