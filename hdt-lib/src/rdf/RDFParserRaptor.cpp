@@ -1,151 +1,84 @@
 /*
- * RDFParserN3.cpp
+ * RDFParserRaptor.cpp
  *
  *  Created on: 05/03/2011
  *      Author: mck
  */
 
-#include "RDFParserN3.hpp"
+#include "RDFParserRaptor.hpp"
 
 namespace hdt {
 
-RDFParserN3::RDFParserN3(std::istream &in) : RDFParser(in) {
+void process_triple(void *user_data, raptor_statement *triple) {
+	 //raptor_statement_print_as_ntriples(triple, stdout);
 
+	const char *s = (const char*)raptor_term_to_string(triple->subject);
+	const char *p = (const char*)raptor_term_to_string(triple->predicate);
+	const char *o = (const char*)raptor_term_to_string(triple->object);
+
+	TripleString ts(s, p, o);
+
+	delete s;
+	delete p;
+	delete o;
+	//cout << "***" << ts << endl;
+
+	RDFParserRaptor *raptorParser = reinterpret_cast<RDFParserRaptor *>(user_data);
+	raptorParser->vectorOutput.push_back(ts);
+
+//	cout << "Triples appended: " << raptorParser->vectorOutput.size() << endl;
 }
 
-RDFParserN3::~RDFParserN3() {
-	// TODO Auto-generated destructor stub
-}
+RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation) : RDFParser(in), notation(notation), pos(0) {
+	buf.resize(2048, '\0');
 
+	world = raptor_new_world();
+	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
+	rdf_parser = raptor_new_parser(world, getParserType(notation));
 
-bool RDFParserN3::hasNext() {
-	getline(input, line);
-	return line!="";
-}
+	raptor_parser_set_statement_handler(rdf_parser, (void *)this, process_triple);
 
-TripleString *RDFParserN3::next() {
-	using namespace std;
+	raptor_parser_parse_start(rdf_parser, base_uri);
 
-	int pos = 0;
-	size_t firstIndex = 0;
-	size_t lastIndex = 0;
-	bool errorParsing = false;
-
-	vector<string> node(3);
-
-	while (true) {
-		line = line.substr(firstIndex);
-
-		if (line == "." || line == "\n" || line == "" || line.at(0) == '#')
-			break;
-
-		//obvious space
-		if (line.at(0) == ' ') {
-			//do nothing
-			lastIndex = 0;
-		}
-		//URI
-		else if (line.at(0) == '<') {
-			lastIndex = line.find(">");
-			//check size of pos
-			if (pos > 2) {
-				errorParsing = true;
-				break;
-			}
-			node[pos] = line.substr(0, lastIndex + 1);
-			pos++;
-		}
-		//Literal
-		else if (line.at(0) == '"') {
-			lastIndex = line.find('"', 1);
-			//check if literal is escaped
-			while (true) {
-				bool escaped = false;
-				int temp = lastIndex - 1;
-
-				while (temp > 0 && line.at(temp) == '\\') {
-					if (escaped)
-						escaped = false;
-					else
-						escaped = true;
-					temp--;
-				}
-
-				if (!escaped)
-					break;
-				lastIndex++;
-				if (lastIndex == line.length())
-					//Cannot find the (unescaped) end
-					errorParsing = true;
-				lastIndex = line.find('"', lastIndex);
-				if (lastIndex == string::npos)
-					//Cannot find the (unescaped) end
-					errorParsing = true;
-			}
-
-			// literal can extend to a bit more than just the ",
-			// also take into account lang and datatype strings
-			if (line.at(lastIndex + 1) == '@') {
-				// find end of literal/lang tag
-				lastIndex = line.find(' ', lastIndex + 1) - 1;
-			} else if (line.at(lastIndex + 1) == '^') {
-				lastIndex = line.find('>', lastIndex + 1);
-			}
-			//check size of pos
-			if (pos > 2) {
-				errorParsing = true;
-				break;
-			}
-			node[pos] = line.substr(0, lastIndex + 1);
-			pos++;
-		}
-		//blank, a variable, a relative predicate
-		else if (line.at(0) == '_' || (line.find(":") != string::npos)) {
-			lastIndex = line.find(" ");
-			//check size of pos
-			if (pos > 2) {
-				errorParsing = true;
-				break;
-			}
-			node[pos] = line.substr(0, lastIndex);
-			pos++;
-		}
-		//parameter or variable ---> obviate for Triples. In future, add to a Hash
-		else if (line.at(0) == '@' || line.at(0) == '?') {
-			break;
-		}
-		// test if number
-		else {
-			// else it is a parsing error
-			lastIndex = line.find(" ");
-			for (size_t j = 0; j < lastIndex; j++) {
-				if (!isdigit(line.at(j)) && line.at(j) != '.' && line.at(j)
-						!= ',') {
-					errorParsing = true;
-				}
-			}
-
-			if (errorParsing == false) {
-				node[pos] = line.substr(0, lastIndex);
-				pos++;
-			}
-
-			break;
-		}
-
-		firstIndex = lastIndex + 1;
+	while(!in.eof()) {
+		//cout << "Buffer pos: " << in.tellg() << endl;
+		in.read((char *)&buf[0], buf.size() );
+		raptor_parser_parse_chunk(rdf_parser, (const unsigned char *)&buf[0], buf.size(), 0);
 	}
+	raptor_parser_parse_chunk(rdf_parser, NULL, 0, 1);
 
-	if (errorParsing == true || (pos != 0 && pos != 3)) {
-		cout << line << endl;
-		throw " :*********** FORMAT ERROR (NOT N3?) ***********";
+	raptor_free_parser(rdf_parser);
+	raptor_free_uri(base_uri);
+	raptor_free_world(world);
+}
+
+RDFParserRaptor::~RDFParserRaptor() {
+
+}
+
+const char *RDFParserRaptor::getParserType(RDFNotation notation){
+	switch(notation){
+	case N3:
+		return "n3";
+	case NTRIPLE:
+		return "ntriple";
+	case TURTLE:
+		return "turtle";
+	case XML:
+		return "rdfxml";
 	}
+}
 
-	ts.setSubject(node[0]);
-	ts.setPredicate(node[1]);
-	ts.setObject(node[2]);
+bool RDFParserRaptor::hasNext() {
+	return pos<vectorOutput.size();
+}
 
-	return &ts;
+TripleString *RDFParserRaptor::next() {
+	return &vectorOutput[pos++];
+}
+
+void RDFParserRaptor::reset() {
+	pos = 0;
 }
 
 }

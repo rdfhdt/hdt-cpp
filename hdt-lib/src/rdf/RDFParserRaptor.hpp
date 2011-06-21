@@ -5,29 +5,49 @@
  *      Author: mck
  */
 
-#ifndef RDFPARSERN3_H_
-#define RDFPARSERN3_H_
+#ifndef RDFPARSERRAPTOR_H_
+#define RDFPARSERRAPTOR_H_
 
 #include <istream>
+#include <vector>
+
+#include <raptor2/raptor2.h>
+
+#include <HDTEnums.hpp>
 
 #include "RDFParser.hpp"
 
 namespace hdt {
 
-class RDFParserN3 : public RDFParser {
+class RDFParserRaptor : public RDFParser {
 
 private:
-	std::string line;
+	vector<char> buf;
 	TripleString ts;
+	RDFNotation notation;
 
+	vector<TripleString> vectorOutput;
+	unsigned int pos;
+
+	// Raptor
+	raptor_world *world;
+	raptor_parser *rdf_parser;
+	raptor_uri *base_uri;
+
+	const char *getParserType(RDFNotation notation);
 public:
-	RDFParserN3(std::istream &in);
-	virtual ~RDFParserN3();
+	RDFParserRaptor(std::istream &in, RDFNotation notation);
+	virtual ~RDFParserRaptor();
 
 	bool hasNext();
 	TripleString *next();
+	void reset();
+
+	friend void process_triple(void *user_data, raptor_statement *triple);
 };
+
+
 
 }
 
-#endif /* RDFPARSERN3_H_ */
+#endif

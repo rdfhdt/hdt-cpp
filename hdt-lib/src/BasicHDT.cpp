@@ -59,6 +59,7 @@
 
 #include "ControlInformation.hpp"
 #include "rdf/RDFParserN3.hpp"
+#include "rdf/RDFParserRaptor.hpp"
 #include "rdf/RDFSerializerN3.hpp"
 #include "util/StopWatch.hpp"
 
@@ -181,7 +182,13 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 	long end = input.tellg();
 	input.seekg(0, ios::beg);
 
-	RDFParserN3 parser(input);
+	RDFParser *parser;
+
+	if(notation==N3) {
+		parser = new RDFParserN3(input);
+	} else {
+		parser = new RDFParserRaptor(input, notation);
+	}
 
 	// Generate Dictionary
 	cout << "Generate Dictionary... "<< endl;
@@ -191,8 +198,8 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 	unsigned int numtriples = 0;
 	StopWatch st;
 	dict->startProcessing();
-	while(parser.hasNext()) {
-		TripleString *ts = parser.next();
+	while(parser->hasNext()) {
+		TripleString *ts = parser->next();
 		numtriples++;
 		//std::cout << ts << std::endl;
 
@@ -224,15 +231,14 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 
 	// Generate Triples
 	cout << "Generating triples... "<< endl;
-	input.clear(); // Resets EOF
-	input.seekg(0, std::ios::beg);
+	parser->reset();
 
 	ModifiableTriples *triplesList = new TriplesList(spec);
 	TripleID ti;
 	st.reset();
 	triplesList->startProcessing();
-	while(parser.hasNext()) {
-		TripleString *ts = parser.next();
+	while(parser->hasNext()) {
+		TripleString *ts = parser->next();
 		//std::cout << ts << std::endl;
 
 		dictionary->tripleStringtoTripleID(*ts, ti);
@@ -269,6 +275,8 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 
 	header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::ORIGINAL_SIZE, end-begin);
 	header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::HDT_SIZE, getDictionary().size()+getTriples().size());
+
+	delete parser;
 }
 
 void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation, ProgressListener *listener)

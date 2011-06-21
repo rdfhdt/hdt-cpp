@@ -26,6 +26,7 @@ public:
 
 	bool hasNext();
 	TripleString *next();
+	void reset();
 };
 
 }

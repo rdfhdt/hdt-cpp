@@ -148,4 +148,9 @@ TripleString *RDFParserN3::next() {
 	return &ts;
 }
 
+void RDFParserN3::reset() {
+	input.clear(); // Resets EOF
+	input.seekg(0, std::ios::beg);
+}
+
 }

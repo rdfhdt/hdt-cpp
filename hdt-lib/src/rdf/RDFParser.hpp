@@ -26,6 +26,7 @@ public:
 
 	virtual bool hasNext()=0;
 	virtual TripleString *next()=0;
+	virtual void reset()=0;
 };
 }
 
