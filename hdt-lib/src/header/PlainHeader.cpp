@@ -80,7 +80,41 @@ void PlainHeader::remove(IteratorTripleString *triples)
 
 IteratorTripleString *PlainHeader::search(const char *subject, const char *predicate, const char *object)
 {
-	throw "Not implemented";
+    TripleString pattern(subject, predicate, object);
+
+    return new PlainHeaderIteratorTripleString(this, pattern);
+}
+
+
+
+/// ITERATOR
+PlainHeaderIteratorTripleString::PlainHeaderIteratorTripleString(PlainHeader *header, TripleString &pattern)
+    : header(header), pos(0), pattern(pattern)
+{
+    doFetch();
+}
+
+void PlainHeaderIteratorTripleString::doFetch() {
+        do {
+                getNextTriple();
+        } while(hasMoreTriples && (!nextTriple.match(pattern)));
+}
+
+void PlainHeaderIteratorTripleString::getNextTriple()
+{
+    nextTriple = header->triples[pos++];
+
+    hasMoreTriples = pos <= header->triples.size();
+}
+
+bool PlainHeaderIteratorTripleString::hasNext()
+{
+    return hasMoreTriples;
+}
+
+hdt::TripleString * PlainHeaderIteratorTripleString::next()
+{
+    return &nextTriple;
 }
 
 }

@@ -15,9 +15,12 @@
 #include "header/PlainHeader.hpp"
 
 #include "dictionary/PlainDictionary.hpp"
+#include "dictionary/PFCDictionary.hpp"
 
 #include "triples/TriplesList.hpp"
+#ifndef WIN32
 #include "triples/TripleListDisk.hpp"
+#endif
 #include "triples/PlainTriples.hpp"
 #include "triples/CompactTriples.hpp"
 #include "triples/BitmapTriples.hpp"
@@ -67,8 +70,10 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 		return new PlainTriples();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
 		return new TriplesList();
+#ifndef WIN32
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		return new TripleListDisk();
+#endif
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_FOQ) {
 		return new FOQTriples();
 	}
@@ -84,6 +89,8 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 
 	if(type==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		return new PlainDictionary();
+	} else if(type==HDTVocabulary::DICTIONARY_TYPE_PFC) {
+		return new PFCDictionary();
 	}
 
 	throw "Dictionary Implementation not available";
@@ -96,7 +103,7 @@ Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
 	string type = controlInformation.get("codification");
 
 	if(type==HDTVocabulary::HEADER_PLAIN) {
-		return new PlainHeader();
+                return new PlainHeader();
 	}
 
 	throw "Header Implementation not available";

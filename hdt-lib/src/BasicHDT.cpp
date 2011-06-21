@@ -44,9 +44,13 @@
 #include "header/EmptyHeader.hpp"
 #include "header/PlainHeader.hpp"
 #include "dictionary/PlainDictionary.hpp"
+#include "dictionary/PFCDictionary.hpp"
 
 #include "triples/TriplesList.hpp"
+
+#ifndef WIN32
 #include "triples/TripleListDisk.hpp"
+#endif
 #include "triples/PlainTriples.hpp"
 #include "triples/CompactTriples.hpp"
 #include "triples/BitmapTriples.hpp"
@@ -93,7 +97,13 @@ void BasicHDT::createComponents() {
 
 	// DICTIONARY
 	std::string dictType = spec.get("dictionary.type");
-	dictionary = new PlainDictionary(spec);
+	if(dictType==HDTVocabulary::DICTIONARY_TYPE_PFC) {
+		dictionary = new PFCDictionary(spec);
+	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PFC) {
+		dictionary = new PlainDictionary(spec);
+	} else {
+		dictionary = new PlainDictionary(spec);
+	}
 
 	// TRIPLES
 	std::string triplesType = spec.get("triples.type");
@@ -104,9 +114,11 @@ void BasicHDT::createComponents() {
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
 		triples = new PlainTriples(spec);
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
-		triples = new TriplesList(spec);
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
-		triples = new TripleListDisk();
+                triples = new TriplesList(spec);
+#ifndef WIN32
+        } else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
+                triples = new TripleListDisk();
+#endif
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_FOQ) {
 		triples = new FOQTriples();
 	} else {
@@ -151,7 +163,11 @@ IteratorTripleString *BasicHDT::search(const char *subject, const char *predicat
 	}
 }
 
+#define NOTIFY(listener, percent, message) \
+    if(listener!=NULL) listener->notifyProgress( (percent), message);
 
+#define NOTIFYCOND(listener, percent, message, number) \
+    if(listener!=NULL && ((number)%20000) == 0) listener->notifyProgress( (percent), message);
 
 void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener)
 {
@@ -170,26 +186,39 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 	// Generate Dictionary
 	cout << "Generate Dictionary... "<< endl;
 
+	PlainDictionary *dict = new PlainDictionary();
+
 	unsigned int numtriples = 0;
 	StopWatch st;
-	dictionary->startProcessing();
+	dict->startProcessing();
 	while(parser.hasNext()) {
 		TripleString *ts = parser.next();
 		numtriples++;
 		//std::cout << ts << std::endl;
 
-		dictionary->insert(ts->getSubject(), SUBJECT);
-		dictionary->insert(ts->getPredicate(), PREDICATE);
-		dictionary->insert(ts->getObject(), OBJECT);
+		dict->insert(ts->getSubject(), SUBJECT);
+		dict->insert(ts->getPredicate(), PREDICATE);
+		dict->insert(ts->getObject(), OBJECT);
 
-		if(listener!=NULL && (numtriples % 20000)==0 ){
-			listener->notifyProgress(input.tellg()*49/end, "Generating Dictionary");
+		NOTIFYCOND(listener, input.tellg()*48/end, "Generating Dictionary", numtriples);
+	}
+	NOTIFY(listener, 48, "Reorganizing Dictionary");
+
+	dict->stopProcessing();
+
+	NOTIFY(listener, 49, "Converting Dictionary");
+	if(dictionary->getType()==dict->getType()) {
+		delete dictionary;
+		dictionary = dict;
+	} else {
+		if(dictionary->getType()==HDTVocabulary::DICTIONARY_TYPE_PFC){
+			PFCDictionary *pfcd = dynamic_cast<PFCDictionary*>(dictionary);
+			pfcd->import(dict);
+			delete dict;
+		} else {
+			throw "Dictionary implementation not available.";
 		}
 	}
-	if(listener!=NULL){
-		listener->notifyProgress(49, "Organizing Dictionary");
-	}
-	dictionary->stopProcessing();
 	dictionary->populateHeader(*header, "<http://purl.org/hdt/dictionary>"); // FIXME: Assing appropiate rootnode.
 	cout << dictionary->getNumberOfElements() << " entries added in " << st << endl << endl;
 
@@ -210,9 +239,7 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 		//cout << "TripleID: " << ti << endl;
 		triplesList->insert(ti);
 
-		if(listener!=NULL && ((triplesList->getNumberOfElements() % 20000)==0)){
-			listener->notifyProgress( 50+(triplesList->getNumberOfElements()*40)/numtriples, "Generating Triples");
-		}
+		NOTIFYCOND(listener, 50+(triplesList->getNumberOfElements()*40)/numtriples, "Generating Triples", triplesList->getNumberOfElements());
 	}
 	triplesList->stopProcessing();
 
@@ -222,24 +249,13 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 		order = SPO;
 	}
 
-	if(listener!=NULL){
-		listener->notifyProgress( 92, "Sorting Triples");
-	}
+	NOTIFY(listener, 92, "Sorting Triples");
 	triplesList->sort(order);
 
-	if(listener!=NULL){
-		listener->notifyProgress( 95, "Removing duplicate Triples");
-	}
+	NOTIFY(listener, 95, "Removing duplicate Triples");
 	triplesList->removeDuplicates();
 
-	if(listener!=NULL){
-		listener->notifyProgress( 98, "Convert to final format");
-	}
-
-
-
-
-	// Convert to final Triples
+	NOTIFY(listener, 98, "Convert to final format");
 	if(triples->getType()==triplesList->getType()) {
 		delete triples;
 		triples = triplesList;
@@ -250,6 +266,9 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 
 	triples->populateHeader(*header, "<http://purl.org/hdt/triples>");
 	cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
+
+	header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::ORIGINAL_SIZE, end-begin);
+	header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::HDT_SIZE, getDictionary().size()+getTriples().size());
 }
 
 void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation, ProgressListener *listener)

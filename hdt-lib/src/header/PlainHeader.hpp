@@ -56,7 +56,29 @@ public:
 	void remove(TripleString &triples);
 
 	void remove(IteratorTripleString *triples);
+
+        friend class PlainHeaderIteratorTripleString;
 };
+
+
+
+class PlainHeaderIteratorTripleString : public IteratorTripleString {
+
+private:
+        PlainHeader *header;
+        unsigned int pos;
+        TripleString nextTriple, pattern;
+        bool hasMoreTriples;
+
+        void doFetch();
+        void getNextTriple();
+public:
+        PlainHeaderIteratorTripleString(PlainHeader *header, TripleString &pattern);
+
+        bool hasNext();
+        TripleString *next();
+};
+
 
 }
 

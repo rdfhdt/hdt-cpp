@@ -65,6 +65,7 @@ private:
 	DictEntryHash hashObject;
 	PrefixHash prefixes;
 	unsigned int mapping;
+	size_t sizeStrings;
 
 	//ControlInformation controlInformation;
 	HDTSpecification spec;
@@ -78,10 +79,9 @@ public:
 	std::string idToString(unsigned int id, TripleComponentRole position);
 	unsigned int stringToId(std::string &str, TripleComponentRole position);
 
-	void tripleStringtoTripleID(TripleString &tripleString, TripleID &tid);
-	void tripleIDtoTripleString(TripleID &tripleID, TripleString &ts);
-
 	unsigned int getNumberOfElements();
+
+	unsigned int size();
 
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();
@@ -133,6 +133,8 @@ public:
 
 	void dumpStats(std::string &path);
 	void dumpSizes(std::ostream &out);
+
+	friend class PFCDictionary;
 };
 
 }

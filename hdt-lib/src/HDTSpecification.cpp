@@ -27,10 +27,6 @@ HDTSpecification::HDTSpecification(std::string &filename) {
 	}
 }
 
-HDTSpecification::~HDTSpecification() {
-
-}
-
 void HDTSpecification::setOptions(std::string options) {
 	std::istringstream strm(options);
 	std::string singleOption;

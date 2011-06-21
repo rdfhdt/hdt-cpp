@@ -108,23 +108,6 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 	}
 }
 
-void PlainDictionary::tripleIDtoTripleString(TripleID &tripleID, TripleString &ts)
-{
-	string s = idToString(tripleID.getSubject(), SUBJECT);
-	string p = idToString(tripleID.getPredicate(), PREDICATE);
-	string o = idToString(tripleID.getObject(), OBJECT);
-	ts.setSubject(s);
-	ts.setPredicate(p);
-	ts.setObject(o);
-}
-
-void PlainDictionary::tripleStringtoTripleID(TripleString &tripleString, TripleID &tid)
-{
-	tid.setSubject(stringToId(tripleString.getSubject(), SUBJECT));
-	tid.setPredicate(stringToId(tripleString.getPredicate(), PREDICATE));
-	tid.setObject(stringToId(tripleString.getObject(), OBJECT));
-}
-
 void PlainDictionary::startProcessing()
 {
 	subjects_not_shared.clear();
@@ -155,6 +138,7 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 	startProcessing();
 
 	this->mapping = ci.getUint("$mapping");
+	this->sizeStrings = ci.getUint("$sizeStrings");
 
 	while(region<5 && getline(input, line)) {
 		//std::cout << line << std::endl;
@@ -183,6 +167,12 @@ unsigned int PlainDictionary::getNumberOfElements()
 	return subjects_shared.size() + subjects_not_shared.size() + objects_not_shared.size() + predicates.size();
 }
 
+unsigned int PlainDictionary::size()
+{
+    return sizeStrings;
+}
+
+
 void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 {
 	if(str=="") return;
@@ -194,6 +184,7 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 		} else {
 			DictionaryEntry *entry = new DictionaryEntry;
 			setPrefixAndString(entry, str);
+                        sizeStrings += str.length();
 			//cout << " Add new predicate: " << str.c_str() << endl;
 
 			hashPredicate[entry->str->c_str()] = entry;
@@ -215,6 +206,7 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			// Did not exist, create new.
 			DictionaryEntry *entry = new DictionaryEntry;
 			setPrefixAndString(entry, str);
+                        sizeStrings += str.length();
 
 			//cout << " Add new subject: " << str << endl;
 			hashSubject[entry->str->c_str()] = entry;
@@ -231,6 +223,7 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			// Did not exist, create new.
 			DictionaryEntry *entry = new DictionaryEntry;
 			setPrefixAndString(entry, str);
+                        sizeStrings += str.length();
 
 			//cout << " Add new object: " << str << endl;
 			hashObject[entry->str->c_str()] = entry;
@@ -268,6 +261,8 @@ bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 	controlInformation.setUint("$maxobjectid", getMaxObjectID());
 
 	controlInformation.setUint("$mapping", this->mapping);
+
+	controlInformation.setUint("$sizeStrings", this->sizeStrings);
 
 	controlInformation.save(output);
 
@@ -670,6 +665,7 @@ void PlainDictionary::populateHeader(Header &header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXPREDICATEID, getMaxPredicateID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXOBJECTTID, getMaxObjectID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAPPING, getMapping());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_SIZE_STRINGS, size());
 }
 
 void PlainDictionary::dumpSizes(ostream &out) {

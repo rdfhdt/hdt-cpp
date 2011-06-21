@@ -16,7 +16,9 @@ using namespace std;
 #include <fcntl.h>
 
 #include <stdlib.h> // for qsort
+#ifndef WIN32
 #include <sys/mman.h> // For mmap
+#endif
 #include <string.h> // memcpy
 
 #include "../util/StopWatch.hpp"
@@ -35,6 +37,8 @@ TripleListDisk::TripleListDisk() :
 
 #ifdef __APPLE__
 	fd = mkstemp(&v[0]);
+#elif defined(WIN32)
+
 #else
 	fd = mkostemp(&v[0], O_RDWR | O_CREAT | O_TRUNC);
 #endif
@@ -98,8 +102,10 @@ void TripleListDisk::mapFile() {
 
 	getFileSize();
 
+#ifndef WIN32
 	// Map File to memory
 	pointer = (char *) mmap(0, mappedSize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+#endif
 	if(pointer==(char *)-1) {
 		throw "Could not mmap";
 	}
@@ -112,8 +118,11 @@ void TripleListDisk::mapFile() {
 void TripleListDisk::unmapFile() {
 	if(pointer!=NULL && pointer!=(char *)-1) {
 		//cout << "UNMAP" << endl;
+
+#ifndef WIN32
 		munmap(pointer, mappedSize);
-		pointer=NULL;
+#endif
+                pointer=NULL;
 		arrayTriples=NULL;
 		tripleHead=NULL;
 	}
@@ -153,7 +162,10 @@ void TripleListDisk::ensureSize(unsigned int newsize) {
 		perror("Error write");
 		throw "Error write";
 	}
+
+#ifndef WIN32
 	fsync(fd);
+#endif
 
 	capacity = newsize;
 

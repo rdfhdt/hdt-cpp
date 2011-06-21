@@ -123,7 +123,7 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 	streamY->add(itY);
 	streamZ->add(itZ);
 
-#if 1
+#if 0
 	// Debug Adjacency Lists
 	cout << "Y" << vectorY.size() << "): ";
 	for(unsigned int i=0;i<20 && i<streamY->getNumberOfElements();i++){
