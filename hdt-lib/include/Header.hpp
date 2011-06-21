@@ -47,6 +47,26 @@ public:
 	 */
 	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object) = 0;
 
+        std::string getProperty(const char *subject, const char *predicate) {
+            hdt::IteratorTripleString *it = search(subject, predicate, "");
+            std::string out;
+            if(it->hasNext()) {
+                hdt::TripleString *ts = it->next();
+                out = ts->getObject();
+            }
+            delete it;
+
+            return out;
+        }
+
+        int getPropertyInt(const char *subject, const char *predicate) {
+            string str = getProperty(subject, predicate);
+            stringstream ss(str);
+            int value;
+            ss >> value;
+            return value;
+        }
+
 	/**
 	 * Insert a triple to the collection.
 	 *

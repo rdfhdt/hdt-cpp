@@ -31,9 +31,12 @@ namespace HDTVocabulary {
 	const std::string DICTIONARY_MAXPREDICATEID = HDT_DICTIONARY+"maxPredicateID>";
 	const std::string DICTIONARY_MAXOBJECTTID = HDT_DICTIONARY+"maxObjectID>";
 	const std::string DICTIONARY_MAPPING = HDT_DICTIONARY+"mapping>";
+	const std::string DICTIONARY_SIZE_STRINGS = HDT_DICTIONARY+"sizeStrings>";
+	const std::string DICTIONARY_BLOCK_SIZE = HDT_DICTIONARY+"numBlocks>";
 
 	// Dictionary Types
 	const std::string DICTIONARY_TYPE_PLAIN = HDT_DICTIONARY+"Plain>";
+	const std::string DICTIONARY_TYPE_PFC = HDT_DICTIONARY+"PlainFrontCoding>";
 
 	// Triples
 	const std::string TRIPLES_TYPE = HDT_TRIPLES+"codification>";
@@ -56,6 +59,10 @@ namespace HDTVocabulary {
 	const std::string STREAM_TYPE_LOG = HDT_STREAM+"Log>";
 	const std::string STREAM_TYPE_HUFFMAN = HDT_STREAM+"Huffman>";
 	const std::string STREAM_TYPE_WAVELET = HDT_STREAM+"Wavelet>";
+
+        // OTHER
+        const std::string ORIGINAL_SIZE = HDT_BASE+"originalSize>";
+        const std::string HDT_SIZE = HDT_BASE+"hdtSize>";
 }
 }
 

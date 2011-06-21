@@ -190,16 +190,16 @@ public:
 	 * @return boolean
 	 */
 	inline bool match(TripleID &pattern) {
-		unsigned int subject = pattern.getSubject();
-		unsigned int object = pattern.getObject();
+		unsigned int subject = pattern.getSubject();		
 		unsigned int predicate = pattern.getPredicate();
+                unsigned int object = pattern.getObject();
 
-		if (subject == 0 || subject == this->subject) {
-			if (object == 0 || object == this->object) {
-				if (predicate == 0 || predicate == this->predicate) {
-					return true;
-				}
-			}
+		if (subject == 0 || subject == this->subject) {                    
+                    if (predicate == 0 || predicate == this->predicate) {
+                        if (object == 0 || object == this->object) {
+                            return true;
+                        }
+                    }
 		}
 
 		return false;
@@ -222,7 +222,7 @@ public:
          * @return boolean
          */
         inline bool isEmpty() const {
-            return !(this->subject != 0 || this->predicate != 0 | this->object != 0);
+            return !(this->subject != 0 || this->predicate != 0 || this->object != 0);
         }
 
 	/**
@@ -341,6 +341,22 @@ public:
 
 		return stream;
 	}
+
+        inline bool match(TripleString &pattern) {
+            string subject = pattern.getSubject();
+            string predicate = pattern.getPredicate();
+            string object = pattern.getObject();
+
+            if (subject == "" || subject == this->subject) {
+                if (predicate == "" || predicate == this->predicate) {
+                    if (object == "" || object == this->object) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
 	/**
 	 * Clear all components to the empty String "";

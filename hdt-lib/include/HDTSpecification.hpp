@@ -64,7 +64,6 @@ public:
 	 * @return
 	 */
 	HDTSpecification(std::string &filename);
-	~HDTSpecification();
 
 	/** Add a set of options using the syntax property1:value1;property2:value2 */
 	void setOptions(std::string options);
