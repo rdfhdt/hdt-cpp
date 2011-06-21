@@ -12,14 +12,14 @@ DOXYGEN=doxygen
 LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib
 
 OBJECTS=$(patsubst %.cpp,%.o, $(wildcard src/*.cpp) $(wildcard src/**/*.cpp))
-HEADERS=$(wildcard include/*.hpp) $(wildcard src/*.hpp) $(wildcard include/*.h) $(wildcard src/*.h)
+HEADERS=$(wildcard include/*.hpp) $(wildcard include/*.h) $(wildcard src/*.hpp) $(wildcard src/*.h)
 TOOLS=$(patsubst %.cpp,%, $(wildcard tools/*.cpp))
 
 all: libhdt tools
 
 tools/%: tools/%.cpp $(OBJECTS) $(HEADERS)
 	@echo " [HDT] Compiling tool $<"
-	@$(CPP) $(INCLUDES) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) ${LIB} libhdt.a 
+	@$(CPP) $(INCLUDES) $(CPPFLAGS) $(FLAGS) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) libhdt.a ${LIB}
 
 tools: libhdt $(TOOLS)
 	@echo " [HDT] Compiling tools"
@@ -30,7 +30,7 @@ tools: libhdt $(TOOLS)
 
 libhdt: $(OBJECTS) $(HEADERS)
 	@echo " [HDT] Linking libhdt.a"
-	@ar rcs  libhdt.a $(OBJECTS)
+	@ar rcs libhdt.a $(OBJECTS)
 
 doc:	
 	@echo " [HDT] Generating documentation"
