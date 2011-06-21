@@ -162,7 +162,7 @@ public:
     * @param str
     * @param role
     */
-    virtual void insert(std::string &str, TripleComponentRole role)=0;
+    virtual unsigned int insert(std::string &str, TripleComponentRole role)=0;
 
     /**
     * Function to be called before starting inserting entries to the dictionary to perform an initialization.

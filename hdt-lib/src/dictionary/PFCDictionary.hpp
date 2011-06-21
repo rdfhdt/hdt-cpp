@@ -56,7 +56,7 @@ public:
 	bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
-	void insert(std::string &str, TripleComponentRole position);
+	unsigned int insert(std::string &str, TripleComponentRole position);
 
 	void startProcessing();
 	void stopProcessing();

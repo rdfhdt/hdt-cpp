@@ -265,8 +265,9 @@ void PFCDictionary::stopProcessing(){
 	objects->dumpAll();
 }
 
-void PFCDictionary::insert(std::string & str, TripleComponentRole position)
+unsigned int PFCDictionary::insert(std::string & str, TripleComponentRole position)
 {
+	throw "This dictionary does not support insertions.";
 }
 
 string PFCDictionary::getType()

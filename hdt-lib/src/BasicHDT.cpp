@@ -58,8 +58,8 @@
 #include "triples/TripleOrderConvert.hpp"
 
 #include "ControlInformation.hpp"
-#include "RDFParserN3.hpp"
-#include "RDFSerializerN3.hpp"
+#include "rdf/RDFParserN3.hpp"
+#include "rdf/RDFSerializerN3.hpp"
 #include "util/StopWatch.hpp"
 
 
@@ -403,60 +403,86 @@ IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char
 void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener)
 {
 	// FIXME: Add other parsers.
-	if(notation!=N3) {
-		throw "Not implemented: Only parsing available: N3";
-	}
-
-	RDFParserN3 parser(input);
-
-	// Generate Dictionary
-	cout << "Generate Dictionary "<< endl;
-
-	unsigned int numtriples = 0;
-	StopWatch st;
-	dictionary->startProcessing();
-	while(parser.hasNext()) {
-		TripleString *ts = parser.next();
-		numtriples++;
-		//std::cout << ts << std::endl;
-
-		dictionary->insert(ts->getSubject(), SUBJECT);
-		dictionary->insert(ts->getPredicate(), PREDICATE);
-		dictionary->insert(ts->getObject(), OBJECT);
-
-		if(listener!=NULL /*&& (numtriples % 1000)==0*/ ){
-			listener->notifyProgress(0, "Generating Dictionary");
+		if(notation!=N3) {
+			throw "Not implemented: Only parsing available: N3";
 		}
-	}
-	dictionary->stopProcessing();
-	dictionary->populateHeader(*header, "http://purl.org/hdt/dictionary");
-	cout << dictionary->getNumberOfElements() << " entries added in " << st << endl;
 
-	// Generate Triples
-	cout << "Generating triples "<< endl;
-	input.clear(); // Resets EOF
-	input.seekg(0, std::ios::beg);
+		long begin = input.tellg();
+		input.seekg(0, ios::end);
+		long end = input.tellg();
+		input.seekg(0, ios::beg);
 
-	TripleID ti;
-	unsigned int count = 0;
-	st.reset();
-	triples->startProcessing();
-	while(parser.hasNext()) {
-		TripleString *ts = parser.next();
-		//std::cout << ts << std::endl;
+		RDFParserN3 parser(input);
 
-		dictionary->tripleStringtoTripleID(*ts, ti);
+		PlainDictionary *dict = new PlainDictionary();
+		ModifiableTriples *triplesList = new TriplesList(spec);
 
-		triples->insert(ti);
+		unsigned int numtriples = 0;
+		TripleID tid;
+		StopWatch st;
+		dict->startProcessing();
+		triplesList->startProcessing();
+		while(parser.hasNext()) {
+			TripleString *ts = parser.next();
+			numtriples++;
+			//std::cout << ts << std::endl;
 
-		if(listener!=NULL /*&& (count % 1000)==0)*/){
-			listener->notifyProgress( (count*100.0)/numtriples, "Generating Triples");
+			unsigned int sid = dict->insert(ts->getSubject(), SUBJECT);
+			unsigned int pid = dict->insert(ts->getPredicate(), PREDICATE);
+			unsigned int oid = dict->insert(ts->getObject(), OBJECT);
+			tid.setAll(sid, pid, oid);
+
+			triplesList->insert(tid);
+
+			NOTIFYCOND(listener, input.tellg()*48/end, "Generating Dictionary", numtriples);
 		}
-		count++;
-	}
-	triples->stopProcessing();
-	triples->populateHeader(*header, "http://purl.org/hdt/triples");
-	cout << triples->getNumberOfElements() << " triples added in " << st << endl;
+		NOTIFY(listener, 48, "Reorganizing Dictionary");
+
+		dict->stopProcessing();
+		triplesList->stopProcessing();
+
+		NOTIFY(listener, 49, "Converting Dictionary");
+		if(dictionary->getType()==dict->getType()) {
+			delete dictionary;
+			dictionary = dict;
+		} else {
+			if(dictionary->getType()==HDTVocabulary::DICTIONARY_TYPE_PFC){
+				PFCDictionary *pfcd = dynamic_cast<PFCDictionary*>(dictionary);
+				pfcd->import(dict);
+				delete dict;
+			} else {
+				throw "Dictionary implementation not available.";
+			}
+		}
+		dictionary->populateHeader(*header, "<http://purl.org/hdt/dictionary>"); // FIXME: Assing appropiate rootnode.
+		cout << dictionary->getNumberOfElements() << " entries added in " << st << endl << endl;
+
+		// SORT & Duplicates
+		TripleComponentOrder order = parseOrder(spec.get("triples.component.order").c_str());
+		if(order==Unknown){
+			order = SPO;
+		}
+
+		NOTIFY(listener, 92, "Sorting Triples");
+		triplesList->sort(order);
+
+		NOTIFY(listener, 95, "Removing duplicate Triples");
+		triplesList->removeDuplicates();
+
+		NOTIFY(listener, 98, "Convert Triples to final format");
+		if(triples->getType()==triplesList->getType()) {
+			delete triples;
+			triples = triplesList;
+		}else{
+			triples->load(*triplesList);
+			delete triplesList;
+		}
+
+		triples->populateHeader(*header, "<http://purl.org/hdt/triples>");
+		cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
+
+		header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::ORIGINAL_SIZE, end-begin);
+		header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::HDT_SIZE, getDictionary().size()+getTriples().size());
 }
 
 void BasicModifiableHDT::saveToRDF(std::ostream & output, RDFNotation notation, ProgressListener *listener)

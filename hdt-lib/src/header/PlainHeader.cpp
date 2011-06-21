@@ -7,7 +7,7 @@
 
 #include <HDTVocabulary.hpp>
 #include <HDTFactory.hpp>
-#include "../RDFParserN3.hpp"
+#include "../rdf/RDFParserN3.hpp"
 
 #include "PlainHeader.hpp"
 

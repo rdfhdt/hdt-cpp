@@ -173,25 +173,26 @@ unsigned int PlainDictionary::size()
 }
 
 
-void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
+unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 {
-	if(str=="") return;
+	if(str=="") return 0;
 
 	if(pos==PREDICATE) {
 		DictEntryIt it = hashPredicate.find(str.c_str());
 		if(it!=hashPredicate.end()) {
 			//cout << "  existing predicate: " << str << endl;
+			return it->second->id;
 		} else {
 			DictionaryEntry *entry = new DictionaryEntry;
 			setPrefixAndString(entry, str);
-                        sizeStrings += str.length();
+			entry->id = predicates.size()+1;
+			sizeStrings += str.length();
 			//cout << " Add new predicate: " << str.c_str() << endl;
 
 			hashPredicate[entry->str->c_str()] = entry;
 			predicates.push_back(entry);
+			return entry->id;
 		}
-
-		return;
 	}
 
 	DictEntryIt subjectIt = hashSubject.find(str.c_str());
@@ -206,7 +207,7 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			// Did not exist, create new.
 			DictionaryEntry *entry = new DictionaryEntry;
 			setPrefixAndString(entry, str);
-                        sizeStrings += str.length();
+			sizeStrings += str.length();
 
 			//cout << " Add new subject: " << str << endl;
 			hashSubject[entry->str->c_str()] = entry;
@@ -223,7 +224,7 @@ void PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			// Did not exist, create new.
 			DictionaryEntry *entry = new DictionaryEntry;
 			setPrefixAndString(entry, str);
-                        sizeStrings += str.length();
+			sizeStrings += str.length();
 
 			//cout << " Add new object: " << str << endl;
 			hashObject[entry->str->c_str()] = entry;

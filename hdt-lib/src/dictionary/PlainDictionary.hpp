@@ -98,7 +98,7 @@ public:
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
 
-	void insert(std::string &str, TripleComponentRole position);
+	unsigned int insert(std::string &str, TripleComponentRole position);
 
 	void startProcessing();
 	void stopProcessing();
@@ -126,8 +126,6 @@ public:
 
 	void convertMapping(unsigned int mapping);
 	void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);
-
-
 
 	unsigned int getMapping();
 
