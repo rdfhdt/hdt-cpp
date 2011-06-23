@@ -136,6 +136,8 @@ int main(int argc, char **argv) {
 		delete hdt;
 	} catch (char *e) {
 		cout << "ERROR: " << e << endl;
+	} catch (const char *e) {
+		cout << "ERROR: " << e << endl;
 	}
 }
 

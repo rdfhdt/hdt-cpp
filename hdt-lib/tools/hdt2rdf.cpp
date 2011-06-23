@@ -84,6 +84,8 @@ int main(int argc, char **argv) {
 		}
 	} catch (char *exception) {
 		cerr << "ERROR: " << exception << endl;
+	} catch (const char *e) {
+		cout << "ERROR: " << e << endl;
 	}
 
 	delete hdt;
