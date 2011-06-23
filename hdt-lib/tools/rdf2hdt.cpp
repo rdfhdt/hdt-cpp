@@ -175,6 +175,8 @@ int main(int argc, char **argv) {
 
 	} catch (char *exception) {
 		cerr << "ERROR: " << exception << endl;
+	} catch (const char *exception) {
+		cerr << "ERROR: " << exception << endl;
 	}
 
 	delete hdt;
