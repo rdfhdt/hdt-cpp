@@ -6,7 +6,8 @@ CPPFLAGS=
 FLAGS=-O9 -Wno-deprecated 
 #FLAGS=-g -Wno-deprecated  #-Wall
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include
-LDFLAGS=-lstdc++ -lraptor2 -lz
+LDFLAGS=-lstdc++ 
+#-lraptor2 -lz
 DOXYGEN=doxygen
 
 LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib

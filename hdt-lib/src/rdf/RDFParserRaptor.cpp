@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#ifdef USE_RAPTOR
 #include "RDFParserRaptor.hpp"
 
 namespace hdt {
@@ -82,3 +83,4 @@ void RDFParserRaptor::reset() {
 }
 
 }
+#endif 
