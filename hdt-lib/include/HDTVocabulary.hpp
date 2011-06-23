@@ -36,7 +36,7 @@ namespace HDTVocabulary {
 
 	// Dictionary Types
 	const std::string DICTIONARY_TYPE_PLAIN = HDT_DICTIONARY+"Plain>";
-	const std::string DICTIONARY_TYPE_PFC = HDT_DICTIONARY+"PlainFrontCoding>";
+	const std::string DICTIONARY_TYPE_PFC = HDT_DICTIONARY+"FrontCoding>";
 
 	// Triples
 	const std::string TRIPLES_TYPE = HDT_TRIPLES+"codification>";
@@ -61,8 +61,8 @@ namespace HDTVocabulary {
 	const std::string STREAM_TYPE_WAVELET = HDT_STREAM+"Wavelet>";
 
         // OTHER
-        const std::string ORIGINAL_SIZE = HDT_BASE+"originalSize>";
-        const std::string HDT_SIZE = HDT_BASE+"hdtSize>";
+	const std::string ORIGINAL_SIZE = HDT_BASE+"originalSize>";
+	const std::string HDT_SIZE = HDT_BASE+"hdtSize>";
 }
 }
 

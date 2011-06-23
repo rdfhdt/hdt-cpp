@@ -61,13 +61,30 @@ void PFCDictionary::import(PlainDictionary *dictionary)
 	objects = new csd::CSD_PFC(&itObj, blocksize);
 	shared = new csd::CSD_PFC(&itShared, blocksize);
 
+	this->sizeStrings = dictionary->sizeStrings;
+	this->mapping = dictionary->mapping;
+
+#if 0
 	cout << "Shared: " << shared->getLength() << endl;
 	cout << "Subjects: " << subjects->getLength() << endl;
 	cout << "Predicates: " << predicates->getLength() << endl;
 	cout << "Objects: " << objects->getLength() << endl;
 
-	this->sizeStrings = dictionary->sizeStrings;
-}
+	cout << "Ensure same: " << endl;
+	for(unsigned int i=1;i<getMaxObjectID();i++){
+		string str1 = dictionary->idToString(i, OBJECT);
+		string str2 = this->idToString(i, OBJECT);
+		unsigned int id1 = dictionary->stringToId(str1, OBJECT);
+		unsigned int id2 = this->stringToId(str1, OBJECT);
+
+		if( (str1!=str2) || (id1!=id2)) {
+			cout << i << " Objects difer: " << endl;
+			cout << "\tPlain: " << id1 << " => " << str1 << endl;
+			cout << "\tPFC: " << id2 << " => " << str2 << endl;
+		}
+	}
+#endif
+ }
 
 
 std::string PFCDictionary::idToString(unsigned int id, TripleComponentRole position)
@@ -313,9 +330,9 @@ unsigned int PFCDictionary::getGlobalId(unsigned int mapping, unsigned int id, D
 
 		case NOT_SHARED_OBJECT:
 			if(mapping==MAPPING2) {
-				return shared->getLength()+subjects->getLength()+id;
-			} else {
 				return shared->getLength()+id;
+			} else {
+				return shared->getLength()+subjects->getLength()+id;
 			}
 
 		case SHARED_SUBJECT:
@@ -345,7 +362,7 @@ unsigned int PFCDictionary::getLocalId(unsigned int mapping, unsigned int id, Tr
 				return id;
 			} else {
 				if(mapping==MAPPING2) {
-					return 1+id-shared->getLength();
+					return id-shared->getLength();
 				} else {
 					return 2+id-shared->getLength()-subjects->getLength();
 				}

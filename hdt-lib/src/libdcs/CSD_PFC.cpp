@@ -336,6 +336,7 @@ CSD_PFC::locateInBlock(uint block, const uchar *s, uint len)
 	if(block>=nblocks){
 		return 0;
 	}
+
 	uint pos = blocks->getField(block);
 	uchar *string = new uchar[maxlength];
 
@@ -352,7 +353,7 @@ CSD_PFC::locateInBlock(uint block, const uchar *s, uint len)
 
 	// Scanning the block until a decission about the existence
 	// of 's' can be made.
-	while ( (idInBlock<blocksize) && (pos<bytes))  // FIXME: What if last block is not full?
+	while ( (idInBlock<blocksize) && (pos<bytes))
 	{
 
 		// Decoding the prefix
@@ -371,10 +372,10 @@ CSD_PFC::locateInBlock(uint block, const uchar *s, uint len)
 			pshared = cshared;
 			cshared += lcp(string+cshared, s+cshared, delta+slen-cshared, len-cshared);
 
-			// The string is not in the dictionary
-			if (cshared < pshared) break;
 			// This is the required string
-			if ((cshared == len) && ((delta+slen-1) == len)) break;
+			if ((cshared == len) && ((delta+slen-1) == len)) {
+				break;
+			}
 		}
 		else
 		{
@@ -386,7 +387,7 @@ CSD_PFC::locateInBlock(uint block, const uchar *s, uint len)
 		idInBlock++;
 	}
 
-	if(pos==bytes) {
+	if(pos==bytes || idInBlock == blocksize) {
 		idInBlock=0;
 	}
 

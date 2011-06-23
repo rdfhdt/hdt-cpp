@@ -59,7 +59,9 @@
 
 #include "ControlInformation.hpp"
 #include "rdf/RDFParserN3.hpp"
+#ifdef USE_RAPTOR
 #include "rdf/RDFParserRaptor.hpp"
+#endif
 #include "rdf/RDFSerializerN3.hpp"
 #include "util/StopWatch.hpp"
 
@@ -100,7 +102,7 @@ void BasicHDT::createComponents() {
 	std::string dictType = spec.get("dictionary.type");
 	if(dictType==HDTVocabulary::DICTIONARY_TYPE_PFC) {
 		dictionary = new PFCDictionary(spec);
-	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PFC) {
+	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		dictionary = new PlainDictionary(spec);
 	} else {
 		dictionary = new PlainDictionary(spec);
@@ -187,7 +189,11 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 	if(notation==N3) {
 		parser = new RDFParserN3(input);
 	} else {
+#ifdef USE_RAPTOR
 		parser = new RDFParserRaptor(input, notation);
+#else
+		throw "No parser available for format";
+#endif
 	}
 
 	// Generate Dictionary
@@ -219,6 +225,7 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 		dictionary = dict;
 	} else {
 		if(dictionary->getType()==HDTVocabulary::DICTIONARY_TYPE_PFC){
+			cout << "Convert to PFCDictionary" << endl;
 			PFCDictionary *pfcd = dynamic_cast<PFCDictionary*>(dictionary);
 			pfcd->import(dict);
 			delete dict;
