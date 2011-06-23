@@ -146,7 +146,7 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 			res = z1 - z2;
 			// Third component is the same
 			if ( res == 0) {
-				return true;
+				return false;
 			} else {
 				return (z2 > z1);
 			}
