@@ -338,7 +338,7 @@ CSD_PFC::locateInBlock(uint block, const uchar *s, uint len)
 	}
 
 	uint pos = blocks->getField(block);
-	uchar *string = new uchar[maxlength];
+	uchar *string = new uchar[maxlength+1];
 
 	uint slen = strlen((char*)text+pos)+1;
 

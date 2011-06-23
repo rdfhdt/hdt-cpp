@@ -21,6 +21,10 @@ TripleComponentOrder parseOrder(const char *str){
         return Unknown;
     }
 
+const char *getOrderStr(TripleComponentOrder order) {
+	return TripleComponentOrderStr[order];
+}
+
     /** Swap
  * @param a Description of the param.
  * @param b Description of the param.

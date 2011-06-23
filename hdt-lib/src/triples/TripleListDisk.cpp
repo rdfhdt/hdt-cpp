@@ -70,7 +70,7 @@ TripleListDisk::TripleListDisk(const char *file) :
 {
 	fileName.assign(file);
 
-	fd = open(fileName.c_str(), O_RDWR | O_CREAT );
+	fd = open(fileName.c_str(), O_RDWR | O_CREAT, 0644 );
 	if (fd == -1) {
 		perror("Error open");
 		throw "Error open";
