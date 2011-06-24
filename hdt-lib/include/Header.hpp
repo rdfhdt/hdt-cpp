@@ -47,25 +47,33 @@ public:
 	 */
 	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object) = 0;
 
-        std::string getProperty(const char *subject, const char *predicate) {
-            hdt::IteratorTripleString *it = search(subject, predicate, "");
-            std::string out;
-            if(it->hasNext()) {
-                hdt::TripleString *ts = it->next();
-                out = ts->getObject();
-            }
-            delete it;
+	std::string getProperty(const char *subject, const char *predicate) {
+		hdt::IteratorTripleString *it = search(subject, predicate, "");
+		std::string out;
+		if(it->hasNext()) {
+			hdt::TripleString *ts = it->next();
+			out = ts->getObject();
+		}
+		delete it;
 
-            return out;
-        }
+		return out;
+	}
 
-        int getPropertyInt(const char *subject, const char *predicate) {
-            string str = getProperty(subject, predicate);
-            stringstream ss(str);
-            int value;
-            ss >> value;
-            return value;
-        }
+	int getPropertyInt(const char *subject, const char *predicate) {
+		string str = getProperty(subject, predicate);
+		stringstream ss(str);
+		int value;
+		ss >> value;
+		return value;
+	}
+
+	long long getPropertyLong(const char *subject, const char *predicate) {
+		string str = getProperty(subject, predicate);
+		stringstream ss(str);
+		long long value;
+		ss >> value;
+		return value;
+	}
 
 	/**
 	 * Insert a triple to the collection.
@@ -89,7 +97,7 @@ public:
 	 *
 	 * @param triples New triple to be added.
 	 */
-	void insert(string subject, string predicate, int object) {
+	void insert(string subject, string predicate, long long object) {
 		stringstream st;
 		st << object;
 		//TripleString ts(subject, predicate, "\""+st.str()+"\"^^<http://www.w3.org/2001/XMLSchema#integer>");

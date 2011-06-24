@@ -183,9 +183,9 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 		throw "Not implemented: Only parsing available: N3";
 	}
 
-	long begin = input.tellg();
+	long long begin = input.tellg();
 	input.seekg(0, ios::end);
-	long end = input.tellg();
+	long long end = input.tellg();
 	input.seekg(0, ios::beg);
 
 	RDFParser *parser;
