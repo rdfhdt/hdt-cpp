@@ -95,14 +95,17 @@ PlainHeaderIteratorTripleString::PlainHeaderIteratorTripleString(PlainHeader *he
 }
 
 void PlainHeaderIteratorTripleString::doFetch() {
-        do {
-                getNextTriple();
-        } while(hasMoreTriples && (!nextTriple.match(pattern)));
+	do {
+		getNextTriple();
+	} while(hasMoreTriples && (!nextTriple.match(pattern)));
 }
 
 void PlainHeaderIteratorTripleString::getNextTriple()
 {
-    nextTriple = header->triples[pos++];
+	if(pos<header->triples.size())
+		nextTriple = header->triples[pos];
+
+	pos++;
 
     hasMoreTriples = pos <= header->triples.size();
 }
@@ -114,7 +117,9 @@ bool PlainHeaderIteratorTripleString::hasNext()
 
 hdt::TripleString * PlainHeaderIteratorTripleString::next()
 {
-    return &nextTriple;
+	returnTriple = nextTriple;
+	doFetch();
+    return &returnTriple;
 }
 
 }

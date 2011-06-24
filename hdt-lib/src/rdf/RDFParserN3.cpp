@@ -120,7 +120,7 @@ TripleString *RDFParserN3::next() {
 			lastIndex = line.find(" ");
 			for (size_t j = 0; j < lastIndex; j++) {
 				if (!isdigit(line.at(j)) && line.at(j) != '.' && line.at(j)
-						!= ',') {
+                                        != ',' && line.at(j) != '-') {
 					errorParsing = true;
 				}
 			}

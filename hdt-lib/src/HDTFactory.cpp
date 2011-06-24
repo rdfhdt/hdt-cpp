@@ -24,7 +24,9 @@
 #include "triples/PlainTriples.hpp"
 #include "triples/CompactTriples.hpp"
 #include "triples/BitmapTriples.hpp"
+#ifdef USE_FOQ
 #include "triples/FOQTriples.hpp"
+#endif
 
 
 using namespace hdt;
@@ -74,8 +76,10 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		return new TripleListDisk();
 #endif
+#ifdef USE_FOQ
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_FOQ) {
 		return new FOQTriples();
+#endif
 	}
 
 	throw "Triples Implementation not available";
@@ -103,7 +107,7 @@ Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
 	string type = controlInformation.get("codification");
 
 	if(type==HDTVocabulary::HEADER_PLAIN) {
-                return new PlainHeader();
+		return new PlainHeader();
 	}
 
 	throw "Header Implementation not available";

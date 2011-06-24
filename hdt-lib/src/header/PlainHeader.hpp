@@ -67,7 +67,7 @@ class PlainHeaderIteratorTripleString : public IteratorTripleString {
 private:
         PlainHeader *header;
         unsigned int pos;
-        TripleString nextTriple, pattern;
+        TripleString nextTriple, pattern, returnTriple;
         bool hasMoreTriples;
 
         void doFetch();
