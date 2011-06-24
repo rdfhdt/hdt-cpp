@@ -14,6 +14,7 @@
 #include "../src/lm_access/gzstream.hpp"
 
 #include "../src/triples/PlainTriples.hpp"
+#include "../src/util/StopWatch.hpp"
 
 using namespace hdt;
 using namespace std;
@@ -125,6 +126,7 @@ int main(int argc, char **argv) {
 		if(!in.good()){
 			throw "Could not open input file.";
 		}
+		StopWatch globalTimer;
 		hdt->loadFromRDF(in, N3, &progress);
 		in.close();
 
@@ -137,6 +139,13 @@ int main(int argc, char **argv) {
 		}
 		hdt->saveToHDT(out, &progress);
 		out.close();
+
+		globalTimer.stop();
+		cout << "HDT Successfully generated." << endl;
+		cout << "Total processing time: ";
+		cout << "Clock(" << globalTimer.getRealStr();
+		cout << ")  User(" << globalTimer.getUserStr();
+		cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
 
 		ControlInformation controlInformation;
 
