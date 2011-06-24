@@ -283,6 +283,9 @@ void CSD_PFC::build(IteratorUCharString *iterator)
 bool
 CSD_PFC::locateBlock(const uchar *s, uint *block)
 {
+	if(nblocks==0) {
+		return false;
+	}
 	long long int left = 0, right = nblocks-1, center;
 	int cmp;
 
