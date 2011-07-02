@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
 		ofstream out;
 
 		// Save HDT
-		out.open(outputFile.c_str());
+		out.open(outputFile.c_str(), ios::out | ios::binary);
 		if(!out.good()){
 			throw "Could not open output file.";
 		}

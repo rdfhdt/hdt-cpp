@@ -118,11 +118,16 @@ TripleString *RDFParserN3::next() {
 		else {
 			// else it is a parsing error
 			lastIndex = line.find(" ");
-			for (size_t j = 0; j < lastIndex; j++) {
-				if (!isdigit(line.at(j)) && line.at(j) != '.' && line.at(j)
-                                        != ',' && line.at(j) != '-') {
-					errorParsing = true;
+
+			if(lastIndex!=string::npos) {
+				for (size_t j = 0; j < lastIndex; j++) {
+					if (!isdigit(line.at(j)) && line.at(j) != '.' && line.at(j)
+							!= ',' && line.at(j) != '-') {
+						errorParsing = true;
+					}
 				}
+			} else {
+				errorParsing = true;
 			}
 
 			if (errorParsing == false) {

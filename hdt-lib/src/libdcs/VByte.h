@@ -36,7 +36,7 @@ using namespace cds_utils;
 
 namespace csd
 {
-static const size_t SSIZE = 4;  // Size reserved for encoded sequences.
+static const uint64_t SSIZE = 4;  // Size reserved for encoded sequences.
 
 class VByte
 {		
@@ -57,7 +57,7 @@ class VByte
         @e: byte to be shifted.
 	@p: position to be set.
     */
-    static void bitset(uchar * e, size_t p);
+    static void bitset(uchar * e, uint64_t p);
   };
 };
 

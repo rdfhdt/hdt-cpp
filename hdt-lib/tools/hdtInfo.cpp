@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 
 	inputFile = argv[optind];
 	try {
-		ifstream in(inputFile.c_str());
+		ifstream in(inputFile.c_str(), ios::in | ios::binary);
 		if(!in.good()){
 			throw "Could not open input file.";
 		}

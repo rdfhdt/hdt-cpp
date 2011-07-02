@@ -1,7 +1,4 @@
 header.type = <http://purl.org/HDT/hdt#headerSimple>
 triples.type = <http://purl.org/HDT/hdt#triplesList>
 dictionary.type = <http://purl.org/HDT/hdt#dictionaryPlain>
-stream.x = <http://purl.org/HDT/hdt#streamInteger>
-stream.y = <http://purl.org/HDT/hdt#streamInteger>
-stream.z = <http://purl.org/HDT/hdt#streamInteger>
-triples.component.order = PSO
+triples.component.order = SPO

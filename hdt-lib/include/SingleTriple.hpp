@@ -278,6 +278,24 @@ public:
 		this->object = object;
 	}
 
+	TripleString(const TripleString &other) {
+		this->subject = other.subject;
+		this->predicate = other.predicate;
+		this->object = other.object;
+	}
+
+	TripleString & operator=(const TripleString &other) {
+		if(this!=&other) {
+			this->subject = other.subject;
+			this->predicate = other.predicate;
+			this->object = other.object;
+		}
+		return *this;
+	}
+
+
+
+
 	~TripleString() {
 
 	}
@@ -341,6 +359,28 @@ public:
 
 		return stream;
 	}
+
+        bool operator==(TripleString &operand) {
+                // Subject comparison
+                if (this->subject != operand.subject) {
+                        return false;
+                }
+
+                // Object comparison (since subject was successful)
+                if (this->object != operand.object) {
+                        return false;
+                }
+
+                // Predicate comparison (since subject and object were successful)
+                if (this->predicate != operand.predicate) {
+                        return false;
+                }
+                return true;
+        }
+
+        bool operator!=(TripleString &operand) {
+                return !(this->operator==(operand));
+        }
 
         inline bool match(TripleString &pattern) {
             string subject = pattern.getSubject();

@@ -22,12 +22,13 @@ namespace hdt {
 class RDFParserRaptor : public RDFParser {
 
 private:
-	vector<char> buf;
 	TripleString ts;
 	RDFNotation notation;
 
 	vector<TripleString> vectorOutput;
 	unsigned int pos;
+
+	unsigned int globalLine;
 
 	// Raptor
 	raptor_world *world;
@@ -38,6 +39,8 @@ private:
 public:
 	RDFParserRaptor(std::istream &in, RDFNotation notation);
 	virtual ~RDFParserRaptor();
+
+	void readBlock();
 
 	bool hasNext();
 	TripleString *next();

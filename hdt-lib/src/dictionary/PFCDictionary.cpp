@@ -153,10 +153,17 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 
 	ifstream *in = dynamic_cast<ifstream *>(&input);
 
-	shared = csd::CSD::load(*in);
+        cout << "Load shared" << endl;
+        shared = csd::CSD::load(*in);
+
+        cout << "Load subjects" << endl;
 	subjects = csd::CSD::load(*in);
-	predicates = csd::CSD::load(*in);
-	objects = csd::CSD::load(*in);
+
+        cout << "Load predicates" << endl;
+        predicates = csd::CSD::load(*in);
+
+        cout << "Load objects" << endl;
+        objects = csd::CSD::load(*in);
 }
 
 bool PFCDictionary::save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener)
@@ -181,11 +188,19 @@ bool PFCDictionary::save(std::ostream & output, ControlInformation & controlInfo
 
 	controlInformation.save(output);
 
-	ofstream *out = dynamic_cast<ofstream *>(&output);
-	shared->save(*out);
-	subjects->save(*out);
+        ofstream *out = dynamic_cast<ofstream *>(&output);
+
+        cout << "Save shared" << endl;
+        shared->save(*out);
+
+        cout << "Save subjects" << endl;
+        subjects->save(*out);
+
+        cout << "Save predicates" << endl;
 	predicates->save(*out);
-	objects->save(*out);
+
+        cout << "Save objects" << endl;
+        objects->save(*out);
 }
 
 

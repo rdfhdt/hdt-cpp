@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
 	try {
-		ifstream in(inputFile.c_str());
+		ifstream in(inputFile.c_str(), ios::in | ios::binary);
 		if(!in.good()){
 			throw "Could not open input file.";
 		}
@@ -74,7 +74,6 @@ int main(int argc, char **argv) {
 		in.close();
 
 		if(query!="") {
-
 			ostream *out;
 			ofstream outF;
 

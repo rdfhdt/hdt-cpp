@@ -1,0 +1,129 @@
+#-------------------------------------------------
+#
+# Project created by QtCreator 2011-06-16T15:23:01
+#
+#-------------------------------------------------
+
+QT       -= core gui
+
+CONFIG += debug_and_release
+
+TARGET = hdt
+TEMPLATE = lib
+CONFIG += staticlib
+
+DEFINES += USE_RAPTOR
+
+win32:OutputDir = 'win32'
+unix:OutputDir = 'unix'
+macx:OutputDir = 'macx'
+
+DESTDIR = $${OutputDir}
+OBJECTS_DIR = $${OutputDir}
+MOC_DIR = $${OutputDir}
+RCC_DIR = $${OutputDir}
+UI_DIR = $${OutputDir}
+
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O9
+QMAKE_CFLAGS_RELEASE -= -O2
+QMAKE_CFLAGS_RELEASE += -O9
+
+SOURCES += \
+    ../src/rdf/RDFSerializerN3.cpp \
+    ../src/rdf/RDFParserN3.cpp \
+    ../src/HDTSpecification.cpp \
+    ../src/HDTFactory.cpp \
+    ../src/ControlInformation.cpp \
+    ../src/BasicHDT.cpp \
+    ../src/dictionary/PlainDictionary.cpp \
+    ../src/util/StopWatch.cpp \
+    ../src/util/propertyutil.cpp \
+    ../src/triples/TriplesList.cpp \
+    ../src/triples/TriplesComparator.cpp \
+    ../src/triples/TripleOrderConvert.cpp \
+    ../src/triples/TripleIterators.cpp \
+    ../src/triples/PlainTriples.cpp \
+    ../src/triples/FOQTriples.cpp \
+    ../src/triples/CompactTriples.cpp \
+    ../src/triples/BitmapTriples.cpp \
+    ../src/stream/WaveletStream.cpp \
+    ../src/stream/UintStream.cpp \
+    ../src/stream/StreamElements.cpp \
+    ../src/stream/LogStream.cpp \
+    ../src/stream/HuffmanStream.cpp \
+    ../src/stream/AdjacencyList.cpp \
+    ../src/huffman/Huffman.cpp \
+    ../src/huffman/huff.cpp \
+    ../src/header/PlainHeader.cpp \
+    ../src/header/BasicHeader.cpp \
+    ../src/triples/TripleListDisk.cpp \
+    ../src/libdcs/VByte.cpp \
+    ../src/libdcs/CSD.cpp \
+    ../src/libdcs/CSD_PFC.cpp \
+    ../src/dictionary/PFCDictionary.cpp \
+    ../src/rdf/RDFParserRaptor.cpp
+
+HEADERS += \
+    ../include/Triples.hpp \
+    ../include/SingleTriple.hpp \
+    ../include/RDF.hpp \
+    ../include/Header.hpp \
+    ../include/HDTVocabulary.hpp \
+    ../include/HDTSpecification.hpp \
+    ../include/HDTListener.hpp \
+    ../include/HDTFactory.hpp \
+    ../include/HDTEnums.hpp \
+    ../include/HDT.hpp \
+    ../include/Dictionary.hpp \
+    ../include/ControlInformation.hpp \
+    ../src/rdf/RDFSerializerN3.hpp \
+    ../src/rdf/RDFSerializer.hpp \
+    ../src/rdf/RDFParserN3.hpp \
+    ../src/rdf/RDFParser.hpp \
+    ../src/BasicHDT.hpp \
+    ../src/dictionary/PlainDictionary.hpp \
+    ../src/util/StopWatch.hpp \
+    ../src/util/fdstream.hpp \
+    ../src/util/propertyutil.h \
+    ../src/util/Histogram.h \
+    ../src/triples/TriplesList.hpp \
+    ../src/triples/TriplesComparator.hpp \
+    ../src/triples/TripleOrderConvert.hpp \
+    ../src/triples/TripleListDisk.hpp \
+    ../src/triples/TripleIterators.hpp \
+    ../src/triples/PlainTriples.hpp \
+    ../src/triples/FOQTriples.hpp \
+    ../src/triples/CompactTriples.hpp \
+    ../src/triples/BitmapTriples.hpp \
+    ../src/stream/WaveletStream.hpp \
+    ../src/stream/UintStream.hpp \
+    ../src/stream/StreamElements.hpp \
+    ../src/stream/LogStream.hpp \
+    ../src/stream/HuffmanStream.hpp \
+    ../src/stream/AdjacencyList.hpp \
+    ../src/huffman/Huffman.h \
+    ../src/huffman/huff.h \
+    ../src/header/PlainHeader.hpp \
+    ../src/header/EmptyHeader.hpp \
+    ../src/header/BasicHeader.hpp \
+    ../src/libdcs/VByte.h \
+    ../src/libdcs/CSD.h \
+    ../src/libdcs/CSD_PFC.h \
+    ../src/dictionary/PFCDictionary.hpp \
+    ../src/rdf/RDFParserRaptor.hpp
+
+INCLUDEPATH += ../include
+
+#For libcds
+SRCBASE = ../../libcds-v1.0.7/src
+INCLUDEPATH += $${SRCBASE}/utils $${SRCBASE}/static/bitsequence $${SRCBASE}/static/sequence $${SRCBASE}/static/coders $${SRCBASE}/static/mapper $${SRCBASE}/static/permutation
+
+#For raptor
+win32:INCLUDEPATH += ../../raptor/include
+INCLUDEPATH += /usr/local/include
+
+#RAPTOR
+win32:LIBS += E:/win/libxml2-2.7.8.win32/lib/libxml2.lib E:/win/zlib-1.2.5/lib/zlib.lib
+win32:LIBS += -L../raptor/qmake/raptor/debug/ -lraptor
+

@@ -190,15 +190,15 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 
 	RDFParser *parser;
 
+#ifdef USE_RAPTOR
+	parser = new RDFParserRaptor(input, notation);
+#else
 	if(notation==N3) {
 		parser = new RDFParserN3(input);
 	} else {
-#ifdef USE_RAPTOR
-		parser = new RDFParserRaptor(input, notation);
-#else
 		throw "No parser available for format";
-#endif
 	}
+#endif
 
 	// Generate Dictionary
 	cout << "Generate Dictionary... "<< endl;
