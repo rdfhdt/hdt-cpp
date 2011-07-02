@@ -34,7 +34,6 @@ public:
 
     void update();
 
-    unsigned int getNumResults() const;
     string getTime();
 signals:
 };

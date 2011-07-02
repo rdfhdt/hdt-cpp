@@ -1,6 +1,6 @@
 #include "matrixviewwidget.hpp"
 
-#include <Color.h>
+#include "Color.h"
 #include <fstream>
 
 MatrixViewWidget::MatrixViewWidget(QWidget *parent) :
@@ -160,20 +160,18 @@ void MatrixViewWidget::paintScales()
 
 void MatrixViewWidget::paintPoints()
 {
-    if(hdtmanager->getSearchResultsModel()->getNumResults()>100) {
-        glPointSize(RDF_POINT_SIZE);
-    } else {
-        glPointSize(3.0);
-    }
 
-    glBegin(GL_POINTS);
+    Color c;
+    ColorRamp2 cr;
 
+    if(hdtmanager->getNumResults()==0) {
+        // Do not render anything
+    } else if(hdtmanager->getNumResults()<10000) {
 
-    if(hdtmanager->getSearchResultsModel()->getNumResults()<20000) {
-        hdt::IteratorTripleID *it = hdtmanager->getHDT()->getTriples().search(hdtmanager->getSearchPattern());
+        hdt::IteratorTripleID *it = hdtmanager->getHDT()->getTriples().search(hdtmanager->getSearchPatternID());
 
-        Color c;
-        ColorRamp2 cr;
+        glPointSize(3);
+        glBegin(GL_POINTS);
         while(it->hasNext()) {
             hdt::TripleID *tid = it->next();
 
@@ -190,16 +188,18 @@ void MatrixViewWidget::paintPoints()
             glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
 
         }
+        glEnd();
         delete it;
 
     } else {
-
+        glPointSize(RDF_POINT_SIZE);
+        glBegin(GL_POINTS);
+        vector<hdt::TripleID> triples = hdtmanager->getTriples();
         for(unsigned int i=0;i<triples.size();i++) {
             hdt::TripleID *tid = &triples[i];
 
-            if(tid->match(hdtmanager->getSearchPattern())) {
-                Color c;
-                ColorRamp2 cr;
+            if(tid->match(hdtmanager->getSearchPatternID())) {
+
                 cr.apply(&c, tid->getPredicate(), 0, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
 
                 if(hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
@@ -213,8 +213,9 @@ void MatrixViewWidget::paintPoints()
                 glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
             }
         }
+        glEnd();
     }
-    glEnd();
+
 }
 
 
@@ -360,39 +361,6 @@ void MatrixViewWidget::unProject(int x, int y, double *outx, double *outy, doubl
     //printf("Dest: %f %f %f\n", *outx, *outy, *outz);
 }
 
-unsigned long long inline DIST(unsigned long long x1, unsigned long long x2,
-                unsigned long long y1, unsigned long long y2) {
-        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
-}
-
-void MatrixViewWidget::selectTriple(int subject, int predicate, int object)
-{
-    if(triples.size()==0) {
-        hdtmanager->clearSelectedTriple();
-        return;
-    }
-
-    hdt::TripleID *best = &triples[0];
-    unsigned int bestpos = 0;
-    unsigned long long bestdist = DIST(triples[0].getSubject(), subject, triples[0].getObject(), object);
-
-    for (unsigned int i = 0; i < triples.size(); i ++) {
-        if (triples[i].match(hdtmanager->getSearchPattern()) && hdtmanager->isPredicateActive(triples[i].getPredicate()-1)) {
-            unsigned long long dist = DIST(triples[i].getSubject(), subject, triples[i].getObject(), object);
-
-            if (dist < bestdist) {
-                best = &triples[i];
-                bestdist = dist;
-                bestpos = i;
-//                printf("1New %u, %u, %u, Dist: %u Pos: %u\n", best->getSubject(), best->getPredicate(), best->getObject(), bestdist, bestpos);
-            }
-        }
-    }
-//    printf("Found: %u, %u, %u, Dist: %llu\n", best->getSubject(), best->getPredicate(), best->getObject(), bestdist);
-
-    hdtmanager->setSelectedTriple( *best );
-}
-
 QString cleanString(string in) {
     if(in.size()>150) {
         QString str = in.substr(0, 147).c_str();
@@ -441,7 +409,7 @@ void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
     if ( (subject > 0 && subject < dictionary.getMaxSubjectID()) &&
          (object > 0 && object <= dictionary.getMaxObjectID())
        ) {
-        this->selectTriple(subject,predicate, object);
+        hdtmanager->selectTriple(subject,predicate, object);
 
         QString subjStr = cleanString(dictionary.idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT));
         QString predStr = cleanString(dictionary.idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE));
@@ -483,30 +451,10 @@ QSize MatrixViewWidget::sizeHint() const
 void MatrixViewWidget::reloadHDTInfo()
 {
     cout << "Reloading HDT Info: " << hdtmanager->getHDT() << endl;
-    triples.clear();
 
     if(hdtmanager->getHDT()==NULL) {
         return;
     }
-
-    hdt::Triples &t = hdtmanager->getHDT()->getTriples();
-
-    unsigned int increment = t.getNumberOfElements()/100000;
-    increment = increment < 1 ? 1 : increment;
-
-    hdt::IteratorTripleID *it = t.searchAll();
-    unsigned int count = 0;
-    while(it->hasNext()) {
-        hdt::TripleID *tid = it->next();
-        count++;
-
-        if( (count%increment) == 0) {
-            triples.push_back(*tid);
-        }
-    }
-    delete it;
-
-    cout << "Rendering: " << triples.size() << " points." << endl;
 
     updateGL();
 }

@@ -7,7 +7,7 @@ SearchResultsModel::SearchResultsModel(QObject *parent, HDTManager *view) : hdtM
 
 int SearchResultsModel::rowCount(const QModelIndex &parent) const
 {
-    return getNumResults();
+    return numResults;
 }
 
 int SearchResultsModel::columnCount(const QModelIndex &parent) const
@@ -44,9 +44,11 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
     }
     case Qt::FontRole:
     {
+#if 0
         QFont font;
         font.setPointSize(10);
         return font;
+#endif
     }
 
     }
@@ -89,7 +91,7 @@ void SearchResultsModel::resetIterator()
     }
 
     if(hdtManager->getHDT() != NULL) {
-        triples = hdtManager->getHDT()->getTriples().search(hdtManager->getSearchPattern());
+        triples = hdtManager->getHDT()->getTriples().search(hdtManager->getSearchPatternID());
         if(triples->hasNext()) {
             currentTriple = *triples->next();
         }
@@ -107,16 +109,19 @@ void SearchResultsModel::update() {
 
     numResults = 0;
     currentIndex = 0;
-
+#if 0
     if(triples!=NULL) {
         while(triples->hasNext()) {
             triples->next();
             numResults++;
         }
     }
+#endif
     time.stop();
 
-    resetIterator();
+    numResults = hdtManager->getNumResults();
+
+    //resetIterator();
 
     emit layoutChanged();
 }
@@ -135,11 +140,6 @@ void SearchResultsModel::findTriple(unsigned int index)
         currentTriple = *triples->next();
         currentIndex++;
     }
-}
-
-unsigned int SearchResultsModel::getNumResults() const
-{
-    return numResults+1;
 }
 
 std::string SearchResultsModel::getTime()

@@ -42,13 +42,15 @@ private slots:
     void on_actionTopView_toggled(bool arg1);
     void on_action3Dview_toggled(bool arg1);
 
-    void updateSearchPattern();
+    void searchPatternEdited();
+    void refreshSearchPattern();
 
     void setPatternSubject(QModelIndex index);
     void setPatternPredicate(QModelIndex index);
     void setPatternObject(QModelIndex index);
 
     void setPatternGlobal(QModelIndex index);
+    void on_actionAbout_triggered();
 };
 
 #endif // HDTIT_HPP

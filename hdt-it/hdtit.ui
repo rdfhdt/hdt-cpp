@@ -90,7 +90,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_2">
            <attribute name="title">
@@ -128,16 +128,39 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-             <widget class="QLabel" name="numPredicateCount">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Minimum predicate usage count:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="numPredicateCount">
+                <property name="text">
+                 <string>0</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <widget class="QSlider" name="predicateCountSlider">
+              <property name="sliderPosition">
+               <number>0</number>
+              </property>
+              <property name="tracking">
+               <bool>true</bool>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="invertedAppearance">
+               <bool>false</bool>
+              </property>
+              <property name="invertedControls">
+               <bool>false</bool>
               </property>
               <property name="tickPosition">
                <enum>QSlider::NoTicks</enum>
@@ -200,11 +223,6 @@
          <string>Matrix View</string>
         </attribute>
        </widget>
-       <widget class="QWidget" name="tab_5">
-        <attribute name="title">
-         <string>Statistics</string>
-        </attribute>
-       </widget>
       </widget>
      </widget>
     </item>
@@ -228,6 +246,9 @@
     <addaction name="separator"/>
     <addaction name="actionImportRDF"/>
     <addaction name="actionExportRDF"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuViews">
     <property name="title">
@@ -260,7 +281,7 @@
    <addaction name="actionTopView"/>
    <addaction name="action3Dview"/>
    <addaction name="separator"/>
-   <addaction name="actionTest"/>
+   <addaction name="actionAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenHDT">
@@ -352,6 +373,25 @@
     <string>Test</string>
    </property>
   </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="toolTip">
+    <string>About HDT-it!</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="toolTip">
+    <string>Quit HDT-it!</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -387,7 +427,7 @@
    <sender>subjectPatternEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>HDTit</receiver>
-   <slot>updateSearchPattern()</slot>
+   <slot>searchPatternEdited()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>170</x>
@@ -403,7 +443,7 @@
    <sender>predicatePatternEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>HDTit</receiver>
-   <slot>updateSearchPattern()</slot>
+   <slot>searchPatternEdited()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>170</x>
@@ -419,7 +459,7 @@
    <sender>objectPatternEdit</sender>
    <signal>textChanged(QString)</signal>
    <receiver>HDTit</receiver>
-   <slot>updateSearchPattern()</slot>
+   <slot>searchPatternEdited()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>170</x>
@@ -438,8 +478,8 @@
    <slot>setPatternObject(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>191</x>
-     <y>383</y>
+     <x>95</x>
+     <y>280</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>
@@ -454,8 +494,8 @@
    <slot>setPatternSubject(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>65</x>
-     <y>299</y>
+     <x>95</x>
+     <y>280</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>
@@ -470,12 +510,44 @@
    <slot>setPatternPredicate(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>65</x>
-     <y>310</y>
+     <x>81</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>
      <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>HDTit</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>predicateCountSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>numPredicateCount</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>306</x>
+     <y>292</y>
     </hint>
    </hints>
   </connection>
@@ -486,8 +558,8 @@
    <slot>setPatternGlobal(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>537</x>
-     <y>294</y>
+     <x>441</x>
+     <y>96</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>

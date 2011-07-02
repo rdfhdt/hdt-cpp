@@ -42,9 +42,11 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     }
     case Qt::FontRole:
     {
+#if 0
         QFont font;
         font.setPointSize(10);
         return font;
+#endif
     }
     case Qt::CheckStateRole:
         if(tripleComponentRole==hdt::PREDICATE) {
@@ -68,6 +70,34 @@ bool TripleComponentModel::setData(const QModelIndex &index, const QVariant &val
         }
     }
     return true;
+}
+
+QVariant TripleComponentModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+
+    switch(role) {
+    case Qt::DisplayRole:
+    {
+        if(orientation == Qt::Horizontal) {
+            switch(tripleComponentRole) {
+            case hdt::SUBJECT:
+                return "Subject";
+            case hdt::PREDICATE:
+                return "Predicate";
+            case hdt::OBJECT:
+                return "Object";
+            }
+        } else {
+            return QString::number(section+1);
+        }
+        break;
+    }
+    case Qt::SizeHintRole:
+    {
+    }
+    }
+
+    return QVariant();
 }
 
 Qt::ItemFlags TripleComponentModel::flags(const QModelIndex &index) const

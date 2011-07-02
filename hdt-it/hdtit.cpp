@@ -4,6 +4,8 @@
 #include "hdtspecform.hpp"
 #include "ui_hdtspecform.h"
 
+#include "abouthdt.hpp"
+
 #include <fstream>
 
 HDTit::HDTit(QWidget *parent) :
@@ -31,8 +33,10 @@ HDTit::HDTit(QWidget *parent) :
     connect(ui->selectAllPredicatesButton, SIGNAL(clicked()), hdtManager, SLOT(selectAllPredicates()));
     connect(ui->selectNoneButton, SIGNAL(clicked()), hdtManager, SLOT(selectNonePredicates()));
 
-    QString file = tr("/Users/mck/workspace-cpp/hdt-lib/data/nytimes.hdt");
-    //openHDTFile(file);
+    connect(ui->predicateCountSlider, SIGNAL(valueChanged(int)), hdtManager, SLOT(setMinimumPredicateCount(int)));
+    connect(hdtManager, SIGNAL(minimumPredicateCountChanged(int)), ui->predicateCountSlider, SLOT(setValue(int)));
+
+    connect(hdtManager, SIGNAL(searchPatternChanged()), this, SLOT(refreshSearchPattern()));
 }
 
 HDTit::~HDTit()
@@ -41,7 +45,7 @@ HDTit::~HDTit()
     delete hdtManager;
 }
 
-void HDTit::updateSearchPattern()
+void HDTit::searchPatternEdited()
 {
     std::string subject = std::string(ui->subjectPatternEdit->text().toAscii());
     std::string predicate = std::string(ui->predicatePatternEdit->text().toAscii());
@@ -50,16 +54,25 @@ void HDTit::updateSearchPattern()
     cout << "Search Pattern: " << ts << endl;
     hdtManager->setSearchPattern(ts);
     ui->numResultsLabel->setText(
-                QString("%1 results found in %2.").arg(hdtManager->getSearchResultsModel()->getNumResults())
+                QString("%1 results found in %2.").arg(hdtManager->getNumResults())
                 .arg(hdtManager->getSearchResultsModel()->getTime().c_str())
                 );
     //ui->resultsTable->resizeColumnsToContents();
     //ui->resultsTable->resizeRowsToContents();
     ui->matrixView->updateGL();
 
-    ui->subjectView->selectRow(hdtManager->getSearchPattern().getSubject()-1);
-    ui->objectView->selectRow(hdtManager->getSearchPattern().getObject()-1);
+    ui->subjectView->selectRow(hdtManager->getSearchPatternID().getSubject()-1);
+    ui->objectView->selectRow(hdtManager->getSearchPatternID().getObject()-1);
 }
+
+void HDTit::refreshSearchPattern()
+{
+    hdt::TripleString &ts = hdtManager->getSearchPatternString();
+    ui->subjectPatternEdit->setText(ts.getSubject().c_str());
+    ui->predicatePatternEdit->setText(ts.getPredicate().c_str());
+    ui->objectPatternEdit->setText(ts.getObject().c_str());
+}
+
 
 void HDTit::openHDTFile(QString &file)
 {
@@ -77,11 +90,11 @@ void HDTit::importRDFFile(QString &file, hdt::RDFNotation notation, hdt::HDTSpec
 
 void HDTit::hdtChanged(QString &file)
 {
-    ui->predicateCountSlider->setMaximum(hdtManager->getMaxPredicateCount());
+    ui->predicateCountSlider->setMaximum(hdtManager->getMaximumPredicateCount()+1);
     ui->statusBar->showMessage(file);
     ui->statsLabel->setText(hdtManager->getStatistics());
     ui->numResultsLabel->setText(
-                QString("%1 results found in %2.").arg(hdtManager->getSearchResultsModel()->getNumResults())
+                QString("%1 results found in %2.").arg(hdtManager->getNumResults())
                 .arg(hdtManager->getSearchResultsModel()->getTime().c_str())
                 );
 
@@ -97,8 +110,10 @@ void HDTit::hdtChanged(QString &file)
 
 void HDTit::on_actionOpenHDT_triggered()
 {
-    QString file = QFileDialog::getOpenFileName(this,tr("Select HDT File"), tr("/Users/mck/workspace-cpp/hdt-lib/data"), tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
+    static QString base = QDir::homePath();
+    QString file = QFileDialog::getOpenFileName(this,tr("Select HDT File"), base , tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
     if(!file.isEmpty()) {
+        base = file;
         openHDTFile(file);
     }
 }
@@ -120,7 +135,7 @@ void HDTit::on_actionImportRDF_triggered()
 
 void HDTit::on_actionSaveHDT_triggered()
 {
-    QString file = QFileDialog::getSaveFileName(this,tr("Select Output HDT File"), tr("/Users/mck/workspace-cpp/hdt-lib/data"), tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
+    QString file = QFileDialog::getSaveFileName(this,tr("Select Output HDT File"), QDir::homePath(), tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
     if(!file.isEmpty()) {
         hdtManager->saveHDTFile(file);
     }
@@ -128,7 +143,7 @@ void HDTit::on_actionSaveHDT_triggered()
 
 void HDTit::on_actionExportRDF_triggered()
 {
-    QString file = QFileDialog::getSaveFileName(this,tr("Select Output RDF File"), tr("/Users/mck/workspace-cpp/hdt-lib/data"), tr("HDT Files(*.rdf *.RDF *.n3 *.N3)"), 0, 0 );
+    QString file = QFileDialog::getSaveFileName(this,tr("Select Output RDF File"), QDir::homePath(), tr("HDT Files(*.rdf *.RDF *.n3 *.N3)"), 0, 0 );
     if(!file.isEmpty()) {
         // FIXME: Select notation.
         hdtManager->exportRDFFile(file, hdt::N3);
@@ -217,5 +232,12 @@ void HDTit::setPatternGlobal(QModelIndex index)
         ui->objectPatternEdit->setText(hdtManager->getSearchResultsModel()->data(index).toString());
         break;
     }
+}
+
+
+void HDTit::on_actionAbout_triggered()
+{
+    Abouthdt aboutForm;
+    aboutForm.exec();
 }
 

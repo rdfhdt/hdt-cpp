@@ -119,6 +119,11 @@
           </property>
           <item>
            <property name="text">
+            <string>Plain Front Coding</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>Plain</string>
            </property>
           </item>

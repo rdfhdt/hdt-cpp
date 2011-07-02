@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/images">
         <file>editreset.png</file>
+        <file>logo-hdt.png</file>
     </qresource>
 </RCC>

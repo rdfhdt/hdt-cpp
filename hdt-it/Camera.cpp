@@ -117,7 +117,7 @@ void Camera::setScreenSize(int w, int h){
 }
 
 void Camera::applyTransform(){
-    glScaled(zoom, zoom, 1.0);
+    glScaled(1.1*zoom, 1.1*zoom, 1.0);
 
     glScalef(widgetWidth, widgetHeight, 1.0);
 

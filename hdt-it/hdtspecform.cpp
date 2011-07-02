@@ -47,7 +47,7 @@ void HDTSpecForm::on_triplesTypeCombo_currentIndexChanged(int index)
 
 void HDTSpecForm::on_inputFileButton_clicked()
 {
-    QString file = QFileDialog::getOpenFileName(this,tr("Select Input RDF File"), tr("/Users/mck/workspace-cpp/hdt-lib/data"), tr("RDF Files(*)"), 0, 0 );
+    QString file = QFileDialog::getOpenFileName(this,tr("Select Input RDF File"), QDir::homePath(), tr("RDF Files(*)"), 0, 0 );
     ui->rdfInputFile->setText(file);
 }
 
@@ -77,7 +77,17 @@ std::string HDTSpecForm::getStreamType(int index) {
 void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
 {
     hdt.set("header.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PLAIN);
-    hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PLAIN);
+
+    switch(ui->dictionaryTypeCombo->currentIndex()) {
+    case 0:
+        // PFCDictionary
+        hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PFC);
+        break;
+    case 1:
+        // PlainDictionary
+        hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PLAIN);
+        break;
+    }
 
     switch(ui->triplesTypeCombo->currentIndex()) {
     case 0:

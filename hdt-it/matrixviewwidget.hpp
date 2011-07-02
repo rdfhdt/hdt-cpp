@@ -31,10 +31,9 @@ private:
     int lastX, lastY, lastClickX, lastClickY, buttonClick;
     HDTManager *hdtmanager;
 
-    vector<hdt::TripleID> triples;
+    //vector<hdt::TripleID> triples;
 
     void unProject(int x, int y, double *outx, double *outy, double *outz);
-    void selectTriple(int s, int p, int o);
 
     void paintShared();
     void paintScales();
