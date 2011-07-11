@@ -109,7 +109,7 @@ enum RDFNotation {
 	 *
 	 * @see <a href="http://en.wikipedia.org/wiki/N-Triples">Wikipedia</a>
 	 */
-	NTRIPLE,
+	NTRIPLES,
 	/**
 	 * TURTLE notation
 	 *

@@ -316,6 +316,12 @@ public:
 		this->subject = subject;
 	}
 
+	inline void setAll(std:: string &subject, std:: string &predicate, std:: string &object) {
+		this->subject = subject;
+		this->predicate = predicate;
+		this->object = object;
+	}
+
 	/**
 	 * Get Predicate.
 	 * @return
