@@ -384,7 +384,7 @@ void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
     bool right = event->buttons() & Qt::RightButton;
     bool shift = event->modifiers() & Qt::ShiftModifier;
 
-    if(right || left && shift) {
+    if(right || (left && shift)) {
         camera.moveOffset(diffx, diffy);
         emit cameraChanged();
     } else if(left) {

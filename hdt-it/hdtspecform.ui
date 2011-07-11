@@ -42,17 +42,17 @@
          <widget class="QComboBox" name="rdfInputCombo">
           <item>
            <property name="text">
+            <string>NTRIPLES</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>N3</string>
            </property>
           </item>
           <item>
            <property name="text">
             <string>TURTLE</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>NTRIPLES</string>
            </property>
           </item>
           <item>

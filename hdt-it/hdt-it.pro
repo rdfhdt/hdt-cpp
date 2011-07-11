@@ -65,24 +65,20 @@ FORMS    += hdtit.ui \
 
 INCLUDEPATH += ../hdt-lib/include/ .
 
-#RAPTOR
-win32:LIBS += E:/win/libxml2-2.7.8.win32/lib/libxml2.lib E:/win/zlib-1.2.5/lib/zlib.lib
-win32:LIBS += -L../raptor/qmake/raptor/debug/ -lraptor
-
 # Using Traditional Makefile
 #LIBS += ../libcds-v1.0.7/lib/libcds.a ../hdt-lib/libhdt.a
 
 # Using Qt Projects
-
 win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a ../libcds-v1.0.7/qmake/win32/libcds.a
+win32:LIBS += c:/mingw/lib/libraptor2.a c:/mingw/lib/libexpat.a
+#win32:LIBS += ../raptor/qmake/raptor/debug/libraptor.a
 
-unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a ../libcds-v1.0.7/qmake/unix/libcds.a
-macx:LIBS += ../hdt-lib/qmake/macx/libhdt.a ../libcds-v1.0.7/qmake/macx/libcds.a
+unix:!macx:LIBS += ../libcds-v1.0.7/qmake/unix/libcds.a ../hdt-lib/qmake/unix/libhdt.a
+macx:LIBS += ../libcds-v1.0.7/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
 
-#PRE_TARGETDEPS += $$LIBS
+PRE_TARGETDEPS += $$LIBS
 
 macx:LIBS += -lz -lraptor2
-
 
 RESOURCES += \
     hdtresources.qrc

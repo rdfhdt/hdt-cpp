@@ -125,13 +125,13 @@ hdt::RDFNotation HDTSpecForm::getNotation()
 {
     switch(ui->rdfInputCombo->currentIndex()) {
     case 0:
-        return hdt::N3;
+        return hdt::NTRIPLES;
     case 1:
-        return hdt::TURTLE;
+        return hdt::N3;
     case 2:
-        return hdt::NTRIPLE;
+        return hdt::TURTLE;
     case 3:
         return hdt::XML;
     }
-    return hdt::N3;
+    return hdt::NTRIPLES;
 }
