@@ -12,7 +12,7 @@ TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += USE_RAPTOR
+DEFINES += USE_RAPTOR RAPTOR_STATIC
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'
@@ -62,7 +62,12 @@ SOURCES += \
     ../src/libdcs/CSD.cpp \
     ../src/libdcs/CSD_PFC.cpp \
     ../src/dictionary/PFCDictionary.cpp \
-    ../src/rdf/RDFParserRaptor.cpp
+    ../src/rdf/RDFParserRaptor.cpp \
+    ../src/rdf/RDFParserNtriples.cpp \
+    ../src/rdf/RDFParser.cpp \
+    ../src/rdf/RDFParserRaptorLine.cpp \
+    ../src/rdf/RDFSerializerRaptor.cpp \
+    ../src/rdf/RDFSerializer.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
@@ -111,19 +116,18 @@ HEADERS += \
     ../src/libdcs/CSD.h \
     ../src/libdcs/CSD_PFC.h \
     ../src/dictionary/PFCDictionary.hpp \
-    ../src/rdf/RDFParserRaptor.hpp
+    ../src/rdf/RDFParserRaptor.hpp \
+    ../src/rdf/RDFParserNtriples.hpp \
+    ../src/rdf/RDFSerializerRaptor.hpp \
+    ../src/rdf/RDFParserRaptorLine.hpp
 
+#For hdt-lib
 INCLUDEPATH += ../include
 
 #For libcds
-SRCBASE = ../../libcds-v1.0.7/src
-INCLUDEPATH += $${SRCBASE}/utils $${SRCBASE}/static/bitsequence $${SRCBASE}/static/sequence $${SRCBASE}/static/coders $${SRCBASE}/static/mapper $${SRCBASE}/static/permutation
+LIBCDSBASE = ../../libcds-v1.0.7/src
+INCLUDEPATH += $${LIBCDSBASE}/utils $${LIBCDSBASE}/static/bitsequence $${LIBCDSBASE}/static/sequence $${LIBCDSBASE}/static/coders $${LIBCDSBASE}/static/mapper $${LIBCDSBASE}/static/permutation
 
 #For raptor
-win32:INCLUDEPATH += ../../raptor/include
-INCLUDEPATH += /usr/local/include
-
-#RAPTOR
-win32:LIBS += E:/win/libxml2-2.7.8.win32/lib/libxml2.lib E:/win/zlib-1.2.5/lib/zlib.lib
-win32:LIBS += -L../raptor/qmake/raptor/debug/ -lraptor
-
+macx:INCLUDEPATH += /usr/local/include
+win32:INCLUDEPATH += C:/mingw/include
