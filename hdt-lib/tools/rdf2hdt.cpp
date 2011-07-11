@@ -51,6 +51,8 @@ int main(int argc, char **argv) {
 	string options;
 	string rdfFormat;
 
+	RDFNotation notation = NTRIPLES;
+
 	int c;
 	while( (c = getopt(argc,argv,"H:D:T:c:o:vf:"))!=-1) {
 		switch(c) {
@@ -113,6 +115,22 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	if(rdfFormat!="") {
+		if(rdfFormat=="ntriples") {
+			notation = NTRIPLES;
+		} else if(rdfFormat=="n3") {
+			notation = N3;
+		} else if(rdfFormat=="turtle") {
+			notation = TURTLE;
+		} else if(rdfFormat=="rdfxml") {
+			notation = XML;
+		} else {
+			cout << "ERROR: The RDF input format must be one of: (ntriples, n3, turtle, rdfxml)" << endl;
+			help();
+			return 1;
+		}
+	}
+
 	// Process
 	ConvertProgress progress;
 	HDTSpecification spec(configFile);
@@ -127,7 +145,7 @@ int main(int argc, char **argv) {
 			throw "Could not open input file.";
 		}
 		StopWatch globalTimer;
-		hdt->loadFromRDF(in, N3, &progress);
+		hdt->loadFromRDF(in, notation, &progress);
 		in.close();
 
 		ofstream out;

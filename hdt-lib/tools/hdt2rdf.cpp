@@ -26,13 +26,14 @@ void help() {
 
 int main(int argc, char **argv) {
 	int c;
-	string format, inputFile, outputFile;
+	string rdfFormat, inputFile, outputFile;
+	RDFNotation notation = NTRIPLES;
 
 	while( (c = getopt(argc,argv,"f:"))!=-1) {
 		switch(c) {
 		case 'f':
-			format = optarg;
-			cout << "Format: " << format << endl;
+			rdfFormat = optarg;
+			cout << "Format: " << rdfFormat << endl;
 			break;
 		default:
 			cout << "ERROR: Unknown option" << endl;
@@ -45,6 +46,22 @@ int main(int argc, char **argv) {
 		cout << "ERROR: You must supply an input and output" << endl << endl;
 		help();
 		return 1;
+	}
+
+	if(rdfFormat!="") {
+		if(rdfFormat=="ntriples") {
+			notation = NTRIPLES;
+		} else if(rdfFormat=="n3") {
+			notation = N3;
+		} else if(rdfFormat=="turtle") {
+			notation = TURTLE;
+		} else if(rdfFormat=="rdfxml") {
+			notation = XML;
+		} else {
+			cout << "ERROR: The RDF output format must be one of: (ntriples, n3, turtle, rdfxml)" << endl;
+			help();
+			return 1;
+		}
 	}
 
 	inputFile = argv[optind];
@@ -77,10 +94,10 @@ int main(int argc, char **argv) {
 			if(!in.good()){
 				throw "Could not write to output file.";
 			}
-			hdt->saveToRDF(out, N3);
+			hdt->saveToRDF(out, notation);
 			out.close();
 		} else {
-			hdt->saveToRDF(cout, N3);
+			hdt->saveToRDF(cout, notation);
 		}
 	} catch (char *exception) {
 		cerr << "ERROR: " << exception << endl;

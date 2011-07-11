@@ -78,11 +78,11 @@ int main(int argc, char **argv) {
 			if(!out.good()){
 				throw "Could not open output file.";
 			}
-			RDFSerializerN3 serializer(out);
+			RDFSerializerN3 serializer(out, N3);
 			serializer.serialize(it);
 			out.close();
 		} else {
-			RDFSerializerN3 serializer(cout);
+			RDFSerializerN3 serializer(cout, N3);
 			serializer.serialize(it);
 		}
 		delete it;
