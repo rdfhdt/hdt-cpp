@@ -8,6 +8,7 @@
 #ifndef RDFSERIALIZERRAPTOR_H_
 #define RDFSERIALIZERRAPTOR_H_
 
+#ifdef USE_RAPTOR
 #include <raptor2/raptor2.h>
 
 #include "RDFSerializer.hpp"
@@ -31,4 +32,5 @@ public:
 
 }
 
+#endif
 #endif /* RDFSERIALIZERRAPTOR_H_ */
