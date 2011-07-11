@@ -10,8 +10,8 @@
 
 namespace hdt {
 
-void process_triple(void *user_data, raptor_statement *triple) {
-	//raptor_statement_print_as_ntriples(triple, stdout);
+void raptor_process_triple(void *user_data, raptor_statement *triple) {
+	 //raptor_statement_print_as_ntriples(triple, stdout);
 
 	const char *s = (const char*)raptor_term_to_string(triple->subject);
 	const char *p = (const char*)raptor_term_to_string(triple->predicate);
@@ -27,50 +27,42 @@ void process_triple(void *user_data, raptor_statement *triple) {
 	RDFParserRaptor *raptorParser = reinterpret_cast<RDFParserRaptor *>(user_data);
 	raptorParser->vectorOutput.push_back(ts);
 
-	//	cout << "Triples appended: " << raptorParser->vectorOutput.size() << endl;
+//	cout << "Triples appended: " << raptorParser->vectorOutput.size() << endl;
 }
 
-RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation) : RDFParser(in), notation(notation), pos(0), globalLine(0) {
+RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation) : RDFParser(in, notation), pos(0) {
+	buf.resize(2048, '\0');
+
 	world = raptor_new_world();
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 	rdf_parser = raptor_new_parser(world, getParserType(notation));
 
-	raptor_parser_set_statement_handler(rdf_parser, (void *)this, process_triple);
-
-	readBlock();
-}
-
-
-void RDFParserRaptor::readBlock() {
-	vectorOutput.clear();
-	pos = 0;
+	raptor_parser_set_statement_handler(rdf_parser, (void *)this, raptor_process_triple);
 
 	raptor_parser_parse_start(rdf_parser, base_uri);
 
-	string line;
-	unsigned int lineCount = 0;
-	while(!input.eof() && lineCount < 10000) {
-		getline(input, line);
-		raptor_parser_parse_chunk(rdf_parser, (const unsigned char *)line.c_str(), line.length(), 0);
-		lineCount++;
-		globalLine++;
+	while(!in.eof()) {
+		//cout << "Buffer pos: " << in.tellg() << endl;
+		in.read((char *)&buf[0], buf.size() );
+		raptor_parser_parse_chunk(rdf_parser, (const unsigned char *)&buf[0], buf.size(), 0);
 	}
-
 	raptor_parser_parse_chunk(rdf_parser, NULL, 0, 1);
-}
 
-RDFParserRaptor::~RDFParserRaptor() {
 	raptor_free_parser(rdf_parser);
 	raptor_free_uri(base_uri);
 	raptor_free_world(world);
+}
+
+RDFParserRaptor::~RDFParserRaptor() {
+
 }
 
 const char *RDFParserRaptor::getParserType(RDFNotation notation){
 	switch(notation){
 	case N3:
 		return "n3";
-	case NTRIPLE:
-		return "ntriple";
+	case NTRIPLES:
+		return "ntriples";
 	case TURTLE:
 		return "turtle";
 	case XML:
@@ -79,24 +71,15 @@ const char *RDFParserRaptor::getParserType(RDFNotation notation){
 }
 
 bool RDFParserRaptor::hasNext() {
-	return !input.eof() || pos<vectorOutput.size();
+	return pos<vectorOutput.size();
 }
 
 TripleString *RDFParserRaptor::next() {
-	ts = vectorOutput[pos++];
-
-	if(pos==vectorOutput.size() && !input.eof()) {
-		readBlock();
-	}
-	return &ts;
+	return &vectorOutput[pos++];
 }
 
 void RDFParserRaptor::reset() {
 	pos = 0;
-	vectorOutput.clear();
-	input.clear(); // Resets EOF
-	input.seekg(0, std::ios::beg);
-	readBlock();
 }
 
 }

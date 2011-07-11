@@ -46,7 +46,7 @@ using namespace cds_utils;
 
 namespace csd
 {
-static const uint64_t FACTOR = 20; // Percentual fraction (of the original dict
+static const uint32_t FACTOR = 20; // Percentual fraction (of the original dict
 				 // size) for memory allocation in building.
 
 class CSD_PFC : public CSD
@@ -60,7 +60,7 @@ class CSD_PFC : public CSD
 	@filename: path to the file containing the string dictionary.
 	@blocksize: number of strings stored in each dictionary block.
     */
-    CSD_PFC(char *filename, uint64_t blocksize);
+    CSD_PFC(char *filename, uint32_t blocksize);
 
     /** Constructor receiving Tdict as a sequence of 'tlength' uchars. Tdict
 	must concatenate all strings separated by '\n' characters.  
@@ -68,21 +68,21 @@ class CSD_PFC : public CSD
 	@tlength: number of integer symbols in the stream.
 	@blocksize: number of strings stored in each dictionary block.
     */
-    CSD_PFC(uchar *dict, uint tlength, uint64_t blocksize);
+    CSD_PFC(uchar *dict, uint tlength, uint32_t blocksize);
 
-    CSD_PFC(IteratorUCharString *it, uint64_t blocksize);
+    CSD_PFC(IteratorUCharString *it, uint32_t blocksize);
     
     /** Returns the ID that identify s[1..length]. If it does not exist, 
 	returns 0. 
 	@s: the string to be located.
 	@len: the length (in characters) of the string s.
     */
-    uint64_t locate(const uchar *s, uint64_t len);
+    uint32_t locate(const uchar *s, uint32_t len);
 
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    uchar * extract(uint64_t id);
+    uchar * extract(uint32_t id);
 
     /** Obtains the original Tdict from its CSD_PFC representation. Each string is
 	separated by '\n' symbols.
@@ -95,7 +95,7 @@ class CSD_PFC : public CSD
     void dumpBlock(uint block);
 
     /** Returns the size of the structure in bytes. */
-    uint64_t getSize();
+    uint32_t getSize();
 
     /** Stores a CSD_PFC structure given a file pointer.
 	@fp: pointer to the file saving a CSD_PFC structure.
@@ -110,11 +110,11 @@ class CSD_PFC : public CSD
     ~CSD_PFC();	
 		
   protected:
-    uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
+    uint32_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
     uchar *text;	//! Front-Coding encoded sequence.
 
-    uint64_t blocksize;	//! Number of strings stored in each block.
-    uint64_t nblocks;	//! Number of total blocks in the dictionary.
+    uint32_t blocksize;	//! Number of strings stored in each block.
+    uint32_t nblocks;	//! Number of total blocks in the dictionary.
     Array *blocks;	//! Start positions of dictionary blocks.
 
     bool search;

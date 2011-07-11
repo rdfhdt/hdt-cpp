@@ -80,7 +80,7 @@ void PFCDictionary::import(PlainDictionary *dictionary)
 		if( (str1!=str2) || (id1!=id2)) {
 			cout << i << " Objects difer: " << endl;
 			cout << "\tPlain: " << id1 << " => " << str1 << endl;
-			cout << "\tPFC: " << id2 << " => " << str2 << endl;
+			cout << "\tPFC__: " << id2 << " => " << str2 << endl;
 		}
 	}
 #endif
@@ -153,16 +153,9 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 
 	ifstream *in = dynamic_cast<ifstream *>(&input);
 
-        cout << "Load shared" << endl;
         shared = csd::CSD::load(*in);
-
-        cout << "Load subjects" << endl;
 	subjects = csd::CSD::load(*in);
-
-        cout << "Load predicates" << endl;
         predicates = csd::CSD::load(*in);
-
-        cout << "Load objects" << endl;
         objects = csd::CSD::load(*in);
 }
 

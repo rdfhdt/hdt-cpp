@@ -5,14 +5,14 @@
  *      Author: mck
  */
 
-#ifdef USE_RAPTOR
+#if 1
 #include "RDFSerializerRaptor.hpp"
 
 using namespace std;
 
 namespace hdt {
 
-RDFSerializerRaptor::RDFSerializerRaptor(std::ostream &s) : RDFSerializer(s) {
+RDFSerializerRaptor::RDFSerializerRaptor(std::ostream &s, RDFNotation notation) : RDFSerializer(s, notation) {
 
 }
 
@@ -56,6 +56,20 @@ raptor_term *getTerm(string &str, raptor_world *world) {
 	}
 }
 
+const char *getType(RDFNotation notation) {
+	switch(notation) {
+	case N3:
+		return "n3";
+	case NTRIPLES:
+		return "ntriples";
+	case XML:
+		return "rdfxml-abbrev";
+	case TURTLE:
+		return "turtle";
+	}
+	return "ntriples";
+}
+
 void RDFSerializerRaptor::serialize(IteratorTripleString *it)
 {
 	world = raptor_new_world();
@@ -68,7 +82,7 @@ void RDFSerializerRaptor::serialize(IteratorTripleString *it)
 	handler.write_bytes = iostream_write_bytes;
 
 	raptor_iostream *iostream = raptor_new_iostream_from_handler(world, (void *) &stream, &handler);
-	raptor_serializer* rdf_serializer = raptor_new_serializer(world, "ntriples") ;
+	raptor_serializer* rdf_serializer = raptor_new_serializer(world, getType(notation)) ;
 
 	raptor_serializer_start_to_iostream(rdf_serializer, uri, iostream);
 
@@ -89,6 +103,8 @@ void RDFSerializerRaptor::serialize(IteratorTripleString *it)
 	raptor_free_serializer(rdf_serializer);
 
 	raptor_free_iostream(iostream);
+
+	raptor_free_uri(uri);
 
 	raptor_free_world(world);
 }

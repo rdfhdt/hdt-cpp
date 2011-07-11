@@ -34,17 +34,17 @@ CSD_PFC::CSD_PFC()
 	search = true;
 }
 
-CSD_PFC::CSD_PFC(char *filename, uint64_t blocksize)
+CSD_PFC::CSD_PFC(char *filename, uint32_t blocksize)
 {
 	throw "Not implemented";
 }
 
-CSD_PFC::CSD_PFC(uchar *dict, uint tlength, uint64_t blocksize)
+CSD_PFC::CSD_PFC(uchar *dict, uint tlength, uint32_t blocksize)
 {
 	throw "Not implemented";
 }
 
-CSD_PFC::CSD_PFC(IteratorUCharString *it, uint64_t blocksize)
+CSD_PFC::CSD_PFC(IteratorUCharString *it, uint32_t blocksize)
 {
 	this->type = PFC;
 	this->length = 0;
@@ -56,8 +56,8 @@ CSD_PFC::CSD_PFC(IteratorUCharString *it, uint64_t blocksize)
 	build(it);
 }
 
-uint64_t
-CSD_PFC::locate(const uchar *s, uint64_t len)
+uint32_t
+CSD_PFC::locate(const uchar *s, uint32_t len)
 {
 	// Locating the candidate block for 's'
 	uint block;
@@ -133,7 +133,7 @@ void CSD_PFC::dumpBlock(uint block) {
 }
 
 uchar*
-CSD_PFC::extract(uint64_t id)
+CSD_PFC::extract(uint32_t id)
 {
 	if ((id > 0) && (id <= length))
 	{
@@ -160,7 +160,7 @@ CSD_PFC::decompress(uchar **dict)
         return 0;
 }
 
-uint64_t
+uint32_t
 CSD_PFC::getSize()
 {
 	return bytes*sizeof(uchar)+blocks->getSize()+sizeof(CSD_PFC);
@@ -169,31 +169,31 @@ CSD_PFC::getSize()
 void
 CSD_PFC::save(ofstream & fp)
 {
-	saveValue<uint64_t>(fp, type);
-	saveValue<uint64_t>(fp, length);
-	saveValue<uint64_t>(fp, maxlength);
-	saveValue<uint64_t>(fp, bytes);
+        saveValue<uint32_t>(fp, type);
+        saveValue<uint32_t>(fp, length);
+        saveValue<uint32_t>(fp, maxlength);
+        saveValue<uint32_t>(fp, bytes);
 	saveValue<uchar>(fp, text, bytes);
-	saveValue<uint64_t>(fp, blocksize);
-	saveValue<uint64_t>(fp, nblocks);
+        saveValue<uint32_t>(fp, blocksize);
+        saveValue<uint32_t>(fp, nblocks);
 	blocks->save(fp);
 }
 
 CSD*
 CSD_PFC::load(ifstream & fp)
 {
-//	uint64_t type = loadValue<uint64_t>(fp);
+//	uint32_t type = loadValue<uint32_t>(fp);
 //	if(type != PFC) return NULL;
 
 	CSD_PFC *dicc = new CSD_PFC();
 
         dicc->type = PFC;
-	dicc->length = loadValue<uint64_t>(fp);
-	dicc->maxlength = loadValue<uint64_t>(fp);
-	dicc->bytes = loadValue<uint64_t>(fp);
+        dicc->length = loadValue<uint32_t>(fp);
+        dicc->maxlength = loadValue<uint32_t>(fp);
+        dicc->bytes = loadValue<uint32_t>(fp);
 	dicc->text = loadValue<uchar>(fp, dicc->bytes);
-	dicc->blocksize = loadValue<uint64_t>(fp);
-	dicc->nblocks = loadValue<uint64_t>(fp);
+        dicc->blocksize = loadValue<uint32_t>(fp);
+        dicc->nblocks = loadValue<uint32_t>(fp);
 	dicc->blocks = new Array(fp);
 
 	return dicc;
@@ -201,7 +201,7 @@ CSD_PFC::load(ifstream & fp)
 
 void CSD_PFC::build(IteratorUCharString *iterator)
 {
-	uint64_t tsize = 1024;
+        uint32_t tsize = 1024;
 	text = (uchar*)malloc(tsize*sizeof(uchar));
 
 	vector<uint> xblocks; // Temporal storage for start positions

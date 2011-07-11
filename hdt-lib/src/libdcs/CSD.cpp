@@ -37,10 +37,10 @@ namespace csd
 {
   CSD * CSD::load(ifstream & fp)
   {
-    uint64_t r = loadValue<uint64_t>(fp);
-    //uint64_t pos = fp.tellg();
-    //fp.seekg(pos-sizeof(uint64_t));
-    //fp.seekg(-sizeof(uint64_t), ios_base::cur);
+    uint32_t r = loadValue<uint32_t>(fp);
+    //uint32_t pos = fp.tellg();
+    //fp.seekg(pos-sizeof(uint32_t));
+    //fp.seekg(-sizeof(uint32_t), ios_base::cur);
     switch(r)
     {
 //	case HTFC: return CSD_HTFC::load(fp);
@@ -57,7 +57,7 @@ namespace csd
     return NULL;
   }
 	
-  uint64_t CSD::getLength()
+  uint32_t CSD::getLength()
   {
     return length;
   }

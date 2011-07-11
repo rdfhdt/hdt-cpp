@@ -47,7 +47,7 @@ bool BasicHeader::save(std::ostream & output, ControlInformation &controlInforma
 	controlInformation.clear();
 	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);
 	controlInformation.save(output);
-	hdt->saveToRDF(output, NTRIPLE);
+	hdt->saveToRDF(output, NTRIPLES);
 	output << endl;
 }
 

@@ -9,7 +9,7 @@
 
 namespace hdt {
 
-RDFParserN3::RDFParserN3(std::istream &in) : RDFParser(in) {
+RDFParserN3::RDFParserN3(std::istream &in, RDFNotation notation) : RDFParser(in, notation) {
 
 }
 

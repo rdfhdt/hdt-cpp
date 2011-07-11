@@ -29,7 +29,7 @@ void PlainHeader::load(std::istream & input, ControlInformation &controlInformat
 		throw "Unexpected PlainHeader format";
 	}
 
-	RDFParserN3 parser(input);
+	RDFParserN3 parser(input, N3);
 
 	while(parser.hasNext()) {
 		TripleString *ts = parser.next();

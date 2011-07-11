@@ -14,7 +14,7 @@ namespace hdt {
 
 class RDFSerializerN3: public RDFSerializer {
 public:
-	RDFSerializerN3(std::ostream &s) : RDFSerializer(s) { }
+	RDFSerializerN3(std::ostream &s, RDFNotation notation) : RDFSerializer(s, notation) { }
 	virtual ~RDFSerializerN3();
 	void serialize(IteratorTripleString *it);
 	void endProcessing();

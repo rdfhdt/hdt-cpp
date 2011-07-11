@@ -45,11 +45,11 @@ using namespace cds_utils;
 
 namespace csd
 {
-static const uint64_t PFC = 2;
-static const uint64_t HTFC = 3;
-static const uint64_t FMINDEX = 4;
-static const uint64_t REPAIRDAC = 5;
-static const uint64_t HASHHUFF = 6;
+static const uint32_t PFC = 2;
+static const uint32_t HTFC = 3;
+static const uint32_t FMINDEX = 4;
+static const uint32_t REPAIRDAC = 5;
+static const uint32_t HASHHUFF = 6;
 
 
 class IteratorUCharString {
@@ -93,12 +93,12 @@ class CSD
 	@s: the string to be located.
 	@len: the length (in characters) of the string s.
     */
-    virtual uint64_t locate(const uchar *s, uint64_t len)=0;
+    virtual uint32_t locate(const uchar *s, uint32_t len)=0;
 
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    virtual uchar * extract(uint64_t id)=0;
+    virtual uchar * extract(uint32_t id)=0;
 
     /** Obtains the original Tdict from its CSD representation. Each string is
 	separated by '\n' symbols.
@@ -108,12 +108,12 @@ class CSD
     virtual uint decompress(uchar **dict)=0;
 
     /** Returns the size of the structure in bytes. */
-    virtual uint64_t getSize()=0;
+    virtual uint32_t getSize()=0;
 
     virtual void dumpAll()=0;
 
     /** Returns the number of strings in the dictionary. */
-    uint64_t getLength();
+    uint32_t getLength();
 
     /** Stores a CSD structure given a file pointer.
 	@fp: pointer to the file saving a CSD structure.
@@ -125,10 +125,10 @@ class CSD
     static CSD * load(ifstream & fp);
 		
   protected:
-    uint64_t type; 	//! Dictionary type.
-    uint64_t tlength;	//! Original Tdict size.
-    uint64_t length;	//! Number of elements in the dictionary.
-    uint64_t maxlength; 	//! Length of the largest string in the dictionary.
+    uint32_t type; 	//! Dictionary type.
+    uint32_t tlength;	//! Original Tdict size.
+    uint32_t length;	//! Number of elements in the dictionary.
+    uint32_t maxlength; 	//! Length of the largest string in the dictionary.
   };
 };
 

@@ -60,11 +60,8 @@
 #include "triples/TripleOrderConvert.hpp"
 
 #include "ControlInformation.hpp"
-#include "rdf/RDFParserN3.hpp"
-#ifdef USE_RAPTOR
-#include "rdf/RDFParserRaptor.hpp"
-#endif
-#include "rdf/RDFSerializerN3.hpp"
+#include "rdf/RDFParser.hpp"
+#include "rdf/RDFSerializer.hpp"
 #include "util/StopWatch.hpp"
 
 
@@ -178,27 +175,12 @@ IteratorTripleString *BasicHDT::search(const char *subject, const char *predicat
 
 void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener)
 {
-	// FIXME: Add other parsers.
-	if(notation!=N3) {
-		throw "Not implemented: Only parsing available: N3";
-	}
-
 	long long begin = input.tellg();
 	input.seekg(0, ios::end);
 	long long end = input.tellg();
 	input.seekg(0, ios::beg);
 
-	RDFParser *parser;
-
-#ifdef USE_RAPTOR
-	parser = new RDFParserRaptor(input, notation);
-#else
-	if(notation==N3) {
-		parser = new RDFParserN3(input);
-	} else {
-		throw "No parser available for format";
-	}
-#endif
+	RDFParser *parser = RDFParser::getParser(input, notation);
 
 	// Generate Dictionary
 	cout << "Generate Dictionary... "<< endl;
@@ -211,7 +193,7 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 	while(parser->hasNext()) {
 		TripleString *ts = parser->next();
 		numtriples++;
-		//std::cout << ts << std::endl;
+		//std::cout << *ts << std::endl;
 
 		dict->insert(ts->getSubject(), SUBJECT);
 		dict->insert(ts->getPredicate(), PREDICATE);
@@ -292,11 +274,13 @@ void BasicHDT::loadFromRDF(std::istream &input, RDFNotation notation, ProgressLi
 
 void BasicHDT::saveToRDF(std::ostream & output, RDFNotation notation, ProgressListener *listener)
 {
-	RDFSerializerN3 serializer(output);
+	RDFSerializer *serializer = RDFSerializer::getSerializer(output, notation);
 
 	IteratorTripleString *it = search("", "", "");
-	serializer.serialize(it);
-	serializer.endProcessing();
+	serializer->serialize(it);
+	serializer->endProcessing();
+	delete it;
+	delete serializer;
 }
 
 
@@ -431,7 +415,7 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation, 
 		long end = input.tellg();
 		input.seekg(0, ios::beg);
 
-		RDFParserN3 parser(input);
+		RDFParser *parser = RDFParser::getParser(input, notation);
 
 		PlainDictionary *dict = new PlainDictionary();
 		ModifiableTriples *triplesList = new TriplesList(spec);
@@ -441,8 +425,8 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation, 
 		StopWatch st;
 		dict->startProcessing();
 		triplesList->startProcessing();
-		while(parser.hasNext()) {
-			TripleString *ts = parser.next();
+		while(parser->hasNext()) {
+			TripleString *ts = parser->next();
 			numtriples++;
 			//std::cout << ts << std::endl;
 
@@ -502,15 +486,19 @@ void BasicModifiableHDT::loadFromRDF(std::istream &input, RDFNotation notation, 
 
 		header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::ORIGINAL_SIZE, end-begin);
 		header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::HDT_SIZE, getDictionary().size()+getTriples().size());
+
+		delete parser;
 }
 
 void BasicModifiableHDT::saveToRDF(std::ostream & output, RDFNotation notation, ProgressListener *listener)
 {
-	RDFSerializerN3 serializer(output);
+	RDFSerializer *serializer = RDFSerializer::getSerializer(output, notation);
 
 	IteratorTripleString *it = search("", "", "");
-	serializer.serialize(it);
-	serializer.endProcessing();
+	serializer->serialize(it);
+	serializer->endProcessing();
+	delete it;
+	delete serializer;
 }
 
 

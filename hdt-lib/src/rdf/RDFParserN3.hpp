@@ -21,7 +21,7 @@ private:
 	TripleString ts;
 
 public:
-	RDFParserN3(std::istream &in);
+	RDFParserN3(std::istream &in, RDFNotation notation);
 	virtual ~RDFParserN3();
 
 	bool hasNext();

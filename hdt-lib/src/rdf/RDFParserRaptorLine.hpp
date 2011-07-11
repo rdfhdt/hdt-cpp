@@ -1,12 +1,12 @@
 /*
- * RDFParserN3.h
+ * RDFParserRaptorLine.h
  *
  *  Created on: 05/03/2011
  *      Author: mck
  */
 
-#ifndef RDFPARSERRAPTOR_H_
-#define RDFPARSERRAPTOR_H_
+#ifndef RDFPARSERRAPTORLINE_H_
+#define RDFPARSERRAPTORLINE_H_
 
 #include <istream>
 #include <vector>
@@ -19,14 +19,15 @@
 
 namespace hdt {
 
-class RDFParserRaptor : public RDFParser {
+class RDFParserRaptorLine : public RDFParser {
 
 private:
-	vector<char> buf;
 	TripleString ts;
 
 	vector<TripleString> vectorOutput;
 	unsigned int pos;
+
+	unsigned int globalLine;
 
 	// Raptor
 	raptor_world *world;
@@ -35,14 +36,16 @@ private:
 
 	const char *getParserType(RDFNotation notation);
 public:
-	RDFParserRaptor(std::istream &in, RDFNotation notation);
-	virtual ~RDFParserRaptor();
+	RDFParserRaptorLine(std::istream &in, RDFNotation notation);
+	virtual ~RDFParserRaptorLine();
+
+	void readBlock();
 
 	bool hasNext();
 	TripleString *next();
 	void reset();
 
-	friend void raptor_process_triple(void *user_data, raptor_statement *triple);
+	friend void raptor_line_process_triple(void *user_data, raptor_statement *triple);
 };
 
 

@@ -67,7 +67,7 @@ namespace csd
 	}
 	
 	void 
-	VByte::bitset(uchar * e, uint64_t p) 
+        VByte::bitset(uchar * e, uint32_t p)
 	{
         	e[p/8] |= (1<<(p%8));
     	}
