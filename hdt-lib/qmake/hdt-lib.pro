@@ -7,6 +7,7 @@
 QT       -= core gui
 
 CONFIG += debug_and_release
+macx:CONFIG += x86
 
 TARGET = hdt
 TEMPLATE = lib

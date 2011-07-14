@@ -3,10 +3,10 @@ LIBCDSPATH = ../libcds-v1.0.7
 
 CPP=g++
 CPPFLAGS=
-#FLAGS=-O9 -Wno-deprecated
-FLAGS=-g -Wno-deprecated #-Wall
+FLAGS=-O9 -Wno-deprecated
+#FLAGS=-g -Wno-deprecated #-Wall
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include
-LDFLAGS=-lstdc++ -lraptor2 -lz
+LDFLAGS=-lstdc++ -lraptor2
 DOXYGEN=doxygen
 DEFINES= -DUSE_RAPTOR
 
@@ -17,6 +17,8 @@ HEADERS=$(wildcard include/*.hpp) $(wildcard include/*.h) $(wildcard src/*.hpp) 
 TOOLS=$(patsubst %.cpp,%, $(wildcard tools/*.cpp))
 
 all: showflags tools
+
+clall: clean all
 
 showflags:
 	@echo " [CFG] FLAGS = $(FLAGS)"
