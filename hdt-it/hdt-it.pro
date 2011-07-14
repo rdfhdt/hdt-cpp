@@ -7,6 +7,7 @@
 QT       += core gui opengl
 
 CONFIG += debug_and_release
+//macx:CONFIG += x86
 
 TARGET = hdt-it
 TEMPLATE = app
@@ -40,7 +41,9 @@ SOURCES += main.cpp\
     triplecomponentmodel.cpp \
     hdtmanager.cpp \
     hdtoperation.cpp \
-    abouthdt.cpp
+    abouthdt.cpp \
+    hdtcachedinfo.cpp \
+    stringutils.cpp
 
 HEADERS  += hdtit.hpp \
     matrixviewwidget.hpp \
@@ -57,7 +60,9 @@ HEADERS  += hdtit.hpp \
     triplecomponentmodel.hpp \
     hdtmanager.hpp \
     hdtoperation.hpp \
-    abouthdt.hpp
+    abouthdt.hpp \
+    hdtcachedinfo.hpp \
+    stringutils.hpp
 
 FORMS    += hdtit.ui \
     hdtspecform.ui \
@@ -78,7 +83,7 @@ macx:LIBS += ../libcds-v1.0.7/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
 
 PRE_TARGETDEPS += $$LIBS
 
-macx:LIBS += -lz -lraptor2
+macx:LIBS += -lraptor2
 
 RESOURCES += \
     hdtresources.qrc

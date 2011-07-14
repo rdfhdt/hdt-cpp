@@ -18,16 +18,17 @@ HDTit::HDTit(QWidget *parent) :
     ui->matrixView->setManager(hdtManager);
 
     ui->subjectView->setModel(hdtManager->getSubjectModel());
-    ui->subjectView->setColumnWidth(0, 300);
+ //   ui->subjectView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     ui->predicateView->setModel(hdtManager->getPredicateModel());
 
     ui->objectView->setModel(hdtManager->getObjectModel());
-    ui->objectView->setColumnWidth(0, 300);
+   // ui->objectView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     ui->resultsTable->setModel(hdtManager->getSearchResultsModel());
+    //ui->resultsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
-    connect(ui->matrixView,SIGNAL(cameraChanged()), this, SLOT(set3Dview()));
+    connect(ui->matrixView, SIGNAL(rotationChanged()), this, SLOT(set3Dview()));
     connect(hdtManager, SIGNAL(datasetChanged()), ui->matrixView, SLOT(reloadHDTInfo()));
     connect(hdtManager, SIGNAL(predicatesChanged()), ui->matrixView, SLOT(updateGL()));
     connect(ui->selectAllPredicatesButton, SIGNAL(clicked()), hdtManager, SLOT(selectAllPredicates()));
@@ -45,20 +46,26 @@ HDTit::~HDTit()
     delete hdtManager;
 }
 
+void HDTit::updateNumResults()
+{
+    ui->numResultsLabel->setText(
+                QString("%1 results found in %2.")
+                .arg(QLocale::system().toString(hdtManager->getNumResults()))
+                .arg(hdtManager->getTime())
+                );
+}
+
 void HDTit::searchPatternEdited()
 {
     std::string subject = std::string(ui->subjectPatternEdit->text().toAscii());
     std::string predicate = std::string(ui->predicatePatternEdit->text().toAscii());
     std::string object = std::string(ui->objectPatternEdit->text().toAscii());
+
     hdt::TripleString ts(subject, predicate, object);
-    cout << "Search Pattern: " << ts << endl;
     hdtManager->setSearchPattern(ts);
-    ui->numResultsLabel->setText(
-                QString("%1 results found in %2.").arg(hdtManager->getNumResults())
-                .arg(hdtManager->getSearchResultsModel()->getTime().c_str())
-                );
-    //ui->resultsTable->resizeColumnsToContents();
-    //ui->resultsTable->resizeRowsToContents();
+
+    this->updateNumResults();
+
     ui->matrixView->updateGL();
 
     ui->subjectView->selectRow(hdtManager->getSearchPatternID().getSubject()-1);
@@ -91,12 +98,10 @@ void HDTit::importRDFFile(QString &file, hdt::RDFNotation notation, hdt::HDTSpec
 void HDTit::hdtChanged(QString &file)
 {
     ui->predicateCountSlider->setMaximum(hdtManager->getMaximumPredicateCount()+1);
+    ui->predicateCountSlider->setValue(0);
     ui->statusBar->showMessage(file);
     ui->statsLabel->setText(hdtManager->getStatistics());
-    ui->numResultsLabel->setText(
-                QString("%1 results found in %2.").arg(hdtManager->getNumResults())
-                .arg(hdtManager->getSearchResultsModel()->getTime().c_str())
-                );
+    updateNumResults();
 
     ui->subjectPatternEdit->clear();
     ui->predicatePatternEdit->clear();
@@ -240,4 +245,5 @@ void HDTit::on_actionAbout_triggered()
     Abouthdt aboutForm;
     aboutForm.exec();
 }
+
 

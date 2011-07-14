@@ -1,5 +1,6 @@
 #include "triplecomponentmodel.hpp"
 
+#include <QFont>
 
 TripleComponentModel::TripleComponentModel(QObject *parent, HDTManager *view, hdt::TripleComponentRole compRole) :
     hdtManager(view), tripleComponentRole(compRole)
@@ -35,18 +36,18 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     }
 
     switch(role) {
+    case Qt::ToolTipRole:
     case Qt::DisplayRole:
     {
+        //cout << "Data: " << index.row() << " role: " << role << " type: " << tripleComponentRole << endl;
         hdt::Dictionary &d = hdtManager->getHDT()->getDictionary();
         return d.idToString(index.row()+1, tripleComponentRole).c_str();
     }
     case Qt::FontRole:
     {
-#if 0
         QFont font;
         font.setPointSize(10);
         return font;
-#endif
     }
     case Qt::CheckStateRole:
         if(tripleComponentRole==hdt::PREDICATE) {

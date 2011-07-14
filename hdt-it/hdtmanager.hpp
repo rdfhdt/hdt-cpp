@@ -4,7 +4,7 @@
 #include <HDT.hpp>
 #include <QObject>
 
-
+#include "hdtcachedinfo.hpp"
 #include "triplecomponentmodel.hpp"
 #include "searchresultsmodel.hpp"
 
@@ -27,15 +27,14 @@ private:
     TripleComponentModel *objectModel;
     SearchResultsModel *searchResultsModel;
     vector<bool> activePredicate;
-    vector<unsigned int> subjectCount;
-    vector<unsigned int> predicateCount;
-    vector<unsigned int> objectCount;
     int minPredicateCount;
     int maxPredicateCount;
     hdt::TripleID searchPatternID;
     hdt::TripleString searchPatternString;
     unsigned int numResults;
-    vector<hdt::TripleID> triples;
+    HDTCachedInfo *hdtInfo;
+
+    StopWatch resultsTime;
 
 public:
     hdt::HDT *getHDT();
@@ -73,6 +72,7 @@ public:
     unsigned int getNumResults();
 
     QString getStatistics();
+    QString getTime();
 
 signals:
     void datasetChanged();

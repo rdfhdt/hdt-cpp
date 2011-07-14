@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>HDT-it !</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="hdtresources.qrc">
+    <normaloff>:/images/logo-hdt.png</normaloff>:/images/logo-hdt.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -37,10 +41,21 @@
            <item row="0" column="0">
             <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0">
              <item row="1" column="1">
-              <widget class="QClearLineEdit" name="subjectPatternEdit"/>
+              <widget class="QClearLineEdit" name="subjectPatternEdit">
+               <property name="toolTip">
+                <string>Insert a Subject Search Pattern</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
+              </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QClearLineEdit" name="predicatePatternEdit"/>
+              <widget class="QClearLineEdit" name="predicatePatternEdit">
+               <property name="toolTip">
+                <string>Insert a Predicate Search Pattern</string>
+               </property>
+              </widget>
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="subjectLabel">
@@ -57,7 +72,11 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QClearLineEdit" name="objectPatternEdit"/>
+              <widget class="QClearLineEdit" name="objectPatternEdit">
+               <property name="toolTip">
+                <string>Insert an Object Search Pattern</string>
+               </property>
+              </widget>
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="objectLabel">
@@ -98,15 +117,25 @@
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QLabel" name="statsLabel">
-              <property name="text">
-               <string>Not open.</string>
+             <widget class="QTextBrowser" name="statsLabel">
+              <property name="frameShape">
+               <enum>QFrame::Panel</enum>
               </property>
-              <property name="alignment">
-               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
               </property>
-              <property name="wordWrap">
-               <bool>true</bool>
+              <property name="lineWidth">
+               <number>1</number>
+              </property>
+              <property name="documentTitle">
+               <string/>
+              </property>
+              <property name="html">
+               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;No dataset.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
              </widget>
             </item>
@@ -118,7 +147,32 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="QTableView" name="subjectView"/>
+             <widget class="QTableView" name="subjectView">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="textElideMode">
+               <enum>Qt::ElideMiddle</enum>
+              </property>
+              <property name="horizontalScrollMode">
+               <enum>QAbstractItemView::ScrollPerPixel</enum>
+              </property>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>400</number>
+              </attribute>
+              <attribute name="horizontalHeaderMinimumSectionSize">
+               <number>400</number>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>20</number>
+              </attribute>
+              <attribute name="verticalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -131,6 +185,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
                <widget class="QLabel" name="label">
+                <property name="toolTip">
+                 <string>Show only triples from most used predicates.</string>
+                </property>
                 <property name="text">
                  <string>Minimum predicate usage count:</string>
                 </property>
@@ -196,7 +253,29 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
-             <widget class="QTableView" name="objectView"/>
+             <widget class="QTableView" name="objectView">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="textElideMode">
+               <enum>Qt::ElideMiddle</enum>
+              </property>
+              <property name="horizontalScrollMode">
+               <enum>QAbstractItemView::ScrollPerPixel</enum>
+              </property>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>400</number>
+              </attribute>
+              <attribute name="horizontalHeaderMinimumSectionSize">
+               <number>400</number>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>20</number>
+              </attribute>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -214,7 +293,26 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QResultTableView" name="resultsTable"/>
+          <widget class="QTableView" name="resultsTable">
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="textElideMode">
+            <enum>Qt::ElideMiddle</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <attribute name="horizontalHeaderDefaultSectionSize">
+            <number>300</number>
+           </attribute>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>300</number>
+           </attribute>
+           <attribute name="verticalHeaderDefaultSectionSize">
+            <number>20</number>
+           </attribute>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -415,13 +513,10 @@
    <extends>QLineEdit</extends>
    <header>qclearlineedit.hpp</header>
   </customwidget>
-  <customwidget>
-   <class>QResultTableView</class>
-   <extends>QTableView</extends>
-   <header>qresulttableview.hpp</header>
-  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="hdtresources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>subjectPatternEdit</sender>

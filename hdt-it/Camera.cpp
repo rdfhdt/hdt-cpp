@@ -9,35 +9,52 @@
 
 #include "Camera.h"
 
-Camera::Camera() {
+Camera::Camera() : rotationAnimation(this, "camRotation"){
     widgetWidth = 800;
     widgetHeight = 600;
     toDefaultValues();
+
+    connect(this, SIGNAL(rotationChanged()), this, SIGNAL(cameraChanged()));
+    connect(this, SIGNAL(zoomChanged()), this, SIGNAL(cameraChanged()));
+    connect(this, SIGNAL(offsetChanged()), this, SIGNAL(cameraChanged()));
+}
+
+qreal Camera::getZoom()
+{
+    return zoom;
 }
 
 void Camera::setZoom(double newz)
 {
     zoom = newz;
-    emit cameraChanged();
+    emit zoomChanged();
 }
 
 void Camera::increaseZoom(int dif)
 {
     zoom += 0.001*dif*zoom;
     zoom = zoom < 0.5 ? 0.5 : zoom;
-    emit cameraChanged();
+    emit zoomChanged();
 }
 
 void Camera::decreaseZoom(int dif){
     zoom -= 0.001*dif*zoom;
     zoom = zoom < 0.5 ? 0.5 : zoom;
-    emit cameraChanged();
+    emit zoomChanged();
 }
 
 void Camera::setOffset(double x,double y){
     offx = x;
     offy = y;
-    emit cameraChanged();
+    emit offsetChanged();
+}
+
+void Camera::setOffset(QPointF &rect){
+    this->setOffset(rect.x(), rect.y());
+}
+
+QPointF Camera::getOffset() {
+    return QPointF(offx, offy);
 }
 
 void Camera::moveOffset(double x,double y){
@@ -49,13 +66,32 @@ void Camera::moveOffset(double x,double y){
 void Camera::setRotation(double x,double y){
     rotx = x;
     roty = y;
-    emit cameraChanged();
+    emit rotationChanged();
+}
+
+void Camera::setRotation(QPointF &rect){
+    this->setRotation(rect.x(), rect.y());
+}
+
+void Camera::animateRotation(double x, double y) {
+    rotationAnimation.stop();
+    rotationAnimation.setDuration(500);
+    rotationAnimation.setEasingCurve(QEasingCurve::InOutQuad);
+    rotationAnimation.setStartValue(QPointF(rotx, roty));
+    rotationAnimation.setEndValue(QPointF(x,y));
+
+    rotationAnimation.start();
+}
+
+QPointF Camera::getRotation() {
+    return QPointF(rotx, roty);
 }
 
 void Camera::rotateCamera(double x,double y){
+    rotationAnimation.stop();
     rotx += (float) 0.5f * x;
     roty += (float) 0.5f * y;
-    emit cameraChanged();
+    emit rotationChanged();
 }
 
 void Camera::toDefaultValues(){
@@ -63,7 +99,9 @@ void Camera::toDefaultValues(){
     zoom = 1;
     offx = -0.5;
     offy = -0.5;
-    emit cameraChanged();
+    emit rotationChanged();
+    emit zoomChanged();
+    emit offsetChanged();
 }
 
 void Camera::setScreenSize(int w, int h){
@@ -131,22 +169,22 @@ void Camera::applyTransform(){
 
 void Camera::setFrontView()
 {
-    setRotation(0, 0);
+    animateRotation(0, 0);
 }
 
 void Camera::setLeftView()
 {
-    setRotation(90,0);
+    animateRotation(90,0);
 }
 
 void Camera::setTopView()
 {
-    setRotation(0,90);
+    animateRotation(0,90);
 }
 
 void Camera::set3DView()
 {
-    setRotation(-45,45);
+    animateRotation(-45,45);
 }
 
 bool Camera::isFrontView()

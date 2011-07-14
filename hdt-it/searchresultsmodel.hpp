@@ -5,8 +5,6 @@
 
 #include <SingleTriple.hpp>
 
-#include "StopWatch.hpp"
-
 #include "hdtmanager.hpp"
 
 class HDTManager;
@@ -19,7 +17,6 @@ private:
     hdt::TripleID currentTriple;
     unsigned int currentIndex;
     unsigned int numResults;
-    StopWatch time;
 
     void resetIterator();
     void findTriple(unsigned int index);
@@ -33,8 +30,6 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
     void update();
-
-    string getTime();
 signals:
 };
 

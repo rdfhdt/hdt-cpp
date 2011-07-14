@@ -1,4 +1,5 @@
 #include "searchresultsmodel.hpp"
+#include <QFont>
 
 SearchResultsModel::SearchResultsModel(QObject *parent, HDTManager *view) : hdtManager(view), triples(NULL)
 {
@@ -22,8 +23,10 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
     }
 
     switch(role) {
+    case Qt::ToolTipRole:
     case Qt::DisplayRole:
     {
+        //cout << "SearchResultsModel.data " << index.row() << "," << index.column() << endl;
         // Compiler complains that by calling findTriple we are modifying internal
         // state, which is illegal due to this function being const. But we need to
         // modify the currentIndex and currentTriple, so we can avoid it.
@@ -44,11 +47,9 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
     }
     case Qt::FontRole:
     {
-#if 0
-        QFont font;
+        static QFont font;
         font.setPointSize(10);
         return font;
-#endif
     }
 
     }
@@ -103,8 +104,6 @@ void SearchResultsModel::resetIterator()
 }
 
 void SearchResultsModel::update() {
-
-    time.reset();
     resetIterator();
 
     numResults = 0;
@@ -117,7 +116,6 @@ void SearchResultsModel::update() {
         }
     }
 #endif
-    time.stop();
 
     numResults = hdtManager->getNumResults();
 
@@ -140,9 +138,4 @@ void SearchResultsModel::findTriple(unsigned int index)
         currentTriple = *triples->next();
         currentIndex++;
     }
-}
-
-std::string SearchResultsModel::getTime()
-{
-    return time.getUserStr();
 }

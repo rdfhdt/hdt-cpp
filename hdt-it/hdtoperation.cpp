@@ -1,8 +1,13 @@
 #include <QMessageBox>
+#include <QtGui>
 
 #include "hdtoperation.hpp"
 
-HDTOperation::HDTOperation(hdt::HDT *hdt) : hdt(hdt)
+HDTOperation::HDTOperation(hdt::HDT *hdt) : hdt(hdt), hdtInfo(NULL)
+{
+}
+
+HDTOperation::HDTOperation(hdt::HDT *hdt, HDTCachedInfo *hdtInfo) : hdt(hdt), hdtInfo(hdtInfo)
 {
 }
 
@@ -11,9 +16,11 @@ void HDTOperation::execute() {
         switch(op) {
         case HDT_READ:
             hdt->loadFromHDT((istream &)*in, dynamic_cast<ProgressListener *>(this));
+            hdtInfo->loadInfo(dynamic_cast<ProgressListener *>(this));
             break;
         case RDF_READ:
             hdt->loadFromRDF((istream &)*in, notation, dynamic_cast<ProgressListener *>(this));
+            hdtInfo->loadInfo(dynamic_cast<ProgressListener *>(this));
             break;
         case HDT_WRITE:
             hdt->saveToHDT((ostream &)*out, dynamic_cast<ProgressListener *>(this));
@@ -61,5 +68,39 @@ void HDTOperation::loadFromHDT(std::ifstream *in)
 {
     this->op = HDT_READ;
     this->in = in;
+}
+
+int HDTOperation::exec()
+{
+    QProgressDialog dialog;
+    dialog.setRange(0,100);
+
+    switch(op) {
+    case HDT_READ:
+        dialog.setWindowTitle("Loading HDT File");
+        break;
+    case RDF_READ:
+        dialog.setWindowTitle("Importing RDF File to HDT");
+        break;
+    case HDT_WRITE:
+        dialog.setWindowTitle("Saving HDT File");
+        break;
+    case RDF_WRITE:
+        dialog.setWindowTitle("Exporting HDT File to RDF");
+        break;
+    }
+
+    QPushButton btn;
+    btn.setEnabled(false);
+    btn.setText("Cancel");
+    dialog.setCancelButton(&btn);
+    dialog.setFixedSize(300,130);
+
+    connect(this, SIGNAL(progressChanged(int)), &dialog, SLOT(setValue(int)), Qt::QueuedConnection);
+    connect(this, SIGNAL(messageChanged(QString)), &dialog, SLOT(setLabelText(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(processFinished()), &dialog, SLOT(close()), Qt::QueuedConnection);
+
+    QtConcurrent::run(this, &HDTOperation::execute);
+    return dialog.exec();
 }
 

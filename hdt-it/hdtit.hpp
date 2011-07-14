@@ -23,6 +23,7 @@ private:
     void importRDFFile(QString &file, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
 
     void hdtChanged(QString &file);
+    void updateNumResults();
 
 public:
     explicit HDTit(QWidget *parent = 0);
