@@ -1,10 +1,3 @@
-/*
- * ControlInformation.h
- *
- *  Created on: 29/04/2011
- *      Author: mck
- */
-
 #ifndef CONTROLINFORMATION_H_
 #define CONTROLINFORMATION_H_
 

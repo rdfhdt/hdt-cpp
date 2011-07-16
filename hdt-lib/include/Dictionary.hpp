@@ -2,8 +2,7 @@
  * Dictionary.hpp
  *
  * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Guillermo Rodriguez-Cano, Alejandro Andres,
- *                     Mario Arias
+ *                     Mario Arias, Alejandro Andres.
  * All rights reserved.
  *
  *
@@ -28,8 +27,6 @@
  *   Guillermo Rodriguez-Cano:  wileeam@acm.org
  *   Alejandro Andres:          fuzzy.alej@gmail.com
  *   Mario Arias:               mario.arias@gmail.com
- *
- * @version $Id$
  *
  */
 
