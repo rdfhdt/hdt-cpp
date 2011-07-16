@@ -1,12 +1,13 @@
 /*
- * Dictionary.hpp
+ * File BasicHDT.cpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
  * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Guillermo Rodriguez-Cano, Alejandro Andres,
- *                     Mario Arias
+ *                     Mario Arias, Alejandro Andres.
  * All rights reserved.
  *
- * TODO: Define me
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,11 +27,8 @@
  * Contacting the authors:
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Guillermo Rodriguez-Cano:  wileeam@acm.org
- *   Alejandro Andres:          fuzzy.alej@gmail.com
  *   Mario Arias:               mario.arias@gmail.com
- *
- * @version $Id$
+ *   Alejandro Andres:          fuzzy.alej@gmail.com
  *
  */
 
