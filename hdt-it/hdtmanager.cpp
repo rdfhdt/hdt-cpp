@@ -72,7 +72,7 @@ void HDTManager::importRDFFile(QString file, hdt::RDFNotation notation, hdt::HDT
             updateOnHDTChanged();
         }
     } else {
-        QMessageBox::critical(0, "File Error", "Could not open file: "+file);
+        QMessageBox::critical(0, tr("File Error"), QString("Could not open file: %1").arg(file));
     }
 }
 
@@ -100,7 +100,7 @@ void HDTManager::openHDTFile(QString file)
             updateOnHDTChanged();
         }
     } else {
-        QMessageBox::critical(0, "File Error", "Could not open file: "+file);
+        QMessageBox::critical(0, tr("File Error"), QString("Could not open file: %1").arg(file));
     }
 }
 
@@ -116,7 +116,7 @@ void HDTManager::saveHDTFile(QString file)
             delete hdtop;
             delete out;
         } else {
-            QMessageBox::critical(0, "File Error", "Could not open file: "+file);
+            QMessageBox::critical(0, tr("File Error"), QString("Could not open file: %1").arg(file));
         }
     }
 }
@@ -137,7 +137,7 @@ void HDTManager::exportRDFFile(QString file, hdt::RDFNotation notation)
             delete hdtop;
             delete out;
         } else {
-            QMessageBox::critical(0, "File Error", "Could not open file: "+file);
+            QMessageBox::critical(0, tr("File Error"), QString("Could not open file: %1").arg(file));
         }
     }
 }
@@ -337,7 +337,7 @@ QString HDTManager::getStatistics()
     QString output;
     QLocale loc = QLocale::system();
 
-    output.append("<h3>Dataset:</h3>");
+    output.append(tr("<h3>Dataset:</h3>"));
 
     unsigned long long originalSize = head.getPropertyLong("<http://purl.org/hdt/dataset>", hdt::HDTVocabulary::ORIGINAL_SIZE.c_str());
     output.append(tr("<b>Original Size</b>: "));
@@ -353,31 +353,33 @@ QString HDTManager::getStatistics()
     output.append(QString::number(hdtSize*100.0/originalSize, 'f', 2));
     output.append("%<br/>");
 
+#if 0
     output.append("<h3>Header:</h3>");
-    output.append(QString("<b>Number of triples</b>: %1<br/>").arg(loc.toString(head.getNumberOfElements())));
+    output.append(QString(tr("<b>Number of triples</b>: %1<br/>").arg(loc.toString(head.getNumberOfElements())));
+#endif
 
-    output.append("<h3>Dictionary:</h3>");
-    output.append(QString("<b>Number of entries</b>: %1<br/>").arg(loc.toString(dict.getNumberOfElements())));
-    output.append(QString("<b>Different subjects</b>: %1<br/>").arg(loc.toString(dict.getNsubjects())));
-    output.append(QString("<b>Different predicates</b>: %1<br/>").arg(loc.toString(dict.getNpredicates())));
-    output.append(QString("<b>Different objects</b>: %1<br/>").arg(loc.toString(dict.getNobjects())));
-    output.append(QString("<b>Shared area</b>: %1<br/>").arg(loc.toString(dict.getSsubobj())));
+    output.append(tr("<h3>Dictionary:</h3>"));
+    output.append(QString(tr("<b>Number of entries</b>: %1<br/>")).arg(loc.toString(dict.getNumberOfElements())));
+    output.append(QString(tr("<b>Different subjects</b>: %1<br/>")).arg(loc.toString(dict.getNsubjects())));
+    output.append(QString(tr("<b>Different predicates</b>: %1<br/>")).arg(loc.toString(dict.getNpredicates())));
+    output.append(QString(tr("<b>Different objects</b>: %1<br/>")).arg(loc.toString(dict.getNobjects())));
+    output.append(QString(tr("<b>Shared area</b>: %1<br/>")).arg(loc.toString(dict.getSsubobj())));
     QString dictType = dict.getType().c_str();
     dictType.replace("<", "&lt;");
     dictType.replace(">", "&gt;");
-    output.append(QString("<b>Type</b>: <small>").append(dictType).append("</small><br/>"));
+    output.append(QString(tr("<b>Type</b>: <small>")).append(dictType).append("</small><br/>"));
 
     output.append(tr("<b>Dictionary Size</b>: "));
     output.append(stringutils::sizeHuman(dict.size()));
     output.append(tr("<br/>"));
 
-    output.append("<h3>Triples:</h3>");
-    output.append(QString("<b>Number of triples</b>: %1<br/>").arg(loc.toString(triples.getNumberOfElements())));
+    output.append(tr("<h3>Triples:</h3>"));
+    output.append(QString(tr("<b>Number of triples</b>: %1<br/>")).arg(loc.toString(triples.getNumberOfElements())));
 
     QString triplesType = triples.getType().c_str();
     triplesType.replace("<", "&lt;");
     triplesType.replace(">", "&gt;");
-    output.append(QString("<b>Type</b>: <small>").append(triplesType).append("</small><br/>"));
+    output.append(QString(tr("<b>Type</b>: <small>")).append(triplesType).append("</small><br/>"));
 
     output.append(tr("<b>Triples Size</b>: "));
     output.append(stringutils::sizeHuman(triples.size()));

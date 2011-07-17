@@ -7,7 +7,7 @@
 QT       += core gui opengl
 
 CONFIG += debug_and_release
-//macx:CONFIG += x86
+#macx:CONFIG += x86
 
 TARGET = hdt-it
 TEMPLATE = app
@@ -23,9 +23,9 @@ RCC_DIR = $${OutputDir}
 UI_DIR = $${OutputDir}
 
 QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O9
+QMAKE_CXXFLAGS_RELEASE += -O3
 QMAKE_CFLAGS_RELEASE -= -O2
-QMAKE_CFLAGS_RELEASE += -O9
+QMAKE_CFLAGS_RELEASE += -O3
 
 SOURCES += main.cpp\
         hdtit.cpp \
@@ -68,6 +68,9 @@ FORMS    += hdtit.ui \
     hdtspecform.ui \
     abouthdt.ui
 
+TRANSLATIONS += hdt-it_en.ts \
+                hdt-it_es.ts
+
 INCLUDEPATH += ../hdt-lib/include/ .
 
 # Using Traditional Makefile
@@ -78,12 +81,12 @@ win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a ../libcds-v1.0.7/qmake/win32/libcd
 win32:LIBS += c:/mingw/lib/libraptor2.a c:/mingw/lib/libexpat.a
 #win32:LIBS += ../raptor/qmake/raptor/debug/libraptor.a
 
-unix:!macx:LIBS += ../libcds-v1.0.7/qmake/unix/libcds.a ../hdt-lib/qmake/unix/libhdt.a
+unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a ../libcds-v1.0.7/qmake/unix/libcds.a 
 macx:LIBS += ../libcds-v1.0.7/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
 
 PRE_TARGETDEPS += $$LIBS
 
-macx:LIBS += -lraptor2
+unix:LIBS += -lraptor2
 
 RESOURCES += \
     hdtresources.qrc

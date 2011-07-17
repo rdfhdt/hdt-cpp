@@ -5,6 +5,7 @@
 #include <HDTSpecification.hpp>
 #include <HDTEnums.hpp>
 #include <QAbstractItemModel>
+#include <QDir>
 
 #include "hdtmanager.hpp"
 
@@ -19,6 +20,7 @@ class HDTit : public QMainWindow
 private:
     Ui::HDTit *ui;
     HDTManager *hdtManager;
+    QString lastDir;
     void openHDTFile(QString &file);
     void importRDFFile(QString &file, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
 
@@ -30,9 +32,6 @@ public:
     ~HDTit();
 
 private slots:
-
-    void set3Dview();
-
     void on_actionOpenHDT_triggered();
     void on_actionImportRDF_triggered();
     void on_actionSaveHDT_triggered();
@@ -52,6 +51,8 @@ private slots:
 
     void setPatternGlobal(QModelIndex index);
     void on_actionAbout_triggered();
+
+    void updateViewButtons();
 };
 
 #endif // HDTIT_HPP

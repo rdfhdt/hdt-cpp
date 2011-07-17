@@ -11,7 +11,8 @@
 HDTit::HDTit(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::HDTit),
-    hdtManager(new HDTManager())
+    hdtManager(new HDTManager()),
+    lastDir(QDir::currentPath())
 {
     ui->setupUi(this);
 
@@ -28,7 +29,7 @@ HDTit::HDTit(QWidget *parent) :
     ui->resultsTable->setModel(hdtManager->getSearchResultsModel());
     //ui->resultsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
-    connect(ui->matrixView, SIGNAL(rotationChanged()), this, SLOT(set3Dview()));
+    connect(ui->matrixView, SIGNAL(rotationChanged()), this, SLOT(updateViewButtons()));
     connect(hdtManager, SIGNAL(datasetChanged()), ui->matrixView, SLOT(reloadHDTInfo()));
     connect(hdtManager, SIGNAL(predicatesChanged()), ui->matrixView, SLOT(updateGL()));
     connect(ui->selectAllPredicatesButton, SIGNAL(clicked()), hdtManager, SLOT(selectAllPredicates()));
@@ -49,7 +50,7 @@ HDTit::~HDTit()
 void HDTit::updateNumResults()
 {
     ui->numResultsLabel->setText(
-                QString("%1 results found in %2.")
+                QString(tr("%1 results found in %2."))
                 .arg(QLocale::system().toString(hdtManager->getNumResults()))
                 .arg(hdtManager->getTime())
                 );
@@ -115,10 +116,9 @@ void HDTit::hdtChanged(QString &file)
 
 void HDTit::on_actionOpenHDT_triggered()
 {
-    static QString base = QDir::homePath();
-    QString file = QFileDialog::getOpenFileName(this,tr("Select HDT File"), base , tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
+    QString file = QFileDialog::getOpenFileName(this,tr("Select HDT File"), lastDir , tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
     if(!file.isEmpty()) {
-        base = file;
+        lastDir = file;
         openHDTFile(file);
     }
 }
@@ -140,71 +140,62 @@ void HDTit::on_actionImportRDF_triggered()
 
 void HDTit::on_actionSaveHDT_triggered()
 {
-    QString file = QFileDialog::getSaveFileName(this,tr("Select Output HDT File"), QDir::homePath(), tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
+    QString file = QFileDialog::getSaveFileName(this,tr("Select Output HDT File"), lastDir, tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
     if(!file.isEmpty()) {
+        lastDir = file;
         hdtManager->saveHDTFile(file);
     }
 }
 
 void HDTit::on_actionExportRDF_triggered()
 {
-    QString file = QFileDialog::getSaveFileName(this,tr("Select Output RDF File"), QDir::homePath(), tr("HDT Files(*.rdf *.RDF *.n3 *.N3)"), 0, 0 );
+    QString file = QFileDialog::getSaveFileName(this,tr("Select Output RDF File"), lastDir, tr("RDF Files(*.rdf *.RDF *.n3 *.N3)"), 0, 0 );
     if(!file.isEmpty()) {
         // FIXME: Select notation.
+        lastDir = file;
         hdtManager->exportRDFFile(file, hdt::N3);
     }
+}
+
+void HDTit::updateViewButtons()
+{
+    Camera &cam = ui->matrixView->getCamera();
+    ui->actionFrontView->setChecked(cam.isFrontView());
+    ui->actionLeftView->setChecked(cam.isLeftView());
+    ui->actionTopView->setChecked(cam.isTopView());
+    ui->action3Dview->setChecked(cam.is3DView());
 }
 
 void HDTit::on_actionFrontView_toggled(bool state)
 {
     if(state) {
-        ui->actionLeftView->setChecked(false);
-        ui->actionTopView->setChecked(false);
-        ui->action3Dview->setChecked(false);
-
         ui->matrixView->getCamera().setFrontView();
+        updateViewButtons();
     }
 }
 
 void HDTit::on_actionLeftView_toggled(bool state)
 {
     if(state) {
-        ui->actionFrontView->setChecked(false);
-        ui->actionTopView->setChecked(false);
-        ui->action3Dview->setChecked(false);
-
         ui->matrixView->getCamera().setLeftView();
+        updateViewButtons();
     }
 }
 
 void HDTit::on_actionTopView_toggled(bool state)
 {
     if(state) {
-        ui->actionFrontView->setChecked(false);
-        ui->actionLeftView->setChecked(false);
-        ui->action3Dview->setChecked(false);
-
         ui->matrixView->getCamera().setTopView();
+        updateViewButtons();
     }
 }
 
 void HDTit::on_action3Dview_toggled(bool state)
 {
     if(state) {
-        ui->actionFrontView->setChecked(false);
-        ui->actionLeftView->setChecked(false);
-        ui->actionTopView->setChecked(false);
-
         ui->matrixView->getCamera().set3DView();
+        updateViewButtons();
     }
-}
-
-void HDTit::set3Dview()
-{
-    ui->actionFrontView->setChecked(false);
-    ui->actionLeftView->setChecked(false);
-    ui->actionTopView->setChecked(false);
-    ui->action3Dview->setChecked(false);
 }
 
 void HDTit::setPatternSubject(QModelIndex index)
@@ -245,5 +236,7 @@ void HDTit::on_actionAbout_triggered()
     Abouthdt aboutForm;
     aboutForm.exec();
 }
+
+
 
 

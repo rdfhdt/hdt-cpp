@@ -66,11 +66,11 @@ QVariant SearchResultsModel::headerData(int section, Qt::Orientation orientation
         if(orientation == Qt::Horizontal) {
             switch(section) {
             case 0:
-                return "Subject";
+                return tr("Subject");
             case 1:
-                return "Predicate";
+                return tr("Predicate");
             case 2:
-                return "Object";
+                return tr("Object");
             }
         } else {
             return QString::number(section+1);

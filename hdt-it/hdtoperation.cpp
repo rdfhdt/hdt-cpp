@@ -77,22 +77,22 @@ int HDTOperation::exec()
 
     switch(op) {
     case HDT_READ:
-        dialog.setWindowTitle("Loading HDT File");
+        dialog.setWindowTitle(tr("Loading HDT File"));
         break;
     case RDF_READ:
-        dialog.setWindowTitle("Importing RDF File to HDT");
+        dialog.setWindowTitle(tr("Importing RDF File to HDT"));
         break;
     case HDT_WRITE:
-        dialog.setWindowTitle("Saving HDT File");
+        dialog.setWindowTitle(tr("Saving HDT File"));
         break;
     case RDF_WRITE:
-        dialog.setWindowTitle("Exporting HDT File to RDF");
+        dialog.setWindowTitle(tr("Exporting HDT File to RDF"));
         break;
     }
 
     QPushButton btn;
     btn.setEnabled(false);
-    btn.setText("Cancel");
+    btn.setText(tr("Cancel"));
     dialog.setCancelButton(&btn);
     dialog.setFixedSize(300,130);
 

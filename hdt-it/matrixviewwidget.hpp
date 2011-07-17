@@ -63,6 +63,7 @@ public slots:
     void reloadHDTInfo();
 
 signals:
+    void rotationChanged();
     void cameraChanged();
 };
 

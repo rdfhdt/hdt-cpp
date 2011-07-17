@@ -8,6 +8,7 @@ MatrixViewWidget::MatrixViewWidget(QWidget *parent) :
 {
     setMouseTracking(true);
     connect(&camera, SIGNAL(cameraChanged()), (QObject *)this, SLOT(updateGL()));
+    connect(&camera, SIGNAL(rotationChanged()), (QObject *)this, SIGNAL(rotationChanged()));
 
     timer.setInterval(20);
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateGL()));

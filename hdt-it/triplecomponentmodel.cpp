@@ -82,11 +82,11 @@ QVariant TripleComponentModel::headerData(int section, Qt::Orientation orientati
         if(orientation == Qt::Horizontal) {
             switch(tripleComponentRole) {
             case hdt::SUBJECT:
-                return "Subject";
+                return tr("Subject");
             case hdt::PREDICATE:
-                return "Predicate";
+                return tr("Predicate");
             case hdt::OBJECT:
-                return "Object";
+                return tr("Object");
             }
         } else {
             return QString::number(section+1);

@@ -47,7 +47,11 @@ void HDTSpecForm::on_triplesTypeCombo_currentIndexChanged(int index)
 
 void HDTSpecForm::on_inputFileButton_clicked()
 {
-    QString file = QFileDialog::getOpenFileName(this,tr("Select Input RDF File"), QDir::homePath(), tr("RDF Files(*)"), 0, 0 );
+    static QString lastDir = QDir::currentPath();
+    QString file = QFileDialog::getOpenFileName(this,tr("Select Input RDF File"), lastDir, tr("RDF Files(*)"), 0, 0 );
+    if(file!="") {
+        lastDir=file;
+    }
     ui->rdfInputFile->setText(file);
 }
 
