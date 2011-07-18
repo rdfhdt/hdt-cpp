@@ -19,6 +19,9 @@ DATASETSHDT="aifb.hdt apex.hdt 2blog.hdt 3kbo.hdt aaronland.hdt 3dnews.hdt aisri
 echo macdeployqt $SRCAPP
 macdeployqt $SRCAPP
 
+# ADD Translation files
+cp -Rf ../*.qm $STCAPP/Resources
+
 # REMOVE UNNEDED FILES
 for i in $REMOVE
 do

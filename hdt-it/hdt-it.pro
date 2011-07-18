@@ -36,7 +36,6 @@ SOURCES += main.cpp\
     Camera.cpp \
     StopWatch.cpp \
     qclearlineedit.cpp \
-    qresulttableview.cpp \
     searchresultsmodel.cpp \
     triplecomponentmodel.cpp \
     hdtmanager.cpp \
@@ -55,7 +54,6 @@ HEADERS  += hdtit.hpp \
     colors.hpp \
     StopWatch.hpp \
     qclearlineedit.hpp \
-    qresulttableview.hpp \
     searchresultsmodel.hpp \
     triplecomponentmodel.hpp \
     hdtmanager.hpp \

@@ -77,13 +77,15 @@
     </valuemap>
     <value key="ProjectExplorer.BuildConfiguration.BuildStepListCount" type="int">2</value>
     <value key="ProjectExplorer.BuildConfiguration.ClearSystemEnvironment" type="bool">false</value>
-    <valuelist key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges" type="QVariantList"/>
+    <valuelist key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges" type="QVariantList">
+     <value type="QString">QMAKESPEC=macx-clang</value>
+    </valuelist>
     <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Qt in PATH Debug</value>
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">E:/workspace-cpp/hdt-it-win32</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">6</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="QString">ProjectExplorer.ToolChain.Gcc:/usr/bin/g++.x86-macos-generic-mach_o-64bit.</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">false</value>
    </valuemap>

@@ -35,14 +35,22 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
 
         hdt::Dictionary &d = hdtManager->getHDT()->getDictionary();
 
-        switch(index.column()) {
-        case 0:
-            return d.idToString(currentTriple.getSubject(), hdt::SUBJECT).c_str();
-        case 1:
-            return d.idToString(currentTriple.getPredicate(), hdt::PREDICATE).c_str();
-        case 2:
-            return d.idToString(currentTriple.getObject(), hdt::OBJECT).c_str();
+        try {
+            switch(index.column()) {
+            case 0:
+                return d.idToString(currentTriple.getSubject(), hdt::SUBJECT).c_str();
+            case 1:
+                return d.idToString(currentTriple.getPredicate(), hdt::PREDICATE).c_str();
+            case 2:
+                return d.idToString(currentTriple.getObject(), hdt::OBJECT).c_str();
+            }
+        } catch (char *e) {
+            cout << "Error accesing dictionary: " << e << endl;
+        } catch (const char *e) {
+            cout << "Error accesing dictionary: " << e << endl;
         }
+        return QVariant();
+
         break;
     }
     case Qt::FontRole:
@@ -77,9 +85,6 @@ QVariant SearchResultsModel::headerData(int section, Qt::Orientation orientation
         }
         break;
     }
-    case Qt::SizeHintRole:
-    {
-    }
     }
 
     return QVariant();
@@ -89,6 +94,7 @@ void SearchResultsModel::resetIterator()
 {
     if(triples!=NULL) {
         delete triples;
+        triples = NULL;
     }
 
     if(hdtManager->getHDT() != NULL) {
@@ -106,20 +112,7 @@ void SearchResultsModel::resetIterator()
 void SearchResultsModel::update() {
     resetIterator();
 
-    numResults = 0;
-    currentIndex = 0;
-#if 0
-    if(triples!=NULL) {
-        while(triples->hasNext()) {
-            triples->next();
-            numResults++;
-        }
-    }
-#endif
-
     numResults = hdtManager->getNumResults();
-
-    //resetIterator();
 
     emit layoutChanged();
 }

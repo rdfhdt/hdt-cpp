@@ -41,7 +41,14 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     {
         //cout << "Data: " << index.row() << " role: " << role << " type: " << tripleComponentRole << endl;
         hdt::Dictionary &d = hdtManager->getHDT()->getDictionary();
-        return d.idToString(index.row()+1, tripleComponentRole).c_str();
+        try {
+            return d.idToString(index.row()+1, tripleComponentRole).c_str();
+        } catch (char *e) {
+            cout << "Error accessing dictionary: " << e << endl;
+        } catch (const char *e) {
+            cout << "Error accessing dictionary: " << e << endl;
+        }
+        return QVariant();
     }
     case Qt::FontRole:
     {

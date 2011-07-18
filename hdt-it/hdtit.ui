@@ -381,7 +381,11 @@ p, li { white-space: pre-wrap; }
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+  </widget>
   <action name="actionOpenHDT">
    <property name="text">
     <string>Open HDT</string>

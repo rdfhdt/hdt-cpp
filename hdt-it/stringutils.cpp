@@ -18,10 +18,8 @@ QString stringutils::sizeHuman(unsigned long long size)
             continue;
         }
 
-        int precision = (size % multiplier == 0) ? 0 : 2;
-
         return QString("%1 %2")
-                .arg(QString::number(size / multiplier, 'f', precision))
+                .arg(QString::number(size / multiplier, 'f', 2))
                 .arg(sizes[i]);
     }
 }
