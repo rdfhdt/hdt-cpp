@@ -25,11 +25,6 @@ MOC_DIR = $${OutputDir}
 RCC_DIR = $${OutputDir}
 UI_DIR = $${OutputDir}
 
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O9
-QMAKE_CFLAGS_RELEASE -= -O2
-QMAKE_CFLAGS_RELEASE += -O9
-
 SOURCES += \
     ../src/rdf/RDFSerializerN3.cpp \
     ../src/rdf/RDFParserN3.cpp \
