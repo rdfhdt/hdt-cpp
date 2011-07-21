@@ -19,6 +19,11 @@ AdjacencyList::~AdjacencyList() {
 
 }
 
+/**
+ * Find pos of the list x
+ * @param x
+ * @return
+ */
 size_t AdjacencyList::find(size_t x) {
 	if(x<=0) {
 		return 0;
@@ -27,25 +32,51 @@ size_t AdjacencyList::find(size_t x) {
 	return bitmap->rank0(first1);
 }
 
+/**
+ * Find element y, in the list x
+ * @param x
+ * @param y
+ * @return
+ */
 size_t AdjacencyList::find(size_t x, size_t y) {
 	size_t begin = find(x);
 	size_t end = last(x);
 	return binSearch(y, begin, end);
 }
 
+/**
+ * Find in which list x is the element globalpos
+ * @param globalpos
+ * @return
+ */
 size_t AdjacencyList::findListIndex(size_t globalpos) {
-	return bitmap->rank1(globalpos);
+	size_t posz = bitmap->select0(globalpos+1);
+	return bitmap->rank1(posz);
 }
 
+/**
+ * Find last pos of the list x
+ * @param x
+ * @return
+ */
 size_t AdjacencyList::last(size_t x) {
 	size_t first1 = bitmap->select1(x+1);
 	return bitmap->rank0(first1)-1;
 }
 
+/**
+ * Count the number of lists in the AdjacencyList
+ * @return
+ */
 size_t AdjacencyList::countListsX() {
 	return bitmap->countOnes();
 }
 
+/**
+ * Count the number of items of the list x
+ * @param x
+ * @return
+ */
 size_t AdjacencyList::countItemsY(size_t x) {
 	return last(x)-find(x)+1;
 }
@@ -101,7 +132,7 @@ void AdjacencyList::dump() {
 	}
 	cout << endl;
 
-
+#if 0
 	cout << "List has " << getSize() << " elements in " << countListsX() << " lists" << endl;
 
 	for(unsigned int i=0; i<countListsX(); i++) {
@@ -110,6 +141,7 @@ void AdjacencyList::dump() {
 			cout << "\tItem " << i << ", "<< j << " => " << get(find(i)+j) << " Found pos: " << find(i, get(find(i)+j)) << endl;
 		}
 	}
+#endif
 }
 
 }

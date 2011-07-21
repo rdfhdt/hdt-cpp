@@ -58,7 +58,12 @@ TriplesList::~TriplesList()
 
 IteratorTripleID *TriplesList::search(TripleID &pattern)
 {
-	return new TriplesListIterator(this,pattern);
+	string patternString = pattern.getPatternString();
+	if(patternString=="???") {
+		return new TriplesListIterator(this, pattern);
+	} else {
+		return new SequentialSearchIteratorTripleID(pattern, new TriplesListIterator(this,pattern));
+	}
 }
 
 float TriplesList::cost(TripleID &pattern)
@@ -254,20 +259,61 @@ void TriplesList::removeDuplicates() {
 
 // ITERATOR
 
-TriplesListIterator::TriplesListIterator(TriplesList *t, TripleID &pat) :
-		triples(t), pos(0),
-		PreFetchIteratorTripleID(pat, t->order == Unknown ? SPO : t->order)
+TriplesListIterator::TriplesListIterator(TriplesList *triples, TripleID & pattern) :
+		triples(triples), pattern(pattern), pos(0)
 {
-	doFetch();
 }
 
-void TriplesListIterator::getNextTriple() {
-	 nextTriple = *triples->getTripleID(pos++);
+void TriplesListIterator::updateOutput()
+{
+	returnTriple = *triples->getTripleID(pos);
+	swapComponentOrder(&returnTriple, triples->order, SPO);
+}
 
-	 hasMoreTriples = pos <= triples->getNumberOfElements();
+
+bool TriplesListIterator::hasNext()
+{
+	return pos<triples->getNumberOfElements();
+}
+
+TripleID *TriplesListIterator::next()
+{
+	updateOutput();
+	pos++;
+	return &returnTriple;
+}
+
+
+bool TriplesListIterator::hasPrevious()
+{
+	return pos>0;
+}
+
+
+TripleID *TriplesListIterator::previous()
+{
+	pos--;
+	updateOutput();
+	return &returnTriple;
+}
+
+void TriplesListIterator::goToStart()
+{
+	pos=0;
 }
 
 
 
+
 }
+
+
+
+
+
+
+
+
+
+
 

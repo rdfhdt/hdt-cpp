@@ -466,6 +466,16 @@ public:
 	virtual TripleID *next() {
 		return NULL;
 	}
+
+	virtual bool hasPrevious() {
+		return false;
+	}
+
+	virtual TripleID *previous() {
+		return NULL;
+	}
+	virtual void goToStart() {
+	}
 };
 
 
@@ -476,6 +486,15 @@ public:
 	}
 	virtual TripleString *next() {
 		return NULL;
+	}
+	virtual bool hasPrevious() {
+		return false;
+	}
+	virtual TripleString *previous() {
+		return NULL;
+	}
+	virtual void goToStart() {
+
 	}
 };
 }

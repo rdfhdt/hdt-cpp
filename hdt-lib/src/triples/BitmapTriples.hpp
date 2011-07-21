@@ -89,42 +89,37 @@ public:
 class BitmapTriplesSearchIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
-	TripleID pattern, nextTriple, returnTriple;
-	bool hasMoreTriples;
+	TripleID pattern, returnTriple;
+	bool hasMoreTriples, hasPreviousTriple;
 
 	unsigned int patX, patY, patZ;
 
 	AdjacencyList adjY, adjZ;
 	unsigned int posY, posZ;
+	unsigned int minY, maxY, minZ, maxZ;
 	unsigned int nextY, nextZ;
 	unsigned int x, y, z;
 
-	bool goThroughAll;
-
-	void findFirst();
-	void readTriple();
-	void doFetch();
+	void findRange();
+	void getNextTriple();
+	void getPreviousTriple();
 
 	void updateOutput();
-
 public:
 	BitmapTriplesSearchIterator(BitmapTriples *triples, TripleID &pat);
 
 	bool hasNext();
 	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
 };
-
-
-
-
-
-
 
 class MiddleWaveletIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
-	TripleID nextTriple, pattern, returnTriple;
-	bool hasMoreTriples;
+	TripleID nextTriple, previousTriple, pattern;
+	bool hasMoreTriples, hasPreviousTriples;
 
 	AdjacencyList adjY, adjZ;
 	WaveletStream *wavelet;
@@ -134,9 +129,9 @@ private:
 	unsigned int nextY, nextZ;
 	unsigned int x, y, z;
 
-	void findFirst();
-	void readTriple();
-	void doFetch();
+	void findRange();
+	void getNextTriple();
+	void getPreviousTriple();
 
 	void updateOutput();
 
@@ -145,6 +140,9 @@ public:
 
 	bool hasNext();
 	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
 };
 
 }

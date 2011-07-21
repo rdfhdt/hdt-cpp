@@ -167,7 +167,6 @@ public:
 	virtual ~TripleListDiskIterator();
 
 	bool hasNext();
-
 	TripleID *next();
 };
 

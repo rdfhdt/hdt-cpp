@@ -7,6 +7,8 @@
 
 #include "BitmapTriples.hpp"
 
+#include "TripleIterators.hpp"
+
 #include <HDTVocabulary.hpp>
 
 namespace hdt {
@@ -186,7 +188,11 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	if(order==SPO && patternString=="?P?" && streamY->getType() == HDTVocabulary::STREAM_TYPE_WAVELET) {
 		return new MiddleWaveletIterator(this, pattern);
 	} else {
-		return new BitmapTriplesSearchIterator(this, pattern);
+		if(patternString=="???" || patternString=="S??" || patternString=="SP?"|| patternString=="SPO" ) {
+			return new BitmapTriplesSearchIterator(this, pattern);
+		} else {
+			return new SequentialSearchIteratorTripleID(pattern, new BitmapTriplesSearchIterator(this, pattern));
+		}
 	}
 }
 
@@ -242,6 +248,11 @@ unsigned int BitmapTriples::size()
 	return bitmapY->getSize()+bitmapZ->getSize()+streamY->size()+streamZ->size();
 }
 
+
+
+
+
+
 /// ITERATOR
 BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, TripleID &pat) :
 		triples(trip),
@@ -255,36 +266,6 @@ BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, Tr
 	patY = pattern.getPredicate();
 	patZ = pattern.getObject();
 
-	try {
-		// Find position of the first matching pattern.
-		findFirst();
-
-		// If first not found, go through all to find one.
-		if(!nextTriple.match(pattern)) {
-			doFetch();
-		}
-	} catch (char *ex) {
-		// If exception thrown, the selected triple could not be found.
-		hasMoreTriples = false;
-	}
-}
-
-void BitmapTriplesSearchIterator::updateOutput() {
-	// Convert local order to SPO
-	nextTriple.setAll(x,y,z);
-	swapComponentOrder(&nextTriple, triples->order, SPO);
-
-	// Check termination condition.
-	hasMoreTriples = (posY <= adjY.getSize()) && (posZ <= adjZ.getSize());
-
-	if(!goThroughAll) {
-		hasMoreTriples = hasMoreTriples && nextTriple.match(pattern);
-	}
-}
-
-void BitmapTriplesSearchIterator::findFirst()
-{
-
 #if 0
 	cout << "AdjY: " << endl;
 	adjY.dump();
@@ -293,89 +274,151 @@ void BitmapTriplesSearchIterator::findFirst()
 	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
 #endif
 
-	goThroughAll = false;
+#if 0
+	for(uint mposZ=0;mposZ<adjZ.getSize(); mposZ++) {
+		uint z = adjZ.get(mposZ);
 
+		uint posY = adjZ.findListIndex(mposZ);
+
+		uint y = adjY.get(posY);
+
+		uint x = adjY.findListIndex(posY)+1;
+
+		cout << "FWD2 posZ: " << mposZ << " posY: " << posY << "\t";
+		cout << "Triple: " << x << ", " << y << ", " << z << endl;
+	}
+#endif
+
+	findRange();
+
+	goToStart();
+}
+
+void BitmapTriplesSearchIterator::updateOutput() {
+	// Convert local order to SPO
+	returnTriple.setAll(x,y,z);
+	swapComponentOrder(&returnTriple, triples->order, SPO);
+}
+
+void BitmapTriplesSearchIterator::findRange()
+{
 	if(patX!=0) {
 		// S X X
 		if(patY!=0) {
 			// S P X
-			posY = adjY.find(patX-1, patY);
+			minY = adjY.find(patX-1, patY);
+			maxY = minY+1;
 			if(patZ!=0) {
 				// S P O
-				posZ = adjZ.find(posY,patZ);
+				minZ = adjZ.find(minY,patZ);
+				maxZ = minZ+1;
 			} else {
 				// S P ?
-				posZ = adjZ.find(posY);
+				minZ = adjZ.find(minY);
+				maxZ = adjZ.last(minY)+1;
 			}
 		} else {
 			// S ? X
-			goThroughAll = patZ!=0;
-
-			posY = adjY.find(patX-1);
-			posZ = adjZ.find(posY);
+			minY = adjY.find(patX-1);
+			minZ = adjZ.find(minY);
+			maxY = adjY.last(patX-1)+1;
+			maxZ = adjZ.find(maxY);
 		}
 		nextY = adjY.last(patX-1)+1;
-		nextZ = adjZ.last(posY)+1;
+		nextZ = adjZ.last(minY)+1;
 		x = patX;
 	} else {
 		// ? X X
 		x = 1;
-		posY=0;
-		posZ=0;
+		minY=0;
+		minZ=0;
+                maxY = adjY.getSize();
+                maxZ = adjZ.getSize();
 		nextY = adjY.last(0)+1;
 		nextZ = adjZ.last(0)+1;
-		goThroughAll = true;
 	}
-
-#if 0
-	cout << "Found pos: " << posY << ", " << posZ << endl;
-	cout << "Next: " << nextY << ", " << nextZ << endl;
-#endif
-
-	y = adjY.get(posY++);
-	z = adjZ.get(posZ++);
-
-	updateOutput();
 }
 
-void BitmapTriplesSearchIterator::readTriple() {
-    z = adjZ.get(posZ++);
+bool BitmapTriplesSearchIterator::hasNext()
+{
+	return posZ<maxZ;
+}
 
-	if(posZ==nextZ+1) {
-		y = adjY.get(posY++);
-		nextZ = adjZ.find(posY);
+TripleID *BitmapTriplesSearchIterator::next()
+{
+#if 0
+	cout << "FWD posZ: " << posZ << " posY: " << posY << endl;
+	cout << "\tFWD nextZ: " << nextZ << " nextY: " << nextY << endl;
+	cout << "\tTriple: " << x << ", " << y << ", " << z << endl;
+#endif
 
-		if(posY==nextY+1) {
+	z = adjZ.get(posZ);
+
+	if(posZ==nextZ) {
+		posY++;
+		y = adjY.get(posY);
+		nextZ = adjZ.find(posY+1);
+
+		if(posY==nextY) {
 			x++;
 			nextY = adjY.find(x);
 		}
 	}
 
+	posZ++;
+
 	updateOutput();
-}
-
-void BitmapTriplesSearchIterator::doFetch() {
-	do {
-		readTriple();
-	} while(hasMoreTriples && (!nextTriple.isValid() || !nextTriple.match(pattern)));
-}
-
-bool BitmapTriplesSearchIterator::hasNext()
-{
-	return hasMoreTriples;
-}
-
-TripleID *BitmapTriplesSearchIterator::next()
-{
-	// FIXME: Avoid ret.
-	returnTriple = nextTriple;
-	//cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextv << endl;
-	doFetch();
-
-	//cout << returnTriple << endl;
 
 	return &returnTriple;
 }
+
+bool BitmapTriplesSearchIterator::hasPrevious()
+{
+	return posZ>minZ;
+}
+
+TripleID *BitmapTriplesSearchIterator::previous()
+{
+	if(posZ>adjZ.getSize()) {
+		posZ=adjZ.getSize();
+	}
+
+	posZ--;
+	posY = adjZ.findListIndex(posZ);
+
+	z = adjZ.get(posZ);
+	y = adjY.get(posY);
+	x = adjY.findListIndex(posY)+1;
+
+	nextY = adjY.last(x-1)+1;
+	nextZ = adjZ.last(posY)+1;
+
+#if 0
+	cout << "BACK posZ: " << posZ << " posY: " << posY << endl;
+	cout << "\tBack nextZ: " << nextZ << " nextY: " << nextY << endl;
+	cout << "\tTriple: " << x << ", " << y << ", " << z << endl;
+#endif
+
+	updateOutput();
+
+	return &returnTriple;
+}
+
+void BitmapTriplesSearchIterator::goToStart()
+{
+	posY = minY;
+	posZ = minZ;
+	y = adjY.get(posY);
+	z = adjZ.get(posZ);
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -396,11 +439,11 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
 
 	try {
 		// Find position of the first matching pattern.
-		findFirst();
+		findRange();
 
 		// If first not found, go through all to find one.
 		if(!nextTriple.match(pattern)) {
-			doFetch();
+			getNextTriple();
 		}
 	} catch (char *ex) {
 		// If exception thrown, the selected triple could not be found.
@@ -415,14 +458,14 @@ void MiddleWaveletIterator::updateOutput() {
 	swapComponentOrder(&nextTriple, triples->order, SPO);
 
 	// Check termination condition.
-	hasMoreTriples = (posY <= adjY.getSize()) && (posZ <= adjZ.getSize());
+	hasMoreTriples = (posY < adjY.getSize()) && (posZ < adjZ.getSize());
 
-	if(predicateOcurrence==numOcurrences && posZ == nextZ-1) {
+	if(predicateOcurrence==numOcurrences+1 && posZ == nextZ) {
 		hasMoreTriples = false;
 	}
 }
 
-void MiddleWaveletIterator::findFirst()
+void MiddleWaveletIterator::findRange()
 {
 
 #if 1
@@ -433,19 +476,25 @@ void MiddleWaveletIterator::findFirst()
 	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
 #endif
 
+	for(unsigned int i=0; i<10; i++) {
+		numOcurrences = wavelet->rank(i, wavelet->getNumberOfElements());
+		cout << "Predicate "<< i << " occurs " << numOcurrences << " times" << endl;
+	}
+
 	numOcurrences = wavelet->rank(patY, wavelet->getNumberOfElements());
 
+#if 1
 	cout << "Predicate ocurs " << numOcurrences << " times" << endl;
 
-	for(unsigned int i=1;i<=numOcurrences;i++){
+	for(unsigned int i=1;i<numOcurrences;i++){
 		unsigned int pos = wavelet->select(patY, i);
 		cout << "Occurrence " << i << " => " << pos << " Value: " << adjY.get(pos) << endl;
 
-		unsigned int tx = adjY.findListIndex(i);
+		unsigned int tx = adjY.findListIndex(pos)+1;
 		unsigned int ty = adjY.get(pos);
 
-		unsigned int iniz = adjY.find(pos);
-		unsigned int endz = iniz+adjY.countItemsY(pos);
+		unsigned int iniz = adjZ.find(pos);
+		unsigned int endz = adjZ.last(pos);
 
 		cout << tx << ", " << ty << "[" << iniz << "," << endz << "]" << endl;
 		for(unsigned int j=iniz; j<=endz; j++) {
@@ -453,45 +502,55 @@ void MiddleWaveletIterator::findFirst()
 			cout << tx <<", " << ty << ", " << tz << endl;
 		}
 	}
+#endif
 
 	posY = wavelet->select(patY, predicateOcurrence++);
 	posZ = adjZ.find(posY);
-
 	nextZ = adjZ.last(posY)+1;
+
+	x = adjY.findListIndex(posY)+1;
+	y = adjY.get(posY);
+	z = adjZ.get(posZ);
 
 #if 1
 	cout << "Found pos: " << posY << ", " << posZ << endl;
 	cout << "NextZ: " << nextZ << endl;
+	cout << "Triple: " << x << ", " << y << ", " << z << endl;
 #endif
-
-	x = adjY.findListIndex(posY);
-	y = adjY.get(posY);
-	z = adjZ.get(posZ++);
 
 	updateOutput();
 }
 
-void MiddleWaveletIterator::readTriple() {
+
+
+
+
+
+
+
+
+
+
+void MiddleWaveletIterator::getNextTriple() {
+
+	z = adjZ.get(posZ);
 
 	if(posZ==nextZ && predicateOcurrence<numOcurrences) {
 		posY = wavelet->select(patY, predicateOcurrence++);
-		cout << "\t" << predicateOcurrence-1 << " PosY = " << posY << endl;
 		posZ = adjZ.find(posY);
 		nextZ = adjZ.last(posY)+1;
 
-		x = adjY.findListIndex(posY);
+		x = adjY.findListIndex(posY)+1;
 		y = adjY.get(posY);
+		z = adjZ.get(posZ);
+	} else {
+		posZ++;
 	}
-
-	z = adjZ.get(posZ++);
 
 	updateOutput();
 }
 
-void MiddleWaveletIterator::doFetch() {
-	do {
-		readTriple();
-	} while(hasMoreTriples && (!nextTriple.isValid() || !nextTriple.match(pattern)));
+void MiddleWaveletIterator::getPreviousTriple() {
 }
 
 bool MiddleWaveletIterator::hasNext()
@@ -501,13 +560,23 @@ bool MiddleWaveletIterator::hasNext()
 
 TripleID *MiddleWaveletIterator::next()
 {
-	// FIXME: Avoid Ret.
-	returnTriple = nextTriple;
-	cout << "POS: " << posY-1 << "," << posZ-1 << " => " << nextTriple << endl;
-	doFetch();
-	cout << "\tHasNext: " << hasMoreTriples << endl;
+	getNextTriple();
+	return &nextTriple;
+}
 
-	return &returnTriple;
+bool MiddleWaveletIterator::hasPrevious()
+{
+	return hasPreviousTriples;
+}
+
+TripleID *MiddleWaveletIterator::previous()
+{
+
+}
+
+void MiddleWaveletIterator::goToStart()
+{
+
 }
 
 

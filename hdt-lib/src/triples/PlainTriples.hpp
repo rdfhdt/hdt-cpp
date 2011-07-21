@@ -82,19 +82,22 @@ public:
 	friend class PlainTriplesIterator;
 };
 
-
-class PlainTriplesIterator : public PreFetchIteratorTripleID {
+class PlainTriplesIterator : public IteratorTripleID {
 private:
+	TripleID pattern, returnTriple;
+	TripleComponentOrder order;
 	PlainTriples *triples;
-	unsigned int pos;
+	int64_t pos;
 
+	void updateOutput();
 public:
-	PlainTriplesIterator(PlainTriples *pt, TripleID &pat);
-
-	void getNextTriple();
+	PlainTriplesIterator(PlainTriples *triples, TripleID &pattern, TripleComponentOrder order);
+	bool hasNext();
+	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
 };
-
-
 
 
 class ComponentIterator : public IteratorUint {

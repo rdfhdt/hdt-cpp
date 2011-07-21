@@ -91,6 +91,7 @@ public:
 	CompactTriplesIterator(CompactTriples *pt, TripleID &pat);
 
 	void getNextTriple();
+	void getPreviousTriple();
 };
 
 }

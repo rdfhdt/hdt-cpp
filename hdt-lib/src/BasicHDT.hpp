@@ -210,6 +210,20 @@ public:
 		dict->tripleIDtoTripleString(*tid, result);
 		return &result;
 	}
+
+	bool hasPrevious() {
+		return iterator->hasPrevious();
+	}
+
+	TripleString *previous() {
+		TripleID *tid = iterator->previous();
+		dict->tripleIDtoTripleString(*tid, result);
+		return &result;
+	}
+
+	void goToStart() {
+		iterator->goToStart();
+	}
 };
 
 }

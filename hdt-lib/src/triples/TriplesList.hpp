@@ -175,17 +175,21 @@ public:
 };
 
 
-
-class TriplesListIterator : public PreFetchIteratorTripleID {
+class TriplesListIterator : public IteratorTripleID {
 private:
+	TripleID pattern, returnTriple;
 	TriplesList *triples;
-	unsigned int pos;
+	int64_t pos;
 
+	void updateOutput();
 public:
 	TriplesListIterator(TriplesList *triples, TripleID &pattern);
-	void getNextTriple();
+	bool hasNext();
+	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
 };
-
 
 }
 

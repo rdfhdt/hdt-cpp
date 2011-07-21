@@ -69,7 +69,12 @@ void PlainTriples::populateHeader(Header &header, string rootNode) {
 
 IteratorTripleID *PlainTriples::search(TripleID & pattern)
 {
-	return new PlainTriplesIterator(this, pattern);
+	string patternString = pattern.getPatternString();
+	if(patternString=="???") {
+		return new PlainTriplesIterator(this, pattern, order);
+	} else {
+		return new SequentialSearchIteratorTripleID(pattern, new PlainTriplesIterator(this,pattern, order));
+	}
 }
 
 bool PlainTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
@@ -124,24 +129,45 @@ string PlainTriples::getType() {
 	return HDTVocabulary::TRIPLES_TYPE_PLAIN;
 }
 
-
-/// ITERATOR
-PlainTriplesIterator::PlainTriplesIterator(PlainTriples *pt, TripleID &pat) :
-		triples(pt), pos(0),
-		PreFetchIteratorTripleID(pat, SPO) {
-			// Note: Order is SPO because the order of the streams, not the triples.
-	doFetch();
+PlainTriplesIterator::PlainTriplesIterator(PlainTriples *triples, TripleID & pattern, TripleComponentOrder order) :
+		triples(triples), pattern(pattern), pos(0), order(order)
+{
 }
 
-void PlainTriplesIterator::getNextTriple() {
-	// Get Triple
-	nextTriple.setAll(triples->streamX->get(pos), triples->streamY->get(pos), triples->streamZ->get(pos));
-        pos++;
-
-	// Set condition
-	hasMoreTriples = pos<=triples->getNumberOfElements();
+void PlainTriplesIterator::updateOutput()
+{
+	returnTriple.setAll(triples->streamX->get(pos), triples->streamY->get(pos), triples->streamZ->get(pos));
+	swapComponentOrder(&returnTriple, triples->order, SPO);
 }
 
+bool PlainTriplesIterator::hasNext()
+{
+	return pos<triples->getNumberOfElements();
+}
+
+TripleID *PlainTriplesIterator::next()
+{
+	updateOutput();
+	pos++;
+	return &returnTriple;
+}
+
+bool PlainTriplesIterator::hasPrevious()
+{
+	return pos>0;
+}
+
+TripleID *PlainTriplesIterator::previous()
+{
+	pos--;
+	updateOutput();
+	return &returnTriple;
+}
+
+void PlainTriplesIterator::goToStart()
+{
+	pos=0;
+}
 
 
 

@@ -191,7 +191,7 @@ string CompactTriples::getType() {
 CompactTriplesIterator::CompactTriplesIterator(CompactTriples *pt, TripleID &pat)
 		: triples(pt), numTriple(0), masterPos(0), slavePos(0), PreFetchIteratorTripleID(pat, pt->order) {
 
-	doFetch();
+	doFetchNext();
 }
 
 void CompactTriplesIterator::getNextTriple() {
@@ -222,5 +222,12 @@ void CompactTriplesIterator::getNextTriple() {
 	hasMoreTriples = (numTriple<=triples->numTriples);
 }
 
+void CompactTriplesIterator::getPreviousTriple() {
+	throw "Not implemented";
+
+	nextTriple.setAll(x,y,z);
+
+	hasPreviousTriples = (numTriple>0);
+}
 
 }
