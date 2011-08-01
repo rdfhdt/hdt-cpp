@@ -1,6 +1,6 @@
 header.type = <http://purl.org/HDT/hdt#headerSimple>
 triples.type = <http://purl.org/HDT/hdt#triplesPlain>
-dictionary.type = <http://purl.org/HDT/hdt#dictionaryPlain>
+dictionary.type = <http://purl.org/HDT/hdt#dictionaryFrontCoding>
 stream.x = <http://purl.org/HDT/hdt#streamLog>
 stream.y = <http://purl.org/HDT/hdt#streamLog>
 stream.z = <http://purl.org/HDT/hdt#streamLog>

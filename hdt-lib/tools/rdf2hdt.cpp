@@ -145,7 +145,9 @@ int main(int argc, char **argv) {
 			throw "Could not open input file.";
 		}
 		StopWatch globalTimer;
-		hdt->loadFromRDF(in, notation, &progress);
+		RDFParser *parser = RDFParser::getParser(in, notation);
+		hdt->loadFromRDF(*parser, &progress);
+		delete parser;
 		in.close();
 
 		ofstream out;

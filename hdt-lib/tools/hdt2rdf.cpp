@@ -94,10 +94,14 @@ int main(int argc, char **argv) {
 			if(!in.good()){
 				throw "Could not write to output file.";
 			}
-			hdt->saveToRDF(out, notation);
+			RDFSerializer *serializer = RDFSerializer::getSerializer(out, notation);
+			hdt->saveToRDF(*serializer);
+			delete serializer;
 			out.close();
 		} else {
-			hdt->saveToRDF(cout, notation);
+			RDFSerializer *serializer = RDFSerializer::getSerializer(cout, notation);
+			hdt->saveToRDF(*serializer);
+			delete serializer;
 		}
 	} catch (char *exception) {
 		cerr << "ERROR: " << exception << endl;
