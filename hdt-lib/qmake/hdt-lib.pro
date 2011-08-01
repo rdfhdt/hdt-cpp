@@ -7,13 +7,13 @@
 QT       -= core gui
 
 CONFIG += debug_and_release
-macx:CONFIG += x86
+macx:CONFIG += x86 x86_64
 
 TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += USE_RAPTOR RAPTOR_STATIC
+DEFINES += USE_RAPTOR RAPTOR_STATIC USE_FOQ
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'
@@ -63,7 +63,8 @@ SOURCES += \
     ../src/rdf/RDFParser.cpp \
     ../src/rdf/RDFParserRaptorLine.cpp \
     ../src/rdf/RDFSerializerRaptor.cpp \
-    ../src/rdf/RDFSerializer.cpp
+    ../src/rdf/RDFSerializer.cpp \
+    ../src/util/fileUtil.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
@@ -78,10 +79,10 @@ HEADERS += \
     ../include/HDT.hpp \
     ../include/Dictionary.hpp \
     ../include/ControlInformation.hpp \
+    ../include/RDFParser.hpp \
+    ../include/RDFSerializer.hpp \
     ../src/rdf/RDFSerializerN3.hpp \
-    ../src/rdf/RDFSerializer.hpp \
     ../src/rdf/RDFParserN3.hpp \
-    ../src/rdf/RDFParser.hpp \
     ../src/BasicHDT.hpp \
     ../src/dictionary/PlainDictionary.hpp \
     ../src/util/StopWatch.hpp \
@@ -115,7 +116,8 @@ HEADERS += \
     ../src/rdf/RDFParserRaptor.hpp \
     ../src/rdf/RDFParserNtriples.hpp \
     ../src/rdf/RDFSerializerRaptor.hpp \
-    ../src/rdf/RDFParserRaptorLine.hpp
+    ../src/rdf/RDFParserRaptorLine.hpp \
+    ../src/util/fileUtil.hpp
 
 #For hdt-lib
 INCLUDEPATH += ../include

@@ -76,7 +76,7 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	void loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener = NULL);
+	void loadFromRDF(RDFParser &parser, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
@@ -87,7 +87,7 @@ public:
 	 * @param output
 	 * @param notation
 	 */
-	void saveToRDF(std::ostream &output, RDFNotation notation, ProgressListener *listener = NULL);
+	void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL);
 
 	/**
 	 * @param output
@@ -139,7 +139,7 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	void loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener = NULL);
+	void loadFromRDF(RDFParser &parser, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
@@ -150,7 +150,7 @@ public:
 	 * @param output
 	 * @param notation
 	 */
-	void saveToRDF(std::ostream &output, RDFNotation notation, ProgressListener *listener = NULL);
+	void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL);
 
 	/**
 	 * @param output

@@ -17,8 +17,8 @@ typedef PropertyMap::iterator PropertyMapIt;
 class ControlInformation {
 
 public:
-	unsigned short version;
-	unsigned short components;
+	uint16_t version;
+	uint16_t components;
 
 	PropertyMap map;
 
@@ -65,14 +65,14 @@ public:
 	 * @param key
 	 * @param value
 	 */
-	void setUint(std::string key, unsigned int value);
+	void setUint(std::string key, uint32_t value);
 
 	/** Clear the ControlInformation, removing all properties.
 	 */
 	void clear();
 
 	/** Get the HDT version */
-	unsigned short getVersion();
+	uint16_t getVersion();
 	/** Set the HDT version */
 	void setVersion(unsigned short version);
 

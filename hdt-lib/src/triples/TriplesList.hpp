@@ -181,7 +181,6 @@ private:
 	TriplesList *triples;
 	int64_t pos;
 
-	void updateOutput();
 public:
 	TriplesListIterator(TriplesList *triples, TripleID &pattern);
 	bool hasNext();

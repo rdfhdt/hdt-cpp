@@ -106,7 +106,7 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 	streamY->add(itY);
 	streamZ->add(itZ);
 
-#if 0
+#if 1
 	// Debug Adjacency Lists
 	cout << "Y" << vectorY.size() << "): ";
 	for(unsigned int i=0;i<streamY->getNumberOfElements();i++){
@@ -126,14 +126,18 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 void CompactTriples::populateHeader(Header &header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_COMPACT);
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
+	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
 }
 
 IteratorTripleID *CompactTriples::search(TripleID & pattern)
 {
-	return new CompactTriplesIterator(this, pattern);
+	if(pattern.isEmpty()) {
+		return new CompactTriplesIterator(this, pattern);
+	} else {
+		return new SequentialSearchIteratorTripleID(pattern, new CompactTriplesIterator(this, pattern));
+	}
 }
 
 bool CompactTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
@@ -188,46 +192,93 @@ string CompactTriples::getType() {
 }
 
 /// ITERATOR
-CompactTriplesIterator::CompactTriplesIterator(CompactTriples *pt, TripleID &pat)
-		: triples(pt), numTriple(0), masterPos(0), slavePos(0), PreFetchIteratorTripleID(pat, pt->order) {
+CompactTriplesIterator::CompactTriplesIterator(CompactTriples *trip, TripleID &pat) :
+		triples(trip),
+		pattern(pat)
+{
+	// Convert pattern to local order.
+	swapComponentOrder(&pattern, SPO, triples->order);
+	patX = pattern.getSubject();
+	patY = pattern.getPredicate();
+	patZ = pattern.getObject();
 
-	doFetchNext();
+	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+
+	goToStart();
 }
 
-void CompactTriplesIterator::getNextTriple() {
-	// Get Triple
-	if(numTriple==0) {
-		x = 1;
-		y = triples->streamY->get(masterPos++);
-		z = triples->streamZ->get(slavePos++);
-	} else {
-		z = triples->streamZ->get(slavePos++);
+void CompactTriplesIterator::updateOutput() {
+	// Convert local order to SPO
+	returnTriple.setAll(x,y,z);
+	swapComponentOrder(&returnTriple, triples->order, SPO);
+}
 
-		if(z==0) {
-			z = triples->streamZ->get(slavePos++);
+bool CompactTriplesIterator::hasNext()
+{
+	return posZ<triples->streamZ->getNumberOfElements();
+}
 
-			y = triples->streamY->get(masterPos++);
+TripleID *CompactTriplesIterator::next()
+{
+	//cout << "\t\tposZ=" << posZ << "("<< triples->streamZ->get(posZ)<<") posY="<< posY << "("<< triples->streamY->get(posY) << ")" << endl;
 
-			if(y==0) {
-				y = triples->streamY->get(masterPos++);
-				x++;
-			}
+	if(!goingUp) {
+		posY++;
+		goingUp=true;
+	}
+	z = triples->streamZ->get(posZ++);
+
+	if(z==0) {
+		z = triples->streamZ->get(posZ++);
+
+		y = triples->streamY->get(posY++);
+		if(y==0) {
+			y = triples->streamY->get(posY++);
+			x++;
 		}
 	}
-	numTriple++;
 
-	nextTriple.setAll(x,y,z);
+	updateOutput();
 
-	// Update condition
-	hasMoreTriples = (numTriple<=triples->numTriples);
+	return &returnTriple;
 }
 
-void CompactTriplesIterator::getPreviousTriple() {
-	throw "Not implemented";
+bool CompactTriplesIterator::hasPrevious()
+{
+	return posZ>0;
+}
 
-	nextTriple.setAll(x,y,z);
+TripleID *CompactTriplesIterator::previous()
+{
+	//cout << "\t\tposZ=" << posZ << "("<< triples->streamZ->get(posZ)<<") posY="<< posY << "("<< triples->streamY->get(posY) << ")" << endl;
+	z = triples->streamZ->get(--posZ);
 
-	hasPreviousTriples = (numTriple>0);
+	if(goingUp) {
+		posY--;
+		goingUp = false;
+	}
+
+	if(z==0) {
+		z = triples->streamZ->get(--posZ);
+
+		y = triples->streamY->get(--posY);
+		if(y==0) {
+			y = triples->streamY->get(--posY);
+			x--;
+		}
+	}
+
+	updateOutput();
+
+	return &returnTriple;
+}
+
+void CompactTriplesIterator::goToStart()
+{
+	posY = posZ = 0;
+	x = 1;
+	y = triples->streamY->get(posY++);
+	goingUp = true;
 }
 
 }

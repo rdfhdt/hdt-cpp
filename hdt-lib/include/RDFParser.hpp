@@ -30,6 +30,8 @@ public:
 	virtual bool hasNext()=0;
 	virtual TripleString *next()=0;
 	virtual void reset()=0;
+	virtual uint64_t getPos()=0;
+	virtual uint64_t getSize()=0;
 
 	static RDFParser *getParser(std::istream &input, RDFNotation notation);
 };

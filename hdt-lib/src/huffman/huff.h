@@ -53,14 +53,14 @@ namespace URICompressed{
      *
      *  @author Gonzalo Navarro
      */
-    size_t encodeHuff (const THuff H, uint symb, uint *stream, size_t ptr);
+    uint64_t encodeHuff (const THuff H, uint symb, uint *stream, uint64_t ptr);
 
     /** Decodes *symb using H, over stream[ptr...lim] (ptr and lim are
      *  bit positions of stream). Returns the new ptr.
      *
      *  @author Gonzalo Navarro
      */
-    size_t decodeHuff (const THuff H, uint *symb, uint *stream, size_t ptr);
+    uint64_t decodeHuff (const THuff H, uint *symb, uint *stream, uint64_t ptr);
 
     /** Writes H in file f
      *

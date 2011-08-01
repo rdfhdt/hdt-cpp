@@ -80,8 +80,8 @@ void SequentialSearchIteratorTripleID::doFetchNext()
 {
 	hasMoreTriples = false;
 
-	cout << "Seq NEXT: " << iterator->hasPrevious() << ", " << iterator->hasNext() << endl;
-
+	//cout << "Seq NEXT: " << iterator->hasPrevious() << ", " << iterator->hasNext() << endl;
+//
 	while(iterator->hasNext()){
 		TripleID *next = iterator->next();
 
@@ -119,7 +119,7 @@ bool SequentialSearchIteratorTripleID::hasPrevious()
 void SequentialSearchIteratorTripleID::doFetchPrevious()
 {
 	hasPreviousTriples = false;
-	cout << "Seq PREV: " << iterator->hasPrevious() << ", " << iterator->hasNext() << endl;
+	//cout << "Seq PREV: " << iterator->hasPrevious() << ", " << iterator->hasNext() << endl;
 
 	while(iterator->hasPrevious()){
 		TripleID *previous = iterator->previous();
@@ -160,6 +160,7 @@ void SequentialSearchIteratorTripleID::goToStart()
 
 TripleID *RandomAccessIterator::get(unsigned int idx)
 {
+//	cout << "RandomAccessIterator: " << currentIdx << "/" << idx << " PREV/NEXT: "<< it->hasPrevious() << ", " << it->hasNext() << endl;
 	while(currentIdx > idx && it->hasPrevious()) {
 		if(goingUp) {
 			goingUp = false;
@@ -178,6 +179,9 @@ TripleID *RandomAccessIterator::get(unsigned int idx)
 		current = it->next();
 		currentIdx++;
 		//cout << "NEXT" << endl;
+	}
+	if(currentIdx!=idx) {
+		cout << "ERROR: " << currentIdx << "!=" << idx << " PREV/NEXT: "<< it->hasPrevious() << ", " << it->hasNext() << endl;
 	}
 
 	return current;

@@ -23,27 +23,27 @@
 
 namespace URICompressed{
 	
-    Huffman::Huffman(uint * symb, size_t n) {
+    Huffman::Huffman(uint * symb, uint64_t n) {
         uint max_v = 0;
-        for(size_t i=0;i<n;i++)
+        for(uint64_t i=0;i<n;i++)
             max_v = max(max_v,symb[i]);
         uint * occ = new uint[max_v+1];
-        for(size_t i=0;i<max_v+1;i++)
+        for(uint64_t i=0;i<max_v+1;i++)
             occ[i] = 0;
-        for(size_t i=0;i<n;i++)
+        for(uint64_t i=0;i<n;i++)
             occ[symb[i]]++;
         huff_table = createHuff(occ, max_v);
         delete [] occ;
     }
 
-    Huffman::Huffman(uchar * symb, size_t n) {
+    Huffman::Huffman(uchar * symb, uint64_t n) {
         uchar max_v = 0;
-        for(size_t i=0;i<n;i++)
+        for(uint64_t i=0;i<n;i++)
             max_v = max(max_v,symb[i]);
         uint * occ = new uint[max_v+1];
-        for(size_t i=0;i<(uint)max_v+1;i++)
+        for(uint64_t i=0;i<(uint)max_v+1;i++)
             occ[i] = 0;
-        for(size_t i=0;i<n;i++)
+        for(uint64_t i=0;i<n;i++)
             occ[symb[i]]++;
 				huff_table = createHuff(occ, max_v);
 				delete [] occ;
@@ -52,9 +52,9 @@ namespace URICompressed{
     Huffman::Huffman(Array & seq) {
         uint max_v = seq.getMax();
         uint * occ = new uint[max_v+1];
-        for(size_t i=0;i<(uint)max_v+1;i++)
+        for(uint64_t i=0;i<(uint)max_v+1;i++)
             occ[i] = 0;
-        for(size_t i=0;i<seq.getLength();i++)
+        for(uint64_t i=0;i<seq.getLength();i++)
             occ[seq[i]]++;
         huff_table = createHuff(occ, max_v);
         delete [] occ;
@@ -67,19 +67,19 @@ namespace URICompressed{
         freeHuff(huff_table);
     }
 
-    size_t Huffman::maxLength(){
+    uint64_t Huffman::maxLength(){
         return huff_table.depth;
     }
 
-    size_t Huffman::getSize(){
+    uint64_t Huffman::getSize(){
         return sizeof(Huffman)+sizeHuff(huff_table);
     }
 
-    size_t Huffman::encode(uint symb, uint * stream, size_t pos){
+    uint64_t Huffman::encode(uint symb, uint * stream, uint64_t pos){
         return encodeHuff(huff_table, symb, stream, pos);
     }
 
-    size_t Huffman::decode(uint * symb, uint * stream, size_t pos){
+    uint64_t Huffman::decode(uint * symb, uint * stream, uint64_t pos){
         return decodeHuff(huff_table, symb, stream, pos);
     }
 

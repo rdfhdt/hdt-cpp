@@ -6,11 +6,12 @@
  */
 
 #include "RDFParserN3.hpp"
+#include "../util/fileUtil.hpp"
 
 namespace hdt {
 
 RDFParserN3::RDFParserN3(std::istream &in, RDFNotation notation) : RDFParser(in, notation) {
-
+	size = fileUtil::getSize(in);
 }
 
 RDFParserN3::~RDFParserN3() {
@@ -156,6 +157,14 @@ TripleString *RDFParserN3::next() {
 void RDFParserN3::reset() {
 	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
+}
+
+uint64_t RDFParserN3::getPos(){
+	return input.tellg();
+}
+
+uint64_t RDFParserN3::getSize() {
+	return size;
 }
 
 }

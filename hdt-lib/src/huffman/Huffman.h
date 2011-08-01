@@ -38,25 +38,25 @@ namespace URICompressed{
 
         public:
             /** Creates the codes for the sequence seq of length n */
-            Huffman(uint * seq, size_t n);
-            Huffman(uchar * seq, size_t n);
+            Huffman(uint * seq, uint64_t n);
+            Huffman(uchar * seq, uint64_t n);
             Huffman(Array & seq);
 
             virtual ~Huffman();
 
             /** Encodes symb into stream at bit-position pos,
              * returns the ending position (bits) */
-            virtual size_t encode(uint symb, uint * stream, size_t pos);
+            virtual uint64_t encode(uint symb, uint * stream, uint64_t pos);
 
             /** decodes into symb from stream at bit-position
              * pos, returns the new position.*/
-            virtual size_t decode(uint * symb, uint * stream, size_t pos);
+            virtual uint64_t decode(uint * symb, uint * stream, uint64_t pos);
 
             /** Returns the maximum length of a code */
-            virtual size_t maxLength();
+            virtual uint64_t maxLength();
 
             /** Returns the size of the table */
-            virtual size_t getSize();
+            virtual uint64_t getSize();
 
             /** Saves the coder to a file */
             virtual void save(ofstream & fp);

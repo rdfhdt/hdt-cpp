@@ -50,8 +50,8 @@ private:
 	csd::CSD *shared;
 
 	unsigned int mapping;
-	size_t sizeStrings;
-	size_t blocksize;
+	uint64_t sizeStrings;
+	uint32_t blocksize;
 
 	//ControlInformation controlInformation;
 	HDTSpecification spec;

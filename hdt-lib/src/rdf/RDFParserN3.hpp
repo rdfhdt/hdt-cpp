@@ -17,6 +17,7 @@ namespace hdt {
 class RDFParserN3 : public RDFParser {
 
 private:
+	uint64_t size;
 	std::string line;
 	TripleString ts;
 
@@ -27,6 +28,8 @@ public:
 	bool hasNext();
 	TripleString *next();
 	void reset();
+	uint64_t getPos();
+	uint64_t getSize();
 };
 
 }

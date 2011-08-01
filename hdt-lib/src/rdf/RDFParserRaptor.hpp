@@ -22,6 +22,7 @@ namespace hdt {
 class RDFParserRaptor : public RDFParser {
 
 private:
+	uint64_t size;
 	vector<char> buf;
 	TripleString ts;
 
@@ -41,6 +42,8 @@ public:
 	bool hasNext();
 	TripleString *next();
 	void reset();
+	uint64_t getPos();
+	uint64_t getSize();
 
 	friend void raptor_process_triple(void *user_data, raptor_statement *triple);
 };

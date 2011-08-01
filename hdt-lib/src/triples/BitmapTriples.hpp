@@ -90,7 +90,6 @@ class BitmapTriplesSearchIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
 	TripleID pattern, returnTriple;
-	bool hasMoreTriples, hasPreviousTriple;
 
 	unsigned int patX, patY, patZ;
 
@@ -118,23 +117,17 @@ public:
 class MiddleWaveletIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
-	TripleID nextTriple, previousTriple, pattern;
-	bool hasMoreTriples, hasPreviousTriples;
+	TripleID pattern, returnTriple;
 
 	AdjacencyList adjY, adjZ;
 	WaveletStream *wavelet;
 	unsigned int patX, patY, patZ;
 	unsigned int posY, posZ;
 	unsigned int predicateOcurrence, numOcurrences;
-	unsigned int nextY, nextZ;
+	unsigned int prevZ, nextZ;
 	unsigned int x, y, z;
 
-	void findRange();
-	void getNextTriple();
-	void getPreviousTriple();
-
 	void updateOutput();
-
 public:
 	MiddleWaveletIterator(BitmapTriples *triples, TripleID &pat);
 

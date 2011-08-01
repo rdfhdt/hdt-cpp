@@ -28,8 +28,12 @@ size_t AdjacencyList::find(size_t x) {
 	if(x<=0) {
 		return 0;
 	}
+#ifdef OLD_BITMAP
 	unsigned int first1 = bitmap->select1(x);
 	return bitmap->rank0(first1);
+#else
+	return bitmap->select1(x)+1;
+#endif
 }
 
 /**
@@ -50,8 +54,15 @@ size_t AdjacencyList::find(size_t x, size_t y) {
  * @return
  */
 size_t AdjacencyList::findListIndex(size_t globalpos) {
+#ifdef OLD_BITMAP
 	size_t posz = bitmap->select0(globalpos+1);
 	return bitmap->rank1(posz);
+#else
+	if(globalpos<=0) {
+		return 0;
+	}
+	return bitmap->rank1(globalpos-1);
+#endif
 }
 
 /**
@@ -60,8 +71,12 @@ size_t AdjacencyList::findListIndex(size_t globalpos) {
  * @return
  */
 size_t AdjacencyList::last(size_t x) {
+#ifdef OLD_BITMAP
 	size_t first1 = bitmap->select1(x+1);
 	return bitmap->rank0(first1)-1;
+#else
+	return bitmap->select1(x+1);
+#endif
 }
 
 /**
@@ -69,7 +84,11 @@ size_t AdjacencyList::last(size_t x) {
  * @return
  */
 size_t AdjacencyList::countListsX() {
+#ifdef OLD_BITMAP
 	return bitmap->countOnes();
+#else
+	return bitmap->countOnes();
+#endif
 }
 
 /**
@@ -132,13 +151,13 @@ void AdjacencyList::dump() {
 	}
 	cout << endl;
 
-#if 0
+#if 1
 	cout << "List has " << getSize() << " elements in " << countListsX() << " lists" << endl;
 
 	for(unsigned int i=0; i<countListsX(); i++) {
 		cout << "List " << i << " [" << find(i) << ", " << last(i) << "] (" << countItemsY(i)<< ") "<< endl;
 		for(unsigned int j=0; j<countItemsY(i); j++) {
-			cout << "\tItem " << i << ", "<< j << " => " << get(find(i)+j) << " Found pos: " << find(i, get(find(i)+j)) << endl;
+			cout << "\tItem " << i << ", "<< j << " => " << get(find(i)+j) << " Found pos: " << find(i, get(find(i)+j)) << " Found list: " << findListIndex(find(i)+j) << endl;
 		}
 	}
 #endif

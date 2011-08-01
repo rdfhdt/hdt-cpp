@@ -7,6 +7,7 @@
 
 #ifdef USE_RAPTOR
 #include "RDFParserRaptor.hpp"
+#include "../util/fileUtil.hpp"
 
 namespace hdt {
 
@@ -31,6 +32,8 @@ void raptor_process_triple(void *user_data, raptor_statement *triple) {
 }
 
 RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation) : RDFParser(in, notation), pos(0) {
+	size = fileUtil::getSize(in);
+
 	buf.resize(2048, '\0');
 
 	world = raptor_new_world();
@@ -80,6 +83,14 @@ TripleString *RDFParserRaptor::next() {
 
 void RDFParserRaptor::reset() {
 	pos = 0;
+}
+
+uint64_t RDFParserRaptor::getPos(){
+	return input.tellg();
+}
+
+uint64_t RDFParserRaptor::getSize() {
+	return size;
 }
 
 }

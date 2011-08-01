@@ -30,6 +30,7 @@ typedef enum {
 
 class RDFParserNtriples : public RDFParser {
 private:
+	uint64_t size;
 	std::string lineStr;
 	TripleString ts;
 
@@ -59,7 +60,8 @@ public:
 	bool hasNext();
 	TripleString *next();
 	void reset();
-
+	uint64_t getPos();
+	uint64_t getSize();
 };
 
 }

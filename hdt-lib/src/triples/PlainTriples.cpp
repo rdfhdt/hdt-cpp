@@ -21,9 +21,9 @@ PlainTriples::PlainTriples() : order(SPO) {
 PlainTriples::PlainTriples(HDTSpecification &specification) : spec(specification) {
 	std::string orderStr = spec.get("triples.component.order");
 	order = parseOrder(orderStr.c_str());
-	if(order==Unknown)
+	if(order==Unknown) {
 			order = SPO;
-
+	}
 	streamX = StreamElements::getStream(spec.get("stream.x"));
 	streamY = StreamElements::getStream(spec.get("stream.y"));
 	streamZ = StreamElements::getStream(spec.get("stream.z"));
@@ -61,7 +61,7 @@ void PlainTriples::load(ModifiableTriples &triples, ProgressListener *listener) 
 void PlainTriples::populateHeader(Header &header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_PLAIN);
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
+	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMX_TYPE, streamX->getType() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
@@ -69,8 +69,7 @@ void PlainTriples::populateHeader(Header &header, string rootNode) {
 
 IteratorTripleID *PlainTriples::search(TripleID & pattern)
 {
-	string patternString = pattern.getPatternString();
-	if(patternString=="???") {
+	if(pattern.isEmpty()) {
 		return new PlainTriplesIterator(this, pattern, order);
 	} else {
 		return new SequentialSearchIteratorTripleID(pattern, new PlainTriplesIterator(this,pattern, order));
@@ -137,7 +136,6 @@ PlainTriplesIterator::PlainTriplesIterator(PlainTriples *triples, TripleID & pat
 void PlainTriplesIterator::updateOutput()
 {
 	returnTriple.setAll(triples->streamX->get(pos), triples->streamY->get(pos), triples->streamZ->get(pos));
-	swapComponentOrder(&returnTriple, triples->order, SPO);
 }
 
 bool PlainTriplesIterator::hasNext()

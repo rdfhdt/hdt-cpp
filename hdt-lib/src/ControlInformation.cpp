@@ -58,19 +58,22 @@ ControlInformation::~ControlInformation() {
 }
 
 void ControlInformation::save(std::ostream &out) {
-
+	//std::cout << "Save ControlInformation " << out.tellp() << std::endl;
 	out << "$HDT";
 
-	out.write((char *)&this->version, sizeof(unsigned short));
-	out.write((char *)&this->components, sizeof(unsigned short));
+	out.write((char *)&this->version, sizeof(uint16_t));
+	out.write((char *)&this->components, sizeof(uint16_t));
 
 	for(PropertyMapIt it = map.begin(); it!=map.end(); it++) {
 		out << it->first << ':' << it->second << ';' << std::endl;
 	}
 	out << "$END" << std::endl;
+
+	//std::cout << "Save ControlInformation OK " << out.tellp() << std::endl;
 }
 
 void ControlInformation::load(std::istream &in) {
+	//std::cout << "Load ControlInformation" << in.tellg() << std::endl;
 	std::string line;
 	std::string all;
 
@@ -83,8 +86,8 @@ void ControlInformation::load(std::istream &in) {
 
 	}
 
-	in.read((char *)&this->version, sizeof(unsigned short));
-	in.read((char *)&this->components, sizeof(unsigned short));
+	in.read((char *)&this->version, sizeof(uint16_t));
+	in.read((char *)&this->components, sizeof(uint16_t));
 
 	while(getline(in,line)) {
 		if(line=="$END") {
@@ -107,6 +110,8 @@ void ControlInformation::load(std::istream &in) {
 			}
 		}
 	}
+
+	//std::cout << "Load ControlInformation OK " << in.tellg() << std::endl;
 }
 
 void ControlInformation::clear() {
@@ -122,12 +127,12 @@ void ControlInformation::set(std::string key, std::string value) {
 	map[key] = value;
 }
 
-unsigned int ControlInformation::getUint(std::string key) {
+uint32_t ControlInformation::getUint(std::string key) {
 	std::string str = map[key];
 	return atoi(str.c_str()); // TODO: WARNING: unsigned int??
 }
 
-void ControlInformation::setUint(std::string key, unsigned int value) {
+void ControlInformation::setUint(std::string key, uint32_t value) {
 	std::stringstream out;
 	out << value;
 	map[key] = out.str();
@@ -135,12 +140,12 @@ void ControlInformation::setUint(std::string key, unsigned int value) {
 
 
 
-void ControlInformation::setVersion(unsigned short  version)
+void ControlInformation::setVersion(uint16_t  version)
 {
 	this->version = version;
 }
 
-unsigned short ControlInformation::getVersion()
+uint16_t ControlInformation::getVersion()
 {
 	return this->version;
 }

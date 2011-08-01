@@ -183,10 +183,19 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 
 	ifstream *in = dynamic_cast<ifstream *>(&input);
 
-        shared = csd::CSD::load(*in);
+	//cout << "Load shared " << in->tellg() << endl;
+	shared = csd::CSD::load(*in);
+
+	//cout << "Load subjects " << in->tellg() << endl;
 	subjects = csd::CSD::load(*in);
-        predicates = csd::CSD::load(*in);
-        objects = csd::CSD::load(*in);
+
+	//cout << "Load predicates " << in->tellg() << endl;
+	predicates = csd::CSD::load(*in);
+
+	//cout << "Load objects " << in->tellg() << endl;
+	objects = csd::CSD::load(*in);
+
+	//cout << "Dictionary loaded " << in->tellg() << endl;
 }
 
 bool PFCDictionary::save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener)
@@ -211,19 +220,21 @@ bool PFCDictionary::save(std::ostream & output, ControlInformation & controlInfo
 
 	controlInformation.save(output);
 
-        ofstream *out = dynamic_cast<ofstream *>(&output);
+	ofstream *out = dynamic_cast<ofstream *>(&output);
 
-        cout << "Save shared" << endl;
-        shared->save(*out);
+	//cout << "Save shared " << out->tellp() << endl;
+	shared->save(*out);
 
-        cout << "Save subjects" << endl;
-        subjects->save(*out);
+	//cout << "Save subjects " << out->tellp() << endl;
+	subjects->save(*out);
 
-        cout << "Save predicates" << endl;
+	//cout << "Save predicates " << out->tellp() << endl;
 	predicates->save(*out);
 
-        cout << "Save objects" << endl;
-        objects->save(*out);
+	//cout << "Save objects " << out->tellp() << endl;
+	objects->save(*out);
+
+	//cout << "Dictionary saved " << out->tellp() << endl;
 }
 
 

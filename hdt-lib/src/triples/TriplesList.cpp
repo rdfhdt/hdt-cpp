@@ -132,7 +132,7 @@ void TriplesList::populateHeader(Header &header, string rootNode)
 {
 	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST);
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
+	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
 }
 
 void TriplesList::startProcessing()
@@ -209,8 +209,6 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 void TriplesList::sort(TripleComponentOrder order)
 {
 	if(this->order != order) {
-		cout << "TriplesList::sort: " << order << endl;
-
 		StopWatch st;
 		std::sort(arrayOfTriples.begin(), arrayOfTriples.end(), TriplesComparator(order));
 		cout << "Sorted in " << st << endl;
@@ -264,13 +262,6 @@ TriplesListIterator::TriplesListIterator(TriplesList *triples, TripleID & patter
 {
 }
 
-void TriplesListIterator::updateOutput()
-{
-	returnTriple = *triples->getTripleID(pos);
-	swapComponentOrder(&returnTriple, triples->order, SPO);
-}
-
-
 bool TriplesListIterator::hasNext()
 {
 	return pos<triples->getNumberOfElements();
@@ -278,22 +269,18 @@ bool TriplesListIterator::hasNext()
 
 TripleID *TriplesListIterator::next()
 {
-	updateOutput();
-	pos++;
+	returnTriple = *triples->getTripleID(pos++);
 	return &returnTriple;
 }
-
 
 bool TriplesListIterator::hasPrevious()
 {
 	return pos>0;
 }
 
-
 TripleID *TriplesListIterator::previous()
 {
-	pos--;
-	updateOutput();
+	returnTriple = *triples->getTripleID(--pos);
 	return &returnTriple;
 }
 

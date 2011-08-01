@@ -88,6 +88,9 @@ public:
 	 * @param triples New triple to be added.
 	 */
 	void insert(string subject, string predicate, string object) {
+		if(object.at(0)!='<' && object.at(0)!='"' && object.at(0)!='_') {
+			object = "\""+object+"\"";
+		}
 		TripleString ts(subject, predicate, object);
 		insert(ts);
 	}

@@ -160,7 +160,7 @@ namespace URICompressed{
         return H;
     }
 
-    void bitzero (register uint *e, register size_t p,
+    void bitzero (register uint *e, register uint64_t p,
     register uint len) {
 
         e += p/W; p %= W;
@@ -177,10 +177,10 @@ namespace URICompressed{
             *e &= ~(((1<<len)-1)<<p);
     }
 
-    size_t encodeHuff (const THuff H, uint symb, uint *stream, size_t ptr) {
-        size_t pos;
-        size_t code;
-        size_t d;
+    uint64_t encodeHuff (const THuff H, uint symb, uint *stream, uint64_t ptr) {
+        uint64_t pos;
+        uint64_t code;
+        uint64_t d;
         pos = H.spos[symb];
         code = 0;
         d = H.depth;
@@ -198,9 +198,9 @@ namespace URICompressed{
         return ptr;
     }
 
-    size_t decodeHuff (const THuff H, uint *symb, uint *stream, size_t ptr) {
-        size_t pos;
-        size_t d;
+    uint64_t decodeHuff (const THuff H, uint *symb, uint *stream, uint64_t ptr) {
+        uint64_t pos;
+        uint64_t d;
         pos = 0;
         d = 0;
         while (pos < H.fst[d]) {

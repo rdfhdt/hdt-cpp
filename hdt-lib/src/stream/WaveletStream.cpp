@@ -54,10 +54,6 @@ void WaveletStream::add(IteratorUint &elements)
 	cds_static::Mapper *mapper = new cds_static::MapperNone();
 
 	sequence = new cds_static::WaveletTreeNoptrs(&vector[0], vector.size(), builder, mapper);
-
-	for(unsigned int i=0;i<100;i++){
-		cout << "Rank item: " << i << " => " << sequence->rank(i, sequence->getLength()) << endl;
-	}
 }
 
 void WaveletStream::load(std::istream & input)
@@ -69,7 +65,9 @@ void WaveletStream::load(std::istream & input)
 		sequence=NULL;
 	}
 
+	cout << "Load WV from " << in->tellg() << endl;
 	sequence = cds_static::Sequence::load(*in);
+	cout << "AFTER " << in->tellg() << endl;
 }
 
 void WaveletStream::save(std::ostream & output)
@@ -79,7 +77,9 @@ void WaveletStream::save(std::ostream & output)
 
 	std::ofstream *out = dynamic_cast<std::ofstream *>(&output);
 
+	cout << "Save WV to " << out->tellp() << endl;
 	sequence->save(*out);
+	cout << "AFTER " << out->tellp() << endl;
 }
 
 unsigned int WaveletStream::getNumberOfElements()

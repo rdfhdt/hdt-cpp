@@ -6,6 +6,7 @@
  */
 
 #ifdef USE_RAPTOR
+#include "../util/fileUtil.hpp"
 #include "RDFParserRaptorLine.hpp"
 
 namespace hdt {
@@ -32,6 +33,8 @@ void raptor_line_process_triple(void *user_data, raptor_statement *triple) {
 
 RDFParserRaptorLine::RDFParserRaptorLine(std::istream &in, RDFNotation notation) :
 		RDFParser(in, notation), pos(0), globalLine(0) {
+	size = fileUtil::getSize(in);
+
 	world = raptor_new_world();
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 	rdf_parser = raptor_new_parser(world, getParserType(notation));
@@ -98,6 +101,14 @@ void RDFParserRaptorLine::reset() {
 	input.clear(); // Resets EOF
 	input.seekg(0, std::ios::beg);
 	readBlock();
+}
+
+uint64_t RDFParserRaptorLine::getPos(){
+	return input.tellg();
+}
+
+uint64_t RDFParserRaptorLine::getSize() {
+	return size;
 }
 
 }

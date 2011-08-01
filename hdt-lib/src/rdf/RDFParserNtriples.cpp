@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include "RDFParserNtriples.hpp"
+#include "../util/fileUtil.hpp"
 
 namespace hdt {
 
@@ -21,6 +22,8 @@ RDFParserNtriples::RDFParserNtriples(std::istream &in, RDFNotation notation) : R
 	byte = 0;
 
 	isNQuad = false; // FIXME: Adjust
+
+	size = fileUtil::getSize(in);
 }
 
 RDFParserNtriples::~RDFParserNtriples() {
@@ -839,5 +842,14 @@ void RDFParserNtriples::reset() {
 	column=0;
 	byte=0;
 }
+
+uint64_t RDFParserNtriples::getPos(){
+	return input.tellg();
+}
+
+uint64_t RDFParserNtriples::getSize() {
+	return size;
+}
+
 
 }

@@ -69,7 +69,9 @@ void BasicHeader::load(std::istream & input, ControlInformation &controlInformat
 		throw "Unexpected BasicHeader format";
 	}
 
-	hdt->loadFromRDF(input, N3);
+	RDFParser *parser = RDFParser::getParser(input, NTRIPLES);
+	hdt->loadFromRDF(*parser);
+	delete parser;
 }
 
 bool BasicHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
@@ -77,7 +79,11 @@ bool BasicHeader::save(std::ostream & output, ControlInformation &controlInforma
 	controlInformation.clear();
 	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);
 	controlInformation.save(output);
-	hdt->saveToRDF(output, NTRIPLES);
+
+	RDFSerializer *serializer = RDFSerializer::getSerializer(output, NTRIPLES);
+
+	hdt->saveToRDF(*serializer);
+	delete serializer;
 	output << endl;
 }
 

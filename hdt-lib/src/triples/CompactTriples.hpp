@@ -80,18 +80,30 @@ public:
 	friend class CompactTriplesIterator;
 };
 
-class CompactTriplesIterator : public PreFetchIteratorTripleID {
+class CompactTriplesIterator : public IteratorTripleID {
 private:
 	CompactTriples *triples;
-	unsigned int pos;
-	unsigned int numTriple, masterPos, slavePos;
+	TripleID pattern, returnTriple;
+
+	unsigned int patX, patY, patZ;
+
+	unsigned int posY, posZ;
 	unsigned int x, y, z;
+	bool goingUp;
 
-public:
-	CompactTriplesIterator(CompactTriples *pt, TripleID &pat);
-
+	void findRange();
 	void getNextTriple();
 	void getPreviousTriple();
+
+	void updateOutput();
+public:
+	CompactTriplesIterator(CompactTriples *triples, TripleID &pat);
+
+	bool hasNext();
+	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
 };
 
 }

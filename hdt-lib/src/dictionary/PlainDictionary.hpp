@@ -92,7 +92,7 @@ private:
 	DictEntryHash hashObject;
 	PrefixHash prefixes;
 	unsigned int mapping;
-	size_t sizeStrings;
+	uint64_t sizeStrings;
 
 	//ControlInformation controlInformation;
 	HDTSpecification spec;

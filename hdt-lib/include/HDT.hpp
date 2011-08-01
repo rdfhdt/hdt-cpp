@@ -42,8 +42,10 @@
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
+#include <RDFParser.hpp>
+#include <RDFSerializer.hpp>
 
-#include <istream>
+#include <iostream>
 
 namespace hdt {
 
@@ -79,7 +81,7 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	virtual void loadFromRDF(std::istream &input, RDFNotation notation, ProgressListener *listener = NULL) = 0;
+	virtual void loadFromRDF(RDFParser &parser, ProgressListener *listener = NULL) = 0;
 
 	/**
 	 * Load an HDT file from a stream.
@@ -92,7 +94,7 @@ public:
 	 * @param output
 	 * @param notation
 	 */
-	virtual void saveToRDF(std::ostream &output, RDFNotation notation, ProgressListener *listener = NULL) = 0;
+	virtual void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL) = 0;
 
 	/**
 	 * Save the current HDT into a stream in a compact manner.
