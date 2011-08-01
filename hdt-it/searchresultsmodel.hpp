@@ -14,15 +14,16 @@ class SearchResultsModel : public QAbstractTableModel {
 private:
     HDTManager *hdtManager;
     hdt::IteratorTripleID *triples;
-    hdt::TripleID currentTriple;
+    hdt::TripleID *currentTriple;
     unsigned int currentIndex;
     unsigned int numResults;
+    bool goingUp;
 
-    void resetIterator();
     void findTriple(unsigned int index);
 
 public:
     SearchResultsModel(QObject *parent, HDTManager *view);
+    ~SearchResultsModel();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;

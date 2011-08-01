@@ -156,7 +156,7 @@ void MatrixViewWidget::paintScales()
     glColor4f(TEXT_COLOR);
     renderText(0, nsubjects * 1.04, 0, "Subjects");
     renderText(nobjects * 1.05, 0, 0, "Objects");
-    renderText(-nsubjects*1.01, 0, npredicates*1.05, "Predicates");
+    renderText(0, 0, npredicates*1.05, "Predicates");
 }
 
 void MatrixViewWidget::paintPoints()
@@ -167,7 +167,7 @@ void MatrixViewWidget::paintPoints()
 
     if(hdtmanager->getNumResults()==0) {
         // Do not render anything
-    } else if(hdtmanager->getNumResults()<10000) {
+    } else if(hdtmanager->getNumResults()<5000) {
 
         hdt::IteratorTripleID *it = hdtmanager->getHDT()->getTriples().search(hdtmanager->getSearchPatternID());
 
@@ -178,9 +178,7 @@ void MatrixViewWidget::paintPoints()
 
             cr.apply(&c, tid->getPredicate(), 0, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
 
-            if(hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
-
-            } else {
+            if(!hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
                 c.r = c.r/4;
                 c.g = c.g/4;
                 c.b = c.b/4;
@@ -203,9 +201,7 @@ void MatrixViewWidget::paintPoints()
 
                 cr.apply(&c, tid->getPredicate(), 0, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
 
-                if(hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
-
-                } else {
+                if(!hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
                     c.r = c.r/4;
                     c.g = c.g/4;
                     c.b = c.b/4;
@@ -270,7 +266,7 @@ void MatrixViewWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if(hdtmanager->getHDT()==NULL) {
+    if(!hdtmanager->hasHDT()) {
         return;
     }
 
@@ -451,8 +447,6 @@ QSize MatrixViewWidget::sizeHint() const
 
 void MatrixViewWidget::reloadHDTInfo()
 {
-    cout << "Reloading HDT Info: " << hdtmanager->getHDT() << endl;
-
     if(hdtmanager->getHDT()==NULL) {
         return;
     }

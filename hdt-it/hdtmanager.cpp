@@ -151,14 +151,11 @@ void HDTManager::closeHDT()
         delete hdt;
         hdt = NULL;
 
-        // FIXME: Connect using signals??
-#if 1
         subjectModel->notifyLayoutChanged();
         predicateModel->notifyLayoutChanged();
         objectModel->notifyLayoutChanged();
 
         emit datasetChanged();
-#endif
     }
 }
 
@@ -185,6 +182,11 @@ SearchResultsModel * HDTManager::getSearchResultsModel()
 hdt::HDT *HDTManager::getHDT()
 {
     return hdt;
+}
+
+bool HDTManager::hasHDT()
+{
+    return hdt!=NULL;
 }
 
 
@@ -384,6 +386,10 @@ QString HDTManager::getStatistics()
     output.append(tr("<b>Triples Size</b>: "));
     output.append(stringutils::sizeHuman(triples.size()));
     output.append(tr("<br/>"));
+
+    output.append(tr("<b>Triples Order</b>: "));
+    output.append(head.getProperty("<http://purl.org/hdt/triples>","<http://purl.org/HDT/hdt#triplesstreamOrder>").c_str());
+    output.append("<br/>");
 
     return output;
 }

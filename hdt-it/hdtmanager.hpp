@@ -38,6 +38,7 @@ private:
 
 public:
     hdt::HDT *getHDT();
+    bool hasHDT();
 
     void openHDTFile(QString file);
     void saveHDTFile(QString file);

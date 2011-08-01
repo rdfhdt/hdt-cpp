@@ -6,6 +6,14 @@ SearchResultsModel::SearchResultsModel(QObject *parent, HDTManager *view) : hdtM
     this->update();
 }
 
+SearchResultsModel::~SearchResultsModel()
+{
+    if(triples!=NULL) {
+        delete triples;
+        triples = NULL;
+    }
+}
+
 int SearchResultsModel::rowCount(const QModelIndex &parent) const
 {
     return numResults;
@@ -18,7 +26,7 @@ int SearchResultsModel::columnCount(const QModelIndex &parent) const
 
 QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
 {
-    if(hdtManager->getHDT() == NULL) {
+    if(triples == NULL) {
         return QVariant();
     }
 
@@ -38,11 +46,11 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
         try {
             switch(index.column()) {
             case 0:
-                return d.idToString(currentTriple.getSubject(), hdt::SUBJECT).c_str();
+                return d.idToString(currentTriple->getSubject(), hdt::SUBJECT).c_str();
             case 1:
-                return d.idToString(currentTriple.getPredicate(), hdt::PREDICATE).c_str();
+                return d.idToString(currentTriple->getPredicate(), hdt::PREDICATE).c_str();
             case 2:
-                return d.idToString(currentTriple.getObject(), hdt::OBJECT).c_str();
+                return d.idToString(currentTriple->getObject(), hdt::OBJECT).c_str();
             }
         } catch (char *e) {
             cout << "Error accesing dictionary: " << e << endl;
@@ -90,28 +98,23 @@ QVariant SearchResultsModel::headerData(int section, Qt::Orientation orientation
     return QVariant();
 }
 
-void SearchResultsModel::resetIterator()
-{
+void SearchResultsModel::update() {
     if(triples!=NULL) {
         delete triples;
         triples = NULL;
     }
 
-    if(hdtManager->getHDT() != NULL) {
+    if(hdtManager->hasHDT()) {
         triples = hdtManager->getHDT()->getTriples().search(hdtManager->getSearchPatternID());
         if(triples->hasNext()) {
-            currentTriple = *triples->next();
+            currentTriple = triples->next();
         }
     } else {
         triples = NULL;
-        currentTriple.clear();
+        currentTriple = NULL;
     }
     currentIndex = 0;
-}
-
-void SearchResultsModel::update() {
-    resetIterator();
-
+    goingUp = true;
     numResults = hdtManager->getNumResults();
 
     emit layoutChanged();
@@ -119,16 +122,32 @@ void SearchResultsModel::update() {
 
 void SearchResultsModel::findTriple(unsigned int index)
 {
-    if(hdtManager->getHDT() == NULL) {
+    if(triples == NULL) {
         return;
     }
 
-    if(index<currentIndex) {
-        resetIterator();
+    while(currentIndex > index && triples->hasPrevious()) {
+        if(goingUp) {
+            // On direction changes, we need to move one extra position.
+            goingUp = false;
+            currentIndex++;
+        }
+        currentTriple = triples->previous();
+        currentIndex--;
     }
 
-    while( currentIndex<index && triples->hasNext()) {
-        currentTriple = *triples->next();
+    while(currentIndex < index && triples->hasNext()) {
+        if(!goingUp){
+            // On direction changes, we need to move one extra position.
+            goingUp = true;
+            currentIndex--;
+        }
+        currentTriple = triples->next();
         currentIndex++;
     }
 }
+
+
+
+
+

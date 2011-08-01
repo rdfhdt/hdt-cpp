@@ -42,7 +42,14 @@ void HDTSpecForm::on_triplesTypeCombo_currentIndexChanged(int index)
         ui->streamYcombo->setEnabled(true);
         ui->streamZcombo->setEnabled(true);
         break;
+    case 4:
+        // FoQTriples
+        ui->streamXcombo->setEnabled(false);
+        ui->streamYcombo->setEnabled(false);
+        ui->streamZcombo->setEnabled(false);
+        break;
     }
+    ui->triplesOrderCombo->setEnabled(index!=4);
 }
 
 void HDTSpecForm::on_inputFileButton_clicked()
@@ -109,6 +116,10 @@ void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
     case 3:
         // CompactTriples
         hdt.set("triples.type", hdt::HDTVocabulary::TRIPLES_TYPE_COMPACT);
+        break;
+    case 4:
+        // FoQTriples
+        hdt.set("triples.type", hdt::HDTVocabulary::TRIPLES_TYPE_FOQ);
         break;
     }
 

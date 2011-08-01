@@ -19,15 +19,12 @@ HDTit::HDTit(QWidget *parent) :
     ui->matrixView->setManager(hdtManager);
 
     ui->subjectView->setModel(hdtManager->getSubjectModel());
- //   ui->subjectView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     ui->predicateView->setModel(hdtManager->getPredicateModel());
 
     ui->objectView->setModel(hdtManager->getObjectModel());
-   // ui->objectView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     ui->resultsTable->setModel(hdtManager->getSearchResultsModel());
-    //ui->resultsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     connect(ui->matrixView, SIGNAL(rotationChanged()), this, SLOT(updateViewButtons()));
     connect(hdtManager, SIGNAL(datasetChanged()), ui->matrixView, SLOT(reloadHDTInfo()));
@@ -63,6 +60,7 @@ void HDTit::searchPatternEdited()
     std::string object = std::string(ui->objectPatternEdit->text().toAscii());
 
     hdt::TripleString ts(subject, predicate, object);
+    cout << "New search Pattern: " << ts << endl;
     hdtManager->setSearchPattern(ts);
 
     this->updateNumResults();
@@ -75,10 +73,16 @@ void HDTit::searchPatternEdited()
 
 void HDTit::refreshSearchPattern()
 {
-    hdt::TripleString &ts = hdtManager->getSearchPatternString();
-    ui->subjectPatternEdit->setText(ts.getSubject().c_str());
-    ui->predicatePatternEdit->setText(ts.getPredicate().c_str());
-    ui->objectPatternEdit->setText(ts.getObject().c_str());
+    if(hdtManager->getHDT()==NULL) {
+        ui->subjectPatternEdit->clear();
+        ui->predicatePatternEdit->clear();
+        ui->objectPatternEdit->clear();
+    } else {
+        hdt::TripleString &ts = hdtManager->getSearchPatternString();
+        ui->subjectPatternEdit->setText(ts.getSubject().c_str());
+        ui->predicatePatternEdit->setText(ts.getPredicate().c_str());
+        ui->objectPatternEdit->setText(ts.getObject().c_str());
+    }
 }
 
 
@@ -104,12 +108,14 @@ void HDTit::hdtChanged(QString &file)
     ui->statsLabel->setText(hdtManager->getStatistics());
     updateNumResults();
 
-    ui->subjectPatternEdit->clear();
-    ui->predicatePatternEdit->clear();
-    ui->objectPatternEdit->clear();
+    bool dataset = hdtManager->getHDT()!=NULL;
+    ui->actionSaveHDT->setEnabled(dataset);
+    ui->actionExportRDF->setEnabled(dataset);
+    ui->subjectPatternEdit->setEnabled(dataset);
+    ui->predicatePatternEdit->setEnabled(dataset);
+    ui->objectPatternEdit->setEnabled(dataset);
 
-    ui->actionSaveHDT->setEnabled(hdtManager->getHDT()!=NULL);
-    ui->actionExportRDF->setEnabled(hdtManager->getHDT()!=NULL);
+    refreshSearchPattern();
 }
 
 
@@ -169,6 +175,7 @@ void HDTit::updateViewButtons()
 void HDTit::on_actionFrontView_toggled(bool state)
 {
     if(state) {
+        ui->resultTabs->setCurrentIndex(1);
         ui->matrixView->getCamera().setFrontView();
         updateViewButtons();
     }
@@ -177,6 +184,7 @@ void HDTit::on_actionFrontView_toggled(bool state)
 void HDTit::on_actionLeftView_toggled(bool state)
 {
     if(state) {
+        ui->resultTabs->setCurrentIndex(1);
         ui->matrixView->getCamera().setLeftView();
         updateViewButtons();
     }
@@ -185,6 +193,7 @@ void HDTit::on_actionLeftView_toggled(bool state)
 void HDTit::on_actionTopView_toggled(bool state)
 {
     if(state) {
+        ui->resultTabs->setCurrentIndex(1);
         ui->matrixView->getCamera().setTopView();
         updateViewButtons();
     }
@@ -193,6 +202,7 @@ void HDTit::on_actionTopView_toggled(bool state)
 void HDTit::on_action3Dview_toggled(bool state)
 {
     if(state) {
+        ui->resultTabs->setCurrentIndex(1);
         ui->matrixView->getCamera().set3DView();
         updateViewButtons();
     }

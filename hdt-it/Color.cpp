@@ -15,9 +15,12 @@
  }
 
  Color::~Color() {
- 	// TODO Auto-generated destructor stub
  }
 
+
+void Color::use() {
+
+}
 
 /** Invert Color
  * @param c Description of the param.

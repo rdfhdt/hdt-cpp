@@ -19,7 +19,7 @@ QString stringutils::sizeHuman(unsigned long long size)
         }
 
         return QString("%1 %2")
-                .arg(QString::number(size / multiplier, 'f', 2))
+                .arg(QString::number((double)size / multiplier, 'f', 1))
                 .arg(sizes[i]);
     }
 }

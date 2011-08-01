@@ -7,7 +7,7 @@
 QT       += core gui opengl
 
 CONFIG += debug_and_release
-#macx:CONFIG += x86
+macx:CONFIG += x86 x86_64
 
 TARGET = hdt-it
 TEMPLATE = app
@@ -21,11 +21,6 @@ OBJECTS_DIR = $${OutputDir}
 MOC_DIR = $${OutputDir}
 RCC_DIR = $${OutputDir}
 UI_DIR = $${OutputDir}
-
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3
-QMAKE_CFLAGS_RELEASE -= -O2
-QMAKE_CFLAGS_RELEASE += -O3
 
 SOURCES += main.cpp\
         hdtit.cpp \
@@ -77,7 +72,6 @@ INCLUDEPATH += ../hdt-lib/include/ .
 # Using Qt Projects
 win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a ../libcds-v1.0.7/qmake/win32/libcds.a
 win32:LIBS += c:/mingw/lib/libraptor2.a c:/mingw/lib/libexpat.a
-#win32:LIBS += ../raptor/qmake/raptor/debug/libraptor.a
 
 unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a ../libcds-v1.0.7/qmake/unix/libcds.a 
 macx:LIBS += ../libcds-v1.0.7/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a

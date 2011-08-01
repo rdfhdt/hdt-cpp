@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>524</height>
+    <width>792</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,6 +42,9 @@
             <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0">
              <item row="1" column="1">
               <widget class="QClearLineEdit" name="subjectPatternEdit">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="toolTip">
                 <string>Insert a Subject Search Pattern</string>
                </property>
@@ -52,6 +55,9 @@
              </item>
              <item row="2" column="1">
               <widget class="QClearLineEdit" name="predicatePatternEdit">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="toolTip">
                 <string>Insert a Predicate Search Pattern</string>
                </property>
@@ -73,6 +79,9 @@
              </item>
              <item row="3" column="1">
               <widget class="QClearLineEdit" name="objectPatternEdit">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="toolTip">
                 <string>Insert an Object Search Pattern</string>
                </property>
@@ -331,7 +340,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>709</width>
+     <width>792</width>
      <height>22</height>
     </rect>
    </property>
@@ -572,7 +581,7 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>objectView</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
+   <signal>activated(QModelIndex)</signal>
    <receiver>HDTit</receiver>
    <slot>setPatternObject(QModelIndex)</slot>
    <hints>
@@ -588,13 +597,13 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>subjectView</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
+   <signal>activated(QModelIndex)</signal>
    <receiver>HDTit</receiver>
    <slot>setPatternSubject(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>280</y>
+     <x>111</x>
+     <y>453</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>
@@ -604,13 +613,13 @@ p, li { white-space: pre-wrap; }
   </connection>
   <connection>
    <sender>predicateView</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
+   <signal>activated(QModelIndex)</signal>
    <receiver>HDTit</receiver>
    <slot>setPatternPredicate(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>81</x>
-     <y>466</y>
+     <x>95</x>
+     <y>293</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>
@@ -641,12 +650,12 @@ p, li { white-space: pre-wrap; }
    <slot>setNum(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>231</x>
-     <y>317</y>
+     <x>95</x>
+     <y>282</y>
     </hint>
     <hint type="destinationlabel">
-     <x>306</x>
-     <y>292</y>
+     <x>135</x>
+     <y>310</y>
     </hint>
    </hints>
   </connection>
@@ -657,7 +666,7 @@ p, li { white-space: pre-wrap; }
    <slot>setPatternGlobal(QModelIndex)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>441</x>
+     <x>483</x>
      <y>96</y>
     </hint>
     <hint type="destinationlabel">

@@ -18,16 +18,22 @@ void HDTOperation::execute() {
             hdt->loadFromHDT((istream &)*in, dynamic_cast<ProgressListener *>(this));
             hdtInfo->loadInfo(dynamic_cast<ProgressListener *>(this));
             break;
-        case RDF_READ:
-            hdt->loadFromRDF((istream &)*in, notation, dynamic_cast<ProgressListener *>(this));
+        case RDF_READ:{
+            hdt::RDFParser *parser = hdt::RDFParser::getParser((istream &)*in, notation);
+            hdt->loadFromRDF(*parser, dynamic_cast<ProgressListener *>(this));
+            delete parser;
             hdtInfo->loadInfo(dynamic_cast<ProgressListener *>(this));
             break;
+            }
         case HDT_WRITE:
             hdt->saveToHDT((ostream &)*out, dynamic_cast<ProgressListener *>(this));
             break;
-        case RDF_WRITE:
-            hdt->saveToRDF((ostream &)*out, notation, dynamic_cast<ProgressListener *>(this));
+        case RDF_WRITE:{
+            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer((ostream &)*out, notation);
+            hdt->saveToRDF(*serializer, dynamic_cast<ProgressListener *>(this));
+            delete serializer;
             break;
+            }
         }
         emit processFinished();
     } catch (char* err) {

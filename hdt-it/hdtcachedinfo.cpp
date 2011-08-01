@@ -1,4 +1,5 @@
 #include "hdtcachedinfo.hpp"
+#include "constants.h"
 
 HDTCachedInfo::HDTCachedInfo(hdt::HDT *hdt) : hdt(hdt)
 {
@@ -7,13 +8,14 @@ HDTCachedInfo::HDTCachedInfo(hdt::HDT *hdt) : hdt(hdt)
 
 void HDTCachedInfo::loadInfo(hdt::ProgressListener *listener)
 {
+    unsigned int nPred = hdt->getDictionary().getNpredicates();
     maxPredicateCount = 0;
     numResults = 0;
     predicateCount.clear();
-    predicateCount.resize(hdt->getDictionary().getNpredicates());
+    predicateCount.resize(nPred);
     hdt::Triples &t = hdt->getTriples();
 
-    unsigned int increment = t.getNumberOfElements()/100000;
+    unsigned int increment = t.getNumberOfElements()/RENDER_NUM_POINTS;
     increment = increment < 1 ? 1 : increment;
 
     hdt::IteratorTripleID *it = t.searchAll();
@@ -21,6 +23,10 @@ void HDTCachedInfo::loadInfo(hdt::ProgressListener *listener)
     resultsTime.reset();
     while(it->hasNext()) {
         hdt::TripleID *tid = it->next();
+
+        if(!tid->isValid()) {
+            cout << numResults << " Invalid: " << *tid << endl;
+        }
 
         if( (numResults%increment)==0) {
             triples.push_back(*tid);
@@ -35,6 +41,19 @@ void HDTCachedInfo::loadInfo(hdt::ProgressListener *listener)
         }
         numResults++;
     }
+    cout << "Total: " << numResults << endl;
     resultsTime.stop();
     delete it;
+
+    // Calculate Predicate Colors
+#if 0
+    StopWatch s;
+    predicateColors.clear();
+    predicateColors.resize(nPred);
+    ColorRamp2 cr;
+    for(unsigned int i=0;i<nPred; i++) {
+        cr.apply(&predicateColors[i], i, 0, nPred);
+    }
+    cout << "Predicate Colors: " << s.stopRealStr() << endl;
+#endif
 }
