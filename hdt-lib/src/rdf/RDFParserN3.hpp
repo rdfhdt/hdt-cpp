@@ -8,6 +8,7 @@
 #ifndef RDFPARSERN3_H_
 #define RDFPARSERN3_H_
 
+#include <stdint.h>
 #include <istream>
 
 #include "RDFParser.hpp"

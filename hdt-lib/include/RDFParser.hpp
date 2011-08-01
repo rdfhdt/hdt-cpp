@@ -10,6 +10,7 @@
 
 #include <string>
 #include <istream>
+#include <stdint.h>
 
 #include <SingleTriple.hpp>
 #include <HDTEnums.hpp>

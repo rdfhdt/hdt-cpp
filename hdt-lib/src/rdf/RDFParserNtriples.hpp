@@ -8,6 +8,7 @@
 #ifndef RDFPARSERNTRIPLES_HPP_
 #define RDFPARSERNTRIPLES_HPP_
 
+#include <stdint.h>
 #include "RDFParser.hpp"
 
 namespace hdt {

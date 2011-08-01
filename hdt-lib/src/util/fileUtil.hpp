@@ -8,6 +8,7 @@
 #ifndef FILEUTIL_HPP_
 #define FILEUTIL_HPP_
 
+#include <stdint.h>
 #include <iostream>
 
 class fileUtil {

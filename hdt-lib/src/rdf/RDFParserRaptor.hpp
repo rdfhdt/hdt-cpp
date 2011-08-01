@@ -8,6 +8,7 @@
 #ifndef RDFPARSERRAPTOR_H_
 #define RDFPARSERRAPTOR_H_
 
+#include <stdint.h>
 #include <istream>
 #include <vector>
 
