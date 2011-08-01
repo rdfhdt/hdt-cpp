@@ -1,35 +1,52 @@
+OS := $(shell uname)
 
 LIBCDSPATH = ../libcds-v1.0.7
 
 CPP=g++
+#CPP=clang++
 CPPFLAGS=
-FLAGS=-O9 -Wno-deprecated
-#FLAGS=-g -Wno-deprecated #-Wall
-INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include
+#FLAGS=-O2 -Wno-deprecated
+FLAGS=-O2 -Wno-deprecated #-Wall
+INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
 LDFLAGS=-lstdc++ -lraptor2
 DOXYGEN=doxygen
-DEFINES= -DUSE_RAPTOR
-
+#DEFINES= -DUSE_RAPTOR -DUSE_FOQ
+DEFINES= -DUSE_FOQ #-DOLD_BITMAP
 LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib
 
-OBJECTS=$(patsubst %.cpp,%.o, $(wildcard src/*.cpp) $(wildcard src/**/*.cpp))
+ifeq ($(OS), Darwin)
+FLAGS=-arch i386 -arch x86_64 -O2 -Wno-deprecated
+endif
+
+SRCS=$(wildcard src/*.cpp) $(wildcard src/**/*.cpp)
+OBJECTS=$(patsubst %.cpp,%.o, $(SRCS) )
 HEADERS=$(wildcard include/*.hpp) $(wildcard include/*.h) $(wildcard src/*.hpp) $(wildcard src/*.h) $(wildcard src/**/*.hpp)
 TOOLS=$(patsubst %.cpp,%, $(wildcard tools/*.cpp))
+TESTS=$(patsubst %.cpp,%, $(wildcard tests/*.cpp))
 
-all: showflags tools
+all: showflags tools tests
 
 clall: clean all
 
 showflags:
+	@echo " [CFG] OS= $(OS)"
+	@echo " [CFG] CPP = $(CPP)"
 	@echo " [CFG] FLAGS = $(FLAGS)"
 	@echo " [CFG] DEFINES = $(DEFINES)"
+	@echo " [CFG] INCLUDES = $(INCLUDES)"
+	@echo " [CFG] LIB= $(LIB)"
 
 tools/%: tools/%.cpp libhdt.a
 	@echo " [HDT] Compiling tool $<"
 	@$(CPP) $(INCLUDES) $(CPPFLAGS) $(FLAGS) $(DEFINES) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) libhdt.a ${LIB}
 
 tools: libhdt.a $(TOOLS)
-	@echo " [HDT] Compiling tools"
+
+tests/%: tests/%.cpp libhdt.a
+	@echo " [HDT] Compiling test $<"
+	@$(CPP) $(INCLUDES) $(CPPFLAGS) $(FLAGS) $(DEFINES) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) libhdt.a ${LIB}
+
+tests: libhdt.a $(TESTS)
 
 %.o: %.cpp $(HEADERS) Makefile
 	@echo " [HDT] Compiling $<"
@@ -37,6 +54,7 @@ tools: libhdt.a $(TOOLS)
 
 libhdt.a: $(OBJECTS) $(HEADERS)
 	@echo " [HDT] Linking libhdt.a"
+	@rm -Rf libhdt.a
 	@ar rcs libhdt.a $(OBJECTS)
 
 doc:	
