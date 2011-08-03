@@ -13,8 +13,6 @@
 
 #include <QtOpenGL>
 
-#include <QObject>
-
 class Camera : public QObject {
     Q_OBJECT
     Q_PROPERTY(QPointF camRotation READ getRotation WRITE setRotation NOTIFY rotationChanged)

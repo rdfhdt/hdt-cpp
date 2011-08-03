@@ -2,6 +2,8 @@
 
 #include "Color.h"
 #include <fstream>
+#include "stringutils.hpp"
+
 
 MatrixViewWidget::MatrixViewWidget(QWidget *parent) :
     QGLWidget(parent)
@@ -38,6 +40,8 @@ void MatrixViewWidget::initializeGL()
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LEQUAL);
 
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void MatrixViewWidget::paintShared()
@@ -161,10 +165,6 @@ void MatrixViewWidget::paintScales()
 
 void MatrixViewWidget::paintPoints()
 {
-
-    Color c;
-    ColorRamp2 cr;
-
     if(hdtmanager->getNumResults()==0) {
         // Do not render anything
     } else if(hdtmanager->getNumResults()<5000) {
@@ -176,14 +176,9 @@ void MatrixViewWidget::paintPoints()
         while(it->hasNext()) {
             hdt::TripleID *tid = it->next();
 
-            cr.apply(&c, tid->getPredicate(), 0, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
+            Color *c = hdtmanager->getHDTCachedInfo()->getPredicateColor(tid->getPredicate());
 
-            if(!hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
-                c.r = c.r/4;
-                c.g = c.g/4;
-                c.b = c.b/4;
-            }
-            glColor4f(c.r, c.g, c.b, c.a);
+            glColor4f(c->r, c->g, c->b, c->a);
             glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
 
         }
@@ -198,15 +193,14 @@ void MatrixViewWidget::paintPoints()
             hdt::TripleID *tid = &triples[i];
 
             if(tid->match(hdtmanager->getSearchPatternID())) {
+                Color *c = hdtmanager->getHDTCachedInfo()->getPredicateColor(tid->getPredicate());
 
-                cr.apply(&c, tid->getPredicate(), 0, hdtmanager->getHDT()->getDictionary().getMaxPredicateID());
-
-                if(!hdtmanager->isPredicateActive(tid->getPredicate()-1)) {
-                    c.r = c.r/4;
-                    c.g = c.g/4;
-                    c.b = c.b/4;
+                if(hdtmanager->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
+                    glColor4f(c->r, c->g, c->b, 1.0);
+                } else {
+                    glColor4f(c->r/2, c->g/2, c->b/2, 0.3);
                 }
-                glColor4f(c.r, c.g, c.b, c.a);
+
                 glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
             }
         }
@@ -233,21 +227,13 @@ void MatrixViewWidget::paintSelected()
 
         glColor4f(CROSS_COLOR);
         glBegin(GL_LINES);
-#if 0
-        // Draw X
-        GLfloat sizex = nobjects / 100;
-        GLfloat sizey = nsubjects / 100;
-        glVertex3f(x - sizex, y - sizey, z);
-        glVertex3f(x + sizex, y + sizey, z);
-        glVertex3f(x - sizex, y + sizey, z);
-        glVertex3f(x + sizex, y - sizey, z);
-#else
+
         // Draw +
         glVertex3f(0, y, z);
         glVertex3f(nobjects, y, z);
         glVertex3f(x, 0, z);
         glVertex3f(x, nsubjects, z);
-#endif
+
         glEnd();
 
         // Draw point
@@ -318,11 +304,11 @@ void MatrixViewWidget::mouseReleaseEvent(QMouseEvent *event)
         if(buttonClick & Qt::LeftButton) {
             //std::cout << "Left Mouse CLICK" << std::endl;
             if(hdtmanager->getSelectedTriple().isValid()) {
-                hdtmanager->selectPredicate(hdtmanager->getSelectedTriple().getPredicate());
+                hdtmanager->getPredicateStatus()->selectPredicate(hdtmanager->getSelectedTriple().getPredicate());
             }
         } else if (buttonClick & Qt::RightButton) {
             //std::cout << "Right Mouse CLICK" << std::endl;
-            hdtmanager->selectAllPredicates();
+            hdtmanager->getPredicateStatus()->selectAllPredicates();
         }
     }
 }
@@ -356,15 +342,6 @@ void MatrixViewWidget::unProject(int x, int y, double *outx, double *outy, doubl
     //printf("Orig: %f %f %f\n", wx, wy, wz);
     gluUnProject(wx, wy, 0, modelview, projection, viewport, outx, outy, outz);
     //printf("Dest: %f %f %f\n", *outx, *outy, *outz);
-}
-
-QString cleanString(string in) {
-    if(in.size()>150) {
-        QString str = in.substr(0, 147).c_str();
-        str.append("...");
-        return str;
-    }
-    return in.c_str();
 }
 
 void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
@@ -406,13 +383,14 @@ void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
     if ( (subject > 0 && subject < dictionary.getMaxSubjectID()) &&
          (object > 0 && object <= dictionary.getMaxObjectID())
        ) {
-        hdtmanager->selectTriple(subject,predicate, object);
+        hdtmanager->selectNearestTriple(subject,predicate, object);
 
-        QString subjStr = cleanString(dictionary.idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT));
-        QString predStr = cleanString(dictionary.idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE));
-        QString objStr = cleanString(dictionary.idToString(hdtmanager->getSelectedTriple().getObject(), hdt::OBJECT));
-        QString coordinate = QString("S: %1\nP: %2\nO: %3").arg(subjStr).arg(predStr).arg(objStr);
-        QToolTip::showText(this->mapToGlobal(event->pos()), coordinate);
+        QFontMetrics metric(QToolTip::font());
+        QString subjStr = metric.elidedText(dictionary.idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT).c_str(), Qt::ElideMiddle, 1024);
+        QString predStr = metric.elidedText(dictionary.idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE).c_str(), Qt::ElideMiddle, 1024);
+        QString objStr = metric.elidedText(dictionary.idToString(hdtmanager->getSelectedTriple().getObject(), hdt::OBJECT).c_str(), Qt::ElideMiddle, 1024);
+        QString tooltip = QString("S: %1\nP: %2\nO: %3").arg(subjStr).arg(predStr).arg(objStr);
+        QToolTip::showText(this->mapToGlobal(event->pos()), tooltip);
     } else {
         hdtmanager->clearSelectedTriple();
     }

@@ -5,6 +5,7 @@
 #include "ui_hdtspecform.h"
 
 #include "abouthdt.hpp"
+#include "hdtsummarygenerator.hpp"
 
 #include <fstream>
 
@@ -17,25 +18,28 @@ HDTit::HDTit(QWidget *parent) :
     ui->setupUi(this);
 
     ui->matrixView->setManager(hdtManager);
-
     ui->subjectView->setModel(hdtManager->getSubjectModel());
-
     ui->predicateView->setModel(hdtManager->getPredicateModel());
-
     ui->objectView->setModel(hdtManager->getObjectModel());
-
     ui->resultsTable->setModel(hdtManager->getSearchResultsModel());
 
+    // Camera
     connect(ui->matrixView, SIGNAL(rotationChanged()), this, SLOT(updateViewButtons()));
+
+    // Dataset
     connect(hdtManager, SIGNAL(datasetChanged()), ui->matrixView, SLOT(reloadHDTInfo()));
-    connect(hdtManager, SIGNAL(predicatesChanged()), ui->matrixView, SLOT(updateGL()));
-    connect(ui->selectAllPredicatesButton, SIGNAL(clicked()), hdtManager, SLOT(selectAllPredicates()));
-    connect(ui->selectNoneButton, SIGNAL(clicked()), hdtManager, SLOT(selectNonePredicates()));
 
-    connect(ui->predicateCountSlider, SIGNAL(valueChanged(int)), hdtManager, SLOT(setMinimumPredicateCount(int)));
-    connect(hdtManager, SIGNAL(minimumPredicateCountChanged(int)), ui->predicateCountSlider, SLOT(setValue(int)));
+    // Predicate Status
+    connect(ui->predicateCountSlider, SIGNAL(valueChanged(int)), hdtManager->getPredicateStatus(), SLOT(setMinimumPredicateCount(int)));
+    connect(hdtManager->getPredicateStatus(), SIGNAL(minimumPredicateCountChanged(int)), ui->predicateCountSlider, SLOT(setValue(int)));
+    connect(hdtManager->getPredicateStatus(), SIGNAL(predicatesChanged(unsigned int, unsigned int)), ui->matrixView, SLOT(updateGL()));
+    connect(ui->selectAllPredicatesButton, SIGNAL(clicked()), hdtManager->getPredicateStatus(), SLOT(selectAllPredicates()));
+    connect(ui->selectNoneButton, SIGNAL(clicked()), hdtManager->getPredicateStatus(), SLOT(selectNonePredicates()));
+    connect(hdtManager->getPredicateStatus(), SIGNAL(predicatesChanged(unsigned int,unsigned int)), hdtManager->getPredicateModel(), SLOT(itemsChanged(uint,uint)));
 
+    // Search pattern
     connect(hdtManager, SIGNAL(searchPatternChanged()), this, SLOT(refreshSearchPattern()));
+    connect(hdtManager, SIGNAL(numResultsChanged(int)), this, SLOT(updateNumResults()));
 }
 
 HDTit::~HDTit()
@@ -60,7 +64,6 @@ void HDTit::searchPatternEdited()
     std::string object = std::string(ui->objectPatternEdit->text().toAscii());
 
     hdt::TripleString ts(subject, predicate, object);
-    cout << "New search Pattern: " << ts << endl;
     hdtManager->setSearchPattern(ts);
 
     this->updateNumResults();
@@ -68,6 +71,7 @@ void HDTit::searchPatternEdited()
     ui->matrixView->updateGL();
 
     ui->subjectView->selectRow(hdtManager->getSearchPatternID().getSubject()-1);
+    ui->predicateView->selectRow(hdtManager->getSearchPatternID().getPredicate()-1);
     ui->objectView->selectRow(hdtManager->getSearchPatternID().getObject()-1);
 }
 
@@ -102,18 +106,18 @@ void HDTit::importRDFFile(QString &file, hdt::RDFNotation notation, hdt::HDTSpec
 
 void HDTit::hdtChanged(QString &file)
 {
-    ui->predicateCountSlider->setMaximum(hdtManager->getMaximumPredicateCount()+1);
+    ui->predicateCountSlider->setMaximum(hdtManager->getPredicateStatus()->getMaximumPredicateCount()+1);
     ui->predicateCountSlider->setValue(0);
     ui->statusBar->showMessage(file);
-    ui->statsLabel->setText(hdtManager->getStatistics());
+    ui->statsLabel->setText(HDTSummaryGenerator::getSummary(hdtManager->getHDT()));
     updateNumResults();
 
-    bool dataset = hdtManager->getHDT()!=NULL;
-    ui->actionSaveHDT->setEnabled(dataset);
-    ui->actionExportRDF->setEnabled(dataset);
-    ui->subjectPatternEdit->setEnabled(dataset);
-    ui->predicatePatternEdit->setEnabled(dataset);
-    ui->objectPatternEdit->setEnabled(dataset);
+    bool hasDataset = hdtManager->getHDT()!=NULL;
+    ui->actionSaveHDT->setEnabled(hasDataset);
+    ui->actionExportRDF->setEnabled(hasDataset);
+    ui->subjectPatternEdit->setEnabled(hasDataset);
+    ui->predicatePatternEdit->setEnabled(hasDataset);
+    ui->objectPatternEdit->setEnabled(hasDataset);
 
     refreshSearchPattern();
 }

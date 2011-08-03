@@ -24,10 +24,6 @@ void HDTCachedInfo::loadInfo(hdt::ProgressListener *listener)
     while(it->hasNext()) {
         hdt::TripleID *tid = it->next();
 
-        if(!tid->isValid()) {
-            cout << numResults << " Invalid: " << *tid << endl;
-        }
-
         if( (numResults%increment)==0) {
             triples.push_back(*tid);
         }
@@ -40,13 +36,13 @@ void HDTCachedInfo::loadInfo(hdt::ProgressListener *listener)
             maxPredicateCount = predicateCount[tid->getPredicate()-1];
         }
         numResults++;
+
+        NOTIFYCOND(listener, "PostProcessing HDT data", numResults, t.getNumberOfElements());
     }
-    cout << "Total: " << numResults << endl;
     resultsTime.stop();
     delete it;
 
     // Calculate Predicate Colors
-#if 0
     StopWatch s;
     predicateColors.clear();
     predicateColors.resize(nPred);
@@ -54,6 +50,9 @@ void HDTCachedInfo::loadInfo(hdt::ProgressListener *listener)
     for(unsigned int i=0;i<nPred; i++) {
         cr.apply(&predicateColors[i], i, 0, nPred);
     }
-    cout << "Predicate Colors: " << s.stopRealStr() << endl;
-#endif
+}
+
+Color * HDTCachedInfo::getPredicateColor(unsigned int npred)
+{
+    return &predicateColors[npred];
 }

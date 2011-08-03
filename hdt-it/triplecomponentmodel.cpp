@@ -58,7 +58,7 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     }
     case Qt::CheckStateRole:
         if(tripleComponentRole==hdt::PREDICATE) {
-            return hdtManager->isPredicateActive(index.row()) ? Qt::Checked : Qt::Unchecked;
+            return hdtManager->getPredicateStatus()->isPredicateActive(index.row()) ? Qt::Checked : Qt::Unchecked;
         }
     }
     return QVariant();
@@ -70,11 +70,10 @@ bool TripleComponentModel::setData(const QModelIndex &index, const QVariant &val
         return false;
     }
 
-    cout << "SetData" << endl;
     switch(role) {
         case Qt::CheckStateRole:
         if(tripleComponentRole==hdt::PREDICATE) {
-            hdtManager->setPredicateActive(index.row(), value.toBool());
+            hdtManager->getPredicateStatus()->setPredicateActive(index.row(), value.toBool());
         }
     }
     return true;
@@ -100,9 +99,6 @@ QVariant TripleComponentModel::headerData(int section, Qt::Orientation orientati
         }
         break;
     }
-    case Qt::SizeHintRole:
-    {
-    }
     }
 
     return QVariant();
@@ -110,7 +106,6 @@ QVariant TripleComponentModel::headerData(int section, Qt::Orientation orientati
 
 Qt::ItemFlags TripleComponentModel::flags(const QModelIndex &index) const
 {
-    //cout << "Flags" << endl;
     if(tripleComponentRole == hdt::PREDICATE) {
         return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
     } else {
@@ -118,7 +113,7 @@ Qt::ItemFlags TripleComponentModel::flags(const QModelIndex &index) const
     }
 }
 
-void TripleComponentModel::itemsChanged(unsigned int ini, unsigned fin)
+void TripleComponentModel::itemsChanged(unsigned int ini, unsigned int fin)
 {
     QModelIndex first = createIndex(ini, 1);
     QModelIndex last = createIndex(fin, 1);

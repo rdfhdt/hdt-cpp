@@ -23,3 +23,4 @@ QString stringutils::sizeHuman(unsigned long long size)
                 .arg(sizes[i]);
     }
 }
+

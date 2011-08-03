@@ -7,7 +7,7 @@
 QT       += core gui opengl
 
 CONFIG += debug_and_release
-macx:CONFIG += x86 x86_64
+#macx:CONFIG += x86_64
 
 TARGET = hdt-it
 TEMPLATE = app
@@ -37,7 +37,9 @@ SOURCES += main.cpp\
     hdtoperation.cpp \
     abouthdt.cpp \
     hdtcachedinfo.cpp \
-    stringutils.cpp
+    stringutils.cpp \
+    predicatestatus.cpp \
+    hdtsummarygenerator.cpp
 
 HEADERS  += hdtit.hpp \
     matrixviewwidget.hpp \
@@ -55,7 +57,9 @@ HEADERS  += hdtit.hpp \
     hdtoperation.hpp \
     abouthdt.hpp \
     hdtcachedinfo.hpp \
-    stringutils.hpp
+    stringutils.hpp \
+    predicatestatus.hpp \
+    hdtsummarygenerator.hpp
 
 FORMS    += hdtit.ui \
     hdtspecform.ui \

@@ -25,7 +25,6 @@ private:
     void importRDFFile(QString &file, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
 
     void hdtChanged(QString &file);
-    void updateNumResults();
 
 public:
     explicit HDTit(QWidget *parent = 0);
@@ -53,6 +52,7 @@ private slots:
     void on_actionAbout_triggered();
 
     void updateViewButtons();
+    void updateNumResults();
 };
 
 #endif // HDTIT_HPP

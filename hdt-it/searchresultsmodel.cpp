@@ -3,7 +3,7 @@
 
 SearchResultsModel::SearchResultsModel(QObject *parent, HDTManager *view) : hdtManager(view), triples(NULL)
 {
-    this->update();
+    this->updateResultListChanged();
 }
 
 SearchResultsModel::~SearchResultsModel()
@@ -98,7 +98,7 @@ QVariant SearchResultsModel::headerData(int section, Qt::Orientation orientation
     return QVariant();
 }
 
-void SearchResultsModel::update() {
+void SearchResultsModel::updateResultListChanged() {
     if(triples!=NULL) {
         delete triples;
         triples = NULL;
@@ -119,6 +119,22 @@ void SearchResultsModel::update() {
 
     emit layoutChanged();
 }
+
+void SearchResultsModel::updateNumResultsChanged()
+{
+    unsigned int old = numResults;
+    numResults = hdtManager->getNumResults();
+
+    if(old!=numResults) {
+#if 0
+    beginInsertRows(QModelIndex(), old, numResults);
+    endInsertRows();
+#else
+    emit layoutChanged();
+#endif
+    }
+}
+
 
 void SearchResultsModel::findTriple(unsigned int index)
 {
@@ -145,7 +161,10 @@ void SearchResultsModel::findTriple(unsigned int index)
         currentTriple = triples->next();
         currentIndex++;
     }
+
+    //cout << "Access " << currentIndex << " => " << *currentTriple << endl;
 }
+
 
 
 

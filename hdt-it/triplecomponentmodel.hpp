@@ -24,7 +24,8 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-    void itemsChanged(unsigned int ini, unsigned fin);
+public slots:
+    void itemsChanged(unsigned int ini, unsigned int fin);
     void notifyLayoutChanged();
 signals:
 };

@@ -25,7 +25,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
-        <string>RDF Input File</string>
+        <string>InputRDF file name or URI</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>

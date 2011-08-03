@@ -22,6 +22,8 @@ public:
 public:
     HDTCachedInfo(hdt::HDT *hdt);
 
+    Color *getPredicateColor(unsigned int npred);
+
     void loadInfo(hdt::ProgressListener *listener);
 };
 

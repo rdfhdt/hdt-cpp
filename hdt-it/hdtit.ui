@@ -252,7 +252,32 @@ p, li { white-space: pre-wrap; }
              </layout>
             </item>
             <item>
-             <widget class="QListView" name="predicateView"/>
+             <widget class="QTableView" name="predicateView">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="textElideMode">
+               <enum>Qt::ElideMiddle</enum>
+              </property>
+              <property name="horizontalScrollMode">
+               <enum>QAbstractItemView::ScrollPerPixel</enum>
+              </property>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>400</number>
+              </attribute>
+              <attribute name="horizontalHeaderMinimumSectionSize">
+               <number>400</number>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>20</number>
+              </attribute>
+              <attribute name="verticalHeaderStretchLastSection">
+               <bool>false</bool>
+              </attribute>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -604,22 +629,6 @@ p, li { white-space: pre-wrap; }
     <hint type="sourcelabel">
      <x>111</x>
      <y>453</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>354</x>
-     <y>261</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>predicateView</sender>
-   <signal>activated(QModelIndex)</signal>
-   <receiver>HDTit</receiver>
-   <slot>setPatternPredicate(QModelIndex)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>95</x>
-     <y>293</y>
     </hint>
     <hint type="destinationlabel">
      <x>354</x>
