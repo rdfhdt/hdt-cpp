@@ -95,6 +95,7 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 		lastY = y;
 		lastZ = z;
 
+		NOTIFYCOND(listener, "Converting to CompactTriples.", numTriples, triples.getNumberOfElements());
 		numTriples++;
 	}
 
@@ -150,7 +151,14 @@ bool CompactTriples::save(std::ostream & output, ControlInformation &controlInfo
 	controlInformation.set("stream.z", streamZ->getType());
 	controlInformation.save(output);
 
+	IntermediateListener iListener(listener);
+
+	iListener.setRange(0,30);
+	iListener.notifyProgress(0, "CompactTriples saving Stream Y");
 	streamY->save(output);
+
+	iListener.setRange(30,100);
+	iListener.notifyProgress(0, "CompactTriples saving Stream Z");
 	streamZ->save(output);
 }
 
@@ -169,11 +177,17 @@ void CompactTriples::load(std::istream &input, ControlInformation &controlInform
 
 	delete streamY;
 	delete streamZ;
-
 	streamY = StreamElements::getStream(typeY);
 	streamZ = StreamElements::getStream(typeZ);
 
+	IntermediateListener iListener(listener);
+
+	iListener.setRange(0,30);
+	iListener.notifyProgress(0, "CompactTriples loading Stream Y");
 	streamY->load(input);
+
+	iListener.setRange(30,100);
+	iListener.notifyProgress(0, "CompactTriples saving Stream Y");
 	streamZ->load(input);
 }
 
@@ -201,8 +215,6 @@ CompactTriplesIterator::CompactTriplesIterator(CompactTriples *trip, TripleID &p
 	patX = pattern.getSubject();
 	patY = pattern.getPredicate();
 	patZ = pattern.getObject();
-
-	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
 
 	goToStart();
 }

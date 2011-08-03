@@ -55,22 +55,10 @@ class CSD_PFC : public CSD
     /** General constructor **/
     CSD_PFC();
 
-    /** Constructor reading Tdict from a file named 'filename'. The file must
-	contain one word per line. 
-	@filename: path to the file containing the string dictionary.
-	@blocksize: number of strings stored in each dictionary block.
-    */
-    CSD_PFC(char *filename, uint32_t blocksize);
-
-    /** Constructor receiving Tdict as a sequence of 'tlength' uchars. Tdict
-	must concatenate all strings separated by '\n' characters.  
-	@dict: uchar stream representing the string dictionary.
-	@tlength: number of integer symbols in the stream.
-	@blocksize: number of strings stored in each dictionary block.
-    */
-    CSD_PFC(uchar *dict, uint tlength, uint32_t blocksize);
-
     CSD_PFC(IteratorUCharString *it, uint32_t blocksize);
+
+    /** General destructor. */
+    ~CSD_PFC();
     
     /** Returns the ID that identify s[1..length]. If it does not exist, 
 	returns 0. 
@@ -106,8 +94,6 @@ class CSD_PFC : public CSD
 	@fp: pointer to the file storing a CSD_PFC structure. */
     static CSD * load(ifstream & fp);
 	
-    /** General destructor. */		
-    ~CSD_PFC();	
 		
   protected:
     uint32_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
@@ -116,15 +102,6 @@ class CSD_PFC : public CSD
     uint32_t blocksize;	//! Number of strings stored in each block.
     uint32_t nblocks;	//! Number of total blocks in the dictionary.
     Array *blocks;	//! Start positions of dictionary blocks.
-
-    bool search;
-
-    /** Builds the CSD_PFC representation from a the Tdict comprising 'tlength'
-	unsigned chars. 
-	@tdict: uchar stream representing the string dictionary.
-    */    
-
-    void build(IteratorUCharString *iterator);
 
     /** Locates the block in where the string 's' can be stored. This method is
 	based on a binary search comparing the first string in each block and
@@ -159,7 +136,7 @@ class CSD_PFC : public CSD
 	@lstr1: length of the first string.
 	@lstr2: length of the second string.
     */
-    uint lcp(const uchar* str1, const uchar* str2, uint lstr1, uint lstr2);
+    uint longest_common_prefix(const uchar* str1, const uchar* str2, uint lstr1, uint lstr2);
   };
 };
 

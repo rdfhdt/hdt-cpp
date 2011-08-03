@@ -19,15 +19,18 @@ class RDFSerializerRaptor: public RDFSerializer {
 private:
 	// Raptor
 	raptor_world *world;
-	raptor_parser *rdf_parser;
+	raptor_serializer *rdf_serializer;
 	raptor_uri *base_uri;
+	raptor_iostream_handler handler;
+	raptor_iostream *iostream;
+	bool readingFromStream;
 
-
+	const char *getType(RDFNotation notation);
 public:
+	RDFSerializerRaptor(const char *fileName, RDFNotation notation);
 	RDFSerializerRaptor(std::ostream &s, RDFNotation notation);
 	virtual ~RDFSerializerRaptor();
-	void serialize(IteratorTripleString *it);
-	void endProcessing();
+	void serialize(IteratorTripleString *it, ProgressListener *listener=NULL, unsigned int totalTriples=0);
 };
 
 }

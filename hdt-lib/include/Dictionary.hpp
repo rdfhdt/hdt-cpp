@@ -1,4 +1,4 @@
-/*
+	/*
  * Dictionary.hpp
  *
  * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
@@ -164,12 +164,12 @@ public:
     /**
     * Function to be called before starting inserting entries to the dictionary to perform an initialization.
     */
-    virtual void startProcessing()=0;
+    virtual void startProcessing(ProgressListener *listener = NULL)=0;
 
     /**
     * Function to be called right after we are done inserting entries, to perform any possible final cleanup.
     */
-    virtual void stopProcessing()=0;
+    virtual void stopProcessing(ProgressListener *listener = NULL)=0;
 
     virtual string getType()=0;
 }; // IDictionary{}

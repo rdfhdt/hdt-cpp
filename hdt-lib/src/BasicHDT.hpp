@@ -49,6 +49,8 @@ private:
 	HDTSpecification spec;
 
 	void createComponents();
+	void loadDictionary(RDFParser &parser, ProgressListener *listener);
+	void loadTriples(RDFParser &parser, ProgressListener *listener);
 
 public:
 	BasicHDT();
@@ -84,6 +86,11 @@ public:
 	void loadFromHDT(std::istream &input, ProgressListener *listener = NULL);
 
 	/**
+	 * @param input
+	 */
+	void loadFromHDT(const char *fileName, ProgressListener *listener = NULL);
+
+	/**
 	 * @param output
 	 * @param notation
 	 */
@@ -93,6 +100,13 @@ public:
 	 * @param output
 	 */
 	void saveToHDT(std::ostream &output, ProgressListener *listener = NULL);
+
+	/**
+	 * @param output
+	 */
+	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
+
+
 
 	/**
 	 * @param subject
@@ -147,6 +161,11 @@ public:
 	void loadFromHDT(std::istream &input, ProgressListener *listener = NULL);
 
 	/**
+	 * @param input
+	 */
+	void loadFromHDT(const char *fileName, ProgressListener *listener = NULL);
+
+	/**
 	 * @param output
 	 * @param notation
 	 */
@@ -156,6 +175,11 @@ public:
 	 * @param output
 	 */
 	void saveToHDT(std::ostream &output, ProgressListener *listener = NULL);
+
+	/**
+	 * @param output
+	 */
+	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
 
 
 	/*

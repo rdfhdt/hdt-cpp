@@ -12,12 +12,17 @@ using namespace std;
 
 namespace hdt {
 
-RDFSerializerRaptor::RDFSerializerRaptor(std::ostream &s, RDFNotation notation) : RDFSerializer(s, notation) {
+RDFSerializerRaptor::RDFSerializerRaptor(const char *fileName, RDFNotation notation)
+	: RDFSerializer(notation),
+	  readingFromStream(false)
+{
+	world = raptor_new_world();
 
-}
+	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 
-RDFSerializerRaptor::~RDFSerializerRaptor() {
+	raptor_serializer* rdf_serializer = raptor_new_serializer(world, getType(notation)) ;
 
+	raptor_serializer_start_to_filename(rdf_serializer, fileName);
 }
 
 int iostream_write_bytes (void *context, const void *ptr, size_t size, size_t nmemb) {
@@ -40,6 +45,38 @@ int iostream_write_byte(void *context, const int byte) {
 	}
 }
 
+RDFSerializerRaptor::RDFSerializerRaptor(std::ostream &s, RDFNotation notation)
+	: RDFSerializer(notation),
+	  readingFromStream(true)
+{
+	world = raptor_new_world();
+
+	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
+
+	memset(&handler, 0, sizeof(handler));
+	handler.write_byte = iostream_write_byte;
+	handler.write_bytes = iostream_write_bytes;
+
+	iostream = raptor_new_iostream_from_handler(world, (void *) &s, &handler);
+	rdf_serializer = raptor_new_serializer(world, getType(notation)) ;
+
+	raptor_serializer_start_to_iostream(rdf_serializer, base_uri, iostream);
+}
+
+RDFSerializerRaptor::~RDFSerializerRaptor() {
+	raptor_serializer_serialize_end(rdf_serializer);
+
+	raptor_free_serializer(rdf_serializer);
+
+	if(readingFromStream) {
+		raptor_free_iostream(iostream);
+	}
+
+	raptor_free_uri(base_uri);
+
+	raptor_free_world(world);
+}
+
 raptor_term *getTerm(string &str, raptor_world *world) {
 	if(str=="") {
 		return NULL;
@@ -56,7 +93,7 @@ raptor_term *getTerm(string &str, raptor_world *world) {
 	}
 }
 
-const char *getType(RDFNotation notation) {
+const char *RDFSerializerRaptor::getType(RDFNotation notation) {
 	switch(notation) {
 	case N3:
 		return "n3";
@@ -70,22 +107,10 @@ const char *getType(RDFNotation notation) {
 	return "ntriples";
 }
 
-void RDFSerializerRaptor::serialize(IteratorTripleString *it)
+#include <stdio.h>
+
+void RDFSerializerRaptor::serialize(IteratorTripleString *it, ProgressListener *listener, unsigned int totalTriples)
 {
-	world = raptor_new_world();
-
-	raptor_uri* uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
-
-	raptor_iostream_handler handler;
-	memset(&handler, 0, sizeof(handler));
-	handler.write_byte = iostream_write_byte;
-	handler.write_bytes = iostream_write_bytes;
-
-	raptor_iostream *iostream = raptor_new_iostream_from_handler(world, (void *) &stream, &handler);
-	raptor_serializer* rdf_serializer = raptor_new_serializer(world, getType(notation)) ;
-
-	raptor_serializer_start_to_iostream(rdf_serializer, uri, iostream);
-
 	while( it->hasNext() ) {
 		TripleString *ts = it->next();
 
@@ -94,23 +119,11 @@ void RDFSerializerRaptor::serialize(IteratorTripleString *it)
 			triple->subject = getTerm(ts->getSubject(), world);
 			triple->predicate = getTerm(ts->getPredicate(), world);
 			triple->object = getTerm(ts->getObject(), world);
+			raptor_statement_print(triple, stdout);
 			raptor_serializer_serialize_statement(rdf_serializer, triple);
 			raptor_free_statement(triple);
 		}
 	}
-	raptor_serializer_serialize_end(rdf_serializer);
-
-	raptor_free_serializer(rdf_serializer);
-
-	raptor_free_iostream(iostream);
-
-	raptor_free_uri(uri);
-
-	raptor_free_world(world);
-}
-
-void RDFSerializerRaptor::endProcessing()
-{
 }
 
 }

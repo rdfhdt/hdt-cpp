@@ -59,16 +59,21 @@ public:
 	}
 };
 
-
-
-
-
 PFCDictionary::PFCDictionary() : blocksize(32)
 {
+	subjects = new csd::CSD_PFC();
+	predicates = new csd::CSD_PFC();
+	objects = new csd::CSD_PFC();
+	shared = new csd::CSD_PFC();
 }
 
 PFCDictionary::PFCDictionary(HDTSpecification & spec) : blocksize(32)
 {
+	subjects = new csd::CSD_PFC();
+	predicates = new csd::CSD_PFC();
+	objects = new csd::CSD_PFC();
+	shared = new csd::CSD_PFC();
+
 	string blockSizeStr = spec.get("dict.block.size");
 	if(blockSizeStr!=""){
 		blocksize = atoi(blockSizeStr.c_str());
@@ -77,18 +82,34 @@ PFCDictionary::PFCDictionary(HDTSpecification & spec) : blocksize(32)
 
 PFCDictionary::~PFCDictionary()
 {
+	delete subjects;
+	delete predicates;
+	delete objects;
+	delete shared;
 }
 
-void PFCDictionary::import(PlainDictionary *dictionary)
+void PFCDictionary::import(PlainDictionary *dictionary, ProgressListener *listener)
 {
+	delete subjects;
+	delete predicates;
+	delete objects;
+	delete shared;
+
 	DictIterator itSubj(dictionary->subjects_not_shared);
 	DictIterator itPred(dictionary->predicates);
 	DictIterator itObj(dictionary->objects_not_shared);
 	DictIterator itShared(dictionary->subjects_shared);
 
+	NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
 	subjects = new csd::CSD_PFC(&itSubj, blocksize);
+
+	NOTIFY(listener, "DictionaryPFC loading predicates", 0, 100);
 	predicates = new csd::CSD_PFC(&itPred, blocksize);
+
+	NOTIFY(listener, "DictionaryPFC loading objects", 0, 100);
 	objects = new csd::CSD_PFC(&itObj, blocksize);
+
+	NOTIFY(listener, "DictionaryPFC loading shared", 0, 100);
 	shared = new csd::CSD_PFC(&itShared, blocksize);
 
 	this->sizeStrings = dictionary->sizeStrings;
@@ -178,20 +199,35 @@ unsigned int PFCDictionary::stringToId(std::string &key, TripleComponentRole pos
 
 void PFCDictionary::load(std::istream & input, ControlInformation & ci, ProgressListener *listener)
 {
+	delete subjects;
+	delete predicates;
+	delete objects;
+	delete shared;
+
 	this->mapping = ci.getUint("$mapping");
 	this->sizeStrings = ci.getUint("$sizeStrings");
 
 	ifstream *in = dynamic_cast<ifstream *>(&input);
 
+	IntermediateListener iListener(listener);
+
+	iListener.setRange(0,25);
+	iListener.notifyProgress(0, "Dictionary read shared area.");
 	//cout << "Load shared " << in->tellg() << endl;
 	shared = csd::CSD::load(*in);
 
+	iListener.setRange(25,50);
+	iListener.notifyProgress(0, "Dictionary read subjects.");
 	//cout << "Load subjects " << in->tellg() << endl;
 	subjects = csd::CSD::load(*in);
 
+	iListener.setRange(50,75);
+	iListener.notifyProgress(0, "Dictionary read predicates.");
 	//cout << "Load predicates " << in->tellg() << endl;
 	predicates = csd::CSD::load(*in);
 
+	iListener.setRange(75,100);
+	iListener.notifyProgress(0, "Dictionary read objects.");
 	//cout << "Load objects " << in->tellg() << endl;
 	objects = csd::CSD::load(*in);
 
@@ -221,16 +257,25 @@ bool PFCDictionary::save(std::ostream & output, ControlInformation & controlInfo
 	controlInformation.save(output);
 
 	ofstream *out = dynamic_cast<ofstream *>(&output);
+	IntermediateListener iListener(listener);
 
+	iListener.setRange(0,10);
+	iListener.notifyProgress(0, "Dictionary save shared area.");
 	//cout << "Save shared " << out->tellp() << endl;
 	shared->save(*out);
 
+	iListener.setRange(10,45);
+	iListener.notifyProgress(0, "Dictionary save subjects.");
 	//cout << "Save subjects " << out->tellp() << endl;
 	subjects->save(*out);
 
+	iListener.setRange(45,60);
+	iListener.notifyProgress(0, "Dictionary save predicates.");
 	//cout << "Save predicates " << out->tellp() << endl;
 	predicates->save(*out);
 
+	iListener.setRange(60,100);
+	iListener.notifyProgress(0, "Dictionary save objects.");
 	//cout << "Save objects " << out->tellp() << endl;
 	objects->save(*out);
 
@@ -314,10 +359,10 @@ unsigned int PFCDictionary::size()
 	return shared->getSize()+subjects->getSize()+predicates->getSize()+objects->getSize();
 }
 
-void PFCDictionary::startProcessing(){
+void PFCDictionary::startProcessing(ProgressListener *listener){
 }
 
-void PFCDictionary::stopProcessing(){
+void PFCDictionary::stopProcessing(ProgressListener *listener){
 	cout << "************ SHARED ***********" << endl;
 	shared->dumpAll();
 

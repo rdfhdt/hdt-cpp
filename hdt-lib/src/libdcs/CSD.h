@@ -84,7 +84,8 @@ public:
 
 class CSD
 {		
-  public:			
+  public:
+	CSD();
     /** General destructor */
     virtual ~CSD() {};
 

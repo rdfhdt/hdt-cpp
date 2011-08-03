@@ -30,14 +30,12 @@ private:
 	vector<TripleString> vectorOutput;
 	unsigned int pos;
 
-	// Raptor
-	raptor_world *world;
 	raptor_parser *rdf_parser;
-	raptor_uri *base_uri;
 
 	const char *getParserType(RDFNotation notation);
 public:
 	RDFParserRaptor(std::istream &in, RDFNotation notation);
+	RDFParserRaptor(const char *fileName, RDFNotation notation);
 	virtual ~RDFParserRaptor();
 
 	bool hasNext();
@@ -47,6 +45,7 @@ public:
 	uint64_t getSize();
 
 	friend void raptor_process_triple(void *user_data, raptor_statement *triple);
+	friend void raptor_log_handler(void *user_data, raptor_log_message *message);
 };
 
 

@@ -28,16 +28,31 @@ void raptor_process_triple(void *user_data, raptor_statement *triple) {
 	RDFParserRaptor *raptorParser = reinterpret_cast<RDFParserRaptor *>(user_data);
 	raptorParser->vectorOutput.push_back(ts);
 
-//	cout << "Triples appended: " << raptorParser->vectorOutput.size() << endl;
+#if 0
+	raptor_locator *locator = raptor_parser_get_locator(raptorParser->rdf_parser);
+	raptorParser->size = raptor_locator_byte(locator);
+#endif
 }
 
-RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation) : RDFParser(in, notation), pos(0) {
+void raptor_log_handler(void *user_data, raptor_log_message *message) {
+	RDFParserRaptor *raptorParser = reinterpret_cast<RDFParserRaptor *>(user_data);
+
+	cout << "LOG: " << message->code << " => " << message->text << endl;
+    throw message->text;
+}
+
+RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation)
+	: RDFParser(notation),
+	  pos(0)
+{
 	size = fileUtil::getSize(in);
 
 	buf.resize(2048, '\0');
 
-	world = raptor_new_world();
-	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
+	raptor_world *world = raptor_new_world();
+	raptor_world_set_log_handler(world, (void *)this, raptor_log_handler);
+
+	raptor_uri *base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 	rdf_parser = raptor_new_parser(world, getParserType(notation));
 
 	raptor_parser_set_statement_handler(rdf_parser, (void *)this, raptor_process_triple);
@@ -51,9 +66,37 @@ RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation) : RDFPa
 	}
 	raptor_parser_parse_chunk(rdf_parser, NULL, 0, 1);
 
-	raptor_free_parser(rdf_parser);
-	raptor_free_uri(base_uri);
-	raptor_free_world(world);
+        raptor_free_parser(rdf_parser);
+        raptor_free_uri(base_uri);
+        raptor_free_world(world);
+}
+
+RDFParserRaptor::RDFParserRaptor(const char *fileName, RDFNotation notation) : RDFParser(notation), pos(0) {
+	raptor_world *world = raptor_new_world();
+	raptor_world_set_log_handler(world, (void *)this, raptor_log_handler);
+
+	rdf_parser = raptor_new_parser(world, getParserType(notation));
+	raptor_parser_set_statement_handler(rdf_parser, (void *)this, raptor_process_triple);
+
+	string file(fileName);
+	raptor_uri *fileUri;
+	if(file.substr(0,7)=="http://") {
+		fileUri = raptor_new_uri(world, (const unsigned char *) fileName);
+	} else {
+		unsigned char *fileUri_string = raptor_uri_filename_to_uri_string(fileName);
+		fileUri = raptor_new_uri(world, fileUri_string);
+		raptor_free_memory(fileUri_string);
+	}
+
+	raptor_uri *base_uri = raptor_uri_copy(fileUri);
+
+	raptor_parser_parse_uri(rdf_parser, fileUri, base_uri);
+
+        raptor_free_parser(rdf_parser);
+        raptor_free_uri(base_uri);
+        raptor_free_uri(fileUri);
+
+        raptor_free_world(world);
 }
 
 RDFParserRaptor::~RDFParserRaptor() {
@@ -86,11 +129,11 @@ void RDFParserRaptor::reset() {
 }
 
 uint64_t RDFParserRaptor::getPos(){
-	return input.tellg();
+	return pos;
 }
 
 uint64_t RDFParserRaptor::getSize() {
-	return size;
+        return vectorOutput.size();
 }
 
 }

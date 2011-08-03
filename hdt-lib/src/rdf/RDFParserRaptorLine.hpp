@@ -8,7 +8,7 @@
 #ifndef RDFPARSERRAPTORLINE_H_
 #define RDFPARSERRAPTORLINE_H_
 
-#include <istream>
+#include <fstream>
 #include <vector>
 
 #include <raptor2/raptor2.h>
@@ -22,6 +22,7 @@ namespace hdt {
 class RDFParserRaptorLine : public RDFParser {
 
 private:
+	std::istream *input;
 	uint64_t size;
 	TripleString ts;
 
@@ -38,6 +39,7 @@ private:
 	const char *getParserType(RDFNotation notation);
 public:
 	RDFParserRaptorLine(std::istream &in, RDFNotation notation);
+	RDFParserRaptorLine(const char *fileName, RDFNotation notation);
 	virtual ~RDFParserRaptorLine();
 
 	void readBlock();

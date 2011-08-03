@@ -40,9 +40,6 @@ private:
 	void increaseSize();
 	void ensureSize(unsigned int size);
 
-
-	void removeDuplicates();
-
 	TripleID *getTripleID(unsigned int num);
 
 public:
@@ -102,9 +99,9 @@ public:
 
 	void populateHeader(Header &header, string rootNode);
 
-	void startProcessing();
+	void startProcessing(ProgressListener *listener=NULL);
 
-	void stopProcessing();
+	void stopProcessing(ProgressListener *listener=NULL);
 
 	string getType();
 
@@ -140,7 +137,10 @@ public:
 	 * @param order
 	 *            The order to sort the triples with
 	 */
-	void sort(TripleComponentOrder order);
+	void sort(TripleComponentOrder order, ProgressListener *listener=NULL);
+
+	void removeDuplicates(ProgressListener *listener=NULL);
+
 
 	/**
 	 * Sets a type of order(TripleComponentOrder)

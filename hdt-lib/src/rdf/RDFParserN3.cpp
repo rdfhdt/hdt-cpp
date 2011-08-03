@@ -10,18 +10,25 @@
 
 namespace hdt {
 
-RDFParserN3::RDFParserN3(std::istream &in, RDFNotation notation) : RDFParser(in, notation) {
-	size = fileUtil::getSize(in);
+RDFParserN3::RDFParserN3(std::istream &in, RDFNotation notation) : RDFParser(notation), input(&in) {
+	size = fileUtil::getSize(*input);
+}
+
+RDFParserN3::RDFParserN3(const char *fileName, RDFNotation notation) : RDFParser(notation), input(new ifstream(fileName, ios::binary | ios::in)) {
+	size = fileUtil::getSize(*input);
 }
 
 RDFParserN3::~RDFParserN3() {
-	// TODO Auto-generated destructor stub
+
 }
 
-
 bool RDFParserN3::hasNext() {
-	getline(input, line);
-	return line!="";
+	if(input->good()) {
+		getline(*input, line);
+		return line!="";
+	} else {
+		return false;
+	}
 }
 
 TripleString *RDFParserN3::next() {
@@ -155,12 +162,12 @@ TripleString *RDFParserN3::next() {
 }
 
 void RDFParserN3::reset() {
-	input.clear(); // Resets EOF
-	input.seekg(0, std::ios::beg);
+	input->clear(); // Resets EOF
+	input->seekg(0, std::ios::beg);
 }
 
 uint64_t RDFParserN3::getPos(){
-	return input.tellg();
+	return input->tellg();
 }
 
 uint64_t RDFParserN3::getSize() {

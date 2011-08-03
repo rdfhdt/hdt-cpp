@@ -127,8 +127,8 @@ public:
 
 	unsigned int insert(std::string &str, TripleComponentRole position);
 
-	void startProcessing();
-	void stopProcessing();
+	void startProcessing(ProgressListener *listener = NULL);
+	void stopProcessing(ProgressListener *listener = NULL);
 
 	string getType();
 
@@ -136,8 +136,8 @@ public:
 private:
 	void insert(std::string entry, DictionarySection pos);
 
-	void split();
-	void lexicographicSort();
+	void split(ProgressListener *listener = NULL);
+	void lexicographicSort(ProgressListener *listener = NULL);
 	void idSort();
 	void updateIDs();
 

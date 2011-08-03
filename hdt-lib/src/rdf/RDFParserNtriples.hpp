@@ -31,8 +31,10 @@ typedef enum {
 
 class RDFParserNtriples : public RDFParser {
 private:
+	std::istream *input;
 	uint64_t size;
 	std::string lineStr;
+	char *fileName;
 	TripleString ts;
 
 	unsigned int byte;
@@ -55,7 +57,8 @@ private:
 	int parse_line(unsigned char *buffer, unsigned int len, int max_terms);
 
 public:
-	RDFParserNtriples(std::istream &istream, RDFNotation notation);
+	RDFParserNtriples(const char *fileName, RDFNotation notation);
+	RDFParserNtriples(std::istream &input, RDFNotation notation);
 	virtual ~RDFParserNtriples();
 
 	bool hasNext();

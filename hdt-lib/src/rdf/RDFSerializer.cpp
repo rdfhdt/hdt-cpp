@@ -14,12 +14,19 @@
 namespace hdt {
 
 RDFSerializer *RDFSerializer::getSerializer(std::ostream &out, RDFNotation notation) {
-#ifdef USE_RAPTOR
-	return new RDFSerializerRaptor(out, notation);
-#else
+//#ifdef USE_RAPTOR
+//	return new RDFSerializerRaptor(out, notation);
+//#else
 	return new RDFSerializerN3(out,notation);
-#endif
+//#endif
 }
 
+RDFSerializer *RDFSerializer::getSerializer(const char *fileName, RDFNotation notation) {
+//#ifdef USE_RAPTOR
+	//	return new RDFSerializerRaptor(fileName, notation);
+	//#else
+	return new RDFSerializerN3(fileName,notation);
+	//#endif
+}
 
 }

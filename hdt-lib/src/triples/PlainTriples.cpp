@@ -42,16 +42,24 @@ float PlainTriples::cost(TripleID & triple)
 void PlainTriples::load(ModifiableTriples &triples, ProgressListener *listener) {
 	triples.sort(order);
 
+	IntermediateListener iListener(listener);
+
+	iListener.setRange(0,33);
+	iListener.notifyProgress(0, "PlainTriples Importing subjects");
 	IteratorTripleID *itS = triples.searchAll();
 	ComponentIterator subjIt(itS, SUBJECT);
 	streamX->add(subjIt);
 	delete itS;
 
+	iListener.setRange(33, 66);
+	iListener.notifyProgress(0, "PlainTriples Importing predicates");
 	IteratorTripleID *itP = triples.searchAll();
 	ComponentIterator predIt(itS, PREDICATE);
 	streamY->add(predIt);
 	delete itP;
 
+	iListener.setRange(66, 100);
+	iListener.notifyProgress(0, "PlainTriples Importing objects");
 	IteratorTripleID *itO = triples.searchAll();
 	ComponentIterator objIt(itS, OBJECT);
 	streamZ->add(objIt);
@@ -87,8 +95,18 @@ bool PlainTriples::save(std::ostream & output, ControlInformation &controlInform
 	controlInformation.set("stream.z", streamZ->getType());
 	controlInformation.save(output);
 
+	IntermediateListener iListener(listener);
+
+	iListener.setRange(0,33);
+	iListener.notifyProgress(0, "PlainTriples saving subjects");
 	streamX->save(output);
+
+	iListener.setRange(33, 66);
+	iListener.notifyProgress(0, "PlainTriples saving predicates");
 	streamY->save(output);
+
+	iListener.setRange(66, 100);
+	iListener.notifyProgress(0, "PlainTriples saving objects");
 	streamZ->save(output);
 }
 
@@ -109,8 +127,18 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 	streamY = StreamElements::getStream(typePredicates);
 	streamZ = StreamElements::getStream(typeObjects);
 
+	IntermediateListener iListener(listener);
+
+	iListener.setRange(0,33);
+	iListener.notifyProgress(0, "PlainTriples loading subjects");
 	streamX->load(input);
+
+	iListener.setRange(33, 66);
+	iListener.notifyProgress(0, "PlainTriples loading predicates");
 	streamY->load(input);
+
+	iListener.setRange(66, 100);
+	iListener.notifyProgress(0, "PlainTriples loading objects");
 	streamZ->load(input);
 }
 

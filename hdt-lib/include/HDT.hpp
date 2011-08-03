@@ -90,6 +90,12 @@ public:
 	virtual void loadFromHDT(std::istream &input, ProgressListener *listener = NULL) = 0;
 
 	/**
+	 * Load an HDT file from a stream.
+	 * @param input
+	 */
+	virtual void loadFromHDT(const char *fileName, ProgressListener *listener = NULL) = 0;
+
+	/**
 	 * Export the current HDT to RDF in the specified notation.
 	 * @param output
 	 * @param notation
@@ -97,11 +103,16 @@ public:
 	virtual void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL) = 0;
 
 	/**
+	 * Save the current HDT into a file in a compact manner.
+	 * @param output
+	 */
+	virtual void saveToHDT(const char *fileName, ProgressListener *listener = NULL) = 0;
+
+	/**
 	 * Save the current HDT into a stream in a compact manner.
 	 * @param output
 	 */
-	virtual void saveToHDT(std::ostream &output, ProgressListener *listener = NULL) = 0;
-
+	virtual void saveToHDT(std::ostream &out, ProgressListener *listener = NULL) = 0;
 
 	/*
 	 * FROM RDFAccess

@@ -93,6 +93,7 @@ bool TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 	for( unsigned int i = 0; i < arrayOfTriples.size(); i++ ) {
 		if ( arrayOfTriples[i].isValid() ) {
 			output.write((char *)&arrayOfTriples[i], sizeof(TripleID));
+			NOTIFYCOND(listener, "TriplesList saving", i, arrayOfTriples.size())
 		}
 	}
 
@@ -112,6 +113,7 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 		arrayOfTriples.push_back(readTriple);
 		numRead++;
 		numValidTriples++;
+		NOTIFYCOND(listener, "TriplesList loading", numRead, totalTriples)
 	}
 }
 
@@ -135,11 +137,11 @@ void TriplesList::populateHeader(Header &header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
 }
 
-void TriplesList::startProcessing()
+void TriplesList::startProcessing(ProgressListener *listener)
 {
 }
 
-void TriplesList::stopProcessing()
+void TriplesList::stopProcessing(ProgressListener *listener)
 {
 }
 
@@ -206,7 +208,7 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 	return removed;
 }
 
-void TriplesList::sort(TripleComponentOrder order)
+void TriplesList::sort(TripleComponentOrder order, ProgressListener *listener)
 {
 	if(this->order != order) {
 		StopWatch st;
@@ -229,7 +231,7 @@ TripleID* TriplesList::getTripleID(unsigned int i)
 	return &this->arrayOfTriples[i];
 }
 
-void TriplesList::removeDuplicates() {
+void TriplesList::removeDuplicates(ProgressListener *listener) {
 
 	if(arrayOfTriples.size()<=1)
 		return;
@@ -246,6 +248,7 @@ void TriplesList::removeDuplicates() {
 			j++;
 			arrayOfTriples[j] = arrayOfTriples[i];
 		}
+		NOTIFYCOND(listener, "TriplesList Removing duplicates", i, arrayOfTriples.size());
 	}
 
 	cout << "Removed "<< arrayOfTriples.size()-j-1 << " duplicates in " << st << endl;

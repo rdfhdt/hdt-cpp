@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#include <fstream>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -16,14 +17,30 @@
 
 namespace hdt {
 
-RDFParserNtriples::RDFParserNtriples(std::istream &in, RDFNotation notation) : RDFParser(in, notation) {
+RDFParserNtriples::RDFParserNtriples(const char *fileName, RDFNotation notation) :
+		RDFParser(notation),
+		input(new std::ifstream(fileName, ios::binary | ios::in))
+{
 	lineNum = 1;
 	column = 0;
 	byte = 0;
 
 	isNQuad = false; // FIXME: Adjust
 
-	size = fileUtil::getSize(in);
+	size = fileUtil::getSize(*input);
+}
+
+RDFParserNtriples::RDFParserNtriples(std::istream &in, RDFNotation notation) :
+		RDFParser(notation),
+		input(&in)
+{
+	lineNum = 1;
+	column = 0;
+	byte = 0;
+
+	isNQuad = false; // FIXME: Adjust
+
+	size = fileUtil::getSize(*input);
 }
 
 RDFParserNtriples::~RDFParserNtriples() {
@@ -823,7 +840,7 @@ int RDFParserNtriples::parse_line(unsigned char *buffer, unsigned int len, int m
 }
 
 bool RDFParserNtriples::hasNext() {
-	getline(input, lineStr);
+	getline(*input, lineStr);
 	return lineStr!="";
 }
 
@@ -836,15 +853,15 @@ TripleString *RDFParserNtriples::next() {
 }
 
 void RDFParserNtriples::reset() {
-	input.clear(); // Resets EOF
-	input.seekg(0, std::ios::beg);
+	input->clear(); // Resets EOF
+	input->seekg(0, std::ios::beg);
 	lineNum=1;
 	column=0;
 	byte=0;
 }
 
 uint64_t RDFParserNtriples::getPos(){
-	return input.tellg();
+	return input->tellg();
 }
 
 uint64_t RDFParserNtriples::getSize() {

@@ -11,6 +11,8 @@
 
 #include <HDTVocabulary.hpp>
 
+#include "../util/StopWatch.hpp"
+
 namespace hdt {
 
 
@@ -37,6 +39,7 @@ BitmapTriples::~BitmapTriples() {
 float BitmapTriples::cost(TripleID & triple)
 {
 }
+
 
 void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener) {
 	triples.sort(order);
@@ -109,6 +112,7 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 		lastY = y;
 		lastZ = z;
 
+        NOTIFYCOND(listener, "Converting to BitmapTriples", numTriples, triples.getNumberOfElements());
 		numTriples++;
 	}
 
@@ -220,14 +224,25 @@ bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 	controlInformation.save(output);
 
 	// Fixme: Bitmap directly on istream/ostream??
+	IntermediateListener iListener(listener);
 	ofstream *out = dynamic_cast<ofstream *>(&output);
 	//cout << "Save BitmapY " << out->tellp() << endl;
+	iListener.setRange(0,5);
+	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Y");
 	bitmapY->save(*out);
+
+	iListener.setRange(5,15);
+	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Z");
 	//cout << "Save BitmapZ " << out->tellp() << endl;
 	bitmapZ->save(*out);
 
+	iListener.setRange(15,30);
+	iListener.notifyProgress(0, "BitmapTriples saving Stream Y");
 	//cout << "Save StreamY " << out->tellp() << endl;
 	streamY->save(output);
+
+	iListener.setRange(30,100);
+	iListener.notifyProgress(0, "BitmapTriples saving Stream Z");
 	//cout << "Save StreamZ " << out->tellp() << endl;
 	streamZ->save(output);
 	//cout << "OK " << out->tellp() << endl;
@@ -244,22 +259,73 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	delete streamY;
 	delete streamZ;
 
-
 	streamY = StreamElements::getStream(typeY);
 	streamZ = StreamElements::getStream(typeZ);
 
+	IntermediateListener iListener(listener);
+
 	// Fixme: Bitmap directly on istream/ostream??
 	ifstream *in = dynamic_cast<ifstream *>(&input);
+
+	iListener.setRange(0,10);
+	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Y");
 	//cout << "Load BitmapY " << in->tellg() << endl;
 	bitmapY = cds_static::BitSequence::load(*in);
+
+	iListener.setRange(10,20);
+	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Z");
 	//cout << "Load BitmapZ " << in->tellg() << endl;
 	bitmapZ = cds_static::BitSequence::load(*in);
 
+	iListener.setRange(20,50);
+	iListener.notifyProgress(0, "BitmapTriples loading Stream Y");
 	//cout << "Load StreamY " << in->tellg() << endl;
 	streamY->load(input);
+
+	iListener.setRange(50,100);
+	iListener.notifyProgress(0, "BitmapTriples loading Stream Z");
 	//cout << "Load StreamZ " << in->tellg() << endl;
 	streamZ->load(input);
 	//cout << "OK " << in->tellg() << endl;
+
+#if 0
+	// CREATE Index.
+	StopWatch st;
+	vector <vector<unsigned int> > index;
+	for(unsigned int i=0;i<streamZ->getNumberOfElements(); i++) {
+		unsigned int val = streamZ->get(i);
+		if(index.size()<val) {
+			index.resize(val);
+		}
+		index[val-1].push_back(i);
+	}
+
+	BitString *indexBitmapTmp = new BitString(streamZ->getNumberOfElements());
+
+	unsigned int pos=0;
+	vector<unsigned int> out;
+	for(unsigned int i=0;i<index.size();i++){
+		//cout << "Object " << i << " (" << index[i].size() << ") => ";
+		for(unsigned int j=0;j<index[i].size()-1;j++){
+			out.push_back(index[i][j]);
+			indexBitmapTmp->setBit(pos, false);
+			//cout << index[i][j] << " ";
+			pos++;
+		}
+		//cout << "[" << index[i][index[i].size()-1] << endl;
+		out.push_back(index[i][index[i].size()-1]);
+		indexBitmapTmp->setBit(pos, true);
+		pos++;
+	}
+
+	cds_static::BitSequence *indexBitmap = new cds_static::BitSequenceRG(*indexBitmapTmp, 20);
+	cds_utils::Array *array = new cds_utils::Array(out, 0);
+
+	cout << "Order: " << getOrderStr(order) << endl;
+	cout << "Index generated in " << st << endl;
+	cout << "Bitmap size: " << size() << endl;
+	cout << "Index size: " << indexBitmap->getSize()+array->getSize() << endl;
+#endif
 }
 
 unsigned int BitmapTriples::getNumberOfElements()
@@ -290,8 +356,8 @@ BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, Tr
 	patY = pattern.getPredicate();
 	patZ = pattern.getObject();
 
-	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
 #if 0
+	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
 	cout << "AdjY: " << endl;
 	adjY.dump();
 	cout << "AdjZ: " << endl;

@@ -51,7 +51,6 @@ private:
 	TripleComponentOrder order;
 	unsigned int numValidTriples;
 
-	void removeDuplicates();
 public:
 	TriplesList();
 	TriplesList(HDTSpecification &specification);
@@ -113,15 +112,9 @@ public:
 	 */
 	void populateHeader(Header &header, string rootNode);
 
-	/**
-	 * TODO Define and decide on return type (bool?)
-	 */
-	void startProcessing();
+	void startProcessing(ProgressListener *listener=NULL);
 
-	/**
-	 * TODO Define and decide on return type (bool?)
-	 */
-	void stopProcessing();
+	void stopProcessing(ProgressListener *listener=NULL);
 
 	string getType();
 
@@ -153,7 +146,9 @@ public:
 	 *
 	 * @param order The order to sort the triples with
 	 */
-	void sort(TripleComponentOrder order);
+	void sort(TripleComponentOrder order, ProgressListener *listener = NULL);
+
+	void removeDuplicates(ProgressListener *listener = NULL);
 
 	/**
 	 * Sets a type of order(TripleComponentOrder)

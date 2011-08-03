@@ -11,23 +11,37 @@ using namespace std;
 
 namespace hdt {
 
-RDFSerializerN3::~RDFSerializerN3() {
-	// TODO Auto-generated destructor stub
+RDFSerializerN3::RDFSerializerN3(std::ostream &s, RDFNotation notation)
+	: RDFSerializer(notation),
+	  output(&s)
+	{
+
 }
 
-void RDFSerializerN3::serialize(IteratorTripleString *it)
+RDFSerializerN3::RDFSerializerN3(const char *fileName, RDFNotation notation)
+	: RDFSerializer(notation),
+	  output(new std::ofstream(fileName, ios::binary | ios::out))
 {
+
+}
+
+RDFSerializerN3::~RDFSerializerN3() {
+
+}
+
+void RDFSerializerN3::serialize(IteratorTripleString *it, ProgressListener *listener, unsigned int totalTriples)
+{
+	unsigned int numTriple=0;
 	while(it->hasNext()) {
 		TripleString *ts = it->next();
 
 		if(!ts->isEmpty()) {
-			stream << ts->getSubject() << ' ' << ts->getPredicate() << ' ' << ts->getObject() << " ." << endl;
+			*output << ts->getSubject() << ' ' << ts->getPredicate() << ' ' << ts->getObject() << " ." << endl;
 		}
-	}
-}
+		numTriple++;
 
-void RDFSerializerN3::endProcessing()
-{
+		NOTIFYCOND(listener, "Exporting HDT to RDF", numTriple, totalTriples);
+	}
 }
 
 }

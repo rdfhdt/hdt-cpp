@@ -163,110 +163,161 @@ IteratorTripleString *BasicHDT::search(const char *subject, const char *predicat
 	}
 }
 
-#define NOTIFY(listener, percent, message) \
-    if(listener!=NULL) listener->notifyProgress( (percent), message);
-
-#define NOTIFYCOND(listener, percent, message, number) \
-    if(listener!=NULL && ((number)%20000) == 0) listener->notifyProgress( (percent), message);
-
-void BasicHDT::loadFromRDF(RDFParser &parser, ProgressListener *listener)
-{
-	// Generate Dictionary
-	cout << "Generate Dictionary... "<< endl;
-
+void BasicHDT::loadDictionary(RDFParser &parser, ProgressListener *listener) {
 	PlainDictionary *dict = new PlainDictionary();
-
 	unsigned int numtriples = 0;
-	StopWatch st;
-	dict->startProcessing();
-	while(parser.hasNext()) {
-		TripleString *ts = parser.next();
-		numtriples++;
-		//std::cout << *ts << std::endl;
+    StopWatch st;
+    IntermediateListener iListener(listener);
 
-		dict->insert(ts->getSubject(), SUBJECT);
-		dict->insert(ts->getPredicate(), PREDICATE);
-		dict->insert(ts->getObject(), OBJECT);
+	try {
+		NOTIFY(listener, "Loading Dictionary", 0, 100);
+		iListener.setRange(0,80);
+		dict->startProcessing();
+		while(parser.hasNext()) {
+			TripleString *ts = parser.next();
+			numtriples++;
+			//std::cout << *ts << std::endl;
 
-		NOTIFYCOND(listener, parser.getPos()*48/parser.getSize(), "Generating Dictionary", numtriples);
+			dict->insert(ts->getSubject(), SUBJECT);
+			dict->insert(ts->getPredicate(), PREDICATE);
+			dict->insert(ts->getObject(), OBJECT);
+
+			NOTIFYCOND(&iListener, "Generating Dictionary", parser.getPos(), parser.getSize());
+		}
+
+		iListener.setRange(80,90);
+		dict->stopProcessing(&iListener);
+	} catch (const char *e) {
+		cout << "Catch exception dictionary" << e << endl;
+		delete dict;
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception dictionary" << e << endl;
+		delete dict;
+		throw e;
 	}
-	NOTIFY(listener, 48, "Reorganizing Dictionary");
 
-	dict->stopProcessing();
-
-	NOTIFY(listener, 49, "Converting Dictionary");
 	if(dictionary->getType()==dict->getType()) {
 		delete dictionary;
 		dictionary = dict;
 	} else {
 		if(dictionary->getType()==HDTVocabulary::DICTIONARY_TYPE_PFC){
-			cout << "Convert to PFCDictionary" << endl;
+			iListener.setRange(90,100);
 			PFCDictionary *pfcd = dynamic_cast<PFCDictionary*>(dictionary);
-			pfcd->import(dict);
+			pfcd->import(dict, &iListener);
 			delete dict;
 		} else {
 			throw "Dictionary implementation not available.";
 		}
 	}
-	dictionary->populateHeader(*header, "<http://purl.org/hdt/dictionary>"); // FIXME: Assing appropiate rootnode.
 	cout << dictionary->getNumberOfElements() << " entries added in " << st << endl << endl;
+}
 
-	// Generate Triples
-	cout << "Generating triples... "<< endl;
-	parser.reset();
+void BasicHDT::loadTriples(RDFParser &parser, ProgressListener *listener){
 
+    // Generate Triples
 	ModifiableTriples *triplesList = new TriplesList(spec);
-	TripleID ti;
-	st.reset();
-	triplesList->startProcessing();
-	while(parser.hasNext()) {
-		TripleString *ts = parser.next();
-		//std::cout << ts << std::endl;
+    TripleID ti;
+    StopWatch st;
+    IntermediateListener iListener(listener);
 
-		dictionary->tripleStringtoTripleID(*ts, ti);
-		//cout << "TripleID: " << ti << endl;
-		triplesList->insert(ti);
+	try {
+		NOTIFY(listener, "Loading Triples", 0, 100);
+		iListener.setRange(0,60);
+		parser.reset();
+		triplesList->startProcessing(&iListener);
+		while(parser.hasNext()) {
+			TripleString *ts = parser.next();
+			//std::cout << ts << std::endl;
 
-		NOTIFYCOND(listener, 50+(triplesList->getNumberOfElements()*40)/numtriples, "Generating Triples", triplesList->getNumberOfElements());
+			dictionary->tripleStringtoTripleID(*ts, ti);
+			//cout << "TripleID: " << ti << endl;
+			triplesList->insert(ti);
+
+			NOTIFYCOND(&iListener, "Generating Triples", parser.getPos(), parser.getSize());
+		}
+		triplesList->stopProcessing(&iListener);
+
+		// SORT & Duplicates
+		TripleComponentOrder order = parseOrder(spec.get("triples.component.order").c_str());
+		if(order==Unknown){
+			order = SPO;
+		}
+
+		iListener.setRange(80, 85);
+		triplesList->sort(order, &iListener);
+
+		iListener.setRange(85, 90);
+		triplesList->removeDuplicates(&iListener);
+	} catch (const char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw e;
 	}
-	triplesList->stopProcessing();
 
-	// SORT & Duplicates
-	TripleComponentOrder order = parseOrder(spec.get("triples.component.order").c_str());
-	if(order==Unknown){
-		order = SPO;
-	}
-
-	NOTIFY(listener, 92, "Sorting Triples");
-	triplesList->sort(order);
-
-	NOTIFY(listener, 95, "Removing duplicate Triples");
-	triplesList->removeDuplicates();
-
-	NOTIFY(listener, 98, "Convert to final format");
 	if(triples->getType()==triplesList->getType()) {
 		delete triples;
 		triples = triplesList;
 	}else{
-		triples->load(*triplesList);
+		iListener.setRange(90, 100);
+		triples->load(*triplesList, &iListener);
 		delete triplesList;
 	}
 
-	triples->populateHeader(*header, "<http://purl.org/hdt/triples>");
 	cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
+}
 
-	header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::ORIGINAL_SIZE, parser.getSize());
-	header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::HDT_SIZE, getDictionary().size()+getTriples().size());
+void BasicHDT::loadFromRDF(RDFParser &parser, ProgressListener *listener)
+{
+	try {
+		IntermediateListener iListener(listener);
+
+		iListener.setRange(0,50);
+		loadDictionary(parser, &iListener);
+
+		iListener.setRange(50,99);
+		loadTriples(parser, &iListener);
+
+		dictionary->populateHeader(*header, "<http://purl.org/hdt/dictionary>"); // FIXME: Assing appropiate rootnode.
+		triples->populateHeader(*header, "<http://purl.org/hdt/triples>");
+		header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::ORIGINAL_SIZE, parser.getSize());
+		header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::HDT_SIZE, getDictionary().size()+getTriples().size());
+	}catch (const char *e) {
+		cout << "Catch exception load" << endl;
+		delete header;
+		delete dictionary;
+		delete triples;
+		createComponents();
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception load" << endl;
+		delete header;
+		delete dictionary;
+		delete triples;
+		createComponents();
+		throw e;
+	}
 }
 
 void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 {
 	IteratorTripleString *it = search("", "", "");
-	serializer.serialize(it);
-	serializer.endProcessing();
+	serializer.serialize(it, listener, getTriples().getNumberOfElements());
 	delete it;
 }
 
+void BasicHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
+	ifstream input(fileName, ios::binary | ios::in);
+	if(!input.good()){
+		throw "Error opening file to load HDT.";
+	}
+	this->loadFromHDT(input, listener);
+	input.close();
+}
 
 void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 {
@@ -275,23 +326,37 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	delete triples;
 
 	ControlInformation controlInformation;
+	IntermediateListener iListener(listener);
 
 	// Load header
+	iListener.setRange(0,5);
 	controlInformation.load(input);
 	header = HDTFactory::readHeader(controlInformation);
-	header->load(input, controlInformation, listener);
+	header->load(input, controlInformation, &iListener);
 
 	//Load Dictionary.
+	iListener.setRange(5, 60);
 	controlInformation.clear();
 	controlInformation.load(input);
 	dictionary = HDTFactory::readDictionary(controlInformation);
-	dictionary->load(input, controlInformation, listener);
+	dictionary->load(input, controlInformation, &iListener);
 
 	// Load Triples
+	iListener.setRange(60,100);
 	controlInformation.clear();
 	controlInformation.load(input);
 	triples = HDTFactory::readTriples(controlInformation);
-	triples->load(input, controlInformation, listener);
+	triples->load(input, controlInformation, &iListener);
+}
+
+void BasicHDT::saveToHDT(const char *fileName, ProgressListener *listener)
+{
+	ofstream out(fileName, ios::binary | ios::out);
+	if(!out.good()){
+		throw "Error opening file to save HDT.";
+	}
+	this->saveToHDT(out, listener);
+	out.close();
 }
 
 void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
@@ -408,15 +473,11 @@ void BasicModifiableHDT::loadFromRDF(RDFParser &parser, ProgressListener *listen
 			tid.setAll(sid, pid, oid);
 
 			triplesList->insert(tid);
-
-			NOTIFYCOND(listener, parser.getPos()*48/parser.getSize(), "Generating Dictionary", numtriples);
 		}
-		NOTIFY(listener, 48, "Reorganizing Dictionary");
 
 		dict->stopProcessing();
 		triplesList->stopProcessing();
 
-		NOTIFY(listener, 49, "Converting Dictionary");
 		if(dictionary->getType()==dict->getType()) {
 			delete dictionary;
 			dictionary = dict;
@@ -438,13 +499,10 @@ void BasicModifiableHDT::loadFromRDF(RDFParser &parser, ProgressListener *listen
 			order = SPO;
 		}
 
-		NOTIFY(listener, 92, "Sorting Triples");
 		triplesList->sort(order);
 
-		NOTIFY(listener, 95, "Removing duplicate Triples");
 		triplesList->removeDuplicates();
 
-		NOTIFY(listener, 98, "Convert Triples to final format");
 		if(triples->getType()==triplesList->getType()) {
 			delete triples;
 			triples = triplesList;
@@ -462,12 +520,19 @@ void BasicModifiableHDT::loadFromRDF(RDFParser &parser, ProgressListener *listen
 
 void BasicModifiableHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 {
-	IteratorTripleString *it = search("", "", "");
-	serializer.serialize(it);
-	serializer.endProcessing();
+    IteratorTripleString *it = search("","","");
+    serializer.serialize(it, listener, this->getTriples().getNumberOfElements() );
 	delete it;
 }
 
+void BasicModifiableHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
+	ifstream input(fileName, ios::binary | ios::in);
+	if(!input.good()){
+		throw "Error opening file to save HDT.";
+	}
+	this->loadFromHDT(input, listener);
+	input.close();
+}
 
 void BasicModifiableHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 {
@@ -479,6 +544,16 @@ void BasicModifiableHDT::loadFromHDT(std::istream & input, ProgressListener *lis
 	controlInformation.clear();
 	controlInformation.load(input);
 	triples->load(input, controlInformation);
+}
+
+void BasicModifiableHDT::saveToHDT(const char *fileName, ProgressListener *listener)
+{
+	ofstream out(fileName, ios::binary | ios::out);
+	if(!out.good()){
+		throw "Error opening file to save HDT.";
+	}
+	this->saveToHDT(out, listener);
+	out.close();
 }
 
 void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *listener)

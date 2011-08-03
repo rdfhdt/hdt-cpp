@@ -114,8 +114,6 @@ void PropertyUtil::read(std::istream &is, PropertyMapT &map)
             val << ch;
             ch = next;
         }
-        if (DEBUG)
-            std::cout << "key:" << key.str() << "|value:" << val.str() << std::endl;
         map[key.str()] = val.str();
     }
 }

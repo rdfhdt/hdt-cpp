@@ -21,11 +21,10 @@ namespace hdt {
 class RDFParser: public IteratorTripleString {
 
 protected:
-	std::istream &input;
 	RDFNotation notation;
 
 public:
-	RDFParser(std::istream &in, RDFNotation notation) : input(in), notation(notation) { }
+	RDFParser(RDFNotation notation) : notation(notation) { }
 	~RDFParser() { }
 
 	virtual bool hasNext()=0;
@@ -34,7 +33,8 @@ public:
 	virtual uint64_t getPos()=0;
 	virtual uint64_t getSize()=0;
 
-	static RDFParser *getParser(std::istream &input, RDFNotation notation);
+	static RDFParser *getParser(const char *filename, RDFNotation notation);
+	static RDFParser *getParser(std::istream &stream, RDFNotation notation);
 };
 
 }

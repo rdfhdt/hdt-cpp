@@ -90,14 +90,9 @@ int main(int argc, char **argv) {
 		in.close();
 
 		if(outputFile!="-") {
-			ofstream out(outputFile.c_str());
-			if(!in.good()){
-				throw "Could not write to output file.";
-			}
-			RDFSerializer *serializer = RDFSerializer::getSerializer(out, notation);
+			RDFSerializer *serializer = RDFSerializer::getSerializer(outputFile.c_str(), notation);
 			hdt->saveToRDF(*serializer);
 			delete serializer;
-			out.close();
 		} else {
 			RDFSerializer *serializer = RDFSerializer::getSerializer(cout, notation);
 			hdt->saveToRDF(*serializer);

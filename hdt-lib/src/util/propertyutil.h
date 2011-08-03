@@ -13,7 +13,6 @@
 
 class PropertyUtil
 {
-    enum { DEBUG = 0 };
 
 public:
 

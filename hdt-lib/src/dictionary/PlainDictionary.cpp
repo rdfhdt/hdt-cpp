@@ -135,7 +135,7 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 	}
 }
 
-void PlainDictionary::startProcessing()
+void PlainDictionary::startProcessing(ProgressListener *listener)
 {
 	subjects_not_shared.clear();
 	subjects_shared.clear();
@@ -148,13 +148,87 @@ void PlainDictionary::startProcessing()
 	prefixes.clear();
 }
 
-void PlainDictionary::stopProcessing()
+void PlainDictionary::stopProcessing(ProgressListener *listener)
 {
-	this->split();
+	this->split(listener);
 	//std::cout << "Splitted" << std::endl;
-	this->lexicographicSort();
+	this->lexicographicSort(listener);
 	//std::cout << "Sorted" << std::endl;
 	//dumpSizes(cout);
+}
+
+
+bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
+{
+	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PLAIN);
+	controlInformation.set("format", "text/plain");
+	controlInformation.setUint("$elements", getNumberOfElements());
+
+	controlInformation.setUint("$subjects", getNsubjects());
+	controlInformation.setUint("$objects", getNobjects());
+	controlInformation.setUint("$predicates", getNpredicates());
+	controlInformation.setUint("$sharedso", getSsubobj());
+
+	controlInformation.setUint("$maxid", getMaxID());
+	controlInformation.setUint("$maxsubjectid",getMaxSubjectID());
+	controlInformation.setUint("$maxpredicateid", getMaxPredicateID());
+	controlInformation.setUint("$maxobjectid", getMaxObjectID());
+
+	controlInformation.setUint("$mapping", this->mapping);
+
+	controlInformation.setUint("$sizeStrings", this->sizeStrings);
+
+	controlInformation.save(output);
+
+	unsigned int i = 0;
+	unsigned int counter=0;
+	const char marker = '\n';
+
+	//shared subjects-objects from subjects
+	for (i = 0; i < subjects_shared.size(); i++) {
+		output << *subjects_shared[i]->prefix;
+		output << *subjects_shared[i]->str;
+		output.put(marker); //character to split file
+		counter++;
+		NOTIFYCOND(listener, "PlainDictionary saving shared", counter, getNumberOfElements());
+	}
+
+	output.put(marker); //extra line to set the begining of next part of dictionary
+
+	//not shared subjects
+	for (i = 0; i < subjects_not_shared.size(); i++) {
+		output << *subjects_not_shared[i]->prefix;
+		output << *subjects_not_shared[i]->str;
+		output.put(marker); //character to split file
+		counter++;
+		NOTIFYCOND(listener, "PlainDictionary saving subjects", counter, getNumberOfElements());
+	}
+
+	output.put(marker); //extra line to set the begining of next part of dictionary
+
+	//not shared objects
+	for (i = 0; i < objects_not_shared.size(); i++) {
+		output << *objects_not_shared[i]->prefix;
+		output << *objects_not_shared[i]->str;
+		output.put(marker); //character to split file
+		counter++;
+		NOTIFYCOND(listener, "PlainDictionary saving objects", counter, getNumberOfElements());
+	}
+
+	output.put(marker); //extra line to set the begining of next part of dictionary
+
+	//predicates
+	for (i = 0; i < predicates.size(); i++) {
+		output << *predicates[i]->prefix;
+		output << *predicates[i]->str;
+		output.put(marker); //character  to split file
+		counter++;
+		NOTIFYCOND(listener, "PlainDictionary saving predicates", counter, getNumberOfElements());
+	}
+
+	output.put(marker);
+
+	return true;
 }
 
 void PlainDictionary::load(std::istream & input, ControlInformation &ci, ProgressListener *listener)
@@ -166,23 +240,34 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 
 	this->mapping = ci.getUint("$mapping");
 	this->sizeStrings = ci.getUint("$sizeStrings");
+	unsigned int numElements = ci.getUint("$elements");
+	unsigned int numLine = 0;
 
+	IntermediateListener iListener(listener);
+	iListener.setRange(0,25);
+	iListener.notifyProgress(0, "Dictionary save shared area.");
 	while(region<5 && getline(input, line)) {
 		//std::cout << line << std::endl;
 
 		if(line!="") {
 			if (region == 1) { //shared SO
+				NOTIFYCOND(&iListener, "Dictionary loading shared area.", numLine, numElements);
 				insert(line, SHARED_SUBJECT);
 			} else if (region == 2) { //not shared Subjects
+				NOTIFYCOND(&iListener, "Dictionary loading subjects.", numLine, numElements);
 				insert(line, NOT_SHARED_SUBJECT);
+				NOTIFYCOND(&iListener, "Dictionary loading objects.", numLine, numElements);
 			} else if (region == 3) { //not shared Objects
 				insert(line, NOT_SHARED_OBJECT);
+				NOTIFYCOND(&iListener, "Dictionary loading predicates.", numLine, numElements);
 			} else if (region == 4) { //predicates
 				insert(line, NOT_SHARED_PREDICATE);
 			}
 		} else {
 			region++;
 		}
+
+		numLine++;
 	}
 
 	// No stopProcessing() Needed. Dictionary already split and sorted in file.
@@ -272,69 +357,6 @@ string intToStr(int val) {
 	return out.str();
 }
 
-bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
-{
-	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PLAIN);
-	controlInformation.set("format", "text/plain");
-	controlInformation.setUint("$elements", getNumberOfElements());
-
-	controlInformation.setUint("$subjects", getNsubjects());
-	controlInformation.setUint("$objects", getNobjects());
-	controlInformation.setUint("$predicates", getNpredicates());
-	controlInformation.setUint("$sharedso", getSsubobj());
-
-	controlInformation.setUint("$maxid", getMaxID());
-	controlInformation.setUint("$maxsubjectid",getMaxSubjectID());
-	controlInformation.setUint("$maxpredicateid", getMaxPredicateID());
-	controlInformation.setUint("$maxobjectid", getMaxObjectID());
-
-	controlInformation.setUint("$mapping", this->mapping);
-
-	controlInformation.setUint("$sizeStrings", this->sizeStrings);
-
-	controlInformation.save(output);
-
-	unsigned int i = 0;
-	const char marker = '\n';
-
-	//shared subjects-objects from subjects
-	for (i = 0; i < subjects_shared.size(); i++) {
-		output << *subjects_shared[i]->prefix;
-		output << *subjects_shared[i]->str;
-		output.put(marker); //character to split file
-	}
-
-	output.put(marker); //extra line to set the begining of next part of dictionary
-
-	//not shared subjects
-	for (i = 0; i < subjects_not_shared.size(); i++) {
-		output << *subjects_not_shared[i]->prefix;
-		output << *subjects_not_shared[i]->str;
-		output.put(marker); //character to split file
-	}
-
-	output.put(marker); //extra line to set the begining of next part of dictionary
-
-	//not shared objects
-	for (i = 0; i < objects_not_shared.size(); i++) {
-		output << *objects_not_shared[i]->prefix;
-		output << *objects_not_shared[i]->str;
-		output.put(marker); //character to split file
-	}
-
-	output.put(marker); //extra line to set the begining of next part of dictionary
-
-	//predicates
-	for (i = 0; i < predicates.size(); i++) {
-		output << *predicates[i]->prefix;
-		output << *predicates[i]->str;
-		output.put(marker); //character  to split file
-	}
-
-	output.put(marker);
-
-	return true;
-}
 
 // PRIVATE
 
@@ -373,7 +395,7 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
 /** Split
  * @return void
  */
-void PlainDictionary::split() {
+void PlainDictionary::split(ProgressListener *listener) {
 	subjects_not_shared.clear();
 	subjects_shared.clear();
 	objects_not_shared.clear();
@@ -406,7 +428,7 @@ void PlainDictionary::split() {
  * @param mapping Description of the param.
  * @return void
  */
-void PlainDictionary::lexicographicSort() {
+void PlainDictionary::lexicographicSort(ProgressListener *listener) {
 
 	//sort shared and not shared subjects
 	sort(subjects_shared.begin(), subjects_shared.end(), DictionaryEntry::cmpLexicographic);

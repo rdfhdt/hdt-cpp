@@ -58,7 +58,6 @@ private:
 
 public:
 	PFCDictionary();
-	PFCDictionary(PlainDictionary *dictionary);
 	PFCDictionary(HDTSpecification &spec);
 	~PFCDictionary();
 
@@ -85,12 +84,12 @@ public:
 
 	unsigned int insert(std::string &str, TripleComponentRole position);
 
-	void startProcessing();
-	void stopProcessing();
+	void startProcessing(ProgressListener *listener = NULL);
+	void stopProcessing(ProgressListener *listener = NULL);
 
 	string getType();
 
-	void import(PlainDictionary *dictionary);
+	void import(PlainDictionary *dictionary, ProgressListener *listener = NULL);
 
 private:
 	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);

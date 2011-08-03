@@ -140,15 +140,10 @@ int main(int argc, char **argv) {
 
 	try {
 		// Read RDF
-		ifstream in(inputFile.c_str());
-		if(!in.good()){
-			throw "Could not open input file.";
-		}
 		StopWatch globalTimer;
-		RDFParser *parser = RDFParser::getParser(in, notation);
+		RDFParser *parser = RDFParser::getParser(inputFile.c_str(), notation);
 		hdt->loadFromRDF(*parser, &progress);
 		delete parser;
-		in.close();
 
 		ofstream out;
 

@@ -35,32 +35,38 @@
 
 namespace csd
 {
-  CSD * CSD::load(ifstream & fp)
-  {
-    uint32_t r = loadValue<uint32_t>(fp);
-    //uint32_t pos = fp.tellg();
-    //fp.seekg(pos-sizeof(uint32_t));
-    //fp.seekg(-sizeof(uint32_t), ios_base::cur);
-    switch(r)
-    {
-//	case HTFC: return CSD_HTFC::load(fp);
+
+CSD::CSD() : length(0) {
+
+}
+
+CSD * CSD::load(ifstream & fp)
+{
+	uint32_t r = loadValue<uint32_t>(fp);
+	//uint32_t pos = fp.tellg();
+	//fp.seekg(pos-sizeof(uint32_t));
+	//fp.seekg(-sizeof(uint32_t), ios_base::cur);
+	switch(r)
+	{
+	//	case HTFC: return CSD_HTFC::load(fp);
 	case PFC: return CSD_PFC::load(fp);
-//	case REPAIRDAC: return CSD_RePairDAC::load(fp);
-//	case FMINDEX: return CSD_FMIndex::load(fp);
-//	case HASHHUFF: return CSD_HashHuff::load(fp);
-								/*
+	//	case REPAIRDAC: return CSD_RePairDAC::load(fp);
+	//	case FMINDEX: return CSD_FMIndex::load(fp);
+	//	case HASHHUFF: return CSD_HashHuff::load(fp);
+	/*
 	 * case DELTA: return URICDDelta::load(fp);
 	 * case DELTA_HT: return URICDDelta_HT::load(fp);
-    */
-		}
+	 */
+	}
 
-    return NULL;
-  }
-	
-  uint32_t CSD::getLength()
-  {
-    return length;
-  }
+	return NULL;
+}
+
+uint32_t CSD::getLength()
+{
+	return length;
+}
+
 };
 
 

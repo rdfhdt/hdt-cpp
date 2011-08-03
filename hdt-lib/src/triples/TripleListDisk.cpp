@@ -235,12 +235,12 @@ bool TripleListDisk::save(std::ostream & output, ControlInformation &controlInfo
 	}
 }
 
-void TripleListDisk::startProcessing()
+void TripleListDisk::startProcessing(ProgressListener *listener)
 {
 	cout << "TripleListDisk Start processing" << endl;
 }
 
-void TripleListDisk::stopProcessing()
+void TripleListDisk::stopProcessing(ProgressListener *listener)
 {
 	sort(SPO);
 	removeDuplicates();
@@ -396,7 +396,7 @@ int tripleIDcmp(const void *a, const void *b) {
 	return t1->compare(*t2);
 }
 
-void TripleListDisk::sort(TripleComponentOrder order)
+void TripleListDisk::sort(TripleComponentOrder order, ProgressListener *listener)
 {
 	// SORT
 	// FIXME: USE specified order
@@ -408,7 +408,7 @@ void TripleListDisk::sort(TripleComponentOrder order)
 	cout << "Sorted in " << st << endl;
 }
 
-void TripleListDisk::removeDuplicates() {
+void TripleListDisk::removeDuplicates(ProgressListener *listener) {
 
 	TripleID previous = *arrayTriples;
 	StopWatch st;

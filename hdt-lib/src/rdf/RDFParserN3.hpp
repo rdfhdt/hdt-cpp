@@ -9,7 +9,7 @@
 #define RDFPARSERN3_H_
 
 #include <stdint.h>
-#include <istream>
+#include <fstream>
 
 #include "RDFParser.hpp"
 
@@ -21,9 +21,11 @@ private:
 	uint64_t size;
 	std::string line;
 	TripleString ts;
+	std::istream *input;
 
 public:
 	RDFParserN3(std::istream &in, RDFNotation notation);
+	RDFParserN3(const char *fileName, RDFNotation notation);
 	virtual ~RDFParserN3();
 
 	bool hasNext();

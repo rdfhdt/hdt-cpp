@@ -163,9 +163,9 @@ public:
 	 * @param order
 	 *            The order to sort the triples with
 	 */
-	virtual void sort(TripleComponentOrder order)=0;
+	virtual void sort(TripleComponentOrder order, ProgressListener *listener = NULL)=0;
 
-	virtual void removeDuplicates()=0;
+	virtual void removeDuplicates(ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Sets a type of order(TripleComponentOrder)
@@ -179,12 +179,12 @@ public:
 	 *  Called before inserting a set of triples
 	 *
 	 */
-	virtual void startProcessing()=0;
+	virtual void startProcessing(ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Called after all triples have been inserted.
 	 */
-	virtual void stopProcessing()=0;
+	virtual void stopProcessing(ProgressListener *listener = NULL)=0;
 };
 
 }
