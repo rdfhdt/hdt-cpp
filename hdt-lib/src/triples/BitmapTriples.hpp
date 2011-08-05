@@ -11,12 +11,11 @@
 #include <Triples.hpp>
 #include <HDTSpecification.hpp>
 
-#include "../stream/WaveletStream.hpp"
-
 #include <libcdsBasics.h>
 #include <BitSequenceRG.h>
 #include <BitString.h>
 
+#include "../stream/WaveletStream.hpp"
 #include "../stream/AdjacencyList.hpp"
 #include "TripleOrderConvert.hpp"
 
@@ -26,10 +25,14 @@ class BitmapTriples : public Triples {
 private:
 	ControlInformation controlInformation;
 	HDTSpecification spec;
-	StreamElements *streamY, *streamZ;
-	cds_static::BitSequence *bitmapY, *bitmapZ;
+	StreamElements *streamY, *streamZ, *streamIndex;
+	cds_static::BitSequence *bitmapY, *bitmapZ, *bitmapIndex;
+	WaveletStream *waveletZ;
+
 	unsigned int numTriples;
 	TripleComponentOrder order;
+
+	void generateIndex(ProgressListener *listener);
 public:
 	BitmapTriples();
 	BitmapTriples(HDTSpecification &specification);
@@ -90,7 +93,6 @@ class BitmapTriplesSearchIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
 	TripleID pattern, returnTriple;
-
 	unsigned int patX, patY, patZ;
 
 	AdjacencyList adjY, adjZ;

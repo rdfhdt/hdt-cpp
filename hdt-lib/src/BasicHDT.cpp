@@ -114,8 +114,8 @@ void BasicHDT::createComponents() {
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
                 triples = new TriplesList(spec);
 #ifndef WIN32
-        } else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
-                triples = new TripleListDisk();
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
+		triples = new TripleListDisk();
 #endif
 #ifdef USE_FOQ
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_FOQ) {
@@ -271,7 +271,12 @@ void BasicHDT::loadTriples(RDFParser &parser, ProgressListener *listener){
 	cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
-void BasicHDT::loadFromRDF(RDFParser &parser, ProgressListener *listener)
+void BasicHDT::createHeaderScheme(string baseUri)
+{
+
+}
+
+void BasicHDT::loadFromRDF(RDFParser &parser, string baseUri, ProgressListener *listener)
 {
 	try {
 		IntermediateListener iListener(listener);
@@ -282,10 +287,33 @@ void BasicHDT::loadFromRDF(RDFParser &parser, ProgressListener *listener)
 		iListener.setRange(50,99);
 		loadTriples(parser, &iListener);
 
-		dictionary->populateHeader(*header, "<http://purl.org/hdt/dictionary>"); // FIXME: Assing appropiate rootnode.
-		triples->populateHeader(*header, "<http://purl.org/hdt/triples>");
-		header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::ORIGINAL_SIZE, parser.getSize());
-		header->insert("<http://purl.org/hdt/dataset>", HDTVocabulary::HDT_SIZE, getDictionary().size()+getTriples().size());
+		header->insert(baseUri, HDTVocabulary::RDF_TYPE, HDTVocabulary::HDT_DATASET);
+		string formatNode = "_:format";
+		header->insert(baseUri, HDTVocabulary::HDT_FORMAT_INFORMATION, formatNode);
+		string dictNode = "_:dictionary";
+		header->insert(formatNode, HDTVocabulary::HDT_DICTIONARY, dictNode);
+		string triplesNode = "_:triples";
+		header->insert(formatNode, HDTVocabulary::HDT_TRIPLES, triplesNode);
+		string statisticsNode = "_:statistics";
+		header->insert(baseUri, HDTVocabulary::HDT_STATISTICAL_INFORMATION, statisticsNode);
+		string publicationInfoNode = "_:publicationInformation";
+		header->insert(baseUri, HDTVocabulary::HDT_PUBLICATION_INFORMATION, publicationInfoNode);
+
+		dictionary->populateHeader(*header, dictNode);
+		triples->populateHeader(*header, triplesNode);
+		header->insert(statisticsNode, HDTVocabulary::ORIGINAL_SIZE, parser.getSize());
+		header->insert(statisticsNode, HDTVocabulary::HDT_SIZE, getDictionary().size()+getTriples().size());
+
+#ifdef WIN32
+
+#else
+		time_t now;
+		char date[40];
+		time(&now);
+		struct tm *today = localtime(&now);
+		strftime(date, 40, "%Y-%m-%dT%H:%M:%S%z", today);
+		header->insert(publicationInfoNode, HDTVocabulary::DUBLIN_CORE_ISSUED, date);
+#endif
 	}catch (const char *e) {
 		cout << "Catch exception load" << endl;
 		delete header;
@@ -364,27 +392,21 @@ void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 	StopWatch st;
 	ControlInformation controlInformation;
 
-	cout << "Saving header" << endl;
-	st.reset();
 	controlInformation.setHeader(true);
 	header->save(output, controlInformation, listener);
-	cout << "Header saved in " << st << endl;
 
-	cout << "Saving dictionary" << endl;
-	st.reset();
 	controlInformation.setDictionary(true);
 	dictionary->save(output, controlInformation, listener);
-	cout << "Dictionary saved in " << st << endl;
 
-	cout << "Saving triples" << endl;
-	st.reset();
 	controlInformation.clear();
 	controlInformation.setTriples(true);
 	triples->save(output, controlInformation, listener);
-	cout << "Triples saved in " << st << endl;
 }
 
+void BasicHDT::convert(HDTSpecification &spec)
+{
 
+}
 
 
 
@@ -452,7 +474,7 @@ IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char
 
 
 
-void BasicModifiableHDT::loadFromRDF(RDFParser &parser, ProgressListener *listener)
+void BasicModifiableHDT::loadFromRDF(RDFParser &parser, string baseUri, ProgressListener *listener)
 {
 		PlainDictionary *dict = new PlainDictionary();
 		ModifiableTriples *triplesList = new TriplesList(spec);
@@ -571,6 +593,11 @@ void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *list
 	st.reset();
 	triples->save(output, controlInformation);
 	cout << "Triples saved in " << st << endl;
+}
+
+void BasicModifiableHDT::convert(HDTSpecification &spec)
+{
+
 }
 
 void BasicModifiableHDT::insert(TripleString & triple)

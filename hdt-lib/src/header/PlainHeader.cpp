@@ -13,10 +13,10 @@
 
 namespace hdt {
 
-PlainHeader::PlainHeader() {
+PlainHeader::PlainHeader() : anonCounter(0) {
 }
 
-PlainHeader::PlainHeader(HDTSpecification &specification) : spec(specification) {
+PlainHeader::PlainHeader(HDTSpecification &specification) : spec(specification), anonCounter(0) {
 }
 
 PlainHeader::~PlainHeader() {
@@ -85,7 +85,13 @@ IteratorTripleString *PlainHeader::search(const char *subject, const char *predi
     return new PlainHeaderIteratorTripleString(this, pattern);
 }
 
-
+string PlainHeader::getAnon()
+{
+	anonCounter++;
+	stringstream out;
+	out << "_:anon" << anonCounter;
+	return out.str();
+}
 
 /// ITERATOR
 PlainHeaderIteratorTripleString::PlainHeaderIteratorTripleString(PlainHeader *header, TripleString &pattern)
@@ -120,6 +126,12 @@ hdt::TripleString * PlainHeaderIteratorTripleString::next()
 	returnTriple = nextTriple;
 	doFetch();
     return &returnTriple;
+}
+
+void PlainHeaderIteratorTripleString::goToStart()
+{
+	pos=0;
+	doFetch();
 }
 
 }

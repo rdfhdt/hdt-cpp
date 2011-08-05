@@ -1,4 +1,4 @@
-	/*
+/*
  * Dictionary.hpp
  *
  * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto

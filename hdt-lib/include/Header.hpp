@@ -62,7 +62,9 @@ public:
 	int getPropertyInt(const char *subject, const char *predicate) {
 		string str = getProperty(subject, predicate);
 		stringstream ss(str);
+		char c;
 		int value;
+		ss >> c;
 		ss >> value;
 		return value;
 	}
@@ -70,9 +72,23 @@ public:
 	long long getPropertyLong(const char *subject, const char *predicate) {
 		string str = getProperty(subject, predicate);
 		stringstream ss(str);
+		char c;   // First "
 		long long value;
+		ss >> c;
 		ss >> value;
 		return value;
+	}
+
+	string getSubject(const char *property, const char *value) {
+		hdt::IteratorTripleString *it = search("", property, value);
+		std::string out;
+		if(it->hasNext()) {
+			hdt::TripleString *ts = it->next();
+                        out = ts->getSubject();
+		}
+		delete it;
+
+		return out;
 	}
 
 	/**
@@ -88,7 +104,7 @@ public:
 	 * @param triples New triple to be added.
 	 */
 	void insert(string subject, string predicate, string object) {
-		if(object.at(0)!='<' && object.at(0)!='"' && object.at(0)!='_') {
+		if(object.length()==0 || (object.at(0)!='<' && object.at(0)!='"' && object.at(0)!='_')) {
 			object = "\""+object+"\"";
 		}
 		TripleString ts(subject, predicate, object);
@@ -104,7 +120,7 @@ public:
 		stringstream st;
 		st << object;
 		//TripleString ts(subject, predicate, "\""+st.str()+"\"^^<http://www.w3.org/2001/XMLSchema#integer>");
-		TripleString ts(subject, predicate, st.str());
+		TripleString ts(subject, predicate, "\""+st.str()+"\"");
 		insert(ts);
 	}
 
@@ -129,6 +145,8 @@ public:
 	 * @param triples Iterator of TripleString indicating the triple patterns to be removed.
 	 */
 	virtual void remove(IteratorTripleString *triples) = 0;
+
+	virtual string getAnon() = 0;
 };
 
 }

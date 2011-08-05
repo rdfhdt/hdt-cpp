@@ -81,7 +81,7 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	virtual void loadFromRDF(RDFParser &parser, ProgressListener *listener = NULL) = 0;
+	virtual void loadFromRDF(RDFParser &parser, string baseUri, ProgressListener *listener = NULL) = 0;
 
 	/**
 	 * Load an HDT file from a stream.
@@ -90,7 +90,7 @@ public:
 	virtual void loadFromHDT(std::istream &input, ProgressListener *listener = NULL) = 0;
 
 	/**
-	 * Load an HDT file from a stream.
+	 * Load an HDT file from a file.
 	 * @param input
 	 */
 	virtual void loadFromHDT(const char *fileName, ProgressListener *listener = NULL) = 0;
@@ -113,6 +113,8 @@ public:
 	 * @param output
 	 */
 	virtual void saveToHDT(std::ostream &out, ProgressListener *listener = NULL) = 0;
+
+	virtual void convert(HDTSpecification &spec)=0;
 
 	/*
 	 * FROM RDFAccess

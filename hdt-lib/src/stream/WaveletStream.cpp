@@ -65,9 +65,7 @@ void WaveletStream::load(std::istream & input)
 		sequence=NULL;
 	}
 
-	cout << "Load WV from " << in->tellg() << endl;
 	sequence = cds_static::Sequence::load(*in);
-	cout << "AFTER " << in->tellg() << endl;
 }
 
 void WaveletStream::save(std::ostream & output)
@@ -77,9 +75,7 @@ void WaveletStream::save(std::ostream & output)
 
 	std::ofstream *out = dynamic_cast<std::ofstream *>(&output);
 
-	cout << "Save WV to " << out->tellp() << endl;
 	sequence->save(*out);
-	cout << "AFTER " << out->tellp() << endl;
 }
 
 unsigned int WaveletStream::getNumberOfElements()

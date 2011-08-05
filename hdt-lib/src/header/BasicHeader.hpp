@@ -48,6 +48,7 @@ class BasicHeader : public Header {
 private:
 	HDTSpecification spec;
 	ModifiableHDT *hdt;	// Delegates on HDT for operations.
+	unsigned int anonCounter;
 
 public:
 	BasicHeader();
@@ -87,6 +88,8 @@ public:
 	void remove(TripleString &triples);
 
 	void remove(IteratorTripleString *triples);
+
+	string getAnon();
 };
 
 }

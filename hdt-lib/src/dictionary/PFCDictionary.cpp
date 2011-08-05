@@ -103,13 +103,13 @@ void PFCDictionary::import(PlainDictionary *dictionary, ProgressListener *listen
 	NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
 	subjects = new csd::CSD_PFC(&itSubj, blocksize);
 
-	NOTIFY(listener, "DictionaryPFC loading predicates", 0, 100);
+	NOTIFY(listener, "DictionaryPFC loading predicates", 25, 100);
 	predicates = new csd::CSD_PFC(&itPred, blocksize);
 
-	NOTIFY(listener, "DictionaryPFC loading objects", 0, 100);
+	NOTIFY(listener, "DictionaryPFC loading objects", 50, 100);
 	objects = new csd::CSD_PFC(&itObj, blocksize);
 
-	NOTIFY(listener, "DictionaryPFC loading shared", 0, 100);
+	NOTIFY(listener, "DictionaryPFC loading shared", 75, 100);
 	shared = new csd::CSD_PFC(&itShared, blocksize);
 
 	this->sizeStrings = dictionary->sizeStrings;

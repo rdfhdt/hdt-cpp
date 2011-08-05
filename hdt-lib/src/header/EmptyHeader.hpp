@@ -67,6 +67,8 @@ public:
 
 	void remove(TripleString &triples){ }
 	void remove(IteratorTripleString *triples){ }
+
+	string getAnon() { }
 };
 
 }

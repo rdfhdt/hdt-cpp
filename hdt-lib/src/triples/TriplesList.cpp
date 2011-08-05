@@ -48,7 +48,7 @@ TriplesList::TriplesList() : numValidTriples(0), order(Unknown)
 {
 }
 
-TriplesList::TriplesList(HDTSpecification &specification) : numValidTriples(0), spec(specification), order(Unknown) {
+TriplesList::TriplesList(HDTSpecification &specification) : spec(specification), numValidTriples(0), order(Unknown) {
 }
 
 TriplesList::~TriplesList()

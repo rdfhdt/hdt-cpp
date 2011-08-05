@@ -70,7 +70,7 @@ void BasicHeader::load(std::istream & input, ControlInformation &controlInformat
 	}
 
 	RDFParser *parser = RDFParser::getParser(input, NTRIPLES);
-	hdt->loadFromRDF(*parser);
+	hdt->loadFromRDF(*parser, "<header>");
 	delete parser;
 }
 
@@ -109,6 +109,14 @@ void BasicHeader::insert(IteratorTripleString *triples)
 void BasicHeader::remove(IteratorTripleString *triples)
 {
 	hdt->remove(triples);
+}
+
+string BasicHeader::getAnon()
+{
+	anonCounter++;
+	string str = "_:anon"+anonCounter;
+	cout << "Anon: " << str << endl;
+	return str;
 }
 
 IteratorTripleString *BasicHeader::search(const char *subject, const char *predicate, const char *object)

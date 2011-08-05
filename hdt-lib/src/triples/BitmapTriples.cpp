@@ -15,10 +15,16 @@
 
 namespace hdt {
 
+#define CHECK_BITMAPTRIPLES_INITIALIZED if(bitmapY==NULL || bitmapZ==NULL){	throw "Accessing uninitialized BitmapTriples"; }
 
 BitmapTriples::BitmapTriples() : numTriples(0), order(SPO) {
 	streamY = StreamElements::getStream(spec.get("stream.y"));
 	streamZ = StreamElements::getStream(spec.get("stream.z"));
+	waveletZ = NULL;
+	streamIndex = NULL;
+	bitmapIndex = NULL;
+	bitmapY = NULL;
+	bitmapZ = NULL;
 }
 
 BitmapTriples::BitmapTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
@@ -29,15 +35,36 @@ BitmapTriples::BitmapTriples(HDTSpecification &specification) : numTriples(0), s
 
 	streamY = StreamElements::getStream(spec.get("stream.y"));
 	streamZ = StreamElements::getStream(spec.get("stream.z"));
+	waveletZ = NULL;
+	streamIndex = NULL;
+	bitmapIndex = NULL;
+	bitmapY = NULL;
+	bitmapZ = NULL;
 }
 
 BitmapTriples::~BitmapTriples() {
+	if(bitmapY!=NULL) {
+		delete bitmapY;
+	}
+	if(bitmapZ!=NULL) {
+		delete bitmapZ;
+	}
+	if(waveletZ != NULL && waveletZ != streamZ) {
+		delete waveletZ;
+	}
+	if(bitmapIndex!=NULL) {
+		delete bitmapIndex;
+	}
+	if(streamIndex!=NULL) {
+		delete streamIndex;
+	}
 	delete streamY;
 	delete streamZ;
 }
 
 float BitmapTriples::cost(TripleID & triple)
 {
+	CHECK_BITMAPTRIPLES_INITIALIZED
 }
 
 
@@ -176,12 +203,77 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 	bitmapY = new cds_static::BitSequenceRG(*bsy, 20);
 	bitmapZ = new cds_static::BitSequenceRG(*bsz, 20);
 
+	if(streamZ->getType()==HDTVocabulary::STREAM_TYPE_WAVELET) {
+		waveletZ = reinterpret_cast<WaveletStream *>(streamZ);
+	}
+
 #if 0
 	AdjacencyList adjY(streamY, bitmapY);
 	AdjacencyList adjZ(streamZ, bitmapZ);
 	adjY.dump();
 	adjZ.dump();
 #endif
+
+#if 0
+	generateIndex(listener);
+#endif
+}
+
+void BitmapTriples::generateIndex(ProgressListener *listener) {
+	StopWatch st;
+
+	vector <vector<unsigned int> > index;
+	for(unsigned int i=0;i<streamZ->getNumberOfElements(); i++) {
+		unsigned int val = streamZ->get(i);
+		if(index.size()<val) {
+			index.resize(val);
+		}
+		index[val-1].push_back(i);
+	}
+
+	BitString *indexBitmapTmp = new BitString(streamZ->getNumberOfElements());
+
+	unsigned int pos=0;
+	vector<unsigned int> out;
+	for(unsigned int i=0;i<index.size();i++){
+		//cout << "Object " << i << " (" << index[i].size() << ") => ";
+		for(unsigned int j=0;j<index[i].size()-1;j++){
+			out.push_back(index[i][j]);
+			indexBitmapTmp->setBit(pos, false);
+			//cout << index[i][j] << " ";
+			pos++;
+		}
+		//cout << "[" << index[i][index[i].size()-1] << endl;
+		out.push_back(index[i][index[i].size()-1]);
+		indexBitmapTmp->setBit(pos++, true);
+		pos++;
+	}
+
+	bitmapIndex = new cds_static::BitSequenceRG(*indexBitmapTmp, 20);
+
+	VectorIterator it(out);
+	streamIndex = StreamElements::getStream(HDTVocabulary::STREAM_TYPE_LOG);
+	streamIndex->add(it);
+
+	cout << "Order: " << getOrderStr(order) << endl;
+	cout << "Index generated in " << st << endl;
+	cout << "Bitmap size: " << size() << endl;
+	cout << "Index size: " << bitmapIndex->getSize()+streamIndex->size() << endl;
+
+	st.reset();
+	if(streamZ->getType()==HDTVocabulary::STREAM_TYPE_WAVELET) {
+		waveletZ = reinterpret_cast<WaveletStream *>(streamZ);
+	} else {
+		waveletZ = new WaveletStream();
+		StreamIterator iterator(streamZ);
+		waveletZ->add(iterator);
+
+		if(false) { // FIXME: Substitute existing or leave?
+			delete streamZ;
+			streamZ = waveletZ;
+		}
+	}
+	cout << "Wavelet created in " << st << endl;
 }
 
 void BitmapTriples::populateHeader(Header &header, string rootNode) {
@@ -190,6 +282,14 @@ void BitmapTriples::populateHeader(Header &header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_SIZE, streamY->size() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_SIZE, streamZ->size() );
+	if(bitmapY!=NULL) {
+		header.insert(rootNode, HDTVocabulary::TRIPLES_BITMAPY_SIZE, bitmapY->getSize() );
+	}
+	if(bitmapZ!=NULL) {
+		header.insert(rootNode, HDTVocabulary::TRIPLES_BITMAPZ_SIZE, bitmapZ->getSize() );
+	}
 }
 
 string BitmapTriples::getType() {
@@ -198,11 +298,13 @@ string BitmapTriples::getType() {
 
 IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 {
+	CHECK_BITMAPTRIPLES_INITIALIZED
+
 	TripleID reorderedPat = pattern;
 	swapComponentOrder(&reorderedPat, SPO, this->order);
 	std::string patternString = reorderedPat.getPatternString();
 
-	if(order==SPO && patternString=="?P?" && streamY->getType() == HDTVocabulary::STREAM_TYPE_WAVELET) {
+	if(patternString=="?P?" && waveletZ != NULL) {
 		return new MiddleWaveletIterator(this, pattern);
 	} else {
 		if(patternString=="???" || patternString=="S??" || patternString=="SP?"|| patternString=="SPO" ) {
@@ -215,6 +317,8 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 
 bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
+	CHECK_BITMAPTRIPLES_INITIALIZED
+
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
 	controlInformation.set("codification", getType());
@@ -288,43 +392,12 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	streamZ->load(input);
 	//cout << "OK " << in->tellg() << endl;
 
+	if(streamZ->getType()==HDTVocabulary::STREAM_TYPE_WAVELET) {
+		waveletZ = reinterpret_cast<WaveletStream *>(streamZ);
+	}
+
 #if 0
-	// CREATE Index.
-	StopWatch st;
-	vector <vector<unsigned int> > index;
-	for(unsigned int i=0;i<streamZ->getNumberOfElements(); i++) {
-		unsigned int val = streamZ->get(i);
-		if(index.size()<val) {
-			index.resize(val);
-		}
-		index[val-1].push_back(i);
-	}
-
-	BitString *indexBitmapTmp = new BitString(streamZ->getNumberOfElements());
-
-	unsigned int pos=0;
-	vector<unsigned int> out;
-	for(unsigned int i=0;i<index.size();i++){
-		//cout << "Object " << i << " (" << index[i].size() << ") => ";
-		for(unsigned int j=0;j<index[i].size()-1;j++){
-			out.push_back(index[i][j]);
-			indexBitmapTmp->setBit(pos, false);
-			//cout << index[i][j] << " ";
-			pos++;
-		}
-		//cout << "[" << index[i][index[i].size()-1] << endl;
-		out.push_back(index[i][index[i].size()-1]);
-		indexBitmapTmp->setBit(pos, true);
-		pos++;
-	}
-
-	cds_static::BitSequence *indexBitmap = new cds_static::BitSequenceRG(*indexBitmapTmp, 20);
-	cds_utils::Array *array = new cds_utils::Array(out, 0);
-
-	cout << "Order: " << getOrderStr(order) << endl;
-	cout << "Index generated in " << st << endl;
-	cout << "Bitmap size: " << size() << endl;
-	cout << "Index size: " << indexBitmap->getSize()+array->getSize() << endl;
+	generateIndex(listener);
 #endif
 }
 
@@ -335,10 +408,11 @@ unsigned int BitmapTriples::getNumberOfElements()
 
 unsigned int BitmapTriples::size()
 {
-	return bitmapY->getSize()+bitmapZ->getSize()+streamY->size()+streamZ->size();
+	if(bitmapY!=NULL && bitmapZ!=NULL) {
+		return bitmapY->getSize()+bitmapZ->getSize()+streamY->size()+streamZ->size();
+	}
+	return streamY->size()+streamZ->size();
 }
-
-
 
 
 
@@ -518,7 +592,7 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
 		adjY(trip->streamY, trip->bitmapY),
 		adjZ(trip->streamZ, trip->bitmapZ),
 		predicateOcurrence(1),
-		wavelet(reinterpret_cast<WaveletStream *>(trip->streamY))
+		wavelet(trip->waveletZ)
 {
 	// Convert pattern to local order.
 	swapComponentOrder(&pattern, SPO, triples->order);
@@ -582,7 +656,7 @@ bool MiddleWaveletIterator::hasPrevious()
 TripleID *MiddleWaveletIterator::previous()
 {
 	//cout << "previousTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
-	if(posZ<prevZ) {
+	if(posZ<=prevZ) {
 		predicateOcurrence--;
 		posY = wavelet->select(patY, predicateOcurrence);
 		nextZ = adjZ.last(posY);
@@ -595,6 +669,7 @@ TripleID *MiddleWaveletIterator::previous()
 	} else {
 		posZ--;
 		z = adjZ.get(posZ);
+
 	}
 	updateOutput();
 	return &returnTriple;

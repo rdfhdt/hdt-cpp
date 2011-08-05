@@ -51,6 +51,7 @@ private:
 	void createComponents();
 	void loadDictionary(RDFParser &parser, ProgressListener *listener);
 	void loadTriples(RDFParser &parser, ProgressListener *listener);
+	void createHeaderScheme(string baseUri);
 
 public:
 	BasicHDT();
@@ -78,7 +79,7 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	void loadFromRDF(RDFParser &parser, ProgressListener *listener = NULL);
+	void loadFromRDF(RDFParser &parser, string baseUri, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
@@ -106,6 +107,7 @@ public:
 	 */
 	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
 
+	void convert(HDTSpecification &spec);
 
 
 	/**
@@ -153,7 +155,7 @@ public:
 	 * @param input
 	 * @param specification
 	 */
-	void loadFromRDF(RDFParser &parser, ProgressListener *listener = NULL);
+	void loadFromRDF(RDFParser &parser, string baseUri, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
@@ -181,6 +183,7 @@ public:
 	 */
 	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
 
+	void convert(HDTSpecification &spec);
 
 	/*
 	 * FROM RDFAccess

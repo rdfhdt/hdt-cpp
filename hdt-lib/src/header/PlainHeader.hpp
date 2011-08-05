@@ -17,6 +17,7 @@ class PlainHeader : public Header {
 private:
 	HDTSpecification spec;
 	vector<TripleString> triples;
+	unsigned int anonCounter;
 
 public:
 	PlainHeader();
@@ -57,7 +58,9 @@ public:
 
 	void remove(IteratorTripleString *triples);
 
-        friend class PlainHeaderIteratorTripleString;
+	string getAnon();
+
+	friend class PlainHeaderIteratorTripleString;
 };
 
 
@@ -77,6 +80,7 @@ public:
 
         bool hasNext();
         TripleString *next();
+        void goToStart();
 };
 
 

@@ -28,14 +28,23 @@ void help() {
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
 	cout << "\t-o\t<options>\tHDT Additional options (option1:value1;option2:value2;...)" << endl;
 	cout << "\t-f\t<format>\tFormat of the RDF input (N3, Turtle, RDF-XML)" << endl;
+	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
 class ConvertProgress : public ProgressListener {
-
+private:
+char *lastMsg;
 public:
+    ConvertProgress() : lastMsg(NULL) {
+	}
     void notifyProgress(float level, const char *section) {
-    	cout << "Progress: " << level << " " << section << endl;
+		if(section!=lastMsg) {
+			lastMsg = (char *)section;
+			cout << endl;
+		}
+    	cout << "\r " << section << ": " << level << " %            \r";
+		cout.flush();
 	}
 
 };
@@ -50,11 +59,12 @@ int main(int argc, char **argv) {
 	string configFile;
 	string options;
 	string rdfFormat;
+	string baseUri;
 
 	RDFNotation notation = NTRIPLES;
 
 	int c;
-	while( (c = getopt(argc,argv,"H:D:T:c:o:vf:"))!=-1) {
+	while( (c = getopt(argc,argv,"H:D:T:c:o:vf:B:"))!=-1) {
 		switch(c) {
 		case 'H':
 			headerFile = optarg;
@@ -82,6 +92,9 @@ int main(int argc, char **argv) {
 		case 'f':
 			rdfFormat = optarg;
 			cout << "RDF format: " << rdfFormat << endl;
+			break;
+		case 'B':
+			baseUri = optarg;
 			break;
 		default:
 			cout << "ERROR: Unknown option" << endl;
@@ -115,6 +128,10 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	if(baseUri=="") {
+		baseUri="<file://"+inputFile+">";
+	}
+
 	if(rdfFormat!="") {
 		if(rdfFormat=="ntriples") {
 			notation = NTRIPLES;
@@ -142,7 +159,7 @@ int main(int argc, char **argv) {
 		// Read RDF
 		StopWatch globalTimer;
 		RDFParser *parser = RDFParser::getParser(inputFile.c_str(), notation);
-		hdt->loadFromRDF(*parser, &progress);
+		hdt->loadFromRDF(*parser, baseUri, &progress);
 		delete parser;
 
 		ofstream out;
@@ -156,6 +173,7 @@ int main(int argc, char **argv) {
 		out.close();
 
 		globalTimer.stop();
+		cout << endl;
 		cout << "HDT Successfully generated." << endl;
 		cout << "Total processing time: ";
 		cout << "Clock(" << globalTimer.getRealStr();

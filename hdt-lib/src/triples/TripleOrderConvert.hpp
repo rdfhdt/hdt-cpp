@@ -56,8 +56,6 @@ class UnorderedTripleOPS : public UnorderedTriple {
 
 UnorderedTriple *getUnorderedTriple(TripleComponentOrder type);
 
-TripleComponentOrder parseOrder(const char *str);
-const char *getOrderStr(TripleComponentOrder order);
 void swapComponentOrder(UnorderedTriple *triple, TripleComponentOrder parsing, TripleComponentOrder to);
 void swapComponentOrder(TripleID *triple, TripleComponentOrder parsing, TripleComponentOrder to);
 

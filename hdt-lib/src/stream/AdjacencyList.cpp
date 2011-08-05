@@ -151,7 +151,7 @@ void AdjacencyList::dump() {
 	}
 	cout << endl;
 
-#if 1
+#if 0
 	cout << "List has " << getSize() << " elements in " << countListsX() << " lists" << endl;
 
 	for(unsigned int i=0; i<countListsX(); i++) {

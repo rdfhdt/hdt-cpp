@@ -66,11 +66,23 @@ enum Mapping
 	MAPPING2
 };
 
+enum HDTCost
+{
+	CONSTANT,
+	LOG_S,
+	LOG_P,
+	LOG_O,
+	SEQUENTIAL_S,
+	SEQUENTIAL_P,
+	SEQUENTIAL_O,
+	SEQUENTIAL_ALL
+};
+
 enum TripleComponentOrder {
 	/**
 	 * Unknown order
 	 */
-	Unknown,
+	Unknown=0,
 	/**
 	 * Subject, predicate, object
 	 */
@@ -96,6 +108,9 @@ enum TripleComponentOrder {
 	 */
 	OPS
 };
+
+TripleComponentOrder parseOrder(const char *str);
+const char *getOrderStr(TripleComponentOrder order);
 
 enum RDFNotation {
 	/**

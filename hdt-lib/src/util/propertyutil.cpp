@@ -24,7 +24,7 @@ void PropertyUtil::read(std::istream &is, PropertyMapT &map)
     if (!is)
         throw "unable to read from stream";
     
-    char ch = 0, next = 0;
+    char ch = 0;
 
     ch = is.get();
 

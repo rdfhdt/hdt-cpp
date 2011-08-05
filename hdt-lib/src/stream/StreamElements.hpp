@@ -24,23 +24,6 @@ public:
 	}
 };
 
-class VectorIterator : public IteratorUint {
-private:
-	std::vector<unsigned int> &vector;
-	unsigned int pos;
-
-public:
-	VectorIterator(std::vector<unsigned int> &v) : vector(v), pos(0) {
-	}
-
-	bool hasNext(){
-		return pos<vector.size();
-	}
-	unsigned int next(){
-		return vector[pos++];
-	}
-};
-
 
 class StreamElements {
 
@@ -98,6 +81,40 @@ public:
 	virtual std::string getType()=0;
 
 	static StreamElements *getStream(std::string type);
+};
+
+class VectorIterator : public IteratorUint {
+private:
+	std::vector<unsigned int> &vector;
+	unsigned int pos;
+
+public:
+	VectorIterator(std::vector<unsigned int> &v) : vector(v), pos(0) {
+	}
+
+	bool hasNext(){
+		return pos<vector.size();
+	}
+	unsigned int next(){
+		return vector[pos++];
+	}
+};
+
+class StreamIterator : public IteratorUint {
+private:
+	StreamElements *stream;
+	unsigned int pos;
+
+public:
+	StreamIterator(StreamElements *elements) : stream(elements), pos(0) {
+	}
+
+	bool hasNext(){
+		return pos<stream->getNumberOfElements();
+	}
+	unsigned int next(){
+		return stream->get(pos++);
+	}
 };
 
 }

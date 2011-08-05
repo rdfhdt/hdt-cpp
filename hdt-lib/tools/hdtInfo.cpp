@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
 
 		while(it->hasNext()) {
 			TripleString *ts = it->next();
-			cout << *ts << endl;
+			cout << *ts << " ."<< endl;
 		}
 
 		if(outputFile!="") {
