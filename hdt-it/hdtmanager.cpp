@@ -5,6 +5,7 @@
 
 #include <HDTFactory.hpp>
 #include <HDTVocabulary.hpp>
+#include <SingleTriple.hpp>
 
 #include <QtGui>
 
@@ -12,19 +13,24 @@
 #include "hdtoperation.hpp"
 #include "hdtcachedinfo.hpp"
 #include "stringutils.hpp"
+#include "resultcounter.hpp"
+
+#define SHOW_DIALOGS
 
 HDTManager::HDTManager(QObject *parent) :
     QObject(parent),
     hdt(NULL),
     searchPatternID(0,0,0),
+    selectedTriple(0,0,0),
     numResults(0),
     iteratorResults(NULL)
 {
-    subjectModel = new TripleComponentModel(this, this, hdt::SUBJECT);
-    predicateModel = new TripleComponentModel(this, this, hdt::PREDICATE);
-    objectModel = new TripleComponentModel(this, this, hdt::OBJECT);
-    searchResultsModel = new SearchResultsModel(this, this);
-    predicateStatus = new PredicateStatus(this, this);
+    subjectModel = new TripleComponentModel(this, hdt::SUBJECT);
+    predicateModel = new TripleComponentModel(this, hdt::PREDICATE);
+    objectModel = new TripleComponentModel(this, hdt::OBJECT);
+    searchResultsModel = new SearchResultsModel(this);
+    headerModel = new HeaderModel(this);
+    predicateStatus = new PredicateStatus(this);
 }
 
 HDTManager::~HDTManager() {
@@ -32,6 +38,8 @@ HDTManager::~HDTManager() {
     delete subjectModel;
     delete predicateModel;
     delete objectModel;
+    delete searchResultsModel;
+    delete headerModel;
     delete predicateStatus;
 }
 
@@ -44,26 +52,42 @@ void HDTManager::updateOnHDTChanged()
     predicateStatus->refreshAll();
     objectModel->notifyLayoutChanged();
     searchResultsModel->updateResultListChanged();
+    headerModel->updateDatasetChanged();
 
     emit datasetChanged();
 }
 
-void HDTManager::importRDFFile(QString file, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
+void HDTManager::importRDFFile(QString file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
 {
     closeHDT();
 
     hdt::HDT *hdt = hdt::HDTFactory::createHDT(spec);
     HDTCachedInfo *hdtInfo = new HDTCachedInfo(hdt);
+
+#ifdef SHOW_DIALOGS
     HDTOperation *hdtop = new HDTOperation(hdt, hdtInfo);
-    hdtop->loadFromRDF(file, notation);
-
+    hdtop->loadFromRDF(file, notation, baseUri);
     int result = hdtop->exec();
-
     delete hdtop;
+#else
+    int result=1;
+    try {
+        hdt::RDFParser *parser = hdt::RDFParser::getParser(fileName.toAscii(), notation);
+        hdt->loadFromRDF(*parser, baseUri);
+        hdtInfo->loadInfo();
+        result=0;
+        delete parser;
+    } catch (const char *ex) {
+        cout << "Error: " << ex;
+    } catch (char *ex) {
+        cout << "Error: " << ex;
+    }
+#endif
 
     if(result==0) {
         this->hdt = hdt;
         this->hdtCachedInfo = hdtInfo;
+        this->fileName = file;
 
         updateOnHDTChanged();
     } else {
@@ -78,16 +102,29 @@ void HDTManager::openHDTFile(QString file)
 
     hdt::HDT *hdt = hdt::HDTFactory::createDefaultHDT();
     HDTCachedInfo *hdtInfo = new HDTCachedInfo(hdt);
+
+#ifdef SHOW_DIALOGS
     HDTOperation *hdtop = new HDTOperation(hdt, hdtInfo);
     hdtop->loadFromHDT(file);
-
     int result = hdtop->exec();
-
     delete hdtop;
+#else
+    int result=1;
+    try {
+        hdt->loadFromHDT(file.toAscii());
+        hdtInfo->loadInfo();
+        result=0;
+    } catch (const char *ex) {
+        cout << "Error: " << ex;
+    } catch (char *ex) {
+        cout << "Error: " << ex;
+    }
+#endif
 
     if(result==0) {
         this->hdt = hdt;
         this->hdtCachedInfo = hdtInfo;
+        this->fileName = file;
 
         updateOnHDTChanged();
     } else {
@@ -99,30 +136,56 @@ void HDTManager::openHDTFile(QString file)
 void HDTManager::saveHDTFile(QString file)
 {
     if(hdt!=NULL) {
+#ifdef SHOW_DIALOGS
         HDTOperation *hdtop = new HDTOperation(hdt);
         hdtop->saveToHDT(file);
         hdtop->exec();
-
         delete hdtop;
+#else
+        hdt->saveToHDT(file.toAscii());
+#endif
     }
 }
 
 void HDTManager::exportRDFFile(QString file, hdt::RDFNotation notation)
 {
     if(hdt!=NULL) { 
+#ifdef SHOW_DIALOGS
         HDTOperation *hdtop = new HDTOperation(hdt);
         hdtop->saveToRDF(file, notation);
         hdtop->exec();
-
         delete hdtop;
+#else
+        hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(file.toAscii(), notation);
+        hdt->saveToRDF(*serializer);
+#endif
     }
 }
+
+void HDTManager::exportResultsRDFFile(QString file, hdt::RDFNotation notation)
+{
+    if(hdt!=NULL) {
+#ifdef SHOW_DIALOGS
+        HDTOperation *hdtop = new HDTOperation(hdt);
+        hdt::IteratorTripleString *it = hdt->search(searchPatternString);
+        hdtop->exportResults(file, it, getNumResults(), notation);
+        hdtop->exec();
+        delete hdtop;
+#else
+        hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(file.toAscii(), notation);
+        hdt::IteratorTripleString *it = hdt->search(searchPatternString);
+        serializer->serialize(iterator, getNumResults());
+        delete serializer;
+        delete iterator;
+        break;
+#endif
+    }
+}
+
 
 void HDTManager::closeHDT()
 {
     if(hdt!=NULL) {
-        selectedTriple.clear();
-        numResults = 0;
         delete hdt;
         hdt = NULL;
 
@@ -131,6 +194,7 @@ void HDTManager::closeHDT()
         predicateStatus->refreshAll();
         objectModel->notifyLayoutChanged();
         searchResultsModel->updateResultListChanged();
+        headerModel->updateDatasetChanged();
 
         emit datasetChanged();
     }
@@ -154,6 +218,11 @@ TripleComponentModel * HDTManager::getObjectModel()
 SearchResultsModel * HDTManager::getSearchResultsModel()
 {
     return searchResultsModel;
+}
+
+HeaderModel * HDTManager::getHeaderModel()
+{
+    return headerModel;
 }
 
 PredicateStatus *HDTManager::getPredicateStatus()
@@ -196,14 +265,20 @@ void HDTManager::setSearchPattern(hdt::TripleString &pattern)
 
                 numResults=0;
                 resultsTime.reset();
+                resultsTime.stop();
                 updateNumResults();
             } else {
                 numResults = hdt->getTriples().getNumberOfElements();
+                iteratorResults = NULL;
             }
 
             predicateStatus->selectPredicate(searchPatternID.getPredicate());
         } catch (char *exception){
             numResults = 0;
+            iteratorResults = NULL;
+        } catch (const char *exception){
+            numResults = 0;
+            iteratorResults = NULL;
         }
         searchResultsModel->updateResultListChanged();
 
@@ -236,8 +311,7 @@ void HDTManager::clearSelectedTriple()
     selectedTriple.clear();
 }
 
-quint64 inline DIST(quint64 x1, quint64 x2,
-                quint64 y1, quint64 y2) {
+quint64 inline DIST(quint64 x1, quint64 x2, quint64 y1, quint64 y2) {
         return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
 }
 
@@ -291,8 +365,38 @@ QString HDTManager::getTime()
     return resultsTime.getRealStr().c_str();
 }
 
+void HDTManager::numResultsValueChanged(int numResults)
+{
+    resultsTime.stop();
+    this->numResults = numResults;
+    searchResultsModel->updateNumResultsChanged();
+    emit numResultsChanged(numResults);
+}
+
+void HDTManager:: numResultCountFinished()
+{
+
+}
+
 void HDTManager::updateNumResults()
 {
+#if 0
+    ResultCounter *counter = new ResultCounter(this, this);
+
+    connect(counter, SIGNAL(numResultsChanged(int)), this, SLOT(numResultsValueChanged(int)));
+    connect(counter, SIGNAL(finished()), this, SLOT(numResultCountFinished()));
+
+    QTimer::singleShot(0, counter, SLOT(startCounting()));
+
+    resultsTime.stop();
+
+    if(iteratorResults->hasNext()) {
+        QTimer::singleShot(0, this, SLOT(updateNumResults()));
+    } else {
+        delete iteratorResults;
+        iteratorResults = NULL;
+    }
+#else
     if(iteratorResults==NULL) {
         return;
     }
@@ -308,19 +412,18 @@ void HDTManager::updateNumResults()
         }
 #endif
     }
-
     resultsTime.stop();
-
-    if(iteratorResults->hasNext()) {
-        QTimer::singleShot(0, this, SLOT(updateNumResults()));
-    } else {
-        delete iteratorResults;
-        iteratorResults = NULL;
-    }
 
     searchResultsModel->updateNumResultsChanged();
     emit numResultsChanged(numResults);
+#endif
 }
+
+QString HDTManager::getFileName()
+{
+    return fileName;
+}
+
 
 
 

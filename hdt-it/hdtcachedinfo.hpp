@@ -24,7 +24,7 @@ public:
 
     Color *getPredicateColor(unsigned int npred);
 
-    void loadInfo(hdt::ProgressListener *listener);
+    void loadInfo(hdt::ProgressListener *listener=NULL);
 };
 
 #endif // HDTCACHEDINFO_HPP

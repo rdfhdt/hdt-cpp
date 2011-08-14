@@ -18,9 +18,9 @@ void HDTCachedInfo::loadInfo(hdt::ProgressListener *listener)
     unsigned int increment = t.getNumberOfElements()/RENDER_NUM_POINTS;
     increment = increment < 1 ? 1 : increment;
 
+    resultsTime.reset();
     hdt::IteratorTripleID *it = t.searchAll();
 
-    resultsTime.reset();
     while(it->hasNext()) {
         hdt::TripleID *tid = it->next();
 
@@ -48,7 +48,7 @@ void HDTCachedInfo::loadInfo(hdt::ProgressListener *listener)
     predicateColors.resize(nPred);
     ColorRamp2 cr;
     for(unsigned int i=0;i<nPred; i++) {
-        cr.apply(&predicateColors[i], i, 0, nPred);
+        cr.apply(&predicateColors[i], i, 0, nPred-1);
     }
 }
 

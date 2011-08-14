@@ -1,8 +1,7 @@
 #include "predicatestatus.hpp"
 
-PredicateStatus::PredicateStatus(QObject *parent, HDTManager *manager) :
-    QObject(parent),
-    manager(manager)
+PredicateStatus::PredicateStatus(HDTManager *manager) :
+    manager(manager), minPredicateCount(0), maxPredicateCount(0)
 {
 }
 
@@ -72,6 +71,7 @@ void PredicateStatus::selectPredicate(unsigned int pred)
     }
     emit predicatesChanged(0, activePredicate.size());
     setMinimumPredicateCountInternal(0);
+    emit predicateSelected(pred-1);
 }
 
 // Private, just updates the value.

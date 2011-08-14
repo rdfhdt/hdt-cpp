@@ -1,7 +1,8 @@
+#include "stringutils.hpp"
 #include "searchresultsmodel.hpp"
 #include <QFont>
 
-SearchResultsModel::SearchResultsModel(QObject *parent, HDTManager *view) : hdtManager(view), triples(NULL)
+SearchResultsModel::SearchResultsModel(HDTManager *view) : hdtManager(view), triples(NULL)
 {
     this->updateResultListChanged();
 }
@@ -46,11 +47,11 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
         try {
             switch(index.column()) {
             case 0:
-                return d.idToString(currentTriple->getSubject(), hdt::SUBJECT).c_str();
+                return stringutils::cleanN3String(d.idToString(currentTriple->getSubject(), hdt::SUBJECT).c_str());
             case 1:
-                return d.idToString(currentTriple->getPredicate(), hdt::PREDICATE).c_str();
+                return stringutils::cleanN3String(d.idToString(currentTriple->getPredicate(), hdt::PREDICATE).c_str());
             case 2:
-                return d.idToString(currentTriple->getObject(), hdt::OBJECT).c_str();
+                return stringutils::cleanN3String(d.idToString(currentTriple->getObject(), hdt::OBJECT).c_str());
             }
         } catch (char *e) {
             cout << "Error accesing dictionary: " << e << endl;
@@ -112,6 +113,7 @@ void SearchResultsModel::updateResultListChanged() {
     } else {
         triples = NULL;
         currentTriple = NULL;
+        numResults=0;
     }
     currentIndex = 0;
     goingUp = true;
@@ -127,8 +129,9 @@ void SearchResultsModel::updateNumResultsChanged()
 
     if(old!=numResults) {
 #if 0
-    beginInsertRows(QModelIndex(), old, numResults);
+    beginInsertRows(QModelIndex(), old+1, numResults);
     endInsertRows();
+    //emit dataChanged(createIndex(old+1,0), createIndex(numResults,2));
 #else
     emit layoutChanged();
 #endif

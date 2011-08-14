@@ -9,7 +9,7 @@
 #define CONSTANTS_H_
 
 #define TIMER_DELAY 50
-#define RENDER_NUM_POINTS 80000
+#define RENDER_NUM_POINTS 100000
 
 #define SCREEN
 

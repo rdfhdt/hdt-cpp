@@ -58,6 +58,9 @@ void HDTSpecForm::on_inputFileButton_clicked()
     QString file = QFileDialog::getOpenFileName(this,tr("Select Input RDF File"), lastDir, tr("RDF Files(*)"), 0, 0 );
     if(file!="") {
         lastDir=file;
+        if(getBaseUri()=="") {
+            ui->baseUriText->setText("<file://"+file+">");
+        }
     }
     ui->rdfInputFile->setText(file);
 }
@@ -65,6 +68,11 @@ void HDTSpecForm::on_inputFileButton_clicked()
 QString HDTSpecForm::getFileName()
 {
     return ui->rdfInputFile->text();
+}
+
+QString HDTSpecForm::getBaseUri()
+{
+    return ui->baseUriText->text();
 }
 
 std::string HDTSpecForm::getStreamType(int index) {
@@ -87,6 +95,8 @@ std::string HDTSpecForm::getStreamType(int index) {
 
 void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
 {
+    hdt.set("triples.component.order", hdt::getOrderStr((hdt::TripleComponentOrder)(ui->triplesOrderCombo->currentIndex()+1)));
+
     hdt.set("header.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 
     switch(ui->dictionaryTypeCombo->currentIndex()) {
@@ -149,4 +159,13 @@ hdt::RDFNotation HDTSpecForm::getNotation()
         return hdt::XML;
     }
     return hdt::NTRIPLES;
+}
+
+void HDTSpecForm::accept()
+{
+    if(getFileName()=="") {
+        QMessageBox::warning(NULL, tr("Select a file name."), tr("Please insert a file name or URI."));
+    } else {
+        done(1);
+    }
 }

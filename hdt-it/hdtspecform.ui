@@ -12,8 +12,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>462</height>
+    <width>470</width>
+    <height>533</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,6 +61,18 @@
            </property>
           </item>
          </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="baseUriGroup">
+       <property name="title">
+        <string>Base URI for the dataset</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLineEdit" name="baseUriText"/>
         </item>
        </layout>
       </widget>
@@ -167,11 +179,6 @@
             <string>CompactTriples</string>
            </property>
           </item>
-          <item>
-           <property name="text">
-            <string>FoQTriples</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="1" column="1">
@@ -235,11 +242,6 @@
             <string>HuffmanStream</string>
            </property>
           </item>
-          <item>
-           <property name="text">
-            <string>WaveletStream</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="3" column="1">
@@ -259,11 +261,6 @@
             <string>HuffmanStream</string>
            </property>
           </item>
-          <item>
-           <property name="text">
-            <string>WaveletStream</string>
-           </property>
-          </item>
          </widget>
         </item>
         <item row="4" column="1">
@@ -281,11 +278,6 @@
           <item>
            <property name="text">
             <string>HuffmanStream</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>WaveletStream</string>
            </property>
           </item>
          </widget>

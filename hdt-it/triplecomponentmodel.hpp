@@ -15,7 +15,7 @@ private:
     HDTManager *hdtManager;
     hdt::TripleComponentRole tripleComponentRole;
 public:
-    TripleComponentModel(QObject *parent, HDTManager *view, hdt::TripleComponentRole compRole);
+    TripleComponentModel(HDTManager *view, hdt::TripleComponentRole compRole);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;

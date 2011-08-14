@@ -26,14 +26,17 @@ private:
     int widgetWidth, widgetHeight;
     QPropertyAnimation rotationAnimation;
 
+    void stopAnimations();
 public:
     explicit Camera();
+    ~Camera();
 
 public:
     qreal getZoom();
     void setZoom(double newz);
     void increaseZoom(int dif);
     void decreaseZoom(int dif);
+    void multiplyZoom(int mult);
 
     void setOffset(double x,double y);
     void setOffset(QPointF &rect);
@@ -48,6 +51,7 @@ public:
     void rotateCamera(double x,double y);
 
     void toDefaultValues();
+    void toDefaultValuesAnimated();
 
     void setScreenSize(int width, int height);
     void applyTransform();

@@ -1,7 +1,7 @@
 #ifndef HDTIT_HPP
 #define HDTIT_HPP
 
-#include <QMainWindow>
+#include <QtGui>
 #include <HDTSpecification.hpp>
 #include <HDTEnums.hpp>
 #include <QAbstractItemModel>
@@ -21,8 +21,11 @@ private:
     Ui::HDTit *ui;
     HDTManager *hdtManager;
     QString lastDir;
+    QModelIndex lastContextMenuCell;
+    QTableView *lastContextMenuTable;
+
     void openHDTFile(QString &file);
-    void importRDFFile(QString &file, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
+    void importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
 
     void hdtChanged(QString &file);
 
@@ -40,6 +43,7 @@ private slots:
     void on_actionLeftView_toggled(bool arg1);
     void on_actionTopView_toggled(bool arg1);
     void on_action3Dview_toggled(bool arg1);
+    void on_actionReset_triggered();
 
     void searchPatternEdited();
     void refreshSearchPattern();
@@ -48,11 +52,19 @@ private slots:
     void setPatternPredicate(QModelIndex index);
     void setPatternObject(QModelIndex index);
 
+    void showContextMenu(QPoint pos);
+    void setPatternContextSubject();
+    void setPatternContextPredicate();
+    void setPatternContextObject();
+    void copyResultTableSelection();
+
     void setPatternGlobal(QModelIndex index);
     void on_actionAbout_triggered();
 
     void updateViewButtons();
     void updateNumResults();
+    void on_actionFull_Screen_triggered();
+
 };
 
 #endif // HDTIT_HPP

@@ -53,7 +53,7 @@ void Color::setRGBA(double r, double g, double b, double a) {
  * @return void
  */
 void Color::setHSV(double h, double s, double v) {
-	// H is given on [0, 6] or UNDEFINED. S and V are given on [0, 1].
+        // H is given on [0, 6]. S and V are given on [0, 1].
 	// RGB are each returned on [0, 1].
 	float m, n, f;
 	int i;

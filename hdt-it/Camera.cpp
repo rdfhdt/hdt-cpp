@@ -9,7 +9,9 @@
 
 #include "Camera.h"
 
-Camera::Camera() : rotationAnimation(this, "camRotation"){
+Camera::Camera() :
+    rotationAnimation(this, "camRotation")
+{
     widgetWidth = 800;
     widgetHeight = 600;
     toDefaultValues();
@@ -17,6 +19,10 @@ Camera::Camera() : rotationAnimation(this, "camRotation"){
     connect(this, SIGNAL(rotationChanged()), this, SIGNAL(cameraChanged()));
     connect(this, SIGNAL(zoomChanged()), this, SIGNAL(cameraChanged()));
     connect(this, SIGNAL(offsetChanged()), this, SIGNAL(cameraChanged()));
+}
+
+Camera::~Camera()
+{
 }
 
 qreal Camera::getZoom()
@@ -27,6 +33,7 @@ qreal Camera::getZoom()
 void Camera::setZoom(double newz)
 {
     zoom = newz;
+    zoom = zoom < 0.5 ? 0.5 : zoom;
     emit zoomChanged();
 }
 
@@ -43,9 +50,21 @@ void Camera::decreaseZoom(int dif){
     emit zoomChanged();
 }
 
+void Camera::multiplyZoom(int mult)
+{
+    zoom *= mult;
+    zoom = zoom < 0.5 ? 0.5 : zoom;
+    emit zoomChanged();
+}
+
+
 void Camera::setOffset(double x,double y){
     offx = x;
     offy = y;
+    if(offx<-1.0) offx=-1.0;
+    if(offx>0.0) offx=0.0;
+    if(offy<-1.0) offy=-1.0;
+    if(offy>0.0) offy=0.0;
     emit offsetChanged();
 }
 
@@ -58,9 +77,7 @@ QPointF Camera::getOffset() {
 }
 
 void Camera::moveOffset(double x,double y){
-    offx += (float) x / (widgetWidth*zoom);
-    offy -= (float) y / (widgetHeight*zoom);
-    emit cameraChanged();
+    setOffset(offx + x / (zoom*widgetWidth), offy - y / (zoom*widgetHeight));
 }
 
 void Camera::setRotation(double x,double y){
@@ -79,7 +96,6 @@ void Camera::animateRotation(double x, double y) {
     rotationAnimation.setEasingCurve(QEasingCurve::InOutQuad);
     rotationAnimation.setStartValue(QPointF(rotx, roty));
     rotationAnimation.setEndValue(QPointF(x,y));
-
     rotationAnimation.start();
 }
 
@@ -110,29 +126,8 @@ void Camera::setScreenSize(int w, int h){
 
     glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 
-#if 0
-#if 0
-    GLfloat fieldOfView = 90.0f;
+    GLdouble aspect, left, right, bottom, top;
 
-     glMatrixMode (GL_PROJECTION);
-     glLoadIdentity();
-     gluPerspective(fieldOfView, (GLfloat) widgetWidth/(GLfloat) widgetHeight, 0.1, 500.0);
-
-     glMatrixMode(GL_MODELVIEW);
-     glLoadIdentity();
-#else
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-widgetWidth / 2, +widgetWidth / 2, -widgetHeight / 2,
-                    +widgetHeight / 2, -10, 10);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-#endif
-#else
-    GLdouble    aspect, left, right, bottom, top;
-
-    /* compute aspect ratio */
     aspect = (GLdouble) widgetWidth / (GLdouble) widgetHeight;
 
     if ( aspect < 1.0 ) {
@@ -151,7 +146,6 @@ void Camera::setScreenSize(int w, int h){
     glLoadIdentity();
     glOrtho( left*widgetWidth, right*widgetWidth, bottom*widgetHeight, top*widgetHeight, -10, 10 );
     glMatrixMode( GL_MODELVIEW );
-#endif
 }
 
 void Camera::applyTransform(){
@@ -206,4 +200,50 @@ bool Camera::is3DView()
 {
     return rotx==-45 && roty==45;
 }
+
+void Camera::toDefaultValuesAnimated()
+{
+    QPropertyAnimation *rotAnim = new QPropertyAnimation(this, "camRotation");
+    rotAnim->setEasingCurve(QEasingCurve::InOutQuad);
+    rotAnim->setDuration(400);
+    rotAnim->setStartValue(QPointF(rotx, roty));
+    rotAnim->setEndValue(QPointF(0,0));
+
+    QPropertyAnimation *zoomAnim = new QPropertyAnimation(this, "camZoom");
+    zoomAnim->setEasingCurve(QEasingCurve::InOutQuad);
+    zoomAnim->setDuration(400);
+    zoomAnim->setStartValue(zoom);
+    zoomAnim->setEndValue(1);
+
+    QPropertyAnimation *offAnim = new QPropertyAnimation(this, "camOffset");
+    offAnim->setEasingCurve(QEasingCurve::InOutQuad);
+    offAnim->setDuration(400);
+    offAnim->setStartValue(QPointF(offx, offy));
+    offAnim->setEndValue(QPointF(-0.5, -0.5));
+
+    QSequentialAnimationGroup *animationGroup = new QSequentialAnimationGroup();
+
+    if(offAnim->startValue()!=offAnim->endValue())
+        animationGroup->addAnimation(offAnim);
+    else
+        delete offAnim;
+
+    if(zoomAnim->startValue()!=zoomAnim->endValue())
+        animationGroup->addAnimation(zoomAnim);
+    else
+        delete zoomAnim;
+
+    if(rotAnim->startValue()!=rotAnim->endValue())
+        animationGroup->addAnimation(rotAnim);
+    else
+        delete rotAnim;
+
+    animationGroup->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void Camera::stopAnimations()
+{
+    rotationAnimation.stop();
+}
+
 

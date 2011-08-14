@@ -15,7 +15,7 @@ private:
 
     void setMinimumPredicateCountInternal(int count);
 public:
-    explicit PredicateStatus(QObject *parent, HDTManager *manager);
+    explicit PredicateStatus(HDTManager *manager);
 
     unsigned int getMinimumPredicateCount();
     unsigned int getMaximumPredicateCount();
@@ -26,6 +26,7 @@ public:
 signals:
     void predicatesChanged(unsigned int min, unsigned int max);
     void minimumPredicateCountChanged(int newval);
+    void predicateSelected(int npred);
 
 public slots:
     void refreshAll();

@@ -1,8 +1,11 @@
-#include "triplecomponentmodel.hpp"
 
 #include <QFont>
 
-TripleComponentModel::TripleComponentModel(QObject *parent, HDTManager *view, hdt::TripleComponentRole compRole) :
+#include "triplecomponentmodel.hpp"
+
+#include "stringutils.hpp"
+
+TripleComponentModel::TripleComponentModel(HDTManager *view, hdt::TripleComponentRole compRole) :
     hdtManager(view), tripleComponentRole(compRole)
 {
 
@@ -10,6 +13,7 @@ TripleComponentModel::TripleComponentModel(QObject *parent, HDTManager *view, hd
 
 int TripleComponentModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     if(hdtManager->getHDT() != NULL) {
         hdt::Dictionary &dict = hdtManager->getHDT()->getDictionary();
         switch(tripleComponentRole) {
@@ -42,7 +46,7 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
         //cout << "Data: " << index.row() << " role: " << role << " type: " << tripleComponentRole << endl;
         hdt::Dictionary &d = hdtManager->getHDT()->getDictionary();
         try {
-            return d.idToString(index.row()+1, tripleComponentRole).c_str();
+            return stringutils::cleanN3String(d.idToString(index.row()+1, tripleComponentRole).c_str());
         } catch (char *e) {
             cout << "Error accessing dictionary: " << e << endl;
         } catch (const char *e) {
@@ -106,6 +110,7 @@ QVariant TripleComponentModel::headerData(int section, Qt::Orientation orientati
 
 Qt::ItemFlags TripleComponentModel::flags(const QModelIndex &index) const
 {
+    Q_UNUSED(index);
     if(tripleComponentRole == hdt::PREDICATE) {
         return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
     } else {

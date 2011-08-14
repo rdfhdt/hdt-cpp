@@ -21,6 +21,7 @@ public:
 
 public:
     QString getFileName();
+    QString getBaseUri();
     void fillHDTSpecification(hdt::HDTSpecification &spec);
     hdt::RDFNotation getNotation();
 
@@ -31,6 +32,7 @@ private:
 private slots:
     void on_triplesTypeCombo_currentIndexChanged(int index);
     void on_inputFileButton_clicked();
+    void accept();
 };
 
 #endif // HDTSPECFORM_HPP

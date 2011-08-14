@@ -19,6 +19,14 @@ QClearLineEdit::QClearLineEdit(QWidget *parent)
     QSize msz = minimumSizeHint();
     setMinimumSize(qMax(msz.width(), clearButton->sizeHint().height() + frameWidth * 2 + 2),
                    qMax(msz.height(), clearButton->sizeHint().height() + frameWidth * 2 + 2));
+
+    suggestions = new DictionarySuggestions(this);
+}
+
+QClearLineEdit::~QClearLineEdit()
+{
+    delete suggestions;
+    delete clearButton;
 }
 
 void QClearLineEdit::resizeEvent(QResizeEvent *)
@@ -32,4 +40,9 @@ void QClearLineEdit::resizeEvent(QResizeEvent *)
 void QClearLineEdit::updateCloseButton(const QString& text)
 {
     clearButton->setVisible(!text.isEmpty());
+}
+
+DictionarySuggestions * QClearLineEdit::getSuggestions()
+{
+    return suggestions;
 }

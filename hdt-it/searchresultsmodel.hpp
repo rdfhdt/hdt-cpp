@@ -22,7 +22,7 @@ private:
     void findTriple(unsigned int index);
 
 public:
-    SearchResultsModel(QObject *parent, HDTManager *view);
+    SearchResultsModel(HDTManager *view);
     ~SearchResultsModel();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;

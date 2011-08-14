@@ -30,7 +30,7 @@ void HDTOperation::execute() {
 
             iListener.setRange(0,90);
             hdt::RDFParser *parser = hdt::RDFParser::getParser(fileName.toAscii(), notation);
-            hdt->loadFromRDF(*parser, &iListener);
+            hdt->loadFromRDF(*parser, baseUri, &iListener);
             delete parser;
 
             iListener.setRange(90, 100);
@@ -47,13 +47,23 @@ void HDTOperation::execute() {
             delete serializer;
             break;
             }
+        case RESULT_EXPORT: {
+            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toAscii(), notation);
+            serializer->serialize(iterator, dynamic_cast<ProgressListener *>(this), numResults );
+            delete serializer;
+            delete iterator;
+            break;
         }
-        emit processFinished();
+        }
+        emit processFinished(0);
     } catch (char* err) {
-        emit processFailed(err);
+        cout << "Error:" << err;
+        emit processFinished(1);
     } catch (const char* err) {
-        emit processFailed(err);
+        cout << "Error:" << err;
+        emit processFinished(1);
     }
+    QApplication::alert(QApplication::activeWindow());
 }
 
 void HDTOperation::notifyProgress(float level, const char *section) {
@@ -74,11 +84,12 @@ void HDTOperation::saveToHDT(QString &fileName)
     this->fileName = fileName;
 }
 
-void HDTOperation::loadFromRDF(QString &fileName, hdt::RDFNotation notation)
+void HDTOperation::loadFromRDF(QString &fileName, hdt::RDFNotation notation, string &baseUri)
 {
     this->op = RDF_READ;
     this->fileName = fileName;
     this->notation = notation;
+    this->baseUri = baseUri;
 }
 
 void HDTOperation::loadFromHDT(QString &fileName)
@@ -87,9 +98,20 @@ void HDTOperation::loadFromHDT(QString &fileName)
     this->fileName = fileName;
 }
 
+void HDTOperation::exportResults(QString &fileName, hdt::IteratorTripleString *iterator, unsigned int numResults, hdt::RDFNotation notation)
+{
+    this->op = RESULT_EXPORT;
+    this->fileName = fileName;
+    this->iterator = iterator;
+    this->numResults = numResults;
+    this->notation = notation;
+}
+
+
 int HDTOperation::exec()
 {
     dialog.setRange(0,100);
+    dialog.setAutoClose(false);
 
     switch(op) {
     case HDT_READ:
@@ -104,6 +126,9 @@ int HDTOperation::exec()
     case RDF_WRITE:
         dialog.setWindowTitle(tr("Exporting HDT File to RDF"));
         break;
+    case RESULT_EXPORT:
+        dialog.setWindowTitle(tr("Exporting results to RDF"));
+        break;
     }
 
     QPushButton btn;
@@ -114,24 +139,8 @@ int HDTOperation::exec()
 
     connect(this, SIGNAL(progressChanged(int)), &dialog, SLOT(setValue(int)), Qt::QueuedConnection);
     connect(this, SIGNAL(messageChanged(QString)), &dialog, SLOT(setLabelText(QString)), Qt::QueuedConnection);
-    connect(this, SIGNAL(processFinished()), this, SLOT(processFinishedOK()), Qt::QueuedConnection);
-    connect(this, SIGNAL(processFailed(const char *)), this, SLOT(showError(const char*)), Qt::QueuedConnection);
+    connect(this, SIGNAL(processFinished(int)), &dialog, SLOT(done(int)), Qt::QueuedConnection);
 
     QtConcurrent::run(this, &HDTOperation::execute);
-    int result = dialog.exec();
-    return result || !succeded;
+    return dialog.exec();
 }
-
-void HDTOperation::processFinishedOK()
-{
-    succeded = true;
-    dialog.close();
-}
-
-void HDTOperation::showError(const char *message)
-{
-    succeded = false;
-    QMessageBox::critical(NULL, "ERROR", QString(message) );
-    dialog.close();
-}
-

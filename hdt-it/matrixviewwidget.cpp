@@ -16,6 +16,12 @@ MatrixViewWidget::MatrixViewWidget(QWidget *parent) :
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateGL()));
 
     //timer.start();
+
+#ifdef GESTURES
+    //grabGesture(Qt::PanGesture);
+    grabGesture(Qt::PinchGesture);
+    //grabGesture(Qt::SwipeGesture);
+#endif
 }
 
 MatrixViewWidget::~MatrixViewWidget() {
@@ -40,6 +46,7 @@ void MatrixViewWidget::initializeGL()
     //glEnable(GL_DEPTH_TEST);
     //glDepthFunc(GL_LEQUAL);
 
+    // FIXME: Check support of alpha blending
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -176,11 +183,15 @@ void MatrixViewWidget::paintPoints()
         while(it->hasNext()) {
             hdt::TripleID *tid = it->next();
 
-            Color *c = hdtmanager->getHDTCachedInfo()->getPredicateColor(tid->getPredicate());
+            Color *c = hdtmanager->getHDTCachedInfo()->getPredicateColor(tid->getPredicate()-1);
 
-            glColor4f(c->r, c->g, c->b, c->a);
+            if(hdtmanager->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
+                glColor4f(c->r, c->g, c->b, 1.0);
+            } else {
+                glColor4f(c->r/4, c->g/4, c->b/4, 0.3);
+            }
+
             glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
-
         }
         glEnd();
         delete it;
@@ -193,12 +204,12 @@ void MatrixViewWidget::paintPoints()
             hdt::TripleID *tid = &triples[i];
 
             if(tid->match(hdtmanager->getSearchPatternID())) {
-                Color *c = hdtmanager->getHDTCachedInfo()->getPredicateColor(tid->getPredicate());
+                Color *c = hdtmanager->getHDTCachedInfo()->getPredicateColor(tid->getPredicate()-1);
 
                 if(hdtmanager->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
                     glColor4f(c->r, c->g, c->b, 1.0);
                 } else {
-                    glColor4f(c->r/2, c->g/2, c->b/2, 0.3);
+                    glColor4f(c->r/4, c->g/4, c->b/4, 0.3);
                 }
 
                 glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
@@ -359,7 +370,7 @@ void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
     bool shift = event->modifiers() & Qt::ShiftModifier;
 
     if(right || (left && shift)) {
-        camera.moveOffset(diffx, diffy);
+        camera.moveOffset(1.8*diffx, 1.8*diffy);
         emit cameraChanged();
     } else if(left) {
         camera.rotateCamera(diffx, diffy);
@@ -377,22 +388,23 @@ void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
     GLdouble subject, predicate, object;
     this->unProject(event->x(), event->y(), &object, &subject, &predicate);
 
-    QToolTip::hideText();
-
     hdt::Dictionary &dictionary = hdtmanager->getHDT()->getDictionary();
     if ( (subject > 0 && subject < dictionary.getMaxSubjectID()) &&
          (object > 0 && object <= dictionary.getMaxObjectID())
        ) {
         hdtmanager->selectNearestTriple(subject,predicate, object);
 
-        QFontMetrics metric(QToolTip::font());
-        QString subjStr = metric.elidedText(dictionary.idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT).c_str(), Qt::ElideMiddle, 1024);
-        QString predStr = metric.elidedText(dictionary.idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE).c_str(), Qt::ElideMiddle, 1024);
-        QString objStr = metric.elidedText(dictionary.idToString(hdtmanager->getSelectedTriple().getObject(), hdt::OBJECT).c_str(), Qt::ElideMiddle, 1024);
-        QString tooltip = QString("S: %1\nP: %2\nO: %3").arg(subjStr).arg(predStr).arg(objStr);
-        QToolTip::showText(this->mapToGlobal(event->pos()), tooltip);
+        QString subjStr = stringutils::asRich(stringutils::cleanN3String(dictionary.idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT).c_str()));
+        QString predStr = stringutils::asRich(stringutils::cleanN3String(dictionary.idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE).c_str()));
+        QString objStr = stringutils::asRich(stringutils::cleanN3String(dictionary.idToString(hdtmanager->getSelectedTriple().getObject(), hdt::OBJECT).c_str()));
+        stringutils::cut(objStr, 1000);
+        QString tooltip = QString("<p style='white-space:pre'><b>S</b>: %1</p><p style='white-space:pre'><b>P</b>: %2</p><p><b>O</b>:&nbsp;%3</p>").arg(subjStr).arg(predStr).arg(objStr);
+        QPoint point = this->mapToGlobal(event->pos());
+        QRect rect = QRect(point.x()-10, point.y()+10, 20, 20);
+        QToolTip::showText(point, tooltip, this, rect);
     } else {
         hdtmanager->clearSelectedTriple();
+        QToolTip::hideText();
     }
 
     updateGL();
@@ -403,15 +415,61 @@ void MatrixViewWidget::wheelEvent( QWheelEvent* e )
 {
   int delta = e->delta();
   if (e->orientation() == Qt::Horizontal) {
-      //std::cout << "DeltaX: " << delta << std::endl;
+#ifdef GESTURES
+      camera.moveOffset(delta/2, 0);
+#endif
   } else {
-      //std::cout << "DeltaY: " << delta << std::endl;
+#ifdef GESTURES
+     camera.moveOffset(0, delta/2);
+#else
       camera.increaseZoom(delta);
-      emit cameraChanged();
+#endif
   }
-
+  hdtmanager->clearSelectedTriple();
   e->accept();
 }
+
+#ifdef GESTURES
+bool MatrixViewWidget::event(QEvent *event)
+{
+    static qreal previousZoom;
+    if (event->type() == QEvent::Gesture) {
+        QGestureEvent *gestureEvent = static_cast<QGestureEvent*>(event);
+        if (QGesture *swipe = gestureEvent->gesture(Qt::SwipeGesture)) {
+            QSwipeGesture *swipeGesture = static_cast<QSwipeGesture *>(swipe);
+        } else if (QGesture *pan = gestureEvent->gesture(Qt::PanGesture)) {
+            QPanGesture *panGesture = static_cast<QPanGesture *>(pan);
+            if(panGesture->state() == Qt::GestureStarted) {
+                //cout << "Panning start" << endl;
+            }
+            if(panGesture->state() == Qt::GestureFinished) {
+                //cout << "Panning end" << endl;
+            }
+            return true;
+        } else if (QGesture *pinch = gestureEvent->gesture(Qt::PinchGesture)) {
+            QPinchGesture *pinchGesture = static_cast<QPinchGesture *>(pinch);
+
+            QPinchGesture::ChangeFlags changeFlags = pinchGesture->changeFlags();
+            if (changeFlags & QPinchGesture::RotationAngleChanged) {
+                qreal value = pinchGesture->property("rotationAngle").toReal();
+                qreal lastValue = pinchGesture->property("lastRotationAngle").toReal();
+                camera.rotateCamera(2.0*(lastValue-value), 0);
+                return true;
+            }
+
+            if (changeFlags & QPinchGesture::ScaleFactorChanged) {
+                if(pinchGesture->state() == Qt::GestureStarted) {
+                    previousZoom = camera.getZoom();
+                }
+                qreal value = pinchGesture->property("scaleFactor").toReal();
+                camera.setZoom(previousZoom*value);
+                return true;
+            }
+        }
+    }
+    return QGLWidget::event(event);
+}
+#endif
 
 QSize MatrixViewWidget::minimumSizeHint() const
 {
@@ -431,6 +489,7 @@ void MatrixViewWidget::reloadHDTInfo()
 
     updateGL();
 }
+
 
 
 

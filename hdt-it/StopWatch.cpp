@@ -24,6 +24,7 @@ StopWatch::StopWatch() {
 #ifdef WIN32
 void StopWatch::reset() {
 	QueryPerformanceCounter(&startCount);
+        endCount = startCount;
 }
 
 void StopWatch::stop() {
@@ -53,6 +54,9 @@ void StopWatch::reset() {
 
 	memcpy(&user1, &ru.ru_utime, sizeof(struct timeval));
 	memcpy(&system1, &ru.ru_stime, sizeof(struct timeval));
+
+        memcpy(&user2, &user1, sizeof(struct timeval));
+        memcpy(&system2, &system1, sizeof(struct timeval) );
 }
 
 void StopWatch::stop() {

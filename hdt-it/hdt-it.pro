@@ -7,9 +7,9 @@
 QT       += core gui opengl
 
 CONFIG += debug_and_release
-#macx:CONFIG += x86_64
+macx:CONFIG += x86_64
 
-TARGET = hdt-it
+TARGET = HDT-it
 TEMPLATE = app
 
 win32:OutputDir = 'win32'
@@ -26,7 +26,6 @@ SOURCES += main.cpp\
         hdtit.cpp \
     matrixviewwidget.cpp \
     hdtspecform.cpp \
-    fps.cpp \
     Color.cpp \
     Camera.cpp \
     StopWatch.cpp \
@@ -39,12 +38,14 @@ SOURCES += main.cpp\
     hdtcachedinfo.cpp \
     stringutils.cpp \
     predicatestatus.cpp \
-    hdtsummarygenerator.cpp
+    hdtsummarygenerator.cpp \
+    resultcounter.cpp \
+    headermodel.cpp \
+    dictionarysuggestions.cpp
 
 HEADERS  += hdtit.hpp \
     matrixviewwidget.hpp \
     hdtspecform.hpp \
-    fps.hpp \
     Color.h \
     Camera.h \
     constants.h \
@@ -59,7 +60,10 @@ HEADERS  += hdtit.hpp \
     hdtcachedinfo.hpp \
     stringutils.hpp \
     predicatestatus.hpp \
-    hdtsummarygenerator.hpp
+    hdtsummarygenerator.hpp \
+    resultcounter.hpp \
+    headermodel.hpp \
+    dictionarysuggestions.hpp
 
 FORMS    += hdtit.ui \
     hdtspecform.ui \

@@ -3,14 +3,13 @@
 
 #include <QObject>
 #include <QString>
-#include <HDT.hpp>
+#include "hdtmanager.hpp"
 
 class HDTSummaryGenerator : public QObject
 {
     Q_OBJECT
 public:
-
-    static QString getSummary(hdt::HDT *hdt);
+    static QString getSummary(HDTManager *manager);
 };
 
 #endif // HDTSUMMARYGENERATOR_HPP

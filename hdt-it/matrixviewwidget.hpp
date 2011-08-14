@@ -21,6 +21,10 @@ class SearchResultsModel;
 class TripleComponentModel;
 class HDTManager;
 
+#ifdef __APPLE__
+#define GESTURES
+#endif
+
 class MatrixViewWidget : public QGLWidget
 {
     Q_OBJECT
@@ -30,8 +34,6 @@ private:
     Camera camera;
     int lastX, lastY, lastClickX, lastClickY, buttonClick;
     HDTManager *hdtmanager;
-
-    //vector<hdt::TripleID> triples;
 
     void unProject(int x, int y, double *outx, double *outy, double *outz);
 
@@ -58,6 +60,9 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void wheelEvent( QWheelEvent* e );
+#ifdef GESTURES
+    bool event(QEvent *);
+#endif
 
 public slots:
     void reloadHDTInfo();
