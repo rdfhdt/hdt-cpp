@@ -129,6 +129,10 @@ public:
 	 */
 	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object) = 0;
 
+    IteratorTripleString *search(TripleString &pattern) {
+        return search(pattern.getSubject().c_str(), pattern.getPredicate().c_str(), pattern.getObject().c_str());
+    }
+
 };
 
 

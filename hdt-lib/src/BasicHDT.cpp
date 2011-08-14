@@ -100,7 +100,7 @@ void BasicHDT::createComponents() {
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		dictionary = new PlainDictionary(spec);
 	} else {
-		dictionary = new PlainDictionary(spec);
+                dictionary = new PFCDictionary(spec);
 	}
 
 	// TRIPLES
@@ -349,23 +349,21 @@ void BasicHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
 
 void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 {
-	delete header;
-	delete dictionary;
-	delete triples;
-
 	ControlInformation controlInformation;
 	IntermediateListener iListener(listener);
 
 	// Load header
 	iListener.setRange(0,5);
 	controlInformation.load(input);
+        delete header;
 	header = HDTFactory::readHeader(controlInformation);
 	header->load(input, controlInformation, &iListener);
 
 	//Load Dictionary.
 	iListener.setRange(5, 60);
 	controlInformation.clear();
-	controlInformation.load(input);
+        controlInformation.load(input);
+        delete dictionary;
 	dictionary = HDTFactory::readDictionary(controlInformation);
 	dictionary->load(input, controlInformation, &iListener);
 
@@ -373,6 +371,7 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	iListener.setRange(60,100);
 	controlInformation.clear();
 	controlInformation.load(input);
+        delete triples;
 	triples = HDTFactory::readTriples(controlInformation);
 	triples->load(input, controlInformation, &iListener);
 }

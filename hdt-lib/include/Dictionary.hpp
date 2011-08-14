@@ -172,6 +172,8 @@ public:
     virtual void stopProcessing(ProgressListener *listener = NULL)=0;
 
     virtual string getType()=0;
+
+    virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)=0;
 }; // IDictionary{}
 
 } // dictionary{}

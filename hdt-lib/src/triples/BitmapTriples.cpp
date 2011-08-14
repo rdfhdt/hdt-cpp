@@ -76,29 +76,11 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 	vector<unsigned int> vectorY, vectorZ;
 	vector<bool> bitY, bitZ;
 
-	//vector<unsigned int> dif_ys, dif_zs;
 	unsigned int lastX, lastY, lastZ;
 	unsigned int x, y, z;
-	//unsigned int ys=0, zs=0, tys=0, tzs=0;
 
-	// First triple
-	if(it->hasNext()) {
-		TripleID *triple = it->next();
-		//cout << "111> " << *triple << endl;
+	numTriples=0;
 
-		swapComponentOrder(triple, SPO, order);
-
-		lastX = x = triple->getSubject();
-		lastY = y = triple->getPredicate();
-		lastZ = z = triple->getObject();
-
-		vectorY.push_back(y);
-		vectorZ.push_back(z);
-
-		numTriples++;
-	}
-
-	// Rest of the triples
 	while(it->hasNext()) {
 		TripleID *triple = it->next();
 		//cout << "111> " << *triple << endl;
@@ -109,7 +91,10 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 		y = triple->getPredicate();
 		z = triple->getObject();
 
-		if(x!=lastX) {
+		if(numTriples==0){
+			vectorY.push_back(y);
+			vectorZ.push_back(z);
+		} else if(x!=lastX) {
 #ifdef OLD_BITMAP
 			bitY.push_back(0);
 #endif

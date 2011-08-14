@@ -133,12 +133,14 @@ void RDFParserRaptorLine::reset() {
 }
 
 uint64_t RDFParserRaptorLine::getPos(){
-	cout << "RDFParserRaptorLine: Pos" << input->tellg() << endl;
-	return input->tellg();
+	if(!input->eof()){
+		return input->tellg();
+	} else {
+		return size;
+	}
 }
 
 uint64_t RDFParserRaptorLine::getSize() {
-	cout << "RDFParserRaptorLine: Size" << size << endl;
 	return size;
 }
 

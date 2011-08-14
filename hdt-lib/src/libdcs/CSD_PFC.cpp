@@ -31,7 +31,6 @@ namespace csd
 {
 CSD_PFC::CSD_PFC()
 {
-	uint32_t tsize = 1024;
 	text = NULL;
 	blocks = NULL;
 }
@@ -118,6 +117,14 @@ CSD_PFC::CSD_PFC(IteratorUCharString *it, uint32_t blocksize)
 
 	// Representing the vector of positions with log(bytes) bits
 	blocks = new Array(xblocks, bits(bytes));
+}
+
+CSD_PFC::~CSD_PFC()
+{
+        if(text)
+                free(text);
+        if(blocks)
+                delete blocks;
 }
 
 uint32_t CSD_PFC::locate(const uchar *s, uint32_t len)
@@ -260,7 +267,25 @@ CSD* CSD_PFC::load(ifstream & fp)
 	dicc->length = loadValue<uint32_t>(fp);
 	dicc->maxlength = loadValue<uint32_t>(fp);
 	dicc->bytes = loadValue<uint32_t>(fp);
-	dicc->text = loadValue<uchar>(fp, dicc->bytes);
+
+#ifdef WIN32
+        //TODO: why?
+        dicc->text = new uchar[dicc->bytes];
+
+        unsigned int counter=0;
+        char *ptr = (char *)dicc->text;
+        while(counter<dicc->bytes && fp.good()) {
+            fp.read(ptr, 1);
+            ptr++;
+            counter++;
+        }
+        //cout << "Read: "<< counter << " " << endl;
+
+        //fp.read((char *)dicc->text, dicc->bytes);
+        //cout << "Read: " << fp.gcount() << " Expected: " << dicc->bytes << endl;
+#else
+        dicc->text = loadValue<uchar>(fp, dicc->bytes);
+#endif
 	dicc->blocksize = loadValue<uint32_t>(fp);
 	dicc->nblocks = loadValue<uint32_t>(fp);
 	dicc->blocks = new Array(fp);
@@ -316,6 +341,9 @@ bool CSD_PFC::locateBlock(const uchar *s, uint *block)
 		*block = center-1;
 
 	//cout << "Found block: " << *block << endl;
+        if(*block == (unsigned int)-1) {
+            *block = 0;
+        }
 
 	return false;
 }
@@ -421,11 +449,75 @@ uint CSD_PFC::longest_common_prefix(const uchar* str1, const uchar* str2, uint l
 	return delta;
 }
 
-CSD_PFC::~CSD_PFC()
-{
-	if(text)
-		free(text);
-	if(blocks)
-		delete blocks;
 }
-};
+
+void csd::CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
+{
+    uint block;
+    locateBlock((cds_utils::uchar *)base, &block);
+
+    if(!text || !blocks || block>=nblocks){
+            return;
+    }
+
+    uchar *string = new uchar[maxlength+1];
+    uint baselen = strlen(base);
+
+    bool terminate = false;
+
+    while(block<nblocks && !terminate) {
+        uint pos = blocks->getField(block);
+        uint slen = strlen((char*)text+pos)+1;
+        uint delta = 0;
+        uint idInBlock = 0;
+
+        // Reading the first string
+        strncpy((char*)string, (char*)(text+pos), slen);
+        string[slen] = '\0';
+        pos+=slen;
+
+        int cmp = strncmp(base, (char *)string, baselen);
+        if(cmp==0) {
+            out.push_back((char *)string);
+            if(out.size()>=maxResults) {
+                terminate=true;
+            }
+        } else if(cmp<0) {
+            terminate=true;
+        }
+
+        idInBlock++;
+
+        // Scanning the block until a decission about the existence
+        // of 's' can be made.
+        while ( (idInBlock<blocksize) && (pos<bytes) && !terminate)
+        {
+            //cout << "POS: " << pos << "/" << bytes << " Next block: "<< blocks->getField(block+1)<<endl;
+
+            // Decoding the prefix
+            pos += VByte::decode(&delta, text+pos);
+
+            // Copying the suffix
+            slen = strlen((char*)text+pos)+1;
+            strncpy((char*)(string+delta), (char*)(text+pos), slen);
+
+            int cmp = strncmp(base, (char *)string, baselen);
+            if(cmp==0) {
+                out.push_back((char *)string);
+                if(out.size()>=maxResults) {
+                    terminate=true;
+                }
+            } else if(cmp<0) {
+                terminate=true;
+            }
+
+            //cout << block*blocksize+idInBlock << " (" << idInBlock << ") => " << string << " Delta=" << delta << " Len="<< slen<< endl;
+
+            pos+=slen;
+            idInBlock++;
+        }
+        block++;
+    }
+
+    delete [] string;
+}

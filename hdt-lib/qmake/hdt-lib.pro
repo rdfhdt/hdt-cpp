@@ -7,13 +7,14 @@
 QT       -= core gui
 
 CONFIG += debug_and_release
-macx:CONFIG += x86 x86_64
+macx:CONFIG += x86_64
 
 TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
 DEFINES += USE_RAPTOR RAPTOR_STATIC USE_FOQ
+#DEFINES += USE_FOQ
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'

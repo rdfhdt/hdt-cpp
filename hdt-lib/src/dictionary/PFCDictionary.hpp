@@ -90,6 +90,7 @@ public:
 	string getType();
 
 	void import(PlainDictionary *dictionary, ProgressListener *listener = NULL);
+        void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
 private:
 	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);

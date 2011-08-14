@@ -6,16 +6,18 @@ CPP=g++
 #CPP=clang++
 CPPFLAGS=
 #FLAGS=-O2 -Wno-deprecated
-FLAGS=-O2 -Wno-deprecated #-Wall
+FLAGS=-g -Wno-deprecated #-Wall
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
-LDFLAGS=-lstdc++ -lraptor2
+LDFLAGS=
 DOXYGEN=doxygen
 #DEFINES= -DUSE_RAPTOR -DUSE_FOQ
 DEFINES= -DUSE_FOQ #-DOLD_BITMAP
-LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib
+LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib -lstdc++ -lraptor2
 
 ifeq ($(OS), Darwin)
-FLAGS=-arch i386 -arch x86_64 -O2 -Wno-deprecated
+CPP=g++
+#CPP=clang++
+FLAGS=-arch x86_64 -O2 -Wno-deprecated
 endif
 
 SRCS=$(wildcard src/*.cpp) $(wildcard src/**/*.cpp)
@@ -32,6 +34,7 @@ showflags:
 	@echo " [CFG] OS= $(OS)"
 	@echo " [CFG] CPP = $(CPP)"
 	@echo " [CFG] FLAGS = $(FLAGS)"
+	@echo " [CFG] LDFLAGS = $(LDFLAGS)"
 	@echo " [CFG] DEFINES = $(DEFINES)"
 	@echo " [CFG] INCLUDES = $(INCLUDES)"
 	@echo " [CFG] LIB= $(LIB)"

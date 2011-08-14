@@ -132,6 +132,7 @@ public:
 
 	string getType();
 
+        void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 // Private methods
 private:
 	void insert(std::string entry, DictionarySection pos);

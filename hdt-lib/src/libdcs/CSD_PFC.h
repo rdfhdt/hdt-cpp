@@ -93,7 +93,8 @@ class CSD_PFC : public CSD
     /** Loads a CSD_PFC structure from a file pointer.
 	@fp: pointer to the file storing a CSD_PFC structure. */
     static CSD * load(ifstream & fp);
-	
+
+    void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 		
   protected:
     uint32_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).

@@ -148,7 +148,7 @@ std::string PFCDictionary::idToString(unsigned int id, TripleComponentRole posit
 		const char * ptr = (const char *)section->extract(localid);
 		if(ptr!=NULL) {
 			string out = ptr;
-			delete ptr;
+                        delete [] ptr;
 			return out;
 		} else {
 			//cout << "Not found: " << id << " as " << position << endl;
@@ -199,11 +199,6 @@ unsigned int PFCDictionary::stringToId(std::string &key, TripleComponentRole pos
 
 void PFCDictionary::load(std::istream & input, ControlInformation & ci, ProgressListener *listener)
 {
-	delete subjects;
-	delete predicates;
-	delete objects;
-	delete shared;
-
 	this->mapping = ci.getUint("$mapping");
 	this->sizeStrings = ci.getUint("$sizeStrings");
 
@@ -214,23 +209,42 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 	iListener.setRange(0,25);
 	iListener.notifyProgress(0, "Dictionary read shared area.");
 	//cout << "Load shared " << in->tellg() << endl;
+        delete shared;
 	shared = csd::CSD::load(*in);
+        if(shared==NULL){
+            shared = new csd::CSD_PFC();
+            throw "Could not read shared.";
+        }
 
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
 	//cout << "Load subjects " << in->tellg() << endl;
-	subjects = csd::CSD::load(*in);
+        delete subjects;
+        subjects = csd::CSD::load(*in);
+        if(subjects==NULL){
+            subjects = new csd::CSD_PFC();
+            throw "Could not read subjects.";
+        }
 
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
 	//cout << "Load predicates " << in->tellg() << endl;
+        delete predicates;
 	predicates = csd::CSD::load(*in);
+        if(predicates==NULL){
+            predicates = new csd::CSD_PFC();
+            throw "Could not read predicates.";
+        }
 
 	iListener.setRange(75,100);
 	iListener.notifyProgress(0, "Dictionary read objects.");
 	//cout << "Load objects " << in->tellg() << endl;
-	objects = csd::CSD::load(*in);
-
+        delete objects;
+        objects = csd::CSD::load(*in);
+        if(objects==NULL){
+            objects = new csd::CSD_PFC();
+            throw "Could not read objects.";
+        }
 	//cout << "Dictionary loaded " << in->tellg() << endl;
 }
 
@@ -473,9 +487,31 @@ unsigned int PFCDictionary::getLocalId(unsigned int id, TripleComponentRole posi
 	return getLocalId(mapping,id,position);
 }
 
+void PFCDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+{
+    if(role==PREDICATE) {
+        predicates->fillSuggestions(base, out, maxResults);
+        return;
+    }
 
+    vector<string> v1,v2;
+    shared->fillSuggestions(base, v1, maxResults);
+    if(role==SUBJECT) {
+        subjects->fillSuggestions(base, v2, maxResults);
+    } else if(role==OBJECT){
+        objects->fillSuggestions(base, v2, maxResults);
+    }
 
+    // Merge results from shared and subjects/objects keeping order
+    merge(v1.begin(),v1.end(), v2.begin(), v2.end(), std::back_inserter(out));
+
+    // Remove possible extra items
+    if(out.size()>maxResults) {
+        out.resize(maxResults);
+    }
+}
 
 }
+
 
 

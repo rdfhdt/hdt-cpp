@@ -828,3 +828,8 @@ string PlainDictionary::getType() {
 
 
 }
+
+void hdt::PlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+{
+    throw "getSuggestions not implemented";
+}
