@@ -24,20 +24,21 @@ private:
     QModelIndex lastContextMenuCell;
     QTableView *lastContextMenuTable;
 
-    void openHDTFile(QString &file);
-    void importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
-
     void hdtChanged(QString &file);
 
 public:
     explicit HDTit(QWidget *parent = 0);
     ~HDTit();
 
+    void openHDTFile(QString &file);
+    void importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
+
 private slots:
     void on_actionOpenHDT_triggered();
     void on_actionImportRDF_triggered();
     void on_actionSaveHDT_triggered();
     void on_actionExportRDF_triggered();
+    void on_actionClose_triggered();
 
     void on_actionFrontView_toggled(bool arg1);
     void on_actionLeftView_toggled(bool arg1);
@@ -64,7 +65,6 @@ private slots:
     void updateViewButtons();
     void updateNumResults();
     void on_actionFull_Screen_triggered();
-
 };
 
 #endif // HDTIT_HPP

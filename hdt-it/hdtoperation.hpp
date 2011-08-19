@@ -2,6 +2,8 @@
 #define HDTOPERATION_HPP
 
 #include <QProgressDialog>
+#include <QMutex>
+#include <QMutexLocker>
 #include <HDTListener.hpp>
 #include <HDT.hpp>
 #include <SingleTriple.hpp>
@@ -19,7 +21,9 @@ private:
     QString fileName;
     hdt::RDFNotation notation;
     string baseUri;
-    bool succeded;
+    char *errorMessage;
+    bool isCancelled;
+    QMutex isCancelledMutex;
     enum Operation {
         HDT_READ,
         RDF_READ,
@@ -45,6 +49,7 @@ signals:
     void messageChanged(QString message);
     void processFinished(int status);
 private slots:
+    void cancel();
 };
 
 #endif // HDTOPERATION_HPP

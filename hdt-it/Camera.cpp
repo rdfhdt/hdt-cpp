@@ -105,8 +105,8 @@ QPointF Camera::getRotation() {
 
 void Camera::rotateCamera(double x,double y){
     rotationAnimation.stop();
-    rotx += (float) 0.5f * x;
-    roty += (float) 0.5f * y;
+    rotx += 0.5 * x;
+    roty += 0.5 * y;
     emit rotationChanged();
 }
 

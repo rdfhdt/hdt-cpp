@@ -19,7 +19,7 @@ public:
     explicit DictionarySuggestions(QLineEdit *parent = 0);
     ~DictionarySuggestions();
     bool eventFilter(QObject *obj, QEvent *ev);
-    void showCompletion(const QStringList &choices);
+    void showCompletion(const vector<string> &choices);
     void setManager(HDTManager *manager);
     void setRole(hdt::TripleComponentRole role);
 

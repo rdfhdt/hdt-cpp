@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>CFBundleIconFile</key>
+	<string>hdtico.icns</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+    <key>CFBundleGetInfoString</key>
+	<string>Created by Qt/QMake</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleExecutable</key>
+	<string>HDT-it</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.rdfhdt.HDT-it</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+	    <dict>
+		<key>CFBundleTypeExtensions</key>
+		<array>
+		    <string>hdt</string>
+		</array>
+		<key>CFBundleTypeIconFile</key>
+		<string>hdtico.icns</string>
+		<key>CFBundleTypeMIMETypes</key>
+		<array>
+		    <string>binary/rdf-hdt</string>
+		</array>
+		<key>CFBundleTypeName</key>
+		<string>HDT RDF File</string>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>LSIsAppleDefaultForType</key>
+		<true/>
+	    </dict>
+	</array>
+</dict>
+</plist>

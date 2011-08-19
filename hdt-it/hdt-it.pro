@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     hdtsummarygenerator.cpp \
     resultcounter.cpp \
     headermodel.cpp \
-    dictionarysuggestions.cpp
+    dictionarysuggestions.cpp \
+    myapplication.cpp
 
 HEADERS  += hdtit.hpp \
     matrixviewwidget.hpp \
@@ -63,7 +64,8 @@ HEADERS  += hdtit.hpp \
     hdtsummarygenerator.hpp \
     resultcounter.hpp \
     headermodel.hpp \
-    dictionarysuggestions.hpp
+    dictionarysuggestions.hpp \
+    myapplication.hpp
 
 FORMS    += hdtit.ui \
     hdtspecform.ui \
@@ -92,5 +94,7 @@ RESOURCES += \
     hdtresources.qrc
 
 win32:RC_FILE = hdtico.rc
+
+QMAKE_INFO_PLIST = Info.plist
 
 ICON = hdtico.icns

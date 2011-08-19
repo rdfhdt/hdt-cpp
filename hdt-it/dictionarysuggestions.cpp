@@ -73,6 +73,7 @@ bool DictionarySuggestions::eventFilter(QObject *obj, QEvent *ev)
         case Qt::Key_End:
         case Qt::Key_PageUp:
         case Qt::Key_PageDown:
+        case Qt::Key_Shift:
             break;
 
         default:
@@ -88,9 +89,9 @@ bool DictionarySuggestions::eventFilter(QObject *obj, QEvent *ev)
     return false;
 }
 
-void DictionarySuggestions::showCompletion(const QStringList &choices)
+void DictionarySuggestions::showCompletion(const vector<string> &choices)
 {
-    if (choices.isEmpty())
+    if (choices.size()==0)
         return;
 
     popup->setUpdatesEnabled(false);
@@ -98,18 +99,18 @@ void DictionarySuggestions::showCompletion(const QStringList &choices)
     int maxWidth=0;
     QFontMetrics metrics(popup->font());
 
-    for (int i = 0; i < choices.count(); ++i) {
+    for (int i = 0; i < choices.size(); ++i) {
         QTreeWidgetItem * item;
         item = new QTreeWidgetItem(popup);
-        item->setText(0, choices[i]);
-        maxWidth = qMax(maxWidth, metrics.boundingRect(choices[i]).width());
+        item->setText(0, stringutils::cleanN3String(choices[i].c_str()));
+        maxWidth = qMax(maxWidth, metrics.boundingRect(item->text(0)).width());
     }
     popup->setCurrentItem(popup->topLevelItem(0));
     popup->resizeColumnToContents(0);
     popup->adjustSize();
     popup->setUpdatesEnabled(true);
 
-    int h = popup->sizeHintForRow(0) * qMin(NUM_SUGGESTIONS, choices.count()) + 3;
+    int h = popup->sizeHintForRow(0) * qMin(NUM_SUGGESTIONS, (int)choices.size()) + 3;
     popup->resize( qMax(popup->width(), qMin(maxWidth+20, 600)), h);
 
     popup->move(editor->mapToGlobal(QPoint(0, editor->height())));
@@ -140,17 +141,22 @@ void DictionarySuggestions::autoSuggest()
         if(str.length()<1) {
             return;
         }
-        QStringList choices;
-        vector<string> options;
+
+        // If not URI, Literal, Blank
+        if(str.at(0)!='<' && str.at(0)!='"' && str.at(0)!='_') {
+            if(str.left(4)=="http") {
+                str.prepend("<");
+            } else {
+                // Assume literal otherwise
+                str.prepend("\"");
+            }
+        }
+        vector<string> choices;
 
         // FETCH RESULTS FROM DICTIONARY
-        manager->getHDT()->getDictionary().getSuggestions(str.toUtf8(), role, options, NUM_SUGGESTIONS);
+        manager->getHDT()->getDictionary().getSuggestions(str.toUtf8(), role, choices, NUM_SUGGESTIONS);
 
-        for(size_t i=0; i<options.size(); i++) {
-            choices << stringutils::cleanN3String(options[i].c_str());
-        }
-
-        if(choices.count()==1 && choices[0]==str) {
+        if(choices.size()==1 && choices[0]==string(str.toUtf8())) {
             return;
         }
 

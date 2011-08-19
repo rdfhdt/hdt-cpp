@@ -3,11 +3,11 @@
 
 #include "hdtoperation.hpp"
 
-HDTOperation::HDTOperation(hdt::HDT *hdt) : hdt(hdt), hdtInfo(NULL), succeded(false)
+HDTOperation::HDTOperation(hdt::HDT *hdt) : hdt(hdt), hdtInfo(NULL), errorMessage(NULL)
 {
 }
 
-HDTOperation::HDTOperation(hdt::HDT *hdt, HDTCachedInfo *hdtInfo) : hdt(hdt), hdtInfo(hdtInfo), succeded(false)
+HDTOperation::HDTOperation(hdt::HDT *hdt, HDTCachedInfo *hdtInfo) : hdt(hdt), hdtInfo(hdtInfo), errorMessage(NULL)
 {
 }
 
@@ -29,9 +29,7 @@ void HDTOperation::execute() {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
 
             iListener.setRange(0,90);
-            hdt::RDFParser *parser = hdt::RDFParser::getParser(fileName.toAscii(), notation);
-            hdt->loadFromRDF(*parser, baseUri, &iListener);
-            delete parser;
+            hdt->loadFromRDF(fileName.toAscii(), notation, baseUri, &iListener);
 
             iListener.setRange(90, 100);
             hdtInfo->loadInfo(&iListener);
@@ -57,16 +55,25 @@ void HDTOperation::execute() {
         }
         emit processFinished(0);
     } catch (char* err) {
-        cout << "Error:" << err;
+        cout << "Error caught: " << err << endl;
+        errorMessage = err;
         emit processFinished(1);
     } catch (const char* err) {
-        cout << "Error:" << err;
+        cout << "Error caught: " << err << endl;
+        errorMessage = (char *)err;
         emit processFinished(1);
     }
-    QApplication::alert(QApplication::activeWindow());
 }
 
+
 void HDTOperation::notifyProgress(float level, const char *section) {
+    //QMutexLocker locker(&isCancelledMutex);
+#if 1
+    if(isCancelled) {
+        cout << "Throwing exception to cancel" << endl;
+        throw (char *)"Cancelled by user";
+    }
+#endif
     emit progressChanged((int)level);
     emit messageChanged(QString(section));
 }
@@ -112,6 +119,7 @@ int HDTOperation::exec()
 {
     dialog.setRange(0,100);
     dialog.setAutoClose(false);
+    dialog.setFixedSize(300,130);
 
     switch(op) {
     case HDT_READ:
@@ -131,16 +139,35 @@ int HDTOperation::exec()
         break;
     }
 
+#if 0
     QPushButton btn;
     btn.setEnabled(false);
     btn.setText(tr("Cancel"));
     dialog.setCancelButton(&btn);
-    dialog.setFixedSize(300,130);
+#endif
 
     connect(this, SIGNAL(progressChanged(int)), &dialog, SLOT(setValue(int)), Qt::QueuedConnection);
     connect(this, SIGNAL(messageChanged(QString)), &dialog, SLOT(setLabelText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(processFinished(int)), &dialog, SLOT(done(int)), Qt::QueuedConnection);
+    connect(&dialog, SIGNAL(canceled()), this, SLOT(cancel()));
 
+    isCancelled=false;
     QtConcurrent::run(this, &HDTOperation::execute);
-    return dialog.exec();
+    int result = dialog.exec();
+
+    cout << "Dialog returned" << endl;
+
+    if(errorMessage) {
+        QMessageBox::critical(NULL, "ERROR", QString(errorMessage) );
+    }
+
+    QApplication::alert(QApplication::activeWindow());
+    return result;
+}
+
+void HDTOperation::cancel()
+{
+    //QMutexLocker locker(&isCancelledMutex);
+    cout << "Operation cancelled" << endl;
+    isCancelled = true;
 }

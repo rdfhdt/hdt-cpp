@@ -13,7 +13,8 @@ HDTit::HDTit(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::HDTit),
     hdtManager(new HDTManager()),
-    lastDir(QDir::currentPath())
+//    lastDir(QDir::currentPath())
+    lastDir("/Users/mck/rdf/hdt/")
 {
     ui->setupUi(this);
     //this->setUnifiedTitleAndToolBarOnMac(true);
@@ -75,26 +76,23 @@ void HDTit::updateNumResults()
 
 void HDTit::searchPatternEdited()
 {
-    std::string subject = std::string(ui->subjectPatternEdit->text().toAscii());
-    std::string predicate = std::string(ui->predicatePatternEdit->text().toAscii());
-    std::string object = std::string(ui->objectPatternEdit->text().toAscii());
-
-#if 0
-    if(object.length()>0 && object.at(0)!='"'){
-        object = '\"'+object+'\"';
-    }
-#endif
+    std::string subject = std::string(ui->subjectPatternEdit->text().toUtf8());
+    std::string predicate = std::string(ui->predicatePatternEdit->text().toUtf8());
+    std::string object = std::string(ui->objectPatternEdit->text().toUtf8());
 
     hdt::TripleString ts(subject, predicate, object);
     hdtManager->setSearchPattern(ts);
 
     this->updateNumResults();
 
+    ui->resultsTable->scrollToTop();
+
     ui->matrixView->updateGL();
 
     ui->subjectView->selectRow(hdtManager->getSearchPatternID().getSubject()-1);
     ui->predicateView->selectRow(hdtManager->getSearchPatternID().getPredicate()-1);
     ui->objectView->selectRow(hdtManager->getSearchPatternID().getObject()-1);
+
 }
 
 void HDTit::refreshSearchPattern()
@@ -342,3 +340,10 @@ void HDTit::showContextMenu(QPoint pos)
     menu.exec(lastContextMenuTable->mapToGlobal(pos));
 }
 
+
+void HDTit::on_actionClose_triggered()
+{
+    hdtManager->closeHDT();
+    QString str;
+    hdtChanged(str);
+}
