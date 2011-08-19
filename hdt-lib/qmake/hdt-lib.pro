@@ -65,7 +65,8 @@ SOURCES += \
     ../src/rdf/RDFParserRaptorLine.cpp \
     ../src/rdf/RDFSerializerRaptor.cpp \
     ../src/rdf/RDFSerializer.cpp \
-    ../src/util/fileUtil.cpp
+    ../src/util/fileUtil.cpp \
+    ../src/rdf/RDFParserRaptorCallback.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
@@ -118,7 +119,8 @@ HEADERS += \
     ../src/rdf/RDFParserNtriples.hpp \
     ../src/rdf/RDFSerializerRaptor.hpp \
     ../src/rdf/RDFParserRaptorLine.hpp \
-    ../src/util/fileUtil.hpp
+    ../src/util/fileUtil.hpp \
+    ../src/rdf/RDFParserRaptorCallback.hpp
 
 #For hdt-lib
 INCLUDEPATH += ../include
