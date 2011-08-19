@@ -3,20 +3,19 @@ OS := $(shell uname)
 LIBCDSPATH = ../libcds-v1.0.7
 
 CPP=g++
-#CPP=clang++
 CPPFLAGS=
 #FLAGS=-O2 -Wno-deprecated
-FLAGS=-g -Wno-deprecated #-Wall
+FLAGS=-O2 -Wno-deprecated #-Wall
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
 LDFLAGS=
 DOXYGEN=doxygen
-#DEFINES= -DUSE_RAPTOR -DUSE_FOQ
-DEFINES= -DUSE_FOQ #-DOLD_BITMAP
+DEFINES= -DUSE_RAPTOR -DUSE_FOQ
+#DEFINES= -DUSE_FOQ #-DOLD_BITMAP
 LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib -lstdc++ -lraptor2
 
 ifeq ($(OS), Darwin)
-CPP=g++
-#CPP=clang++
+CPP=clang++
+#CPP=g++-4.2
 FLAGS=-arch x86_64 -O2 -Wno-deprecated
 endif
 
