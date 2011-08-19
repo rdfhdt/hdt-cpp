@@ -69,9 +69,7 @@ void BasicHeader::load(std::istream & input, ControlInformation &controlInformat
 		throw "Unexpected BasicHeader format";
 	}
 
-	RDFParser *parser = RDFParser::getParser(input, NTRIPLES);
-	hdt->loadFromRDF(*parser, "<header>");
-	delete parser;
+	throw "Not implemented";
 }
 
 bool BasicHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)

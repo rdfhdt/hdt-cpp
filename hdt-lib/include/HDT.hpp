@@ -76,12 +76,7 @@ public:
 	 */
 	virtual Triples &getTriples() = 0;
 
-	/**
-	 * Load an RDF file represented in the specified RDFNotation into the current HDT.
-	 * @param input
-	 * @param specification
-	 */
-	virtual void loadFromRDF(RDFParser &parser, string baseUri, ProgressListener *listener = NULL) = 0;
+	virtual void loadFromRDF(const char *fileName, RDFNotation notation, string baseUri, ProgressListener *listener = NULL) = 0;
 
 	/**
 	 * Load an HDT file from a stream.

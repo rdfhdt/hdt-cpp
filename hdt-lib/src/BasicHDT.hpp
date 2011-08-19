@@ -49,9 +49,9 @@ private:
 	HDTSpecification spec;
 
 	void createComponents();
-	void loadDictionary(RDFParser &parser, ProgressListener *listener);
-	void loadTriples(RDFParser &parser, ProgressListener *listener);
-	void createHeaderScheme(string baseUri);
+	void loadDictionary(const char *fileName, RDFNotation notation, ProgressListener *listener);
+	void loadTriples(const char *fileName, RDFNotation notation, ProgressListener *listener);
+	void fillHeader(string &baseUri);
 
 public:
 	BasicHDT();
@@ -75,11 +75,7 @@ public:
 	 */
 	Triples &getTriples();
 
-	/*
-	 * @param input
-	 * @param specification
-	 */
-	void loadFromRDF(RDFParser &parser, string baseUri, ProgressListener *listener = NULL);
+	void loadFromRDF(const char *fileName, RDFNotation notation, string baseUri, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
@@ -109,7 +105,6 @@ public:
 
 	void convert(HDTSpecification &spec);
 
-
 	/**
 	 * @param subject
 	 * @param predicate
@@ -117,6 +112,27 @@ public:
 	 * @return
 	 */
 	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+};
+
+class DictionaryLoader : public RDFCallback {
+private:
+	Dictionary *dictionary;
+	ProgressListener *listener;
+	unsigned long long size;
+public:
+	DictionaryLoader(Dictionary *dictionary, ProgressListener *listener, unsigned long long size) : dictionary(dictionary), listener(listener), size(size) { }
+	void processTriple(TripleString &triple, unsigned long long pos);
+};
+
+class TriplesLoader : public RDFCallback {
+private:
+	Dictionary *dictionary;
+	ModifiableTriples *triples;
+	ProgressListener *listener;
+	unsigned long long size;
+public:
+	TriplesLoader(Dictionary *dictionary, ModifiableTriples *triples, ProgressListener *listener, unsigned long long size) : dictionary(dictionary), triples(triples), listener(listener), size(size) { }
+	void processTriple(TripleString &triple, unsigned long long pos);
 };
 
 
@@ -151,11 +167,7 @@ public:
 	 */
 	Triples &getTriples();
 
-	/*
-	 * @param input
-	 * @param specification
-	 */
-	void loadFromRDF(RDFParser &parser, string baseUri, ProgressListener *listener = NULL);
+	void loadFromRDF(const char *fileName, RDFNotation notation, string baseUri, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input

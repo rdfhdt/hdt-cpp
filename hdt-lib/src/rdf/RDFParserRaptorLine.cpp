@@ -33,7 +33,6 @@ void raptor_line_process_triple(void *user_data, raptor_statement *triple) {
 
 void raptor_line_log_handler(void *user_data, raptor_log_message *message) {
 //	RDFParserRaptorLine *raptorParser = reinterpret_cast<RDFParserRaptorLine *>(user_data);
-
         cout << "LOG: " << message->code << " => " << message->text << endl;
         throw message->text;
 }
@@ -63,7 +62,7 @@ RDFParserRaptorLine::RDFParserRaptorLine(const char *fileName, RDFNotation notat
 	size = fileUtil::getSize(*input);
 
 	world = raptor_new_world();
-        raptor_world_set_log_handler(world, (void *)this, raptor_line_log_handler);
+	raptor_world_set_log_handler(world, (void *)this, raptor_line_log_handler);
 
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 	rdf_parser = raptor_new_parser(world, getParserType(notation));
@@ -103,7 +102,7 @@ const char *RDFParserRaptorLine::getParserType(RDFNotation notation){
 	case N3:
 		return "n3";
 	case NTRIPLES:
-		return "n3";
+		return "ntriples";
 	case TURTLE:
 		return "turtle";
 	case XML:

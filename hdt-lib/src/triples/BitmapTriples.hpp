@@ -27,7 +27,7 @@ private:
 	HDTSpecification spec;
 	StreamElements *streamY, *streamZ, *streamIndex;
 	cds_static::BitSequence *bitmapY, *bitmapZ, *bitmapIndex;
-	WaveletStream *waveletZ;
+	WaveletStream *waveletY;
 
 	unsigned int numTriples;
 	TripleComponentOrder order;
@@ -87,6 +87,7 @@ public:
 
 	friend class BitmapTriplesSearchIterator;
 	friend class MiddleWaveletIterator;
+	friend class ObjectIndexIterator;
 };
 
 class BitmapTriplesSearchIterator : public IteratorTripleID {
@@ -98,7 +99,7 @@ private:
 	AdjacencyList adjY, adjZ;
 	unsigned int posY, posZ;
 	unsigned int minY, maxY, minZ, maxZ;
-	unsigned int nextY, nextZ;
+        unsigned int nextY, nextZ, prevY, prevZ;
 	unsigned int x, y, z;
 
 	void findRange();
@@ -132,6 +133,29 @@ private:
 	void updateOutput();
 public:
 	MiddleWaveletIterator(BitmapTriples *triples, TripleID &pat);
+
+	bool hasNext();
+	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
+};
+
+class ObjectIndexIterator : public IteratorTripleID {
+private:
+	BitmapTriples *triples;
+	TripleID pattern, returnTriple;
+
+	AdjacencyList adjY, adjZ, adjIndex;
+	unsigned int patX, patY, patZ;
+	unsigned int posIndex;
+	unsigned int predicateOcurrence, numOcurrences;
+	unsigned int minIndex, maxIndex;
+	unsigned int x, y, z;
+
+	void updateOutput();
+public:
+	ObjectIndexIterator(BitmapTriples *triples, TripleID &pat);
 
 	bool hasNext();
 	TripleID *next();

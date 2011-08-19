@@ -101,13 +101,6 @@ class CSD
     */
     virtual uchar * extract(uint32_t id)=0;
 
-    /** Obtains the original Tdict from its CSD representation. Each string is
-	separated by '\n' symbols.
-	@dict: the plain uncompressed dictionary.
-	@return: number of total symbols in the dictionary.
-    */
-    virtual uint decompress(uchar **dict)=0;
-
     /** Returns the size of the structure in bytes. */
     virtual uint32_t getSize()=0;
 

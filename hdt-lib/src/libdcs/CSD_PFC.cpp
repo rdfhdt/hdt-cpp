@@ -31,8 +31,14 @@ namespace csd
 {
 CSD_PFC::CSD_PFC()
 {
-	text = NULL;
-	blocks = NULL;
+	this->type = PFC;
+	this->length = 0;
+	this->maxlength = 0;
+	this->bytes = 0;
+	this->blocksize = 0;
+	this->nblocks = 0;
+	this->text = NULL;
+	this->blocks = NULL;
 }
 
 CSD_PFC::CSD_PFC(IteratorUCharString *it, uint32_t blocksize)
@@ -44,8 +50,8 @@ CSD_PFC::CSD_PFC(IteratorUCharString *it, uint32_t blocksize)
 	this->blocksize = blocksize;
 	this->nblocks = 0;
 
-	uint32_t tsize = 1024;
-	text = (uchar*)malloc(tsize*sizeof(uchar));
+	uint32_t reservedSize = 1024;
+	text = (uchar*)malloc(reservedSize*sizeof(uchar));
 
 	vector<uint> xblocks; // Temporal storage for start positions
 
@@ -61,11 +67,12 @@ CSD_PFC::CSD_PFC(IteratorUCharString *it, uint32_t blocksize)
 
 		// Checking the current size of the encoded
 		// sequence: realloc if necessary
-		if ((bytes+currentLength+1) >= tsize)
+		if ((bytes+currentLength+1) > reservedSize)
 		{
-			if (currentLength < tsize) tsize*=2;
-			else tsize+=(2*currentLength);
-			text = (uchar*)realloc(text, tsize*sizeof(uchar));
+			while((bytes+currentLength+1) > reservedSize) {
+				reservedSize *= 2;
+			}
+			text = (uchar*)realloc(text, reservedSize*sizeof(uchar));
 		}
 
 		if ((length % blocksize) == 0)
@@ -114,6 +121,9 @@ CSD_PFC::CSD_PFC(IteratorUCharString *it, uint32_t blocksize)
 
 	// Storing the final byte position in the vector of positions
 	xblocks.push_back(bytes);
+
+	// Trunc encoded sequence to save unused memory
+	text = (uchar *) realloc(text, bytes*sizeof(uchar));
 
 	// Representing the vector of positions with log(bytes) bits
 	blocks = new Array(xblocks, bits(bytes));
@@ -183,7 +193,7 @@ void CSD_PFC::dumpBlock(uint block) {
 
 	// Scanning the block until a decission about the existence
 	// of 's' can be made.
-	while ( (idInBlock<blocksize) && (pos<bytes))  // FIXME: What if last block is not full?
+	while ( (idInBlock<blocksize) && (pos<bytes))
 	{
 		//cout << "POS: " << pos << "/" << bytes << " Next block: "<< blocks->getField(block+1)<<endl;
 
@@ -228,11 +238,6 @@ uchar* CSD_PFC::extract(uint32_t id)
 	}
 }
 
-uint CSD_PFC::decompress(uchar **dict)
-{
-        return 0;
-}
-
 uint32_t CSD_PFC::getSize()
 {
 	if(!text || !blocks) {
@@ -269,23 +274,20 @@ CSD* CSD_PFC::load(ifstream & fp)
 	dicc->bytes = loadValue<uint32_t>(fp);
 
 #ifdef WIN32
-        //TODO: why?
-        dicc->text = new uchar[dicc->bytes];
-
-        unsigned int counter=0;
-        char *ptr = (char *)dicc->text;
-        while(counter<dicc->bytes && fp.good()) {
-            fp.read(ptr, 1);
-            ptr++;
-            counter++;
-        }
-        //cout << "Read: "<< counter << " " << endl;
-
-        //fp.read((char *)dicc->text, dicc->bytes);
-        //cout << "Read: " << fp.gcount() << " Expected: " << dicc->bytes << endl;
+	dicc->text = (unsigned char *)malloc(dicc->bytes);
+	const unsigned int blocksize = 8192;
+	unsigned int counter=0;
+	char *ptr = (char *)dicc->text;
+	while(counter<dicc->bytes && fp.good()) {
+		fp.read(ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);
+		ptr += fp.gcount();
+		counter += fp.gcount();
+	}
+	//cout << "FINAL Read: " << counter << " / " << dicc->bytes << endl;
 #else
-        dicc->text = loadValue<uchar>(fp, dicc->bytes);
+	dicc->text = loadValue<uchar>(fp, dicc->bytes);
 #endif
+
 	dicc->blocksize = loadValue<uint32_t>(fp);
 	dicc->nblocks = loadValue<uint32_t>(fp);
 	dicc->blocks = new Array(fp);

@@ -26,24 +26,24 @@ void raptor_process_triple(void *user_data, raptor_statement *triple) {
 	//cout << "***" << ts << endl;
 
 	RDFParserRaptor *raptorParser = reinterpret_cast<RDFParserRaptor *>(user_data);
+
 	raptorParser->vectorOutput.push_back(ts);
 
-#if 0
-	raptor_locator *locator = raptor_parser_get_locator(raptorParser->rdf_parser);
-	raptorParser->size = raptor_locator_byte(locator);
-#endif
 }
 
 void raptor_log_handler(void *user_data, raptor_log_message *message) {
 	RDFParserRaptor *raptorParser = reinterpret_cast<RDFParserRaptor *>(user_data);
 
-	cout << "LOG: " << message->code << " => " << message->text << endl;
-    throw message->text;
+	cout << "LOG: " << message->code << " => " << message->text << " at " << message->locator->line << endl;
+	if(message->level>=RAPTOR_LOG_LEVEL_ERROR) {
+		throw message->text;
+	}
 }
 
 RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation)
 	: RDFParser(notation),
-	  pos(0)
+	  pos(0),
+	  callback(NULL)
 {
 	size = fileUtil::getSize(in);
 
@@ -71,7 +71,7 @@ RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation)
         raptor_free_world(world);
 }
 
-RDFParserRaptor::RDFParserRaptor(const char *fileName, RDFNotation notation) : RDFParser(notation), pos(0) {
+RDFParserRaptor::RDFParserRaptor(const char *fileName, RDFNotation notation) : RDFParser(notation), pos(0), callback(NULL) {
 	raptor_world *world = raptor_new_world();
 	raptor_world_set_log_handler(world, (void *)this, raptor_log_handler);
 

@@ -10,6 +10,7 @@
 
 #include "StreamElements.hpp"
 
+
 #include <WaveletTreeNoptrs.h>
 
 namespace hdt {
@@ -21,6 +22,7 @@ private:
 
 public:
 	WaveletStream();
+	WaveletStream(StreamElements *otherStream);
 	virtual ~WaveletStream();
 
 	/**

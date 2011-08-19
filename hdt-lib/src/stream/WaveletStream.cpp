@@ -9,10 +9,25 @@
 
 #include "WaveletStream.hpp"
 
+#include "LogStream.hpp"
+
+
 namespace hdt {
 
 WaveletStream::WaveletStream() : sequence(NULL) {
 
+}
+
+WaveletStream::WaveletStream(StreamElements *otherStream)  {
+	if(otherStream->getType()==HDTVocabulary::STREAM_TYPE_LOG) {
+		LogStream *logStream = static_cast<LogStream *>(otherStream);
+		cds_static::BitSequenceBuilder *builder = new cds_static::BitSequenceBuilderRG(20);
+		cds_static::Mapper *mapper = new cds_static::MapperNone();
+		sequence = new cds_static::WaveletTreeNoptrs(*logStream->array, builder, mapper);
+	} else {
+		StreamIterator iterator(otherStream);
+		this->add(iterator);
+	}
 }
 
 WaveletStream::~WaveletStream() {
@@ -50,7 +65,6 @@ void WaveletStream::add(IteratorUint &elements)
 	}
 
 	cds_static::BitSequenceBuilder *builder = new cds_static::BitSequenceBuilderRG(20);
-	//cds_static::BitSequenceBuilder *builder = new cds_static::BitSequenceBuilderRRR(32);
 	cds_static::Mapper *mapper = new cds_static::MapperNone();
 
 	sequence = new cds_static::WaveletTreeNoptrs(&vector[0], vector.size(), builder, mapper);

@@ -16,10 +16,10 @@ namespace hdt {
 
 RDFParser *RDFParser::getParser(std::istream &stream, RDFNotation notation) {
 #if USE_RAPTOR
-	if(notation == NTRIPLES) {
+	/*if(notation == NTRIPLES) {
 		cout << "RDFParserRaptorLine" << endl;
 		return new RDFParserRaptorLine(stream,notation);
-	}
+	}*/
 	cout << "RDFParserRaptor" << endl;
 	return new RDFParserRaptor(stream,notation);
 #else
@@ -34,10 +34,10 @@ RDFParser *RDFParser::getParser(std::istream &stream, RDFNotation notation) {
 
 RDFParser *RDFParser::getParser(const char *fileName, RDFNotation notation) {
 #if USE_RAPTOR
-	if(notation == NTRIPLES) {
+	/*if(notation == NTRIPLES) {
 		cout << "RDFParserRaptorLine" << endl;
 		return new RDFParserRaptorLine(fileName,notation);
-	}
+	}*/
 	cout << "RDFParserRaptor" << endl;
 	return new RDFParserRaptor(fileName,notation);
 #else

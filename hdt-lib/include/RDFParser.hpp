@@ -18,6 +18,11 @@
 
 namespace hdt {
 
+class RDFCallback {
+public:
+	virtual void processTriple(TripleString &triple, unsigned long long pos)=0;
+};
+
 class RDFParser: public IteratorTripleString {
 
 protected:

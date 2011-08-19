@@ -158,9 +158,7 @@ int main(int argc, char **argv) {
 	try {
 		// Read RDF
 		StopWatch globalTimer;
-		RDFParser *parser = RDFParser::getParser(inputFile.c_str(), notation);
-		hdt->loadFromRDF(*parser, baseUri, &progress);
-		delete parser;
+		hdt->loadFromRDF(inputFile.c_str(), notation, baseUri, &progress);
 
 		ofstream out;
 

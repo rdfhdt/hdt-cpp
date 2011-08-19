@@ -20,11 +20,11 @@ namespace hdt {
 BitmapTriples::BitmapTriples() : numTriples(0), order(SPO) {
 	streamY = StreamElements::getStream(spec.get("stream.y"));
 	streamZ = StreamElements::getStream(spec.get("stream.z"));
-	waveletZ = NULL;
 	streamIndex = NULL;
-	bitmapIndex = NULL;
 	bitmapY = NULL;
 	bitmapZ = NULL;
+	bitmapIndex = NULL;
+	waveletY = NULL;
 }
 
 BitmapTriples::BitmapTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
@@ -32,14 +32,13 @@ BitmapTriples::BitmapTriples(HDTSpecification &specification) : numTriples(0), s
 	order= parseOrder(orderStr.c_str());
 	if(order==Unknown)
 		order = SPO;
-
 	streamY = StreamElements::getStream(spec.get("stream.y"));
 	streamZ = StreamElements::getStream(spec.get("stream.z"));
-	waveletZ = NULL;
 	streamIndex = NULL;
-	bitmapIndex = NULL;
 	bitmapY = NULL;
 	bitmapZ = NULL;
+	bitmapIndex = NULL;
+	waveletY = NULL;
 }
 
 BitmapTriples::~BitmapTriples() {
@@ -49,8 +48,8 @@ BitmapTriples::~BitmapTriples() {
 	if(bitmapZ!=NULL) {
 		delete bitmapZ;
 	}
-	if(waveletZ != NULL && waveletZ != streamZ) {
-		delete waveletZ;
+	if(waveletY != NULL && waveletY != streamY) {
+		delete waveletY;
 	}
 	if(bitmapIndex!=NULL) {
 		delete bitmapIndex;
@@ -189,7 +188,7 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 	bitmapZ = new cds_static::BitSequenceRG(*bsz, 20);
 
 	if(streamZ->getType()==HDTVocabulary::STREAM_TYPE_WAVELET) {
-		waveletZ = reinterpret_cast<WaveletStream *>(streamZ);
+		waveletY = reinterpret_cast<WaveletStream *>(streamZ);
 	}
 
 #if 0
@@ -200,13 +199,16 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 #endif
 
 #if 0
-	generateIndex(listener);
+	generateIndex(&iListener);
 #endif
 }
 
 void BitmapTriples::generateIndex(ProgressListener *listener) {
 	StopWatch st;
 
+	IntermediateListener iListener(listener);
+
+	iListener.setRange(0,40);
 	vector <vector<unsigned int> > index;
 	for(unsigned int i=0;i<streamZ->getNumberOfElements(); i++) {
 		unsigned int val = streamZ->get(i);
@@ -214,14 +216,19 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 			index.resize(val);
 		}
 		index[val-1].push_back(i);
+		NOTIFYCOND(&iListener, "Generating Object lists", i, streamZ->getNumberOfElements());
 	}
 
 	BitString *indexBitmapTmp = new BitString(streamZ->getNumberOfElements());
 
+	iListener.setRange(40, 80);
 	unsigned int pos=0;
 	vector<unsigned int> out;
 	for(unsigned int i=0;i<index.size();i++){
 		//cout << "Object " << i << " (" << index[i].size() << ") => ";
+		if(index[i].size()<=0) {
+			throw "Error generating index: Object should appear at least once";
+		}
 		for(unsigned int j=0;j<index[i].size()-1;j++){
 			out.push_back(index[i][j]);
 			indexBitmapTmp->setBit(pos, false);
@@ -231,34 +238,39 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 		//cout << "[" << index[i][index[i].size()-1] << endl;
 		out.push_back(index[i][index[i].size()-1]);
 		indexBitmapTmp->setBit(pos++, true);
-		pos++;
+		NOTIFYCOND(&iListener, "Serializing object lists", i, index.size());
 	}
+	index.clear();
 
+	NOTIFY(listener, "Creating object bitmap", 80, 100 );
 	bitmapIndex = new cds_static::BitSequenceRG(*indexBitmapTmp, 20);
+	//bitmapIndex = new cds_static::BitSequenceRRR(*indexBitmapTmp,1024);
 
+	NOTIFY(listener, "Creating object sequence", 90, 100 );
 	VectorIterator it(out);
 	streamIndex = StreamElements::getStream(HDTVocabulary::STREAM_TYPE_LOG);
 	streamIndex->add(it);
-
-	cout << "Order: " << getOrderStr(order) << endl;
 	cout << "Index generated in " << st << endl;
-	cout << "Bitmap size: " << size() << endl;
-	cout << "Index size: " << bitmapIndex->getSize()+streamIndex->size() << endl;
 
+	// Generate Wavelet
+	NOTIFY(listener, "Generating wavelet", 90,100);
 	st.reset();
-	if(streamZ->getType()==HDTVocabulary::STREAM_TYPE_WAVELET) {
-		waveletZ = reinterpret_cast<WaveletStream *>(streamZ);
+	if(streamY->getType()==HDTVocabulary::STREAM_TYPE_WAVELET) {
+		waveletY = reinterpret_cast<WaveletStream *>(streamY);
 	} else {
-		waveletZ = new WaveletStream();
-		StreamIterator iterator(streamZ);
-		waveletZ->add(iterator);
+		waveletY = new WaveletStream(streamY);
 
-		if(false) { // FIXME: Substitute existing or leave?
-			delete streamZ;
-			streamZ = waveletZ;
+		if(false) { // FIXME: Substitute existing or leave both?
+			delete streamY;
+			streamY = waveletY;
 		}
 	}
-	cout << "Wavelet created in " << st << endl;
+	cout << "Wavelet generated in " << st << endl;
+
+	cout << "Num triples: " << getNumberOfElements() << endl;
+	cout << "Order: " << getOrderStr(order) << endl;
+	cout << "Original triples size: " << size() << endl;
+	cout << "Index size: " << bitmapIndex->getSize()+streamIndex->size() << " <" << ((unsigned long long)(bitmapIndex->getSize()+streamIndex->size()))*100 / size() << "%>"<< endl;
 }
 
 void BitmapTriples::populateHeader(Header &header, string rootNode) {
@@ -289,7 +301,13 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	swapComponentOrder(&reorderedPat, SPO, this->order);
 	std::string patternString = reorderedPat.getPatternString();
 
-	if(patternString=="?P?" && waveletZ != NULL) {
+	if((streamIndex!=NULL && bitmapIndex != NULL) && (patternString=="??O" || patternString=="?PO" )) {
+		if(patternString=="??O") {
+			return new ObjectIndexIterator(this, pattern);
+		} else {
+			return new SequentialSearchIteratorTripleID(pattern, new ObjectIndexIterator(this, pattern));
+		}
+	} else if( waveletY != NULL && patternString=="?P?") {
 		return new MiddleWaveletIterator(this, pattern);
 	} else {
 		if(patternString=="???" || patternString=="S??" || patternString=="SP?"|| patternString=="SPO" ) {
@@ -356,33 +374,34 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	// Fixme: Bitmap directly on istream/ostream??
 	ifstream *in = dynamic_cast<ifstream *>(&input);
 
-	iListener.setRange(0,10);
+	iListener.setRange(0,5);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Y");
 	//cout << "Load BitmapY " << in->tellg() << endl;
 	bitmapY = cds_static::BitSequence::load(*in);
 
-	iListener.setRange(10,20);
+	iListener.setRange(5,10);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Z");
 	//cout << "Load BitmapZ " << in->tellg() << endl;
 	bitmapZ = cds_static::BitSequence::load(*in);
 
-	iListener.setRange(20,50);
+	iListener.setRange(10,20);
 	iListener.notifyProgress(0, "BitmapTriples loading Stream Y");
 	//cout << "Load StreamY " << in->tellg() << endl;
 	streamY->load(input);
 
-	iListener.setRange(50,100);
+	iListener.setRange(20,50);
 	iListener.notifyProgress(0, "BitmapTriples loading Stream Z");
 	//cout << "Load StreamZ " << in->tellg() << endl;
 	streamZ->load(input);
 	//cout << "OK " << in->tellg() << endl;
 
 	if(streamZ->getType()==HDTVocabulary::STREAM_TYPE_WAVELET) {
-		waveletZ = reinterpret_cast<WaveletStream *>(streamZ);
+		waveletY = reinterpret_cast<WaveletStream *>(streamZ);
 	}
 
 #if 0
-	generateIndex(listener);
+	iListener.setRange(50, 100);
+	generateIndex(&iListener);
 #endif
 }
 
@@ -525,8 +544,23 @@ bool BitmapTriplesSearchIterator::hasPrevious()
 
 TripleID *BitmapTriplesSearchIterator::previous()
 {
-	// TODO: Keep prevZ updated to save bitmap accesses.
+
 	posZ--;
+
+#if 0
+        // TODO: Keep prevZ updated to save bitmap accesses.
+        z = adjZ.get(posZ);
+        if(posZ==prevZ) {
+            posY--;
+            y = adjY.get(posY);
+            prevZ = adjZ.find(posY);
+
+            if(posY==prevY) {
+                x--;
+                prevY = adjY.find(x);
+            }
+        }
+ #else
 	posY = adjZ.findListIndex(posZ);
 
 	z = adjZ.get(posZ);
@@ -535,6 +569,7 @@ TripleID *BitmapTriplesSearchIterator::previous()
 
 	nextY = adjY.last(x-1)+1;
 	nextZ = adjZ.last(posY)+1;
+#endif
 
 #if 0
 	cout << "BACK posZ: " << posZ << " posY: " << posY << endl;
@@ -577,7 +612,7 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
 		adjY(trip->streamY, trip->bitmapY),
 		adjZ(trip->streamZ, trip->bitmapZ),
 		predicateOcurrence(1),
-		wavelet(trip->waveletZ)
+		wavelet(trip->waveletY)
 {
 	// Convert pattern to local order.
 	swapComponentOrder(&pattern, SPO, triples->order);
@@ -674,6 +709,96 @@ void MiddleWaveletIterator::goToStart()
 	z = adjZ.get(posZ);
 }
 
+
+
+
+
+
+
+
+
+
+
+ObjectIndexIterator::ObjectIndexIterator(BitmapTriples *trip, TripleID &pat) :
+		triples(trip),
+		pattern(pat),
+		adjY(trip->streamY, trip->bitmapY),
+		adjZ(trip->streamZ, trip->bitmapZ),
+		adjIndex(trip->streamIndex, trip->bitmapIndex)
+{
+	// Convert pattern to local order.
+	swapComponentOrder(&pattern, SPO, triples->order);
+	patX = pattern.getSubject();
+	patY = pattern.getPredicate();
+	patZ = pattern.getObject();
+
+#if 0
+	cout << "AdjY: " << endl;
+	adjY.dump();
+	cout << "AdjZ: " << endl;
+	adjZ.dump();
+	cout << "AdjIndex: " << endl;
+	adjIndex.dump();
+	cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+#endif
+
+	goToStart();
+}
+
+void ObjectIndexIterator::updateOutput() {
+	// Convert local order to SPO
+	returnTriple.setAll(x,y,z);
+
+	swapComponentOrder(&returnTriple, triples->order, SPO);
+}
+
+bool ObjectIndexIterator::hasNext()
+{
+	return posIndex <= maxIndex;
+}
+
+TripleID *ObjectIndexIterator::next()
+{
+	unsigned int posZ = adjIndex.get(posIndex);
+	unsigned int posY = adjZ.findListIndex(posZ);
+
+	z = adjZ.get(posZ);
+	y = adjY.get(posY);
+	x = adjY.findListIndex(posY)+1;
+
+	posIndex++;
+
+	updateOutput();
+	return &returnTriple;
+}
+
+bool ObjectIndexIterator::hasPrevious()
+{
+	return posIndex>=minIndex;
+}
+
+TripleID *ObjectIndexIterator::previous()
+{
+	posIndex--;
+
+	unsigned int posZ = adjIndex.get(posIndex);
+	unsigned int posY = adjZ.findListIndex(posZ);
+
+	z = adjZ.get(posZ);
+	y = adjY.get(posY);
+	x = adjY.findListIndex(posY)+1;
+
+	updateOutput();
+	return &returnTriple;
+}
+
+void ObjectIndexIterator::goToStart()
+{
+	minIndex=adjIndex.find(patZ-1);
+	maxIndex=adjIndex.last(patZ-1);
+
+	posIndex=minIndex;
+}
 
 
 

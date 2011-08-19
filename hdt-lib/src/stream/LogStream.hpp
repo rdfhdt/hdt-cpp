@@ -67,6 +67,8 @@ public:
 	void load(std::istream &input);
 
 	std::string getType();
+
+	friend class WaveletStream;
 };
 
 }

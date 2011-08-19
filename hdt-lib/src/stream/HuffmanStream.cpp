@@ -30,6 +30,7 @@ unsigned int HuffmanStream::get(unsigned int position)
 
 void HuffmanStream::add(IteratorUint &elements)
 {
+	// Fixme: Modify Huffman.cpp class to pass the frequencies and avoid copying.
 	while(elements.hasNext()) {
 		unsigned int element = elements.next();
 		vectorPlain.push_back(element);
