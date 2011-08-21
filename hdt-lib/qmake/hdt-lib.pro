@@ -28,7 +28,6 @@ UI_DIR = $${OutputDir}
 
 SOURCES += \
     ../src/rdf/RDFSerializerN3.cpp \
-    ../src/rdf/RDFParserN3.cpp \
     ../src/HDTSpecification.cpp \
     ../src/HDTFactory.cpp \
     ../src/ControlInformation.cpp \
@@ -84,7 +83,6 @@ HEADERS += \
     ../include/RDFParser.hpp \
     ../include/RDFSerializer.hpp \
     ../src/rdf/RDFSerializerN3.hpp \
-    ../src/rdf/RDFParserN3.hpp \
     ../src/BasicHDT.hpp \
     ../src/dictionary/PlainDictionary.hpp \
     ../src/util/StopWatch.hpp \
