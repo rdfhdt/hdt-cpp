@@ -3,6 +3,22 @@
 
 #include "hdtoperation.hpp"
 
+//#define OPERATION_CANCELABLE
+
+HDTOperationDialog::HDTOperationDialog()
+{
+}
+
+void HDTOperationDialog::closeEvent(QCloseEvent *event)
+{
+#ifdef OPERATION_CANCELABLE
+    event->accept();
+#else
+    event->ignore();
+#endif
+}
+
+
 HDTOperation::HDTOperation(hdt::HDT *hdt) : hdt(hdt), hdtInfo(NULL), errorMessage(NULL)
 {
 }
@@ -29,7 +45,7 @@ void HDTOperation::execute() {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
 
             iListener.setRange(0,90);
-            hdt->loadFromRDF(fileName.toAscii(), notation, baseUri, &iListener);
+            hdt->loadFromRDF(fileName.toAscii(), baseUri, notation, &iListener);
 
             iListener.setRange(90, 100);
             hdtInfo->loadInfo(&iListener);
@@ -67,8 +83,7 @@ void HDTOperation::execute() {
 
 
 void HDTOperation::notifyProgress(float level, const char *section) {
-    //QMutexLocker locker(&isCancelledMutex);
-#if 1
+#ifdef OPERATION_CANCELABLE
     if(isCancelled) {
         cout << "Throwing exception to cancel" << endl;
         throw (char *)"Cancelled by user";
@@ -139,7 +154,7 @@ int HDTOperation::exec()
         break;
     }
 
-#if 0
+#ifndef OPERATION_CANCELABLE
     QPushButton btn;
     btn.setEnabled(false);
     btn.setText(tr("Cancel"));
@@ -155,9 +170,10 @@ int HDTOperation::exec()
     QtConcurrent::run(this, &HDTOperation::execute);
     int result = dialog.exec();
 
-    cout << "Dialog returned" << endl;
+    //cout << "Dialog returned" << endl;
 
     if(errorMessage) {
+        result = 1;
         QMessageBox::critical(NULL, "ERROR", QString(errorMessage) );
     }
 
@@ -167,7 +183,9 @@ int HDTOperation::exec()
 
 void HDTOperation::cancel()
 {
-    //QMutexLocker locker(&isCancelledMutex);
-    cout << "Operation cancelled" << endl;
+    //cout << "Operation cancelled" << endl;
     isCancelled = true;
 }
+
+
+

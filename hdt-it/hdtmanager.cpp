@@ -189,6 +189,7 @@ void HDTManager::closeHDT()
         delete hdt;
         hdt = NULL;
 
+        numResults=0;
         subjectModel->notifyLayoutChanged();
         predicateModel->notifyLayoutChanged();
         predicateStatus->refreshAll();

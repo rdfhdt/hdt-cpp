@@ -25,12 +25,33 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Research group: &lt;a href=&quot;http://dataweb.infor.uva.es&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://dataweb.infor.uva.es&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;HDT was possible thanks to:&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Javier D. Fernández García &amp;lt;&lt;a href=&quot;mailto:jfergar@infor.uva.es&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;jfergar@infor.uva.es&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Miguel A. Martínez-Prieto &amp;lt;&lt;a href=&quot;mailto:migumar2@infor.uva.es&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;migumar2@infor.uva.es&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Mario Arias Gallego &amp;lt;&lt;a href=&quot;mario.arias@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;mario.arias@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Claudio Gutierrez &amp;lt;&lt;a href=&quot;mailto:cgutierr@dcc.uchile.cl&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;cgutierr@dcc.uchile.cl&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alejandro Andres &amp;lt;&lt;a href=&quot;mailto:fuzzy.alej@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;fuzzy.alej@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;HDT-it! version 0.9beta&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:16pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;HDT (Header, Dictionary, Triples) is a binary representation for RDF that compresses big datasets in order to store and share big RDF files.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;HDT-it is a tool that allows generating and consuming HDT files. As an example, the tool allows to search for basic graph patterns, and shows a global 3D Matrix of the RDF distribution.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information about the tool and our research, please visit:&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;HDT Web page: &lt;a href=&quot;http://www.rdfhdt.org&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://www.rdfhdt.org&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Research group: &lt;a href=&quot;http://dataweb.infor.uva.es&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://dataweb.infor.uva.es&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;HDT was possible thanks to:&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Javier D. Fernández García &amp;lt;&lt;a href=&quot;mailto:jfergar83@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;jfergar83@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Miguel Ángel Martínez-Prieto &amp;lt;&lt;a href=&quot;mailto:migumar2@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;migumar2@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Mario Arias Gallego &amp;lt;&lt;a href=&quot;mario.arias@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;mario.arias@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Claudio Gutierrez &amp;lt;&lt;a href=&quot;mailto:cgutierr@dcc.uchile.cl&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;cgutierr@dcc.uchile.cl&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alejandro Andres &amp;lt;&lt;a href=&quot;mailto:fuzzy.alej@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;fuzzy.alej@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
         <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -128,32 +149,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HDTOperation</name>
     <message>
-        <location filename="hdtoperation.cpp" line="116"/>
+        <location filename="hdtoperation.cpp" line="126"/>
         <source>Loading HDT File</source>
         <translation type="unfinished">Cargando fichero HDT</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="119"/>
+        <location filename="hdtoperation.cpp" line="129"/>
         <source>Importing RDF File to HDT</source>
         <translation type="unfinished">Importando fichero RDF a HDT</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="122"/>
+        <location filename="hdtoperation.cpp" line="132"/>
         <source>Saving HDT File</source>
         <translation type="unfinished">Guardando fichero HDT</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="125"/>
+        <location filename="hdtoperation.cpp" line="135"/>
         <source>Exporting HDT File to RDF</source>
         <translation type="unfinished">Exportando fichero HDT a RDF</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="128"/>
+        <location filename="hdtoperation.cpp" line="138"/>
         <source>Exporting results to RDF</source>
         <translation type="unfinished">Exportar resultados a RDF</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="134"/>
+        <location filename="hdtoperation.cpp" line="145"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancelar</translation>
     </message>

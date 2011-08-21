@@ -10,6 +10,14 @@
 
 #include "hdtcachedinfo.hpp"
 
+
+class HDTOperationDialog : public QProgressDialog {
+    Q_OBJECT
+public:
+    HDTOperationDialog();
+    void closeEvent(QCloseEvent *event);
+};
+
 class HDTOperation : public QObject, public hdt::ProgressListener {
     Q_OBJECT
 
@@ -23,7 +31,8 @@ private:
     string baseUri;
     char *errorMessage;
     bool isCancelled;
-    QMutex isCancelledMutex;
+    HDTOperationDialog dialog;
+
     enum Operation {
         HDT_READ,
         RDF_READ,
@@ -31,7 +40,6 @@ private:
         RDF_WRITE,
         RESULT_EXPORT
     } op;
-    QProgressDialog dialog;
 
 public:
     HDTOperation(hdt::HDT *hdt);

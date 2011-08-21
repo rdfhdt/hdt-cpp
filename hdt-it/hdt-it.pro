@@ -71,8 +71,7 @@ FORMS    += hdtit.ui \
     hdtspecform.ui \
     abouthdt.ui
 
-TRANSLATIONS += hdt-it_en.ts \
-                hdt-it_es.ts
+TRANSLATIONS += hdt-it_es.ts
 
 INCLUDEPATH += ../hdt-lib/include/ .
 
