@@ -23,14 +23,21 @@ public:
 	virtual void processTriple(TripleString &triple, unsigned long long pos)=0;
 };
 
-class RDFParser: public IteratorTripleString {
+class RDFParserCallback {
+public:
+	virtual void doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback)=0;
+
+	static RDFParserCallback *getParserCallback(RDFNotation notation);
+};
+
+class RDFParserPull: public IteratorTripleString {
 
 protected:
 	RDFNotation notation;
 
 public:
-	RDFParser(RDFNotation notation) : notation(notation) { }
-	~RDFParser() { }
+	RDFParserPull(RDFNotation notation) : notation(notation) { }
+	~RDFParserPull() { }
 
 	virtual bool hasNext()=0;
 	virtual TripleString *next()=0;
@@ -38,8 +45,8 @@ public:
 	virtual uint64_t getPos()=0;
 	virtual uint64_t getSize()=0;
 
-	static RDFParser *getParser(const char *filename, RDFNotation notation);
-	static RDFParser *getParser(std::istream &stream, RDFNotation notation);
+	static RDFParserPull *getParserPull(const char *filename, RDFNotation notation);
+	static RDFParserPull *getParserPull(std::istream &stream, RDFNotation notation);
 };
 
 }

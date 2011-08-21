@@ -158,7 +158,7 @@ void PlainDictionary::stopProcessing(ProgressListener *listener)
 }
 
 
-bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
+void PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 	controlInformation.set("format", "text/plain");
@@ -227,8 +227,6 @@ bool PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 	}
 
 	output.put(marker);
-
-	return true;
 }
 
 void PlainDictionary::load(std::istream & input, ControlInformation &ci, ProgressListener *listener)
@@ -349,6 +347,9 @@ unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			hashObject[subjectIt->second->str->c_str()] = subjectIt->second;
 		}
 	}
+
+	// FIXME: Return inserted index?
+	return 0;
 }
 
 string intToStr(int val) {

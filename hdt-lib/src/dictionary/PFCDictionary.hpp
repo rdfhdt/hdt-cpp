@@ -79,7 +79,7 @@ public:
 	unsigned int getMaxObjectID();
 
 	void populateHeader(Header &header, string rootNode);
-	bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
+	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
 	unsigned int insert(std::string &str, TripleComponentRole position);

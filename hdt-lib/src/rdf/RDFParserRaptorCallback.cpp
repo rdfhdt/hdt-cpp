@@ -39,7 +39,8 @@ void raptor_callback_log_handler(void *user_data, raptor_log_message *message) {
 
 	cout << "Parser message: => " << message->text << " at " << message->locator->line << endl;
 	if(message->level>=RAPTOR_LOG_LEVEL_ERROR) {
-		throw message->text;
+		raptorParser->error = "Parsing error";
+		raptor_parser_parse_abort(raptorParser->rdf_parser);
 	}
 }
 
@@ -64,7 +65,7 @@ const char *RDFParserRaptorCallback::getParserType(RDFNotation notation){
 	}
 }
 
-void RDFParserRaptorCallback::doParse(const char *fileName, RDFNotation notation, RDFCallback *callback) {
+void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback) {
 	this->callback = callback;
 
 	raptor_world *world = raptor_new_world();
@@ -83,8 +84,9 @@ void RDFParserRaptorCallback::doParse(const char *fileName, RDFNotation notation
 		raptor_free_memory(fileUri_string);
 	}
 
-	raptor_uri *base_uri = raptor_uri_copy(fileUri);
+	raptor_uri *base_uri = raptor_new_uri(world, (const unsigned char *)baseUri);
 
+	error = NULL;
 	raptor_parser_parse_uri(rdf_parser, fileUri, base_uri);
 
 	raptor_free_parser(rdf_parser);
@@ -92,6 +94,10 @@ void RDFParserRaptorCallback::doParse(const char *fileName, RDFNotation notation
 	raptor_free_uri(fileUri);
 
 	raptor_free_world(world);
+
+	if(error) {
+		throw error;
+	}
 }
 
 }

@@ -46,7 +46,7 @@ class EmptyHeader : public Header {
 public:
 	EmptyHeader() { }
 	virtual ~EmptyHeader(){ }
-	bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL){ return true; }
+	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL){ }
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL){ }
 
 	/**
@@ -68,7 +68,7 @@ public:
 	void remove(TripleString &triples){ }
 	void remove(IteratorTripleString *triples){ }
 
-	string getAnon() { }
+	string getAnon() { return ""; }
 };
 
 }

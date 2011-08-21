@@ -23,7 +23,7 @@ public:
 	PlainHeader();
 	PlainHeader(HDTSpecification &specification);
 	virtual ~PlainHeader();
-	bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
+	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
 	/**

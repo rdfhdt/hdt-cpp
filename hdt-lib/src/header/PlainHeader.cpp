@@ -7,7 +7,7 @@
 
 #include <HDTVocabulary.hpp>
 #include <HDTFactory.hpp>
-#include "../rdf/RDFParserN3.hpp"
+#include "../rdf/RDFParserNtriples.hpp"
 
 #include "PlainHeader.hpp"
 
@@ -29,7 +29,7 @@ void PlainHeader::load(std::istream & input, ControlInformation &controlInformat
 		throw "Unexpected PlainHeader format";
 	}
 
-	RDFParserN3 parser(input, N3);
+	RDFParserNtriples parser(input, N3);
 
 	while(parser.hasNext()) {
 		TripleString *ts = parser.next();
@@ -37,7 +37,7 @@ void PlainHeader::load(std::istream & input, ControlInformation &controlInformat
 	}
 }
 
-bool PlainHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
+void PlainHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);

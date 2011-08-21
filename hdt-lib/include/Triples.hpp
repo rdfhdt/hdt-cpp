@@ -100,7 +100,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	virtual bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
+	virtual void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
 	/**
 	 * Generate triples structure from other triples structure.

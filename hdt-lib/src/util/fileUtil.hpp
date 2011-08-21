@@ -9,11 +9,12 @@
 #define FILEUTIL_HPP_
 
 #include <stdint.h>
-#include <iostream>
+#include <fstream>
 
 class fileUtil {
 public:
 	static uint64_t getSize(std::istream &in);
+	static uint64_t getSize(const char *file);
 };
 
 #endif /* FILEUTIL_HPP_ */

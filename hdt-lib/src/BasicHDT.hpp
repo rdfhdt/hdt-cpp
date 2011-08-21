@@ -49,8 +49,9 @@ private:
 	HDTSpecification spec;
 
 	void createComponents();
-	void loadDictionary(const char *fileName, RDFNotation notation, ProgressListener *listener);
-	void loadTriples(const char *fileName, RDFNotation notation, ProgressListener *listener);
+	void deleteComponents();
+	void loadDictionary(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
+	void loadTriples(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
 	void fillHeader(string &baseUri);
 
 public:
@@ -75,7 +76,7 @@ public:
 	 */
 	Triples &getTriples();
 
-	void loadFromRDF(const char *fileName, RDFNotation notation, string baseUri, ProgressListener *listener = NULL);
+	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
@@ -119,8 +120,9 @@ private:
 	Dictionary *dictionary;
 	ProgressListener *listener;
 	unsigned long long size;
+	unsigned int count;
 public:
-	DictionaryLoader(Dictionary *dictionary, ProgressListener *listener, unsigned long long size) : dictionary(dictionary), listener(listener), size(size) { }
+	DictionaryLoader(Dictionary *dictionary, ProgressListener *listener, unsigned long long size) : dictionary(dictionary), listener(listener), size(size), count(0) { }
 	void processTriple(TripleString &triple, unsigned long long pos);
 };
 
@@ -167,7 +169,7 @@ public:
 	 */
 	Triples &getTriples();
 
-	void loadFromRDF(const char *fileName, RDFNotation notation, string baseUri, ProgressListener *listener = NULL);
+	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input

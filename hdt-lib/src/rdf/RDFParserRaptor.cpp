@@ -41,7 +41,7 @@ void raptor_log_handler(void *user_data, raptor_log_message *message) {
 }
 
 RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation)
-	: RDFParser(notation),
+	: RDFParserPull(notation),
 	  pos(0),
 	  callback(NULL)
 {
@@ -71,7 +71,7 @@ RDFParserRaptor::RDFParserRaptor(std::istream &in, RDFNotation notation)
         raptor_free_world(world);
 }
 
-RDFParserRaptor::RDFParserRaptor(const char *fileName, RDFNotation notation) : RDFParser(notation), pos(0), callback(NULL) {
+RDFParserRaptor::RDFParserRaptor(const char *fileName, RDFNotation notation) : RDFParserPull(notation), pos(0), callback(NULL) {
 	raptor_world *world = raptor_new_world();
 	raptor_world_set_log_handler(world, (void *)this, raptor_log_handler);
 

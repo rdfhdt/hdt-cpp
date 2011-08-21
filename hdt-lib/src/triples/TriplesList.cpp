@@ -82,7 +82,7 @@ unsigned int TriplesList::size()
 	return numValidTriples*sizeof(TripleID);
 }
 
-bool TriplesList::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
+void TriplesList::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", numValidTriples);
@@ -96,8 +96,6 @@ bool TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 			NOTIFYCOND(listener, "TriplesList saving", i, arrayOfTriples.size())
 		}
 	}
-
-	return true;
 }
 
 void TriplesList::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)

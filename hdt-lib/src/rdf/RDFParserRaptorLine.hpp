@@ -19,7 +19,7 @@
 
 namespace hdt {
 
-class RDFParserRaptorLine : public RDFParser {
+class RDFParserRaptorLine : public RDFParserPull {
 
 private:
 	std::istream *input;

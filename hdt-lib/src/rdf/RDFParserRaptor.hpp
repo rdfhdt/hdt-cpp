@@ -20,7 +20,7 @@
 
 namespace hdt {
 
-class RDFParserRaptor : public RDFParser {
+class RDFParserRaptor : public RDFParserPull {
 
 private:
 	uint64_t size;

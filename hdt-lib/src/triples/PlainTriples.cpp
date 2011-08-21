@@ -37,6 +37,7 @@ PlainTriples::~PlainTriples() {
 
 float PlainTriples::cost(TripleID & triple)
 {
+	return 0;
 }
 
 void PlainTriples::load(ModifiableTriples &triples, ProgressListener *listener) {
@@ -84,7 +85,7 @@ IteratorTripleID *PlainTriples::search(TripleID & pattern)
 	}
 }
 
-bool PlainTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
+void PlainTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
@@ -219,7 +220,7 @@ unsigned int ComponentIterator::next()
 
 bool ComponentIterator::hasNext()
 {
-	it->hasNext();
+	return it->hasNext();
 }
 
 

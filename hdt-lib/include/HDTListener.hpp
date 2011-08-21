@@ -42,6 +42,9 @@ public:
 #define NOTIFYCOND(listener, message, number, total) \
     if((listener)!=NULL && ((number)%5000) == 0) (listener)->notifyProgress( ((number)*100/(total)), (message));
 
+#define NOTIFYCOND2(listener, message, counter, number, total) \
+    if((listener)!=NULL && ((counter)%5000) == 0) (listener)->notifyProgress( ((number)*100/(total)), (message));
+
 }
 
 

@@ -18,19 +18,19 @@
 
 namespace hdt {
 
-class RDFParserRaptorCallback {
+class RDFParserRaptorCallback : public RDFParserCallback {
 
 private:
 	raptor_parser *rdf_parser;
-
 	RDFCallback *callback;
+	char *error;
 
 	const char *getParserType(RDFNotation notation);
 public:
 	RDFParserRaptorCallback();
 	virtual ~RDFParserRaptorCallback();
 
-	void doParse(const char *fileName, RDFNotation notation, RDFCallback *callback);
+	void doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback);
 
 	friend void raptor_callback_process_triple(void *user_data, raptor_statement *triple);
 	friend void raptor_callback_log_handler(void *user_data, raptor_log_message *message);

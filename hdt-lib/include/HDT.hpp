@@ -76,7 +76,7 @@ public:
 	 */
 	virtual Triples &getTriples() = 0;
 
-	virtual void loadFromRDF(const char *fileName, RDFNotation notation, string baseUri, ProgressListener *listener = NULL) = 0;
+	virtual void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL) = 0;
 
 	/**
 	 * Load an HDT file from a stream.

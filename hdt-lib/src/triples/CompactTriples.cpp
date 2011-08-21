@@ -36,6 +36,7 @@ CompactTriples::~CompactTriples() {
 
 float CompactTriples::cost(TripleID & triple)
 {
+	return 0;
 }
 
 
@@ -141,7 +142,7 @@ IteratorTripleID *CompactTriples::search(TripleID & pattern)
 	}
 }
 
-bool CompactTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
+void CompactTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());

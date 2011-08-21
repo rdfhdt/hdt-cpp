@@ -64,6 +64,7 @@ BitmapTriples::~BitmapTriples() {
 float BitmapTriples::cost(TripleID & triple)
 {
 	CHECK_BITMAPTRIPLES_INITIALIZED
+	return 0;
 }
 
 
@@ -318,7 +319,7 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	}
 }
 
-bool BitmapTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
+void BitmapTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	CHECK_BITMAPTRIPLES_INITIALIZED
 
@@ -474,16 +475,21 @@ void BitmapTriplesSearchIterator::findRange()
 		// S X X
 		if(patY!=0) {
 			// S P X
-			minY = adjY.find(patX-1, patY);
-			maxY = minY+1;
-			if(patZ!=0) {
-				// S P O
-				minZ = adjZ.find(minY,patZ);
-				maxZ = minZ+1;
-			} else {
-				// S P ?
-				minZ = adjZ.find(minY);
-				maxZ = adjZ.last(minY)+1;
+			try {
+				minY = adjY.find(patX-1, patY);
+				maxY = minY+1;
+				if(patZ!=0) {
+					// S P O
+					minZ = adjZ.find(minY,patZ);
+					maxZ = minZ+1;
+				} else {
+					// S P ?
+					minZ = adjZ.find(minY);
+					maxZ = adjZ.last(minY)+1;
+				}
+			} catch (const char *ex) {
+				// Item not found in list, no results.
+				minY = minZ = maxY = maxZ = 0;
 			}
 		} else {
 			// S ? X

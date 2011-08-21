@@ -72,7 +72,7 @@ void BasicHeader::load(std::istream & input, ControlInformation &controlInformat
 	throw "Not implemented";
 }
 
-bool BasicHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
+void BasicHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
 	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);

@@ -38,7 +38,7 @@ void raptor_line_log_handler(void *user_data, raptor_log_message *message) {
 }
 
 RDFParserRaptorLine::RDFParserRaptorLine(std::istream &in, RDFNotation notation) :
-		RDFParser(notation),
+		RDFParserPull(notation),
 		input(&in),
 		pos(0), globalLine(0) {
 	size = fileUtil::getSize(*input);
@@ -55,7 +55,7 @@ RDFParserRaptorLine::RDFParserRaptorLine(std::istream &in, RDFNotation notation)
 }
 
 RDFParserRaptorLine::RDFParserRaptorLine(const char *fileName, RDFNotation notation) :
-		RDFParser(notation),
+		RDFParserPull(notation),
 		input(new std::ifstream(fileName, ios::binary | ios::in)),
 		pos(0), globalLine(0)
 {

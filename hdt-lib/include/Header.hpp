@@ -24,7 +24,7 @@ class Header : public RDFStorage {
 public:
 	virtual ~Header() { }
 
-	virtual bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
+	virtual void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 	virtual void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
 	/**

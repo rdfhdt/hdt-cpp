@@ -69,7 +69,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	bool save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
+	void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 	/**
 	 * Loads triples from a file

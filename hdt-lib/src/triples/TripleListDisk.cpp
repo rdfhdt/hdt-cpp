@@ -214,7 +214,7 @@ void TripleListDisk::load(std::istream & input, ControlInformation &controlInfor
 
 
 
-bool TripleListDisk::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
+void TripleListDisk::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	cout << "Saving triples: " << tripleHead->numValidTriples << endl;
 

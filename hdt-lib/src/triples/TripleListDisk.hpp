@@ -83,7 +83,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	bool save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
+	void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 
 	void load(ModifiableTriples &input, ProgressListener *listener = NULL);

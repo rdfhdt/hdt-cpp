@@ -9,30 +9,28 @@
 #ifdef USE_RAPTOR
 #include "RDFParserRaptor.hpp"
 #include "RDFParserRaptorLine.hpp"
+#include "RDFParserRaptorCallback.hpp"
 #endif
-#include "RDFParserN3.hpp"
+#include "RDFParserNtriples.hpp"
+#include "RDFParserNtriplesCallback.hpp"
 
 namespace hdt {
 
-RDFParser *RDFParser::getParser(std::istream &stream, RDFNotation notation) {
+RDFParserPull *RDFParserPull::getParserPull(std::istream &stream, RDFNotation notation) {
 #if USE_RAPTOR
-	/*if(notation == NTRIPLES) {
-		cout << "RDFParserRaptorLine" << endl;
-		return new RDFParserRaptorLine(stream,notation);
-	}*/
 	cout << "RDFParserRaptor" << endl;
-	return new RDFParserRaptor(stream,notation);
+	return new RDFParserRaptor(stream, notation);
 #else
 	if(notation==NTRIPLES) {
 		cout << "RDFParserN3" << endl;
-		return new RDFParserN3(stream,notation);
+		return new RDFParserNtriples(stream,notation);
 	} else {
 		throw "No Parser available for input RDF Format";
 	}
 #endif
 }
 
-RDFParser *RDFParser::getParser(const char *fileName, RDFNotation notation) {
+RDFParserPull *RDFParserPull::getParserPull(const char *fileName, RDFNotation notation) {
 #if USE_RAPTOR
 	/*if(notation == NTRIPLES) {
 		cout << "RDFParserRaptorLine" << endl;
@@ -43,12 +41,30 @@ RDFParser *RDFParser::getParser(const char *fileName, RDFNotation notation) {
 #else
 	if(notation==NTRIPLES) {
 		cout << "RDFParserN3" << endl;
-		return new RDFParserN3(fileName,notation);
+		return new RDFParserNtriples(fileName,notation);
 	} else {
 		throw "No Parser available for input RDF Format";
 	}
 #endif
 }
 
+
+RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
+#if USE_RAPTOR
+	/*if(notation == NTRIPLES) {
+		cout << "RDFParserRaptorLine" << endl;
+		return new RDFParserRaptorLine(stream,notation);
+	}*/
+	cout << "RDFParserRaptor" << endl;
+	return new RDFParserRaptorCallback();
+#else
+	if(notation==NTRIPLES) {
+		cout << "RDFParserN3" << endl;
+		return new RDFParserNtriplesCallback();
+	} else {
+		throw "No Parser available for input RDF Format";
+	}
+#endif
+}
 
 }

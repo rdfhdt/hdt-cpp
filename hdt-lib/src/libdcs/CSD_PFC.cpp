@@ -285,7 +285,8 @@ CSD* CSD_PFC::load(ifstream & fp)
 	}
 	//cout << "FINAL Read: " << counter << " / " << dicc->bytes << endl;
 #else
-	dicc->text = loadValue<uchar>(fp, dicc->bytes);
+	dicc->text = (uchar *) malloc(dicc->bytes*sizeof(unsigned char*));
+	fp.read((char *)dicc->text, dicc->bytes);
 #endif
 
 	dicc->blocksize = loadValue<uint32_t>(fp);

@@ -144,7 +144,7 @@ public:
     * @param output
     * @return
     */
-    virtual bool save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
+    virtual void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
     /**
     * Load dictionary information from a stream.

@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
 	try {
 		// Read RDF
 		StopWatch globalTimer;
-		hdt->loadFromRDF(inputFile.c_str(), notation, baseUri, &progress);
+		hdt->loadFromRDF(inputFile.c_str(), baseUri, notation, &progress);
 
 		ofstream out;
 

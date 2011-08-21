@@ -90,30 +90,41 @@ PFCDictionary::~PFCDictionary()
 
 void PFCDictionary::import(PlainDictionary *dictionary, ProgressListener *listener)
 {
-	delete subjects;
-	delete predicates;
-	delete objects;
-	delete shared;
-
 	DictIterator itSubj(dictionary->subjects_not_shared);
 	DictIterator itPred(dictionary->predicates);
 	DictIterator itObj(dictionary->objects_not_shared);
 	DictIterator itShared(dictionary->subjects_shared);
 
-	NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
-	subjects = new csd::CSD_PFC(&itSubj, blocksize);
+	try {
+		NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
+		delete subjects;
+		subjects = new csd::CSD_PFC(&itSubj, blocksize);
 
-	NOTIFY(listener, "DictionaryPFC loading predicates", 25, 100);
-	predicates = new csd::CSD_PFC(&itPred, blocksize);
+		NOTIFY(listener, "DictionaryPFC loading predicates", 25, 100);
+		delete predicates;
+		predicates = new csd::CSD_PFC(&itPred, blocksize);
 
-	NOTIFY(listener, "DictionaryPFC loading objects", 50, 100);
-	objects = new csd::CSD_PFC(&itObj, blocksize);
+		NOTIFY(listener, "DictionaryPFC loading objects", 50, 100);
+		delete objects;
+		objects = new csd::CSD_PFC(&itObj, blocksize);
 
-	NOTIFY(listener, "DictionaryPFC loading shared", 75, 100);
-	shared = new csd::CSD_PFC(&itShared, blocksize);
+		NOTIFY(listener, "DictionaryPFC loading shared", 75, 100);
+		delete shared;
+		shared = new csd::CSD_PFC(&itShared, blocksize);
 
-	this->sizeStrings = dictionary->sizeStrings;
-	this->mapping = dictionary->mapping;
+		this->sizeStrings = dictionary->sizeStrings;
+		this->mapping = dictionary->mapping;
+	} catch (const char *e) {
+		delete subjects;
+		delete predicates;
+		delete objects;
+		delete shared;
+		subjects = new csd::CSD_PFC();
+		predicates = new csd::CSD_PFC();
+		objects = new csd::CSD_PFC();
+		shared = new csd::CSD_PFC();
+		throw e;
+	}
 
 #if 0
 	cout << "Shared: " << shared->getLength() << endl;
@@ -135,7 +146,7 @@ void PFCDictionary::import(PlainDictionary *dictionary, ProgressListener *listen
 		}
 	}
 #endif
- }
+}
 
 
 std::string PFCDictionary::idToString(unsigned int id, TripleComponentRole position)
@@ -148,7 +159,7 @@ std::string PFCDictionary::idToString(unsigned int id, TripleComponentRole posit
 		const char * ptr = (const char *)section->extract(localid);
 		if(ptr!=NULL) {
 			string out = ptr;
-                        delete [] ptr;
+			delete [] ptr;
 			return out;
 		} else {
 			//cout << "Not found: " << id << " as " << position << endl;
@@ -209,46 +220,46 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 	iListener.setRange(0,25);
 	iListener.notifyProgress(0, "Dictionary read shared area.");
 	//cout << "Load shared " << in->tellg() << endl;
-        delete shared;
+	delete shared;
 	shared = csd::CSD::load(*in);
-        if(shared==NULL){
-            shared = new csd::CSD_PFC();
-            throw "Could not read shared.";
-        }
+	if(shared==NULL){
+		shared = new csd::CSD_PFC();
+		throw "Could not read shared.";
+	}
 
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
 	//cout << "Load subjects " << in->tellg() << endl;
-        delete subjects;
-        subjects = csd::CSD::load(*in);
-        if(subjects==NULL){
-            subjects = new csd::CSD_PFC();
-            throw "Could not read subjects.";
-        }
+	delete subjects;
+	subjects = csd::CSD::load(*in);
+	if(subjects==NULL){
+		subjects = new csd::CSD_PFC();
+		throw "Could not read subjects.";
+	}
 
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
 	//cout << "Load predicates " << in->tellg() << endl;
-        delete predicates;
+	delete predicates;
 	predicates = csd::CSD::load(*in);
-        if(predicates==NULL){
-            predicates = new csd::CSD_PFC();
-            throw "Could not read predicates.";
-        }
+	if(predicates==NULL){
+		predicates = new csd::CSD_PFC();
+		throw "Could not read predicates.";
+	}
 
 	iListener.setRange(75,100);
 	iListener.notifyProgress(0, "Dictionary read objects.");
 	//cout << "Load objects " << in->tellg() << endl;
-        delete objects;
-        objects = csd::CSD::load(*in);
-        if(objects==NULL){
-            objects = new csd::CSD_PFC();
-            throw "Could not read objects.";
-        }
+	delete objects;
+	objects = csd::CSD::load(*in);
+	if(objects==NULL){
+		objects = new csd::CSD_PFC();
+		throw "Could not read objects.";
+	}
 	//cout << "Dictionary loaded " << in->tellg() << endl;
 }
 
-bool PFCDictionary::save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener)
+void PFCDictionary::save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener)
 {
 	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PFC);
 	controlInformation.set("format", "text/plain");
@@ -430,25 +441,25 @@ csd::CSD *PFCDictionary::getDictionarySection(unsigned int id, TripleComponentRo
 
 unsigned int PFCDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
 	switch (position) {
-		case NOT_SHARED_SUBJECT:
+	case NOT_SHARED_SUBJECT:
+		return shared->getLength()+id;
+
+	case NOT_SHARED_PREDICATE:
+		return id;
+
+	case NOT_SHARED_OBJECT:
+		if(mapping==MAPPING2) {
 			return shared->getLength()+id;
-
-		case NOT_SHARED_PREDICATE:
-			return id;
-
-		case NOT_SHARED_OBJECT:
-			if(mapping==MAPPING2) {
-				return shared->getLength()+id;
-			} else {
-				return shared->getLength()+subjects->getLength()+id;
-			}
-
-		case SHARED_SUBJECT:
-		case SHARED_OBJECT:
-			return id;
+		} else {
+			return shared->getLength()+subjects->getLength()+id;
 		}
 
-		throw "Item not found";
+	case SHARED_SUBJECT:
+	case SHARED_OBJECT:
+		return id;
+	}
+
+	throw "Item not found";
 }
 
 
@@ -458,29 +469,29 @@ unsigned int PFCDictionary::getGlobalId(unsigned int id, DictionarySection posit
 
 unsigned int PFCDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
 	switch (position) {
-		case SUBJECT:
-			if(id<=shared->getLength()) {
-				return id;
-			} else {
-				return id-shared->getLength();
-			}
-			break;
-		case OBJECT:
-			if(id<=shared->getLength()) {
-				return id;
-			} else {
-				if(mapping==MAPPING2) {
-					return id-shared->getLength();
-				} else {
-					return 2+id-shared->getLength()-subjects->getLength();
-				}
-			}
-			break;
-		case PREDICATE:
+	case SUBJECT:
+		if(id<=shared->getLength()) {
 			return id;
+		} else {
+			return id-shared->getLength();
 		}
+		break;
+	case OBJECT:
+		if(id<=shared->getLength()) {
+			return id;
+		} else {
+			if(mapping==MAPPING2) {
+				return id-shared->getLength();
+			} else {
+				return 2+id-shared->getLength()-subjects->getLength();
+			}
+		}
+		break;
+	case PREDICATE:
+		return id;
+	}
 
-		throw "Item not found";
+	throw "Item not found";
 }
 
 unsigned int PFCDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
@@ -489,26 +500,26 @@ unsigned int PFCDictionary::getLocalId(unsigned int id, TripleComponentRole posi
 
 void PFCDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
-    if(role==PREDICATE) {
-        predicates->fillSuggestions(base, out, maxResults);
-        return;
-    }
+	if(role==PREDICATE) {
+		predicates->fillSuggestions(base, out, maxResults);
+		return;
+	}
 
-    vector<string> v1,v2;
-    shared->fillSuggestions(base, v1, maxResults);
-    if(role==SUBJECT) {
-        subjects->fillSuggestions(base, v2, maxResults);
-    } else if(role==OBJECT){
-        objects->fillSuggestions(base, v2, maxResults);
-    }
+	vector<string> v1,v2;
+	shared->fillSuggestions(base, v1, maxResults);
+	if(role==SUBJECT) {
+		subjects->fillSuggestions(base, v2, maxResults);
+	} else if(role==OBJECT){
+		objects->fillSuggestions(base, v2, maxResults);
+	}
 
-    // Merge results from shared and subjects/objects keeping order
-    merge(v1.begin(),v1.end(), v2.begin(), v2.end(), std::back_inserter(out));
+	// Merge results from shared and subjects/objects keeping order
+	merge(v1.begin(),v1.end(), v2.begin(), v2.end(), std::back_inserter(out));
 
-    // Remove possible extra items
-    if(out.size()>maxResults) {
-        out.resize(maxResults);
-    }
+	// Remove possible extra items
+	if(out.size()>maxResults) {
+		out.resize(maxResults);
+	}
 }
 
 }
