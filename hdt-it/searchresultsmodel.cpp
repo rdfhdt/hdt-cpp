@@ -17,7 +17,8 @@ SearchResultsModel::~SearchResultsModel()
 
 int SearchResultsModel::rowCount(const QModelIndex &parent) const
 {
-    return numResults;
+    // FIXME: QTableView crashes when returning more than 100 Million rows :(
+    return numResults > 100000000 ? 100000000 : numResults;
 }
 
 int SearchResultsModel::columnCount(const QModelIndex &parent) const
@@ -142,6 +143,13 @@ void SearchResultsModel::updateNumResultsChanged()
 void SearchResultsModel::findTriple(unsigned int index)
 {
     if(triples == NULL) {
+        return;
+    }
+
+    if(triples->canGoTo() && (index>currentIndex+5 || index<currentIndex-5)) {
+        triples->goTo(index);
+        currentTriple = triples->next();
+        currentIndex = index;
         return;
     }
 

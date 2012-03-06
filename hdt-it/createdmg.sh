@@ -1,26 +1,41 @@
 #!/bin/bash
 
-SRCAPP="hdt-it.app"
+SRCAPP="macx/HDT-it.app"
 FOLDER="macdmg"
-VOL="hdt-it"
+VOL="HDT-it"
 NAME="HDT-it!"
 VERS="0.9beta"
 DMG="$VOL-$VERS.dmg"
 
 FRAMEWORK_BASE="$SRCAPP/Contents/Frameworks/"
-REMOVE="QtSql.framework QtXmlPatterns.framework QtDeclarative.framework QtNetwork.framework QtScript.framework QtSvg.framework"
+REMOVE="QtSql.framework QtXmlPatterns.framework QtDeclarative.framework QtNetwork.framework QtScript.framework QtSvg.framework QtGui.framework/Versions/4/QtGui.strip"
 
 DATASETBASE="$HOME/rdf/dataset/"
-DATASETS="geospecies test"
+DATASETS="test.nt"
 DATASETHDTBASE="$HOME/rdf/hdt/"
-DATASETSHDT="aifb.hdt apex.hdt 2blog.hdt 3kbo.hdt aaronland.hdt 3dnews.hdt aisricom.hdt"
+DATASETSHDT="3kbo.hdt aaronland.hdt 3dnews.hdt aisricom.hdt"
+#DATASETSHDT="aifb.hdt apex.hdt 2blog.hdt 3kbo.hdt aaronland.hdt 3dnews.hdt aisricom.hdt"
+
+echo hdiutil create -srcfolder "$FOLDER" -volname "$VOL" -format UDZO -imagekey zlib-level=9 "$DMG"
+hdiutil create -srcfolder "$FOLDER" -volname "$NAME" -format UDZO -imagekey zlib-level=9 "$DMG"
+
+exit
+
+mkdir -p $FOLDER
+rm -Rf $FOLDER/*
 
 # ADD LIBRARIES
 echo macdeployqt $SRCAPP
 macdeployqt $SRCAPP
 
 # ADD Translation files
-cp -Rf ../*.qm $STCAPP/Resources
+cp -Rf *.qm $SRCAPP/Contents/Resources
+
+# ADD License and documentation
+cp -Rf LICENSE $FOLDER
+
+mkdir -p $FOLDER/doc
+cp -Rf doc/* $FOLDER/doc
 
 # REMOVE UNNEDED FILES
 for i in $REMOVE

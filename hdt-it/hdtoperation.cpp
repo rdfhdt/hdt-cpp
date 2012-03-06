@@ -36,19 +36,26 @@ void HDTOperation::execute() {
             iListener.setRange(0,70);
             hdt->loadFromHDT(fileName.toAscii(), &iListener );
 
-            iListener.setRange(70, 100);
-            hdtInfo->loadInfo(&iListener);
+            iListener.setRange(70, 90);
+            string file = (const char*)fileName.append("cache").toAscii();
+            hdtInfo->load(file, &iListener);
+
+            iListener.setRange(90, 100);
+	    hdt->generateIndex( &iListener );
 
             break;
         }
         case RDF_READ:{
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
 
-            iListener.setRange(0,90);
+            iListener.setRange(0,80);
             hdt->loadFromRDF(fileName.toAscii(), baseUri, notation, &iListener);
 
+            iListener.setRange(80, 90);
+            hdtInfo->generateInfo(&iListener);
+
             iListener.setRange(90, 100);
-            hdtInfo->loadInfo(&iListener);
+	    hdt->generateIndex( &iListener );
 
             break;
             }

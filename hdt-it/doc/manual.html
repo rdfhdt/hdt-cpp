@@ -4,83 +4,79 @@
 <title>HDT-it! 0.9Beta User Manual</title>
 </head>
 <body>
-<h1>Purpose</h1>
 
-<p>HDT (Header, Dictionary, Triples) is a binary representation for RDF that compresses big datasets in order to store and share big RDF files.</p>
-<p>HDT-it! is a tool that allows generating and consuming HDT files. As an examples, the tool allows to search for basic graph patterns, and shows a global 3D Matrix of the RDF distribution to understand the organization of the information.</p>
-<p>This document teaches the user how to use the tool to create and browse HDT files.</p>
+<h1>HDT-it! 0.9Beta User Manual</h1>
+	
+<h2>Purpose</h2>
 
-<h1>Installation.</h1>
-<h2>Windows</h2>
-To install HDT-it! on Microsoft Windows, download the binary package for Windows from the <a href="http://www.rdfhdt.org/download">RDF-HDT Web page</a>. Uncompress the zip file using any appropriate software (Such as <a href="http://http://www.izarc.org/">IZarc</a>) to any folder of your choice. To launch the application, just double click on <b>hdt-it.exe</b>. You might find usefull to have a shortcut on your desktop. To do so, drag the hdt-it.exe file to your desktop using the right button of the mouse, and select "Create shortcut".
+<p>HDT (Header, Dictionary, Triples) is a binary representation for RDF that compresses big datasets to save space while maintaining search and browse operations. This makes it an ideal format for storing and sharing RDF datasets.</p>
+<p>HDT-it! is a tool that allows generating and consuming HDT files. As an example, the tool allows to search basic graph patterns, and shows a global 3D Matrix of the RDF distribution to understand the organization of the information.</p>
+<p>This document teaches how to use the tool to create and browse HDT files. There is also a <a href="http://www.rdfhdt.org/screencast/">screencast</a> demonstrating visually all the features of HDT-it  available at the <a href="http://www.rdfhdt.org">RDF HDT Web page.</a> </p>
 
-Should you want to uninstall HDT-it!, just delete the folder on your hard drive. 
+<h2>Installation.</h2>
+<h3>Windows</h3>
+<p>To install HDT-it! on Microsoft Windows, download the binary package for Windows from the <a href="http://www.rdfhdt.org/download">RDF-HDT Download page</a>. Uncompress the zip file using any appropriate software (Such as <a href="http://http://www.izarc.org/">IZarc</a>) to any folder of your choice. To launch the application, just double click on <b>HDT-it.exe</b>. You might find usefull to have a shortcut on your desktop. To do so, drag the hdt-it.exe file to your desktop using the right button of the mouse, and select "Create shortcut".</p>
 
-<h2>MacOSX</h2>
-To install HDT-it! on MacOSX, download the binary package for MacOSX from <a href="http://www.rdfhdt.org/download">RDF-HDT Web page</a>. Launch the dmg file and drag the HDT-it! app to your Applications folder. Then you can launch HDT-it! the same way as any MacOSX application. You can create a shortcut to it by droping the app from the Applications folder to your dock.
+<p>Should you want to uninstall HDT-it!, just delete the folder on your hard drive.</p>
 
-Note that HDT-it! is a Universal binary, and can run on 32 and 64 bit Intel platforms, but cannot run on PowerPC. 
+<h3>MacOSX</h3>
+<p>To install HDT-it! on MacOSX, download the binary package for MacOSX from <a href="http://www.rdfhdt.org/download">RDF-HDT Download page</a>. Launch the dmg file and drag the HDT-it! app to your Applications folder. Then you can launch HDT-it! the same way as any MacOSX application. You can create a shortcut to it by droping the app from the Applications folder to your dock.</p>
 
-Should you want to uninstall HDT-it!, just drag the App from the Applications folder to the Trash.
+<p>Note that HDT-it! is a Universal binary, and can run on 32 and 64 bit Intel platforms, but cannot run on PowerPC.</p>
 
-<h2>Linux</h2>
-To install HDT-it! on Linux, download the binary package for Linux from <a href="http://www.rdfhdt.org/download">RDF-HDT Web page</a>. Untar the package on your home and launch it using the hdt-it.sh package.
+<p>Should you want to uninstall HDT-it!, just drag the App from the Applications folder to the Trash.</p>
 
-For some distributions, you might need to install Qt 4.7, and libraptor2 using the package manager.
+<h3>Linux</h3>
+<p>To install HDT-it! on Linux, download the binary package for Linux from <a href="http://www.rdfhdt.org/download">RDF-HDT Download page</a>. Untar the package on your home (tar jxfv HDT-it-0.9beta-linux.tbz2) and launch it using the HDT-it.sh script (./HDT-it.sh). The package contains all the needed libraries: namely Qt 4.7, and libraptor2.</p>
 
-<h1>First steps</h1>
+<h2>HDT-it Usage</h2>
 
-After opening HDT-it, you can see the following view:
+<p>After opening HDT-it, you can see the following view:</p>
 
-<img src="hdtitview.png" />
+<img src="hdtit.png" />
 
-<p>The toolbar on the top represents different options for opening, converting and displaying information.</p>
-
-<p>On the top left, you can insert a triple search pattern. It allows searching for a specific subject, predicate or object. Any field left blank means "any", so the default option will show all triples.</p>
-
-<p>The bottom left shows all the information about the current dataset. It is usually read directly from the "Header" part of the HDT. The tabs reading "Subjects", "Predicates" and "Objects" reveal all the different components available in the dataset.</p>
-
-<p>The right part has two tabs: Search Results and Matrix View. It allows browsing results both in text and visual manners.</p>
-
-<h1>Managing datasets:</h1>
-
-The first step when using HDT-it is loading a dataset. It uses the HDT format to keep all the information in a compact but at the same time accessible manner. 
-	<h2>Load HDT</h2>
-If you have any dataset in HDT, you can load it using the "Open HDT" option from the toolbar. The instalation distribution package contains several example datasets that you can play with. You can also download bigger datasets from the <a href="http://dataweb.infor.uva.es">Dataweb page</a>.
-	<h2>Import RDF</h2>
-You also probably want to load your own dataset. HDT-it! is able to load RDF data in several well-known RDF formats (NTriples, N3, Turtle and RDF-XML) and convert it to HDT. To import data, select Import RDF and follow the instructions. You need to specify some information, namely:
+<h3>Managing datasets:</h3>
+<p>The first step when using HDT-it is loading a dataset. It uses the HDT format to keep all the information in a compact but at the same time accessible manner. 
+	<h3>Load HDT</h3>
+<p>If you have any dataset in HDT, you can load it using the "Open HDT" option from the toolbar. The instalation distribution package contains several example datasets that you can play with. You can also download bigger datasets from the <a href="http://dataweb.infor.uva.es">Dataweb page</a>.
+	<h3>Import RDF</h3>
+<p>You also probably want to load your own dataset. HDT-it! is able to load RDF data in several well-known RDF formats (NTriples, N3, Turtle and RDF-XML) and convert it to HDT. To import data, select Import RDF and follow the instructions. You need to specify some information, namely:</p>
 <ul>
 <li>The file source of RDF</li>
+<li>The base URI used for loading the RDF.</li>
 <li>The specific format of the different sections of HDT. Depending on this options we can obtain a compromise between compression ratio and search capabilities. The default options will provide a fair balance between the two.
 </ul>
 
-The process of importing the RDF file will take a while. We recommend using "NTriples" as input format since it is better optimized and can import it statement by statement using fewer RAM memory. For really big datasets, you may need a powerfull computer with a high amount of RAM memory, since the conversion process needs to construct intermediate data structures. In these cases, we recommend using the commandline tools available in <a href="www.rdfhdt.org">HDT-lib</a> on a server machine. Then the resulting HDT file can be loaded using a more modest computer since it is already compressed and ready to be used.
+<p>The process of importing the RDF file will take a while. We recommend using "NTriples" as input format since it can be processed statement by statement therefore using fewer RAM memory. For really big datasets, you may need a powerfull computer with a high amount of RAM memory, since the conversion process needs to construct intermediate data structures. In these cases, we recommend using the commandline tools available in <a href="http://www.rdfhdt.org">HDT-lib</a> on a server machine. Then the resulting HDT file can be loaded using a more modest computer since it is already compressed and ready to be used.</p>
 
-	<h2>Save HDT</h2>
-This option allows saving the HDT file. It is specially useful when you just imported a RDF file and want to keep an HDT version for faster loading and consumption.
-	<h2>Export RDF</h2>
-You can export any HDT file back to RDF to consume it using traditional tools or loading it to any RDF database. Just select export and by default the tool will serialize it to NTriples. 
+	<h3>Save HDT</h3>
+<p>This option allows saving the HDT file. It is specially useful when you just imported a RDF file and want to keep an HDT version for faster loading and consumption.</p>
+	<h3>Export RDF</h3>
+<p>You can export any HDT search back to RDF to consume it using traditional tools or loading it to any RDF database. Just select export and by default the tool will serialize it to NTriples. If you want to export the whole dataset, just left empty all the fields in the triple search pattern.</p>
 
-<h1>Browsing</h1>
-	<h2>Dataset Information</h2>
-On the bottom left part of the window, all the information available about the dataset is shown. Namely the size of the original dataset and the compressed HDT version (to highlight the savings of using HDT). It also shows the details about the dictionary (the number of entries in the dictionary and the number of triples). It is also interesting to see the relative size of the dictionary against the triples.
-	<h2>List of Components.</h2>
+<h3>Browsing</h3>
+	<h3>Triple Search Pattern</h3>
+<p>On the top left, you can insert a triple search pattern to filter the results. It allows searching for a specific subject, predicate or object. Any field left blank means "any", so the default empty option will show all triples. In order to simplify the typing task, options are proposed as the user types thanks to the dictionary.
+	<h3>Dataset Information</h3>
+<p>On the bottom left part of the window, all the information available about the dataset is shown. Namely the size of the original dataset and the compressed HDT version (to highlight the savings of using HDT). It also shows the details about the dictionary (the number of entries in the dictionary and the number of triples). It is also interesting to see the relative size of the dictionary against the triples.</p>
+	<h3>List of Components.</h3>
 <p>Also on the bottom left you can select any of the components (Subjects, predicates, or objects). It will show a list of all the different elements available. The user can double click on any item to add it to the search box.</p>
-	<h2>Visualization.</h2>
-The visualization widget allows the developer to have an overall view of the dataset. It allows understanding the structure of the RDF data.
-		<h3>Matrix coordinates.</h3>
-The matrix view is based on an Adjacency Matrix. The dictionary part of the HDT assigns numerical ID to each of the different subject, predicate and object. Then, each RDF triple can be referred as a triple of numerical IDs, such as 234,5,3425. This ID can be interpreted as a point in a 3-Dimensional space, therefore it can be plotted as a point in a 3D graph axis.
+	<h3>Metadata</h3>
+	<p>The Metadata tab on the top right allows browsing all the information about the HDT's header in plain RDF format.</p>
+	<h3>Search Results</h3>
+	<p>The Search Results Tab shows the list of all triples that match the specified query in the triple search pattern block. You can double-click on any element to add it to the search pattern box. Also, you can right-click on it and select "Search as Subject/Predicate/Object".</p>
+	<h3>Visualization.</h3>
+<p>The visualization widget allows the developer to have an overall view of the dataset. It allows understanding the structure of the RDF data.</p>
+
+<p>The matrix view is based on an Adjacency Matrix. The dictionary part of the HDT assigns numerical ID to each of the different subject, predicate and object. Then, each RDF triple can be referred as a triple of numerical IDs, such as 234,5,3425. This ID can be interpreted as a point in a 3-Dimensional space, therefore it can be plotted as a point in a 3D graph axis. The matrix view is just a scatter-plot of all the triples of the dataset.</p>
 
 <img src="matrix.png" />
 
-To better see the details, the user can rotate the view by drag and droping using the mouse, or zoom using the mouse wheel. To pan the position, drag the 
-		<h3>Rotation/Translation/Views.</h3>
-		<h3>Browsing areas.</h3>
-		<h3>Interpreting information.</h3>
-	<h2>Search.</h2>
-		<h3>Search Patterns.</h3>
-<h1>Acknowledgements</h1>
-HDT was possible thanks to:
+<p>To better see the details, you can rotate the view by holding the mouse's left button, or pan using the right one. To increase/decrease the zoom the mouse wheel shall be used. There are three predefined views: Top, Left, and 3D, that can be selected on the top bar. You can also select <em>reset</em> to go back to the initial view.</p>
+<p>In order to understand the information underlying each area of the visualization, the application reveals information about the nearest triple under the cursor when the user hovers the mouse over each area. Note that this feature is only available for the Front view.</p>
+
+<h2>Acknowledgements</h2>
+<p>HDT was possible thanks to:
 <ul>
 <li>Javier D. Fernández García &lt;<a href="mailto:jfergar@infor.uva.es">jfergar@infor.uva.es</a>&gt;</li>
 <li>Miguel Ángel Martínez-Prieto &lt;<a href="mailto:migumar2@infor.uva.es">migumar2@infor.uva.es</a>&gt;</li>

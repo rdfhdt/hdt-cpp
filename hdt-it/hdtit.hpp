@@ -33,6 +33,7 @@ public:
     void openHDTFile(QString &file);
     void importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
 
+    HDTManager *getManager();
 private slots:
     void on_actionOpenHDT_triggered();
     void on_actionImportRDF_triggered();
@@ -65,6 +66,7 @@ private slots:
     void updateViewButtons();
     void updateNumResults();
     void on_actionFull_Screen_triggered();
+    void on_actionSparql_triggered();
 };
 
 #endif // HDTIT_HPP

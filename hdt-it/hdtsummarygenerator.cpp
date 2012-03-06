@@ -88,7 +88,7 @@ QString HDTSummaryGenerator::getSummary(HDTManager *hdtManager)
     output.append(tr("<br/>"));
 
     output.append(tr("<b>Triples Order</b>: "));
-    //output.append(head.getProperty("_:triples", hdt::HDTVocabulary::TRIPLES_ORDER.c_str()).c_str());
+    output.append(head.getProperty("_:triples", hdt::HDTVocabulary::TRIPLES_ORDER.c_str()).c_str());
     output.append("<br/>");
 
     return output;

@@ -381,6 +381,30 @@ void HDTManager:: numResultCountFinished()
 
 void HDTManager::updateNumResults()
 {
+    if(iteratorResults==NULL) {
+        return;
+    }
+
+#if 1
+    if(iteratorResults->numResultEstimation()==hdt::EXACT) {
+        numResults = iteratorResults->estimatedNumResults();
+        resultsTime.stop();
+
+        searchResultsModel->updateNumResultsChanged();
+        emit numResultsChanged(numResults);
+        return;
+    }
+
+    if(getSearchPatternID().getPatternString()=="?P?") {
+        numResults = hdtCachedInfo->predicateCount[getSearchPatternID().getPredicate()-1];
+        resultsTime.stop();
+
+        searchResultsModel->updateNumResultsChanged();
+        emit numResultsChanged(numResults);
+        return;
+    }
+#endif
+
 #if 0
     ResultCounter *counter = new ResultCounter(this, this);
 
@@ -398,9 +422,6 @@ void HDTManager::updateNumResults()
         iteratorResults = NULL;
     }
 #else
-    if(iteratorResults==NULL) {
-        return;
-    }
     StopWatch cl;
     while(iteratorResults->hasNext()) {
         iteratorResults->next();

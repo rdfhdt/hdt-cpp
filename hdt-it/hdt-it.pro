@@ -7,7 +7,7 @@
 QT       += core gui opengl
 
 CONFIG += debug_and_release
-macx:CONFIG += x86_64
+macx:CONFIG += x86 x86_64
 
 TARGET = HDT-it
 TEMPLATE = app
@@ -42,7 +42,9 @@ SOURCES += main.cpp\
     resultcounter.cpp \
     headermodel.cpp \
     dictionarysuggestions.cpp \
-    myapplication.cpp
+    myapplication.cpp \
+    sparqlmodel.cpp \
+    sparqlform.cpp
 
 HEADERS  += hdtit.hpp \
     matrixviewwidget.hpp \
@@ -65,11 +67,14 @@ HEADERS  += hdtit.hpp \
     resultcounter.hpp \
     headermodel.hpp \
     dictionarysuggestions.hpp \
-    myapplication.hpp
+    myapplication.hpp \
+    sparqlmodel.hpp \
+    sparqlform.hpp
 
 FORMS    += hdtit.ui \
     hdtspecform.ui \
-    abouthdt.ui
+    abouthdt.ui \
+    sparqlform.ui
 
 TRANSLATIONS += hdt-it_es.ts
 
@@ -97,3 +102,13 @@ win32:RC_FILE = hdtico.rc
 QMAKE_INFO_PLIST = Info.plist
 
 ICON = hdtico.icns
+
+
+
+
+
+
+
+
+
+

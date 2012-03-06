@@ -67,8 +67,8 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Grupo de investigación: &lt;a href=&quot;http://dataweb.infor.uva.es&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://dataweb.infor.uva.es&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;HDT ha sido posible gracias a:&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Javier D. Fernández García &amp;lt;&lt;a href=&quot;mailto:jfergar83@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;jfergar83@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Miguel Ángel Martínez-Prieto &amp;lt;&lt;a href=&quot;mailto:migumar2@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;migumar2@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Javier D. Fernández García &amp;lt;&lt;a href=&quot;mailto:jfergar@infor.uva.es&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;jfergar@infor.uva.es&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Miguel A. Martínez-Prieto &amp;lt;&lt;a href=&quot;mailto:migumar2@infor.uva.es&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;migumar2@infor.uva.es&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Mario Arias Gallego &amp;lt;&lt;a href=&quot;mario.arias@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;mario.arias@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Claudio Gutierrez &amp;lt;&lt;a href=&quot;mailto:cgutierr@dcc.uchile.cl&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;cgutierr@dcc.uchile.cl&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alejandro Andres &amp;lt;&lt;a href=&quot;mailto:fuzzy.alej@gmail.com&quot;&gt;&lt;span style=&quot; font-size:13pt; text-decoration: underline; color:#0000ff;&quot;&gt;fuzzy.alej@gmail.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;
@@ -149,32 +149,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>HDTOperation</name>
     <message>
-        <location filename="hdtoperation.cpp" line="126"/>
+        <location filename="hdtoperation.cpp" line="141"/>
         <source>Loading HDT File</source>
         <translation type="unfinished">Cargando fichero HDT</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="129"/>
+        <location filename="hdtoperation.cpp" line="144"/>
         <source>Importing RDF File to HDT</source>
         <translation type="unfinished">Importando fichero RDF a HDT</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="132"/>
+        <location filename="hdtoperation.cpp" line="147"/>
         <source>Saving HDT File</source>
         <translation type="unfinished">Guardando fichero HDT</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="135"/>
+        <location filename="hdtoperation.cpp" line="150"/>
         <source>Exporting HDT File to RDF</source>
         <translation type="unfinished">Exportando fichero HDT a RDF</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="138"/>
+        <location filename="hdtoperation.cpp" line="153"/>
         <source>Exporting results to RDF</source>
         <translation type="unfinished">Exportar resultados a RDF</translation>
     </message>
     <message>
-        <location filename="hdtoperation.cpp" line="145"/>
+        <location filename="hdtoperation.cpp" line="160"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancelar</translation>
     </message>

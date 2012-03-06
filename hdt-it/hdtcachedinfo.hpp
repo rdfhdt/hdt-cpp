@@ -24,7 +24,10 @@ public:
 
     Color *getPredicateColor(unsigned int npred);
 
-    void loadInfo(hdt::ProgressListener *listener=NULL);
+    void updatePredicateColors();
+    void generateInfo(hdt::ProgressListener *listener=NULL);
+    void save(std::string &file, hdt::ProgressListener *listener=NULL);
+    void load(std::string &file, hdt::ProgressListener *listener=NULL);
 };
 
 #endif // HDTCACHEDINFO_HPP

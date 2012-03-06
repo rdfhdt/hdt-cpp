@@ -4,6 +4,9 @@
 #include "hdtspecform.hpp"
 #include "ui_hdtspecform.h"
 
+#include "sparqlform.hpp"
+#include "ui_sparqlform.h"
+
 #include "abouthdt.hpp"
 #include "hdtsummarygenerator.hpp"
 
@@ -68,9 +71,10 @@ HDTit::~HDTit()
 void HDTit::updateNumResults()
 {
     ui->numResultsLabel->setText(
-                QString(tr("%1 results found in %2."))
+                //QString(tr("%1 results found in %2."))
+                QString(tr("%1 results found."))
                 .arg(QLocale::system().toString(hdtManager->getNumResults()))
-                .arg(hdtManager->getTime())
+                //.arg(hdtManager->getTime())
                 );
 }
 
@@ -346,4 +350,16 @@ void HDTit::on_actionClose_triggered()
     hdtManager->closeHDT();
     QString str;
     hdtChanged(str);
+}
+
+HDTManager * HDTit::getManager()
+{
+    return hdtManager;
+}
+
+void HDTit::on_actionSparql_triggered()
+{
+    SparqlForm *jf = new SparqlForm(this);
+
+    jf->show();
 }

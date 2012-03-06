@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>792</width>
-    <height>511</height>
+    <width>845</width>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -406,7 +406,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>792</width>
+     <width>845</width>
      <height>22</height>
     </rect>
    </property>
@@ -459,6 +459,8 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionFull_Screen"/>
    <addaction name="separator"/>
    <addaction name="actionAbout"/>
+   <addaction name="separator"/>
+   <addaction name="actionSparql"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="enabled">
@@ -626,6 +628,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionSparql">
+   <property name="text">
+    <string>SPARQL</string>
    </property>
   </action>
  </widget>
