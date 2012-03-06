@@ -22,6 +22,9 @@ public:
 	virtual unsigned int next() {
 		return 0;
 	}
+
+	virtual void goToStart() {
+	}
 };
 
 
@@ -98,6 +101,9 @@ public:
 	unsigned int next(){
 		return vector[pos++];
 	}
+	void goToStart(){
+		pos=0;
+	}
 };
 
 class StreamIterator : public IteratorUint {
@@ -114,6 +120,9 @@ public:
 	}
 	unsigned int next(){
 		return stream->get(pos++);
+	}
+	void goToStart() {
+		pos=0;
 	}
 };
 

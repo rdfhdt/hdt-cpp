@@ -91,6 +91,11 @@ public:
 	bool getTriples();
 	/** Set whether this ControlInformation represents Triples */
 	void setTriples(bool trip);
+
+	/** Get whether this ControlInformation represents Triples */
+	bool getIndex();
+	/** Set whether this ControlInformation represents Triples */
+	void setIndex(bool trip);
 };
 
 }

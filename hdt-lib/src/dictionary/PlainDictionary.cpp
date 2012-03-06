@@ -150,10 +150,13 @@ void PlainDictionary::startProcessing(ProgressListener *listener)
 
 void PlainDictionary::stopProcessing(ProgressListener *listener)
 {
+	IntermediateListener iListener(listener);
+	iListener.setRange(0,50);
 	this->split(listener);
-	//std::cout << "Splitted" << std::endl;
-	this->lexicographicSort(listener);
-	//std::cout << "Sorted" << std::endl;
+
+	iListener.setRange(0,100);
+	this->lexicographicSort(&iListener);
+
 	//dumpSizes(cout);
 }
 
@@ -401,6 +404,9 @@ void PlainDictionary::split(ProgressListener *listener) {
 	subjects_shared.clear();
 	objects_not_shared.clear();
 
+	unsigned int total = hashSubject.size()+hashObject.size();
+	unsigned int count = 0;
+
 	for(DictEntryIt subj_it = hashSubject.begin(); subj_it!=hashSubject.end() && subj_it->first; subj_it++) {
 		//cout << "Check Subj: " << subj_it->first << endl;
 		DictEntryIt other = hashObject.find(subj_it->first);
@@ -412,6 +418,8 @@ void PlainDictionary::split(ProgressListener *listener) {
 			// Exist in both
 			subjects_shared.push_back(subj_it->second);
 		}
+		count++;
+		NOTIFYCOND(listener, "Extracting shared subjects", count, total);
 	}
 
 	for(DictEntryIt obj_it = hashObject.begin(); obj_it!=hashObject.end(); ++obj_it) {
@@ -422,6 +430,8 @@ void PlainDictionary::split(ProgressListener *listener) {
 			// Only object
 			objects_not_shared.push_back(obj_it->second);
 		}
+		count++;
+		NOTIFYCOND(listener, "Extracting shared objects", count, total);
 	}
 }
 
@@ -430,16 +440,19 @@ void PlainDictionary::split(ProgressListener *listener) {
  * @return void
  */
 void PlainDictionary::lexicographicSort(ProgressListener *listener) {
-
-	//sort shared and not shared subjects
+	NOTIFY(listener, "Sorting shared", 0, 100);
 	sort(subjects_shared.begin(), subjects_shared.end(), DictionaryEntry::cmpLexicographic);
+
+	NOTIFY(listener, "Sorting subjects", 20, 100);
 	sort(subjects_not_shared.begin(), subjects_not_shared.end(), DictionaryEntry::cmpLexicographic);
 
-	//sort not shared objects
+	NOTIFY(listener, "Sorting objects", 50, 100);
 	sort(objects_not_shared.begin(), objects_not_shared.end(), DictionaryEntry::cmpLexicographic);
 
-	//sort predicates
+	NOTIFY(listener, "Sorting predicates", 90, 100);
 	sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic);
+
+	NOTIFY(listener, "Update Dictionary IDs", 99, 100);
 
 	updateIDs();
 }
@@ -752,11 +765,11 @@ void PlainDictionary::dumpStats(string &output) {
 		tmp.append(*subjects_shared[i]->str);
 
 		if (tmp[0] == '<') {
-			histoURI.Add(tmp.length());
+                        histoURI.add(tmp.length());
 		} else if (tmp[0] == '"') {
-			histoLiteral.Add(tmp.length());
+                        histoLiteral.add(tmp.length());
 		} else if (tmp[0] == '_') {
-			histoBlank.Add(tmp.length());
+                        histoBlank.add(tmp.length());
 		} else {
 			cout << "String not URI/Lit?: " << tmp << endl;
 		}
@@ -769,11 +782,11 @@ void PlainDictionary::dumpStats(string &output) {
 		tmp.append(*subjects_not_shared[i]->str);
 
 		if (tmp[0] == '<') {
-			histoURI.Add(tmp.length());
+                        histoURI.add(tmp.length());
 		} else if (tmp[0] == '"') {
-			histoLiteral.Add(tmp.length());
+                        histoLiteral.add(tmp.length());
 		} else if (tmp[0] == '_') {
-			histoBlank.Add(tmp.length());
+                        histoBlank.add(tmp.length());
 		} else {
 			cout << "String not URI/Lit?: " << tmp << endl;
 		}
@@ -786,11 +799,11 @@ void PlainDictionary::dumpStats(string &output) {
 		tmp.append(*objects_not_shared[i]->str);
 
 		if (tmp[0] == '<') {
-			histoURI.Add(tmp.length());
+                        histoURI.add(tmp.length());
 		} else if (tmp[0] == '"') {
-			histoLiteral.Add(tmp.length());
+                        histoLiteral.add(tmp.length());
 		} else if (tmp[0] == '_') {
-			histoBlank.Add(tmp.length());
+                        histoBlank.add(tmp.length());
 		} else {
 			cout << "String not URI/Lit?: " << tmp << endl;
 		}
@@ -803,11 +816,11 @@ void PlainDictionary::dumpStats(string &output) {
 		tmp.append(*predicates[i]->str);
 
 		if (tmp[0] == '<') {
-			histoURI.Add(tmp.length());
+                        histoURI.add(tmp.length());
 		} else if (tmp[0] == '"') {
-			histoLiteral.Add(tmp.length());
+                        histoLiteral.add(tmp.length());
 		} else if (tmp[0] == '_') {
-			histoBlank.Add(tmp.length());
+                        histoBlank.add(tmp.length());
 		} else {
 			cout << "String not URI/Lit?: " << tmp << endl;
 		}

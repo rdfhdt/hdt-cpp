@@ -40,6 +40,8 @@ public:
 	 */
 	IteratorTripleID *search(TripleID &triple);
 
+	IteratorTripleID *searchJoin(TripleID &a, TripleID &b, unsigned short conditions);
+
 	/**
 	 * Calculates the cost to retrieve a specific pattern
 	 *
@@ -74,6 +76,11 @@ public:
 	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
+
+	void generateIndex(ProgressListener *listener);
+
+	void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
+	void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
 
 	void populateHeader(Header &header, string rootNode);
 
@@ -110,6 +117,7 @@ public:
 
 	bool hasNext();
 	unsigned int next();
+	void goToStart();
 };
 
 }

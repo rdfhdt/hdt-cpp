@@ -29,48 +29,42 @@
 
 namespace csd
 {
-	uint
-	VByte::encode(uint c, uchar *r)
-	{		
-		uint i= 0;
 
-		while (c/128 > 0)
+	unsigned int VByte::encode(unsigned int c, unsigned char *r)
+	{		
+		unsigned int i= 0;
+
+		while (c>127)
 		{
-			r[i] = (uchar)(c%128);			
+			r[i] = (unsigned char)(c&127);
 			i++;
-			c = c/128;
+			c>>=7;
 		}
 		
-		bitset((uchar*)&c, 7);
-		r[i] = (uchar)c;
+		r[i] = (unsigned char)(c|0x80);
 		i++;
 		
 		return i;
 	}
 	
-	uint
-	VByte::decode(uint *c, uchar *r)
+	unsigned int VByte::decode(unsigned int *c, unsigned char *r)
 	{
 		*c = 0;
 		int i = 0;
+		int shift = 0;
 		
-		while (r[i] < 128)
+		while ( !(r[i] & 0x80) )
 		{
-			*c += r[i]*pow((double)128,i);
+			*c |= (r[i] & 127) << shift;
 			i++;
+			shift+=7;
 		}
 		
-		*c += (r[i]-128)*pow((double)128,i);
+		*c |= (r[i] & 127) << shift;
 		i++;
 		
 		return i;
 	}
-	
-	void 
-        VByte::bitset(uchar * e, uint32_t p)
-	{
-        	e[p/8] |= (1<<(p%8));
-    	}
 };
 
 

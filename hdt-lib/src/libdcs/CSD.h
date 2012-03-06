@@ -61,6 +61,10 @@ public:
 	virtual unsigned char *next() {
 		return 0;
 	}
+
+	virtual unsigned int getNumberOfElements() {
+		return 0;
+	}
 };
 
 class VectorIteratorUCharString : public IteratorUCharString {
@@ -102,7 +106,7 @@ class CSD
     virtual uchar * extract(uint32_t id)=0;
 
     /** Returns the size of the structure in bytes. */
-    virtual uint32_t getSize()=0;
+    virtual uint64_t getSize()=0;
 
     virtual void dumpAll()=0;
 
@@ -129,8 +133,8 @@ class CSD
 };
 
 #include "CSD_PFC.h"
+#include "CSD_HTFC.h"
 //#include "CSD_RePairDAC.h"
-//#include "CSD_HTFC.h"
 //#include "CSD_FMIndex.h"
 //#include "CSD_HashHuff.h"
 

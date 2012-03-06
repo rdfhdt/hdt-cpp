@@ -138,6 +138,14 @@ enum RDFNotation {
 	 */
 	N3
 };
+
+enum ResultEstimationType {
+    UNKNOWN,
+    APPROXIMATE,
+    UP_TO,
+    EXACT
+};
+
 }
 
 #endif

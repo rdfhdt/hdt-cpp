@@ -25,6 +25,7 @@ void help() {
 	cout << "\t-H\t<header>\tSave Header in separate file" << endl;
 	cout << "\t-D\t<dictionary>\tSave Dictionary in separate file" << endl;
 	cout << "\t-T\t<triples>\tSave Triples in separate file" << endl;
+	cout << "\t-i\t\tAlso generate index to solve all triple patterns." << endl;
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
 	cout << "\t-o\t<options>\tHDT Additional options (option1:value1;option2:value2;...)" << endl;
 	cout << "\t-f\t<format>\tFormat of the RDF input (N3, Turtle, RDF-XML)" << endl;
@@ -34,16 +35,9 @@ void help() {
 
 class ConvertProgress : public ProgressListener {
 private:
-char *lastMsg;
 public:
-    ConvertProgress() : lastMsg(NULL) {
-	}
     void notifyProgress(float level, const char *section) {
-		if(section!=lastMsg) {
-			lastMsg = (char *)section;
-			cout << endl;
-		}
-    	cout << "\r " << section << ": " << level << " %            \r";
+    	cout << "\r " << section << ": " << level << " %                      \r";
 		cout.flush();
 	}
 
@@ -56,6 +50,7 @@ int main(int argc, char **argv) {
 	string dictionaryFile;
 	string triplesFile;
 	bool verbose=false;
+	bool generateIndex=false;
 	string configFile;
 	string options;
 	string rdfFormat;
@@ -64,7 +59,7 @@ int main(int argc, char **argv) {
 	RDFNotation notation = NTRIPLES;
 
 	int c;
-	while( (c = getopt(argc,argv,"H:D:T:c:o:vf:B:"))!=-1) {
+	while( (c = getopt(argc,argv,"H:D:T:c:o:vf:B:i"))!=-1) {
 		switch(c) {
 		case 'H':
 			headerFile = optarg;
@@ -95,6 +90,9 @@ int main(int argc, char **argv) {
 			break;
 		case 'B':
 			baseUri = optarg;
+			break;
+		case 'i':
+			generateIndex=true;
 			break;
 		default:
 			cout << "ERROR: Unknown option" << endl;
@@ -156,6 +154,14 @@ int main(int argc, char **argv) {
 	HDT *hdt = HDTFactory::createHDT(spec);
 
 	try {
+		// Load Dictionary if exists
+		ifstream dictIn(dictionaryFile.c_str(), ios::binary);
+		if(dictIn.good()) {
+			ControlInformation ci;
+			ci.load(dictIn);
+			hdt->getDictionary().load(dictIn, ci);
+		}
+
 		// Read RDF
 		StopWatch globalTimer;
 		hdt->loadFromRDF(inputFile.c_str(), baseUri, notation, &progress);
@@ -171,12 +177,15 @@ int main(int argc, char **argv) {
 		out.close();
 
 		globalTimer.stop();
-		cout << endl;
-		cout << "HDT Successfully generated." << endl;
+		cout << "HDT Successfully generated.                        " << endl;
 		cout << "Total processing time: ";
 		cout << "Clock(" << globalTimer.getRealStr();
 		cout << ")  User(" << globalTimer.getUserStr();
 		cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
+
+		if(generateIndex) {
+			hdt->generateIndex(&progress);
+		}
 
 		ControlInformation controlInformation;
 

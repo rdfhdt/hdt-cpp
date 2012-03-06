@@ -12,9 +12,17 @@
 #include <string>
 #include <vector>
 
+#include <HDTEnums.hpp>
+
 using namespace std;
 
 namespace hdt {
+
+
+#define IS_VARIABLE(a) ( (a).size()>0 && (a).at(0)=='?')
+#define IS_URI(a) ( (a).size()>0 && (a).at(0)=='<')
+#define IS_LITERAL(a) ( (a).size()>0 && (a).at(0)=='"')
+
 
 /**
  * Represents a single triple, where the subject, predicate, and object components are
@@ -162,7 +170,7 @@ public:
 	} // !=()
 
 	/**
-	 * Compares two triples and returns -1, 0 or 1, stablishing an order.
+	 * Compares two triples and returns -1, 0 or 1, establishing an order.
 	 *
 	 * @param other
 	 * @return
@@ -457,6 +465,53 @@ public:
 	}
 };
 
+class VarBindingID {
+public:
+    virtual ~VarBindingID() { }
+
+    virtual void goToStart()=0;
+    virtual unsigned int estimatedNumResults()=0;
+    virtual bool findNext()=0;
+
+    virtual unsigned int getNumVars()=0;
+    virtual const char *getVarName(unsigned int numvar)=0;
+    virtual unsigned int getVarValue(unsigned int numvar)=0;
+};
+
+class VarBindingString {
+public:
+	virtual ~VarBindingString() { }
+
+	virtual bool findNext()=0;
+	virtual unsigned int getNumVars()=0;
+	virtual string getVar(unsigned int numvar)=0;
+	virtual const char *getVarName(unsigned int numvar)=0;
+	virtual unsigned int estimatedNumResults()=0;
+	virtual void goToStart()=0;
+};
+
+class EmptyVarBingingString : public VarBindingString {
+public:
+	bool findNext() {
+	    return false;
+	}
+	unsigned int getNumVars() {
+	    return 0;
+	}
+	string getVar(unsigned int numvar) {
+	    throw "No such variable";
+	}
+	const char *getVarName(unsigned int numvar) {
+	    throw "No such variable";
+	}
+	unsigned int estimatedNumResults() {
+	    return 0;
+	}
+	void goToStart() {
+
+	}
+};
+
 class IteratorTripleID {
 public:
 	virtual bool hasNext() {
@@ -476,6 +531,27 @@ public:
 	}
 	virtual void goToStart() {
 	}
+	virtual unsigned int estimatedNumResults() {
+		return 0;
+	}
+	virtual ResultEstimationType numResultEstimation() {
+		return UNKNOWN;
+	}
+	virtual bool canGoTo() {
+		return false;
+	}
+	virtual void goTo(unsigned int pos) {
+	}
+	virtual bool findNextOccurrence(unsigned int value, unsigned char component) {
+		return false;
+	}
+	virtual TripleComponentOrder getOrder() {
+		return Unknown;
+	}
+
+    virtual bool isSorted(TripleComponentRole role) {
+	return false;
+    }
 };
 
 

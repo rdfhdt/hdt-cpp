@@ -7,6 +7,7 @@
 
 #include <HDT.hpp>
 #include <HDTFactory.hpp>
+#include <signal.h>
 
 #include <string>
 #include <iostream>
@@ -17,6 +18,12 @@
 using namespace hdt;
 using namespace std;
 
+int interruptSignal = 0;
+
+void signalHandler(int sig)
+{
+	interruptSignal = 1;
+}
 
 void help() {
 	cout << "$ hdtSearch [options] <hdtfile> " << endl;
@@ -66,12 +73,9 @@ int main(int argc, char **argv) {
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
 	try {
-		ifstream in(inputFile.c_str(), ios::in | ios::binary);
-		if(!in.good()){
-			throw "Could not open input file.";
-		}
-		hdt->loadFromHDT(in);
-		in.close();
+		hdt->loadFromHDT(inputFile.c_str());
+
+		hdt->generateIndex();
 
 		if(query!="") {
 			ostream *out;
@@ -89,10 +93,16 @@ int main(int argc, char **argv) {
 
 			IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
 
+			StopWatch st;
+			unsigned int numTriples=0;
 			while(it->hasNext()) {
 				TripleString *ts = it->next();
-				*out << *ts << endl;
+				if(!measure)
+					*out << *ts << endl;
+				numTriples++;
 			}
+			if(measure)
+				cout << numTriples << " results in " << st << endl;
 			delete it;
 
 			if(outputFile!="") {
@@ -103,6 +113,7 @@ int main(int argc, char **argv) {
 			TripleString tripleString;
 			char line[1024*10];
 
+			signal(SIGINT, &signalHandler);
 			cout << ">> ";
 			while(cin.getline(line, 1024*10)) {
 				if(line==""||line=="exit"||line=="quit") {
@@ -112,21 +123,26 @@ int main(int argc, char **argv) {
 				tripleString.read(line);
 				cout << "Query: " << tripleString << endl;
 
-				IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
+				try {
+					IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
 
-				StopWatch st;
-				unsigned int numTriples = 0;
-				while(it->hasNext()) {
-					TripleString *ts = it->next();
+					StopWatch st;
+					unsigned int numTriples = 0;
+					interruptSignal = 0;
+					while(it->hasNext() && !interruptSignal) {
+						TripleString *ts = it->next();
 
-					if(!measure) {
-						cout << *ts << endl;
+						if(!measure) {
+							cout << *ts << endl;
+						}
+
+						numTriples++;
 					}
-
-					numTriples++;
+					cout << numTriples << " results in " << st << endl;
+					delete it;
+				} catch (char *e) {
+					cout << e << endl;
 				}
-				delete it;
-				cout << numTriples << " results in " << st << endl;
 
 				cout << ">> ";
 			}

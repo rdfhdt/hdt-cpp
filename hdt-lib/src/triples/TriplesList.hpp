@@ -66,6 +66,8 @@ public:
 	 */
 	IteratorTripleID *search(TripleID &pattern);
 
+	IteratorTripleID *searchJoin(TripleID &a, TripleID &b, unsigned short conditions);
+
 	/**
 	 * Calculates the cost to retrieve a specific pattern
 	 *
@@ -103,6 +105,11 @@ public:
 	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 	void load(ModifiableTriples &input, ProgressListener *listener = NULL);
+
+	void generateIndex(ProgressListener *listener);
+
+	void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
+	void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
 
 	/**
 	 * Populates the header
@@ -156,6 +163,9 @@ public:
 	 * @param order The order to set
 	 */
 	void setOrder(TripleComponentOrder order);
+
+        void calculateDegree(string path);
+        void calculateDegrees(string path);
 
 	// Others
 

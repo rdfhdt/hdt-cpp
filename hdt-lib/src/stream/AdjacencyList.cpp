@@ -36,6 +36,11 @@ size_t AdjacencyList::find(size_t x) {
 #endif
 }
 
+size_t AdjacencyList::findNext(size_t pos)
+{
+    return bitmap->selectNext1(pos);
+}
+
 /**
  * Find element y, in the list x
  * @param x
@@ -49,7 +54,7 @@ size_t AdjacencyList::find(size_t x, size_t y) {
 }
 
 /**
- * Find in which list x is the element globalpos
+ * Find to which list x does the element at globalpos belongs
  * @param globalpos
  * @return
  */
@@ -100,6 +105,14 @@ size_t AdjacencyList::countItemsY(size_t x) {
 	return last(x)-find(x)+1;
 }
 
+size_t AdjacencyList::search(unsigned int element, size_t begin, size_t end) {
+	if(end-begin>10) {
+		return binSearch(element,begin,end);
+	} else {
+		return linSearch(element,begin,end);
+	}
+}
+
 size_t AdjacencyList::binSearch(unsigned int element, size_t begin, size_t end) {
 	while (begin <= end) {
 		int mid = (begin + end) / 2;
@@ -139,9 +152,9 @@ size_t AdjacencyList::getSize() {
 }
 
 void AdjacencyList::dump() {
-	for(unsigned int i=0; i<countListsX(); i++) {
+	for(unsigned int i=0; i<countListsX() && i<100; i++) {
 		cout << " [";
-		for(unsigned int j=0; j<countItemsY(i); j++) {
+		for(unsigned int j=0; j<countItemsY(i) && i<100; j++) {
 			cout << get(find(i)+j);
 
 			if(j!=countItemsY(i)-1)

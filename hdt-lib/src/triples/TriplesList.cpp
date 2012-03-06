@@ -41,6 +41,7 @@
 
 #include <algorithm>
 
+#include "../util/Histogram.h"
 
 namespace hdt {
 
@@ -48,7 +49,7 @@ TriplesList::TriplesList() : numValidTriples(0), order(Unknown)
 {
 }
 
-TriplesList::TriplesList(HDTSpecification &specification) : spec(specification), numValidTriples(0), order(Unknown) {
+TriplesList::TriplesList(HDTSpecification &specification) : spec(specification), order(Unknown), numValidTriples(0) {
 }
 
 TriplesList::~TriplesList()
@@ -64,6 +65,10 @@ IteratorTripleID *TriplesList::search(TripleID &pattern)
 	} else {
 		return new SequentialSearchIteratorTripleID(pattern, new TriplesListIterator(this,pattern));
 	}
+}
+
+IteratorTripleID *TriplesList::searchJoin(TripleID &a, TripleID &b, unsigned short conditions) {
+	throw "Not implemented";
 }
 
 float TriplesList::cost(TripleID &pattern)
@@ -127,6 +132,19 @@ void TriplesList::load(ModifiableTriples &input, ProgressListener *listener)
 
 	delete it;
 }
+
+void TriplesList::generateIndex(ProgressListener *listener) {
+
+}
+
+void TriplesList::saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener) {
+
+}
+
+void TriplesList::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
+
+}
+
 
 void TriplesList::populateHeader(Header &header, string rootNode)
 {
@@ -210,8 +228,9 @@ void TriplesList::sort(TripleComponentOrder order, ProgressListener *listener)
 {
 	if(this->order != order) {
 		StopWatch st;
+		NOTIFY(listener, "Sorting triples", 0, 100);
 		std::sort(arrayOfTriples.begin(), arrayOfTriples.end(), TriplesComparator(order));
-		cout << "Sorted in " << st << endl;
+		//cout << "Sorted in " << st << endl;
 		this->order = order;
 	}
 }
@@ -246,13 +265,195 @@ void TriplesList::removeDuplicates(ProgressListener *listener) {
 			j++;
 			arrayOfTriples[j] = arrayOfTriples[i];
 		}
-		NOTIFYCOND(listener, "TriplesList Removing duplicates", i, arrayOfTriples.size());
+		NOTIFYCOND(listener, "Removing duplicate triples", i, arrayOfTriples.size());
 	}
 
-	cout << "Removed "<< arrayOfTriples.size()-j-1 << " duplicates in " << st << endl;
+	//cout << "Removed "<< arrayOfTriples.size()-j-1 << " duplicates in " << st << endl;
 
 	arrayOfTriples.resize(j+1);
 	numValidTriples = j+1;
+}
+
+
+
+/** Calculate Degree
+ * @param path Description of the param.
+ * @return void
+ */
+void TriplesList::calculateDegree(string path) {
+        const int maxval = 50000;
+        const int nbins = 50000;
+
+        Histogram hDegree(0, maxval, nbins);
+        Histogram hDegreePartial(0, maxval, nbins);
+        Histogram hDegreeLabeled(0, maxval, nbins);
+
+        int xcount = 1, ycount = 1, ychanged = 1;
+
+        TripleID currentTriple;
+
+        currentTriple = arrayOfTriples[0];
+        swapComponentOrder(&currentTriple, SPO, order);
+
+        int x = currentTriple.getSubject();
+        int y = currentTriple.getPredicate();
+        int z = currentTriple.getObject();
+
+        //cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
+        for (int i = 1; i < getNumberOfElements(); i++) {
+            currentTriple = arrayOfTriples[i];
+            swapComponentOrder(&currentTriple, SPO, order);
+                //cout<<currentTriple.getSubject()<< " " << currentTriple.getPredicate() << " " << currentTriple.getObject()<<"\n";
+                // Ignore duplicate triples
+                if ((x == currentTriple.getSubject()) && (y == currentTriple.getPredicate()) && (z == currentTriple.getObject())) {
+                        continue;
+                }
+
+                if (x != currentTriple.getSubject()) {
+                        //cout << "\tdegree: " << xcount <<endl;
+                        hDegree.add(xcount);
+
+                        //cout << "\tpartial degree: " << ycount << endl;
+                        hDegreePartial.add(ycount);
+
+                        //cout << "\tlabeled degree: " << ychanged << endl;
+                        hDegreeLabeled.add(ychanged);
+
+                        xcount = ycount = 1;
+                        ychanged = 1;
+                } else {
+                        xcount++;
+
+                        if (y != currentTriple.getPredicate()) {
+                                ychanged++;
+
+                                //cout << "\tpartial degree: " << ycount << endl;
+                                hDegreePartial.add(ycount);
+                                ;
+
+                                ycount = 1;
+                        } else {
+                                ycount++;
+                        }
+                }
+
+
+
+                //cout << currentTriple.getSubject() << " " << currentTriple.getPredicate() << " " << currentTriple.getObject() << endl;
+
+                x = currentTriple.getSubject();
+                y = currentTriple.getPredicate();
+                z = currentTriple.getObject();
+        }
+
+                //cout << "\tdegree: " << xcount <<endl;
+                hDegree.add(xcount);
+
+                //cout << "\tpartial degree: " << ycount << endl;
+                hDegreePartial.add(ycount);
+
+                //cout << "\tlabeled degree: " << ychanged << endl;
+                hDegreeLabeled.add(ychanged);
+
+        hDegree.end();
+        hDegreePartial.end();
+        hDegreeLabeled.end();
+
+#if 0
+        ofstream out;
+
+        string direcc=""; //predicate total degree is neither in nor out
+        if (parsing == SPO) direcc="out";
+        else if (parsing == OPS) direcc="in";
+        else direcc="predicate";
+
+
+
+        //cout << endl << "Partial degree" << endl;
+
+        if (parsing==PSO){
+                out.open((path + "_Predicate").c_str(), ios::out);
+                out << "# Predicate degree" << endl;
+                hDegree.dumpStr(out);
+                out.close();
+
+                out.open((path + "_inPredicate").c_str(), ios::out);
+                out << "# Predicate_in degree" << endl;
+                hDegreeLabeled.dumpStr(out);
+                out.close();
+
+        }
+        else if (parsing==POS){
+                out.open((path + "_outPredicate").c_str(), ios::out);
+                out << "# Predicate_out degree" << endl;
+                hDegreeLabeled.dumpStr(out);
+                out.close();
+        }
+        else if (parsing==SOP){
+                out.open((path + "_DirectOut").c_str(), ios::out);
+                out << "# Direct_out degree" << endl;
+                hDegreeLabeled.dumpStr(out);
+                out.close();
+        }
+        else if (parsing==OSP){
+                out.open((path + "_DirectIn").c_str(), ios::out);
+                out << "# Direct_in degree" << endl;
+                hDegreeLabeled.dumpStr(out);
+                out.close();
+        }
+        else{
+                string direcc = (parsing == SPO) ? "out" : "in";
+                //	cout << endl << "Degree" << endl;
+                out.open((path + "_" + direcc).c_str(), ios::out);
+                out << "# " << direcc << " degree" << endl;
+                hDegree.dumpStr(out);
+                out.close();
+
+                out.open((path + "_p" + direcc).c_str(), ios::out);
+                out << "# Partial " << direcc << " degree" << endl;
+                hDegreePartial.dumpStr(out);
+                out.close();
+                //cout << endl << "Labeled degree" << endl;
+                out.open((path + "_l" + direcc).c_str(), ios::out);
+                out << "# Labeled" << direcc << " degree" << endl;
+                hDegreeLabeled.dumpStr(out);
+                out.close();
+        }
+#endif
+
+}
+
+/** Calculate Degrees
+ * @param path Description of the param.
+ * @return void
+ */
+void TriplesList::calculateDegrees(string path) {
+
+    StopWatch st;
+        cout << "Calculate OUT Degree" << endl;
+        sort(SPO);
+        calculateDegree(path);
+
+        cout << "Calculate IN Degree" << endl;
+        sort(OPS);
+        calculateDegree(path);
+
+        cout << "Calculate Direct OUT Degree" << endl;
+        sort(SOP);
+        calculateDegree(path);
+
+        cout << "Calculate Direct IN Degree" << endl;
+        sort(OSP);
+        calculateDegree(path);
+
+        cout << "Calculate Predicate IN Degree" << endl;
+        sort(PSO);
+        calculateDegree(path);
+
+        cout << "Calculate Predicate OUT Degree" << endl;
+        sort(POS);
+        calculateDegree(path);
+        cout << "Degrees calculated in " << st << endl;
 }
 
 

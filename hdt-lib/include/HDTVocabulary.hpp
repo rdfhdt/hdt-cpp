@@ -51,6 +51,7 @@ namespace HDTVocabulary {
 	// Dictionary Types
 	const std::string DICTIONARY_TYPE_PLAIN = HDT_DICTIONARY_BASE+"Plain>";
 	const std::string DICTIONARY_TYPE_PFC = HDT_DICTIONARY_BASE+"FrontCoding>";
+	const std::string DICTIONARY_TYPE_HTFC = HDT_DICTIONARY_BASE+"FrontCodingHuTucker>";
 
 	// Triples
 	const std::string TRIPLES_TYPE = DUBLIN_CORE+"format>";
@@ -77,6 +78,7 @@ namespace HDTVocabulary {
 	// Streams
 	const std::string STREAM_TYPE_INTEGER = HDT_STREAM_BASE+"Integer>";
 	const std::string STREAM_TYPE_LOG = HDT_STREAM_BASE+"Log>";
+	const std::string STREAM_TYPE_LOG2 = HDT_STREAM_BASE+"Log2>";
 	const std::string STREAM_TYPE_HUFFMAN = HDT_STREAM_BASE+"Huffman>";
 	const std::string STREAM_TYPE_WAVELET = HDT_STREAM_BASE+"Wavelet>";
 

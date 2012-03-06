@@ -4,19 +4,18 @@ LIBCDSPATH = ../libcds-v1.0.7
 
 CPP=g++
 CPPFLAGS=
-#FLAGS=-O2 -Wno-deprecated
-FLAGS=-O2 -Wno-deprecated #-Wall
+FLAGS=-O3 -Wno-deprecated 
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
 LDFLAGS=
 DOXYGEN=doxygen
-DEFINES= -DUSE_RAPTOR -DUSE_FOQ
+DEFINES=-DUSE_FOQ
 #DEFINES= -DUSE_FOQ #-DOLD_BITMAP
 LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -L/opt/local/lib -lstdc++ -lraptor2
 
 ifeq ($(OS), Darwin)
-CPP=clang++
-#CPP=g++-4.2
-FLAGS=-arch x86_64 -O2 -Wno-deprecated
+#CPP=clang++
+CPP=g++-4.2
+FLAGS=-arch i386 -arch x86_64 -g -Wno-deprecated
 endif
 
 SRCS=$(wildcard src/*.cpp) $(wildcard src/**/*.cpp)
@@ -65,6 +64,6 @@ doc:
 	
 clean:
 	@echo " [CLN] Removing object files"
-	@rm -f $(OBJECTS) $(TOOLS) libhdt.a *~
-	@rm -Rf tools/*dSYM
+	@rm -f $(OBJECTS) $(TOOLS) $(TESTS) libhdt.a *~
+	@rm -Rf tools/*dSYM tests/*dSYM
 

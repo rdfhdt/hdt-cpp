@@ -85,6 +85,10 @@ IteratorTripleID *PlainTriples::search(TripleID & pattern)
 	}
 }
 
+IteratorTripleID *PlainTriples::searchJoin(TripleID &a, TripleID &b, unsigned short conditions) {
+	throw "Not implemented";
+}
+
 void PlainTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
@@ -142,6 +146,20 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 	iListener.notifyProgress(0, "PlainTriples loading objects");
 	streamZ->load(input);
 }
+
+void PlainTriples::generateIndex(ProgressListener *listener) {
+
+}
+
+void PlainTriples::saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener) {
+
+}
+
+void PlainTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
+
+}
+
+
 
 unsigned int PlainTriples::getNumberOfElements()
 {
@@ -223,6 +241,10 @@ bool ComponentIterator::hasNext()
 	return it->hasNext();
 }
 
+void ComponentIterator::goToStart()
+{
+	it->goToStart();
+}
 
 }
 

@@ -142,6 +142,10 @@ IteratorTripleID *CompactTriples::search(TripleID & pattern)
 	}
 }
 
+IteratorTripleID *CompactTriples::searchJoin(TripleID &a, TripleID &b, unsigned short conditions) {
+	throw "Not implemented";
+}
+
 void CompactTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	controlInformation.clear();
@@ -190,6 +194,18 @@ void CompactTriples::load(std::istream &input, ControlInformation &controlInform
 	iListener.setRange(30,100);
 	iListener.notifyProgress(0, "CompactTriples saving Stream Y");
 	streamZ->load(input);
+}
+
+void CompactTriples::generateIndex(ProgressListener *listener) {
+
+}
+
+void CompactTriples::saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener) {
+
+}
+
+void CompactTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
+
 }
 
 unsigned int CompactTriples::getNumberOfElements()

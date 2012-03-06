@@ -41,13 +41,13 @@ using namespace std;
 #include <libcdsBasics.h>
 using namespace cds_utils;
 
+#include <HDTListener.hpp>
+
 #include "CSD.h"
 #include "VByte.h"
 
 namespace csd
 {
-static const uint32_t FACTOR = 20; // Percentual fraction (of the original dict
-				 // size) for memory allocation in building.
 
 class CSD_PFC : public CSD
 {		
@@ -55,7 +55,7 @@ class CSD_PFC : public CSD
     /** General constructor **/
     CSD_PFC();
 
-    CSD_PFC(IteratorUCharString *it, uint32_t blocksize);
+    CSD_PFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener=NULL);
 
     /** General destructor. */
     ~CSD_PFC();
@@ -83,7 +83,7 @@ class CSD_PFC : public CSD
     void dumpBlock(uint block);
 
     /** Returns the size of the structure in bytes. */
-    uint32_t getSize();
+    uint64_t getSize();
 
     /** Stores a CSD_PFC structure given a file pointer.
 	@fp: pointer to the file saving a CSD_PFC structure.
@@ -97,7 +97,7 @@ class CSD_PFC : public CSD
     void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 		
   protected:
-    uint32_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
+    uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
     uchar *text;	//! Front-Coding encoded sequence.
 
     uint32_t blocksize;	//! Number of strings stored in each block.

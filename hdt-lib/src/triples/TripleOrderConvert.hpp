@@ -59,6 +59,7 @@ UnorderedTriple *getUnorderedTriple(TripleComponentOrder type);
 void swapComponentOrder(UnorderedTriple *triple, TripleComponentOrder parsing, TripleComponentOrder to);
 void swapComponentOrder(TripleID *triple, TripleComponentOrder parsing, TripleComponentOrder to);
 
+TripleComponentOrder invertOrder(TripleComponentOrder src);
 
 }
 

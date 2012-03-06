@@ -47,6 +47,7 @@ private:
 	Dictionary *dictionary;
 	Triples *triples;
 	HDTSpecification spec;
+	string fileName;
 
 	void createComponents();
 	void deleteComponents();
@@ -104,6 +105,10 @@ public:
 	 */
 	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
 
+	void generateIndex(ProgressListener *listener = NULL);
+
+	void saveIndex(ProgressListener *listener = NULL);
+
 	void convert(HDTSpecification &spec);
 
 	/**
@@ -112,7 +117,8 @@ public:
 	 * @param object
 	 * @return
 	 */
-	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+	IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+	VarBindingString *searchJoin(vector<TripleString> &patterns, set<string> &vars);
 };
 
 class DictionaryLoader : public RDFCallback {
@@ -144,6 +150,7 @@ private:
 	Dictionary *dictionary;
 	ModifiableTriples *triples;
 	HDTSpecification spec;
+	string fileName;
 
 	void createComponents();
 
@@ -197,6 +204,10 @@ public:
 	 */
 	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
 
+	void generateIndex(ProgressListener *listener = NULL);
+
+	void saveIndex(ProgressListener *listener = NULL);
+
 	void convert(HDTSpecification &spec);
 
 	/*
@@ -209,24 +220,25 @@ public:
 	 * @param object
 	 * @return
 	 */
-	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+	IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+	VarBindingString *searchJoin(vector<TripleString> &patterns, set<string> &vars);
 
 	/**
 	 *
 	 * @param triples
 	 */
-	virtual void insert(TripleString &triple);
+	void insert(TripleString &triple);
 
-	virtual void insert(IteratorTripleString *triple);
+	void insert(IteratorTripleString *triple);
 
 	/**
 	 * Deletes with pattern matching
 	 *
 	 * @param triples
 	 */
-	virtual void remove(TripleString &triples);
+	void remove(TripleString &triples);
 
-	virtual void remove(IteratorTripleString *triples);
+	void remove(IteratorTripleString *triples);
 
 };
 
@@ -265,6 +277,58 @@ public:
 	void goToStart() {
 		iterator->goToStart();
 	}
+};
+
+class BasicVarBindingString : public VarBindingString {
+private:
+	map<string, TripleComponentRole> varRole;
+	VarBindingID *varID;
+	Dictionary *dict;
+
+	unsigned int getVarIndex(const char *varName) {
+		for(int i=0;i<getNumVars();i++) {
+			if(strcmp(getVarName(i), varName)==0) {
+				return i;
+			}
+		}
+		cout << "Var name: " << varName << " not found" << endl;
+		throw "Var name does not exist";
+	}
+public:
+	BasicVarBindingString(map<string, TripleComponentRole> &varRole, VarBindingID *varID, Dictionary *dict) :
+	varRole(varRole),
+	varID(varID),
+	dict(dict)
+	{
+
+	}
+
+	virtual ~BasicVarBindingString() {
+		delete varID;
+	}
+
+	virtual bool findNext(){
+		return varID->findNext();
+	}
+
+	virtual unsigned int getNumVars() {
+		return varID->getNumVars();
+	}
+	virtual string getVar(unsigned int numvar) {
+		unsigned int id = varID->getVarValue(numvar);
+		string varName(getVarName(numvar));
+
+		return dict->idToString(id, varRole.find(varName)->second);
+	}
+	virtual const char *getVarName(unsigned int numvar) {
+		return varID->getVarName(numvar);
+	}
+        virtual void goToStart() {
+            return varID->goToStart();
+        }
+        virtual unsigned int estimatedNumResults() {
+            return varID->estimatedNumResults();
+        }
 };
 
 }

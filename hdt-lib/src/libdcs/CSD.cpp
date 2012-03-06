@@ -48,7 +48,7 @@ CSD * CSD::load(ifstream & fp)
 	//fp.seekg(-sizeof(uint32_t), ios_base::cur);
 	switch(r)
 	{
-	//	case HTFC: return CSD_HTFC::load(fp);
+	case HTFC: return CSD_HTFC::load(fp);
 	case PFC: return CSD_PFC::load(fp);
 	//	case REPAIRDAC: return CSD_RePairDAC::load(fp);
 	//	case FMINDEX: return CSD_FMIndex::load(fp);

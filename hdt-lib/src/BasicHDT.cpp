@@ -31,7 +31,9 @@
  *   Alejandro Andres:          fuzzy.alej@gmail.com
  *
  */
-
+#include <list>
+#include <iomanip>
+#include <algorithm>
 #include <string>
 #include <time.h>
 
@@ -68,6 +70,7 @@
 #include "rdf/RDFParserNtriplesCallback.hpp"
 #endif
 
+#include "sparql/joins.hpp"
 
 using namespace std;
 
@@ -165,6 +168,145 @@ IteratorTripleString *BasicHDT::search(const char *subject, const char *predicat
 	}
 }
 
+bool varbind_cmp(VarBindingInterface *a, VarBindingInterface *b) {
+		return a->estimatedNumResults() < b->estimatedNumResults();
+}
+
+set<string> getCommonVars(VarBindingInterface &a, VarBindingInterface &b) {
+	set<string> output, varsa;
+
+	// Insert all A variables into a set.
+	for(unsigned int i=0;i<a.getNumVars();i++) {
+		const char *varname = a.getVarName(i);
+		varsa.insert(varname);
+	}
+
+	// Do intersection, going through B, searching in A.
+	for(unsigned int i=0;i<b.getNumVars();i++) {
+		string var(b.getVarName(i));
+		if(varsa.find(var)!=varsa.end()) {
+			output.insert(var);
+		}
+	}
+
+	return output;
+}
+
+VarBindingString *BasicHDT::searchJoin(vector<TripleString> &patterns, set<string> &vars)
+{
+    try {
+	if(patterns.size()==0) {
+	    return new EmptyVarBingingString();
+	}
+
+	set<string> neededVars;
+	map<string, TripleComponentRole> varRole;
+
+	// Gather all appearing vars.
+	for(vector<TripleString>::iterator itPat = patterns.begin(); itPat!=patterns.end(); ++itPat) {
+	    TripleString &triple = *itPat;
+
+	    if(IS_VARIABLE(triple.getSubject())) {
+		neededVars.insert(triple.getSubject());
+		varRole.insert(pair<string, TripleComponentRole>(triple.getSubject(), SUBJECT));
+	    }
+
+	    if(IS_VARIABLE(triple.getPredicate())) {
+		neededVars.insert(triple.getPredicate());
+		varRole.insert(pair<string, TripleComponentRole>(triple.getPredicate(), PREDICATE));
+	    }
+
+	    if(IS_VARIABLE(triple.getObject())) {
+		neededVars.insert(triple.getObject());
+		varRole.insert(pair<string, TripleComponentRole>(triple.getObject(), OBJECT));
+	    }
+	}
+
+#if 0
+	// Show them
+	for(map<string, TripleComponentRole>::iterator itN = varRole.begin(); itN!=varRole.end(); ++itN) {
+	    cout << "Needed var: " << itN->first << " as " << itN->second << endl;
+	}
+#endif
+
+	// Create Pattern searchers
+	vector<VarBindingInterface *> bindings;
+
+	for(vector<TripleString>::iterator itPat = patterns.begin(); itPat!=patterns.end(); ++itPat) {
+	    TripleID triplePatID;
+	    dictionary->tripleStringtoTripleID(*itPat, triplePatID);
+	    //cout << "PatternString: " << *itPat << " PatternID: " << triplePatID << endl;
+
+	    vector<unsigned char> vars; // each position means: 1 Subject, 2 Predicate, 3 Object.
+	    vector<string>varnames;  // If not bound, return null.
+
+	    // Fill array indicating which vars we are going to extract from the triple pattern.
+	    if(neededVars.find(itPat->getSubject())!=neededVars.end()) {
+		varnames.push_back(itPat->getSubject());
+		vars.push_back(1);
+	    }
+	    if(neededVars.find(itPat->getPredicate())!=neededVars.end()) {
+		varnames.push_back(itPat->getPredicate());
+		vars.push_back(2);
+	    }
+	    if(neededVars.find(itPat->getObject())!=neededVars.end()) {
+		varnames.push_back(itPat->getObject());
+		vars.push_back(3);
+	    }
+
+	    VarBindingInterface *bind = new TriplePatternBinding(triples, triplePatID, vars, varnames);
+	    cout << "Pattern: " << *itPat << " Results: " << bind->estimatedNumResults() << endl;
+	    bindings.push_back(bind);
+	}
+
+	// Sort by increasing num results.
+	std::sort(bindings.begin(), bindings.end(), varbind_cmp );
+
+	// Remove unused variables.
+
+	// Construct left-recursive tree by bottom-up composition.
+	list<VarBindingInterface*> items;
+
+	for(unsigned int i=0;i<bindings.size();i++) {
+	    items.push_back(bindings[i]);
+	}
+
+	VarBindingInterface *root=*(items.begin());
+	items.remove(root);
+
+	set<string> bindedVars;
+
+	while(items.size()>0) {
+	    VarBindingInterface *left = root;
+	    for( list<VarBindingInterface *>::iterator it = items.begin() ; it!=items.end(); ++it) {
+		VarBindingInterface *right = *it;
+		set<string> commonVars = getCommonVars(*left, *right);
+		if(commonVars.size()>0) {
+		    string joinVar = *(commonVars.begin());
+
+		    if( left->estimatedNumResults()>200000 && left->isOrdered( left->getVarIndex(joinVar.c_str()) ) &&
+				right->isOrdered( right->getVarIndex(joinVar.c_str()) ) ) {
+			root = new MergeJoinBinding((char *)joinVar.c_str(), left, right);
+		    } else {
+		    	// TODO: Heuristic to use presort+mergejoin when the number of left results is big.
+		    	root = new IndexJoinBinding((char *)joinVar.c_str(), left, right);
+		    }
+		    items.remove(right);
+		    break;
+		} else {
+
+		}
+	    }
+	    // IF no match found??
+	}
+
+	return new BasicVarBindingString(varRole, new VarFilterBinding(root, vars), dictionary);
+    } catch (char *e){
+	cout << "Exception: " << e << endl;
+	throw "Exception";
+    }
+}
+
 void DictionaryLoader::processTriple(hdt::TripleString &triple, unsigned long long pos)
 {
 	dictionary->insert(triple.getSubject(), SUBJECT);
@@ -207,6 +349,7 @@ void BasicHDT::loadDictionary(const char *fileName, const char *baseUri, RDFNota
 		throw e;
 	}
 
+#if 0
 	// Convert to final format
 	if(dictionary->getType()==dict->getType()) {
 		delete dictionary;
@@ -226,15 +369,20 @@ void BasicHDT::loadDictionary(const char *fileName, const char *baseUri, RDFNota
 			throw "Dictionary implementation not available.";
 		}
 	}
-	cout << dictionary->getNumberOfElements() << " entries added in " << st << endl << endl;
+#else
+	delete dictionary;
+	dictionary = dict;
+#endif
+	//cout << dictionary->getNumberOfElements() << " entries added in " << st << endl << endl;
 }
 
 void TriplesLoader::processTriple(hdt::TripleString &triple, unsigned long long pos)
 {
 	TripleID ti;
 	dictionary->tripleStringtoTripleID(triple, ti);
-	//cout << "TripleID: " << ti << endl;
 	triples->insert(ti);
+	//cout << "TripleID: " << ti << endl;
+
 
 	NOTIFYCOND2(listener, "Generating Triples", triples->getNumberOfElements(), pos, size);
 }
@@ -297,7 +445,13 @@ void BasicHDT::loadTriples(const char *fileName, const char *baseUri, RDFNotatio
 		delete triplesList;
 	}
 
-	cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
+	PFCDictionary *pfcd = new PFCDictionary(spec);
+	pfcd->import(dynamic_cast<PlainDictionary*>(dictionary), &iListener);
+
+	delete dictionary;
+	dictionary = pfcd;
+
+	//cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
 void BasicHDT::fillHeader(string &baseUri)
@@ -324,7 +478,11 @@ void BasicHDT::fillHeader(string &baseUri)
 	char date[40];
 	time(&now);
 	struct tm *today = localtime(&now);
+#ifdef WIN32
+	strftime(date, 40, "%Y-%m-%dT%H:%M:%S", today);
+#else
 	strftime(date, 40, "%Y-%m-%dT%H:%M:%S%z", today);
+#endif
 	header->insert(publicationInfoNode, HDTVocabulary::DUBLIN_CORE_ISSUED, date);
 }
 
@@ -334,8 +492,9 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 		IntermediateListener iListener(listener);
 
 		iListener.setRange(0,50);
-		loadDictionary(fileName, baseUri.c_str(), notation, &iListener);
-
+		if(dictionary->getNumberOfElements()==0) {
+			loadDictionary(fileName, baseUri.c_str(), notation, &iListener);
+		}
 		iListener.setRange(50,99);
 		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
 
@@ -369,6 +528,8 @@ void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 }
 
 void BasicHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
+	this->fileName = fileName;
+
 	ifstream input(fileName, ios::binary | ios::in);
 	if(!input.good()){
 		throw "Error opening file to load HDT.";
@@ -386,15 +547,15 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	// Load header
 	iListener.setRange(0,5);
 	controlInformation.load(input);
-        delete header;
+	delete header;
 	header = HDTFactory::readHeader(controlInformation);
 	header->load(input, controlInformation, &iListener);
 
 	//Load Dictionary.
 	iListener.setRange(5, 60);
 	controlInformation.clear();
-        controlInformation.load(input);
-        delete dictionary;
+	controlInformation.load(input);
+	delete dictionary;
 	dictionary = HDTFactory::readDictionary(controlInformation);
 	dictionary->load(input, controlInformation, &iListener);
 
@@ -402,7 +563,7 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	iListener.setRange(60,100);
 	controlInformation.clear();
 	controlInformation.load(input);
-        delete triples;
+	delete triples;
 	triples = HDTFactory::readTriples(controlInformation);
 	triples->load(input, controlInformation, &iListener);
     } catch (const char *ex) {
@@ -426,27 +587,65 @@ void BasicHDT::saveToHDT(const char *fileName, ProgressListener *listener)
 		throw "Error opening file to save HDT.";
 	}
 	this->saveToHDT(out, listener);
+	this->saveIndex(listener);
 	out.close();
     } catch (const char *ex) {
         // Fixme: delete file if exists.
         throw ex;
     }
+
+    this->fileName = fileName;
 }
 
 void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 {
-	StopWatch st;
 	ControlInformation controlInformation;
+	IntermediateListener iListener(listener);
 
+	controlInformation.clear();
 	controlInformation.setHeader(true);
-	header->save(output, controlInformation, listener);
+	iListener.setRange(0,5);
+	header->save(output, controlInformation, &iListener);
 
+	controlInformation.clear();
 	controlInformation.setDictionary(true);
-	dictionary->save(output, controlInformation, listener);
+	iListener.setRange(5,70);
+	dictionary->save(output, controlInformation, &iListener);
 
 	controlInformation.clear();
 	controlInformation.setTriples(true);
-	triples->save(output, controlInformation, listener);
+	iListener.setRange(70,100);
+	triples->save(output, controlInformation, &iListener);
+}
+
+void BasicHDT::generateIndex(ProgressListener *listener) {
+
+	string indexname = this->fileName + ".index";
+	ifstream in(indexname.c_str(), ios::binary);
+
+	if(in.good()) {
+		ControlInformation ci;
+		ci.load(in);
+		triples->loadIndex(in, ci, listener);
+		in.close();
+	} else {
+		triples->generateIndex(listener);
+		this->saveIndex(listener);
+	}
+}
+
+void BasicHDT::saveIndex(ProgressListener *listener) {
+	if(this->fileName.size()==0) {
+		cerr << "Cannot save Index if the HDT is not saved" << endl;
+		return;
+	}
+
+	string indexname = this->fileName + ".index";
+	ofstream out(indexname.c_str(), ios::binary);
+	ControlInformation ci;
+	triples->saveIndex(out, ci, listener);
+	cout << "Final pos: " << out.tellp() << endl;
+	out.close();
 }
 
 void BasicHDT::convert(HDTSpecification &spec)
@@ -518,6 +717,11 @@ IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char
 	return iterator;
 }
 
+VarBindingString *BasicModifiableHDT::searchJoin(vector<TripleString> &patterns, set<string> &vars)
+{
+	throw "Not implemented";
+}
+
 void BasicModifiableHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener)
 {
 
@@ -551,6 +755,14 @@ void BasicModifiableHDT::loadFromHDT(std::istream & input, ProgressListener *lis
 	triples->load(input, controlInformation);
 }
 
+void BasicModifiableHDT::generateIndex(ProgressListener *listener) {
+
+}
+
+void BasicModifiableHDT::saveIndex(ProgressListener *listener) {
+
+}
+
 void BasicModifiableHDT::saveToHDT(const char *fileName, ProgressListener *listener)
 {
 	ofstream out(fileName, ios::binary | ios::out);
@@ -559,6 +771,8 @@ void BasicModifiableHDT::saveToHDT(const char *fileName, ProgressListener *liste
 	}
 	this->saveToHDT(out, listener);
 	out.close();
+
+	this->fileName = fileName;
 }
 
 void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
@@ -576,6 +790,8 @@ void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *list
 	st.reset();
 	triples->save(output, controlInformation);
 	cout << "Triples saved in " << st << endl;
+
+	this->fileName = fileName;
 }
 
 void BasicModifiableHDT::convert(HDTSpecification &spec)

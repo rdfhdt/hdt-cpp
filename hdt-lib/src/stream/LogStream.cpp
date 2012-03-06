@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#include <libcdsBasics.h>
 #include <HDTVocabulary.hpp>
 #include "LogStream.hpp"
 
@@ -40,7 +41,7 @@ void LogStream::add(IteratorUint &elements)
 	while(elements.hasNext()) {
 		unsigned int element = elements.next();
 		vector.push_back(element);
-		max = element > max ? max : element;
+		max = element > max ? element : max;
 	}
 
 	if(array!=NULL) {
@@ -48,7 +49,7 @@ void LogStream::add(IteratorUint &elements)
 		array=NULL;
 	}
 
-	array = new cds_utils::Array(vector, 0);
+	array = new cds_utils::Array(vector, cds_utils::bits(max));
 }
 
 void LogStream::load(std::istream & input)

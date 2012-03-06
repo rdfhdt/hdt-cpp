@@ -9,7 +9,7 @@
 
 namespace hdt {
 
-char TripleComponentOrderStr[7][4] = { "Unk", "SPO", "SOP", "PSO", "POS", "OSP", "OPS" };
+static char TripleComponentOrderStr[7][4] = { "Unk", "SPO", "SOP", "PSO", "POS", "OSP", "OPS" };
 
 TripleComponentOrder parseOrder(const char *str){
 	for(unsigned int i=0;i<7;i++) {
@@ -200,6 +200,11 @@ UnorderedTriple *getUnorderedTriple(TripleComponentOrder type)
 		return new UnorderedTripleOPS();
 	}
 	throw "Invalid TripleComponentOrder type";
+}
+
+TripleComponentOrder invertOrder(TripleComponentOrder src) {
+	const static TripleComponentOrder orderInverse[7] = { Unknown, OPS, POS, OSP, SOP, PSO, SPO };
+	return orderInverse[src];
 }
 
 }

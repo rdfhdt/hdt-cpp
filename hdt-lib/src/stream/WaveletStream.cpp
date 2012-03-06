@@ -18,10 +18,10 @@ WaveletStream::WaveletStream() : sequence(NULL) {
 
 }
 
-WaveletStream::WaveletStream(StreamElements *otherStream)  {
+WaveletStream::WaveletStream(StreamElements *otherStream) : sequence(NULL) {
 	if(otherStream->getType()==HDTVocabulary::STREAM_TYPE_LOG) {
 		LogStream *logStream = static_cast<LogStream *>(otherStream);
-		cds_static::BitSequenceBuilder *builder = new cds_static::BitSequenceBuilderRG(20);
+		cds_static::BitSequenceBuilder *builder = new cds_static::BitSequenceBuilderRG(2);
 		cds_static::Mapper *mapper = new cds_static::MapperNone();
 		sequence = new cds_static::WaveletTreeNoptrs(*logStream->array, builder, mapper);
 	} else {

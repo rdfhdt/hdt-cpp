@@ -14,21 +14,14 @@
 
 namespace hdt {
 
-struct TripleListHeader {
-	unsigned int type;
-	unsigned int numValidTriples;
-	unsigned int numTotalTriples;
-};
-
 class TripleListDisk : public ModifiableTriples {
 private:
 	TripleComponentOrder order;
 	unsigned int capacity;
 
-	char *pointer;
-	struct TripleListHeader *tripleHead;
 	TripleID *arrayTriples;
-
+	unsigned int numValidTriples;
+	unsigned int numTotalTriples;
 	size_t mappedSize;
 	string fileName;
 	int fd;
@@ -56,6 +49,8 @@ public:
 	 * @return
 	 */
 	IteratorTripleID *search(TripleID &pattern);
+
+	IteratorTripleID *searchJoin(TripleID &a, TripleID &b, unsigned short conditions);
 
 	/**
 	 * Calculates the cost to retrieve a specific pattern
@@ -96,6 +91,10 @@ public:
 	 */
 	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
+	void generateIndex(ProgressListener *listener);
+
+	void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
+	void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
 
 	void populateHeader(Header &header, string rootNode);
 

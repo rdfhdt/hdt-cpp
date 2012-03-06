@@ -28,6 +28,8 @@ public:
 	size_t find(size_t x);
 	size_t find(size_t x, size_t y);
 
+        size_t findNext(size_t pos);
+
 	size_t findListIndex(size_t globalpos);
 
 	size_t last(size_t x);
@@ -35,6 +37,7 @@ public:
 	size_t countListsX();
 	size_t countItemsY(size_t x);
 
+	size_t search(unsigned int element, size_t ini, size_t fin);
 	size_t binSearch(unsigned int element, size_t ini, size_t fin);
 	size_t linSearch(unsigned int element, size_t ini, size_t fin);
 

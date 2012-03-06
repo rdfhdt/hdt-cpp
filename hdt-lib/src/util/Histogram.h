@@ -2,6 +2,7 @@
 #include <limits>
 #include <iostream>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -83,7 +84,7 @@ public:
 	 * @param ntimes Description of the param.
 	 * @return void
 	 */
-	void Add(const double& x, int ntimes) {
+        void add(const double& x, int ntimes) {
 		number += ntimes;
 		total += (x * ntimes);
 		mean += (x * ntimes);
@@ -104,8 +105,8 @@ public:
 	 * @param x Description of the param
 	 * @return void
 	 */
-	void Add(const double& x) {
-		Add(x, 1);
+        void add(const double& x) {
+                add(x, 1);
 	}
 
 	/** end
@@ -122,7 +123,7 @@ public:
 	 * @return void
 	 */
 	void dumpStr(ostream &outfile) {
-		unsigned int maxfreq = 0;
+		int maxfreq = 0;
 		for (unsigned int i = 0; i < nBins && i <= maxValue; i++) {
 			outfile << i << "  " << freq[i] << endl;
 			maxfreq = freq[i] > maxfreq ? freq[i] : maxfreq;
@@ -167,7 +168,7 @@ public:
 	 * Get the sum of all counts in the histogram.
 	 * @return The expected result.
 	 */
-	const unsigned int GetTotalCount() const {
+        const unsigned int getTotalCount() const {
 		unsigned int c(0U);
 		for (unsigned int i(0); i < nBins; ++i)
 			c += freq[i];

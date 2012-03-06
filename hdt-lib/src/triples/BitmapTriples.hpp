@@ -15,9 +15,13 @@
 #include <BitSequenceRG.h>
 #include <BitString.h>
 
+
 #include "../stream/WaveletStream.hpp"
 #include "../stream/AdjacencyList.hpp"
+#include "../stream/LogStream2.hpp"
 #include "TripleOrderConvert.hpp"
+
+#undef size_t
 
 namespace hdt {
 
@@ -27,12 +31,14 @@ private:
 	HDTSpecification spec;
 	StreamElements *streamY, *streamZ, *streamIndex;
 	cds_static::BitSequence *bitmapY, *bitmapZ, *bitmapIndex;
+	LogStream2 *predicateCount;
 	WaveletStream *waveletY;
 
 	unsigned int numTriples;
 	TripleComponentOrder order;
 
-	void generateIndex(ProgressListener *listener);
+	void generateWavelet(ProgressListener *listener = NULL);
+
 public:
 	BitmapTriples();
 	BitmapTriples(HDTSpecification &specification);
@@ -81,6 +87,10 @@ public:
 
 	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
 
+	void generateIndex(ProgressListener *listener);
+	void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
+	void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
+
 	void populateHeader(Header &header, string rootNode);
 
 	string getType();
@@ -115,6 +125,13 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
+	unsigned int estimatedNumResults();
+	ResultEstimationType numResultEstimation();
+	TripleComponentOrder getOrder();
+	bool canGoTo();
+	void goTo(unsigned int pos);
+	bool findNextOccurrence(unsigned int value, unsigned char component);
+	bool isSorted(TripleComponentRole role);
 };
 
 class MiddleWaveletIterator : public IteratorTripleID {
@@ -139,6 +156,11 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
+	unsigned int estimatedNumResults();
+	ResultEstimationType numResultEstimation();
+	TripleComponentOrder getOrder();
+	bool findNextOccurrence(unsigned int value, unsigned char component);
+	bool isSorted(TripleComponentRole role);
 };
 
 class ObjectIndexIterator : public IteratorTripleID {
@@ -150,10 +172,13 @@ private:
 	unsigned int patX, patY, patZ;
 	unsigned int posIndex;
 	unsigned int predicateOcurrence, numOcurrences;
-	unsigned int minIndex, maxIndex;
+	long long minIndex, maxIndex;
 	unsigned int x, y, z;
 
 	void updateOutput();
+	void calculateRange();
+	unsigned int getPosZ(unsigned int index);
+	unsigned int getY(unsigned int index);
 public:
 	ObjectIndexIterator(BitmapTriples *triples, TripleID &pat);
 
@@ -162,6 +187,11 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
+	unsigned int estimatedNumResults();
+	ResultEstimationType numResultEstimation();
+	TripleComponentOrder getOrder();
+	bool findNextOccurrence(unsigned int value, unsigned char component);
+	bool isSorted(TripleComponentRole role);
 };
 
 }

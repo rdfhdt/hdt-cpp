@@ -38,6 +38,7 @@
 #include "PFCDictionary.hpp"
 #include <HDTVocabulary.hpp>
 #include "../libdcs/CSD_PFC.h"
+#include "../libdcs/CSD_HTFC.h"
 
 namespace hdt {
 
@@ -57,9 +58,13 @@ public:
 	virtual unsigned char *next() {
 		return (unsigned char*)vector[pos++]->str->c_str();
 	}
+
+	virtual unsigned int getNumberOfElements() {
+		return vector.size();
+	}
 };
 
-PFCDictionary::PFCDictionary() : blocksize(32)
+PFCDictionary::PFCDictionary() : blocksize(8)
 {
 	subjects = new csd::CSD_PFC();
 	predicates = new csd::CSD_PFC();
@@ -88,6 +93,11 @@ PFCDictionary::~PFCDictionary()
 	delete shared;
 }
 
+csd::CSD *loadSection(DictIterator *iterator, uint32_t blocksize, ProgressListener *listener) {
+	return new csd::CSD_PFC(iterator, blocksize, listener);
+	//return new csd::CSD_HTFC(iterator, blocksize, listener);
+}
+
 void PFCDictionary::import(PlainDictionary *dictionary, ProgressListener *listener)
 {
 	DictIterator itSubj(dictionary->subjects_not_shared);
@@ -95,22 +105,28 @@ void PFCDictionary::import(PlainDictionary *dictionary, ProgressListener *listen
 	DictIterator itObj(dictionary->objects_not_shared);
 	DictIterator itShared(dictionary->subjects_shared);
 
+	IntermediateListener iListener(listener);
 	try {
-		NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
+
+		//NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
 		delete subjects;
-		subjects = new csd::CSD_PFC(&itSubj, blocksize);
+		iListener.setRange(0, 20);
+		subjects = loadSection(&itSubj, blocksize, &iListener);
 
-		NOTIFY(listener, "DictionaryPFC loading predicates", 25, 100);
+		//NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
 		delete predicates;
-		predicates = new csd::CSD_PFC(&itPred, blocksize);
+		iListener.setRange(20, 21);
+		predicates = loadSection(&itPred, blocksize, &iListener);
 
-		NOTIFY(listener, "DictionaryPFC loading objects", 50, 100);
+		//NOTIFY(listener, "DictionaryPFC loading objects", 30, 90);
 		delete objects;
-		objects = new csd::CSD_PFC(&itObj, blocksize);
+		iListener.setRange(21, 90);
+		objects = loadSection(&itObj, blocksize, &iListener);
 
-		NOTIFY(listener, "DictionaryPFC loading shared", 75, 100);
+		//NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
 		delete shared;
-		shared = new csd::CSD_PFC(&itShared, blocksize);
+		iListener.setRange(90, 100);
+		shared = loadSection(&itShared, blocksize, &iListener);
 
 		this->sizeStrings = dictionary->sizeStrings;
 		this->mapping = dictionary->mapping;
@@ -173,8 +189,9 @@ unsigned int PFCDictionary::stringToId(std::string &key, TripleComponentRole pos
 {
 	unsigned int ret;
 
-	if(key=="")
+        if(key.length()==0 || key.at(0) == '?') {
 		return 0;
+        }
 
 	switch (position) {
 	case SUBJECT:
@@ -199,6 +216,11 @@ unsigned int PFCDictionary::stringToId(std::string &key, TripleComponentRole pos
 		if( ret != 0) {
 			return getGlobalId(ret,SHARED_OBJECT);
 		}
+		ret = objects->locate((const uchar *)key.c_str(), key.length());
+		if(ret != 0) {
+			return getGlobalId(ret,NOT_SHARED_OBJECT);
+		}
+		cout << "Search for: " << key << endl;
 		ret = objects->locate((const uchar *)key.c_str(), key.length());
 		if(ret != 0) {
 			return getGlobalId(ret,NOT_SHARED_OBJECT);

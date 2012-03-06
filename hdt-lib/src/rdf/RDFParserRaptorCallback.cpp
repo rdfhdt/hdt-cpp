@@ -11,19 +11,48 @@
 
 namespace hdt {
 
+string getString(raptor_term *term) {
+	string out;
+	if(term->type==RAPTOR_TERM_TYPE_URI) {
+		out.append("<");
+		out.append((char *)raptor_uri_as_string(term->value.uri));
+		out.append(">");
+	} else if(term->type==RAPTOR_TERM_TYPE_LITERAL) {
+		out.append("\"");
+		out.append((char *)term->value.literal.string);
+		if(term->value.literal.language_len>0){
+			out.append("\"@");
+			out.append((char *)term->value.literal.language);
+		} else {
+			out.append("\"");
+		}
+		if(term->value.literal.datatype) {
+			out.append("^^");
+			out.append((char *)raptor_uri_as_string(term->value.literal.datatype));
+		}
+	} else if(term->type==RAPTOR_TERM_TYPE_BLANK) {
+		out.append((char *)term->value.blank.string);
+	}
+	//cout << out << endl;
+	return out;
+}
+
 void raptor_callback_process_triple(void *user_data, raptor_statement *triple) {
 	 //raptor_statement_print_as_ntriples(triple, stdout);
 
+#if 0
+	TripleString ts( getString(triple->subject), getString(triple->predicate), getString(triple->object));
+#else
 	const char *s = (const char*)raptor_term_to_string(triple->subject);
 	const char *p = (const char*)raptor_term_to_string(triple->predicate);
 	const char *o = (const char*)raptor_term_to_string(triple->object);
 
-	TripleString ts(s, p, o);
+	TripleString ts(s,p,o);
 
 	raptor_free_memory((void*)s);
 	raptor_free_memory((void*)p);
 	raptor_free_memory((void*)o);
-	//cout << "***" << ts << endl;
+#endif
 
 	RDFParserRaptorCallback *raptorParser = reinterpret_cast<RDFParserRaptorCallback *>(user_data);
 

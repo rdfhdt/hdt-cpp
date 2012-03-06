@@ -47,6 +47,7 @@ namespace hdt {
 #define TRIPLES_BIT 1
 #define DICTIONARY_BIT 2
 #define HEADER_BIT 4
+#define INDEX_BIT 8
 
 ControlInformation::ControlInformation() : version(0), components(0) {
 	// TODO Auto-generated constructor stub
@@ -83,7 +84,6 @@ void ControlInformation::load(std::istream &in) {
 	hdt[4]=0;
 	if(strcmp(hdt,"$HDT")!=0) {
 		throw "Non-HDT Section";
-
 	}
 
 	in.read((char *)&this->version, sizeof(uint16_t));
@@ -190,6 +190,20 @@ void ControlInformation::setHeader(bool dict)
 bool ControlInformation::getHeader()
 {
 	return this->components & HEADER_BIT;
+}
+
+void ControlInformation::setIndex(bool val)
+{
+	if(val) {
+		this->components |= INDEX_BIT;
+	} else {
+		this->components &= ~INDEX_BIT;
+	}
+}
+
+bool ControlInformation::getIndex()
+{
+	return this->components & INDEX_BIT;
 }
 
 }

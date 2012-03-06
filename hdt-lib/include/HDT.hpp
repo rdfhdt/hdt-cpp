@@ -46,6 +46,7 @@
 #include <RDFSerializer.hpp>
 
 #include <iostream>
+#include <set>
 
 namespace hdt {
 
@@ -111,6 +112,10 @@ public:
 
 	virtual void convert(HDTSpecification &spec)=0;
 
+	virtual void generateIndex(ProgressListener *listener = NULL)=0;
+
+	virtual void saveIndex(ProgressListener *listener = NULL)=0;
+
 	/*
 	 * FROM RDFAccess
 	 */
@@ -128,6 +133,7 @@ public:
         return search(pattern.getSubject().c_str(), pattern.getPredicate().c_str(), pattern.getObject().c_str());
     }
 
+    virtual VarBindingString *searchJoin(vector<TripleString> &patterns, set<string> &vars)=0;
 };
 
 

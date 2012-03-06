@@ -31,12 +31,8 @@
 #include <iostream>
 using namespace std;
 
-#include <libcdsBasics.h>
-using namespace cds_utils;
-
 namespace csd
 {
-static const uint32_t SSIZE = 4;  // Size reserved for encoded sequences.
 
 class VByte
 {		
@@ -45,19 +41,13 @@ class VByte
 	@c: number to be encoded.
 	@r: encoded sequence.
     */
-    static uint encode(uint c, uchar *r);
+    static unsigned int encode(unsigned int c, unsigned char *r);
 
     /** Decodes the sequence of bytes (uchar) 'r' into the integer 'c'.
 	@c: decoded number.
 	@r: sequence to be decoded.
     */
-    static uint decode(uint *c, uchar *r);
-  private:
-    /** Set the p-th bit of the byte e.
-        @e: byte to be shifted.
-	@p: position to be set.
-    */
-    static void bitset(uchar * e, uint32_t p);
+    static unsigned int decode(unsigned int *c, unsigned char *r);
   };
 };
 

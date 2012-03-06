@@ -154,8 +154,10 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 			throw "Error parsing ntriples file.";
 		}
 
-		ts.setAll(node[0], node[1], node[2]);
-		callback->processTriple(ts, filePos);
+		if(pos==3) {
+			ts.setAll(node[0], node[1], node[2]);
+			callback->processTriple(ts, filePos);
+		}
 	}
 }
 
