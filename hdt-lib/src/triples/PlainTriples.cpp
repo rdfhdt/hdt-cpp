@@ -176,7 +176,7 @@ string PlainTriples::getType() {
 }
 
 PlainTriplesIterator::PlainTriplesIterator(PlainTriples *triples, TripleID & pattern, TripleComponentOrder order) :
-		triples(triples), pattern(pattern), pos(0), order(order)
+		pattern(pattern), order(order), triples(triples), pos(0)
 {
 }
 

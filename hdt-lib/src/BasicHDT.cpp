@@ -59,9 +59,6 @@
 #include "triples/PlainTriples.hpp"
 #include "triples/CompactTriples.hpp"
 #include "triples/BitmapTriples.hpp"
-#ifdef USE_FOQ
-#include "triples/FOQTriples.hpp"
-#endif
 #include "triples/TripleOrderConvert.hpp"
 
 #ifdef USE_RAPTOR
@@ -117,10 +114,6 @@ void BasicHDT::createComponents() {
 #ifndef WIN32
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		triples = new TripleListDisk();
-#endif
-#ifdef USE_FOQ
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_FOQ) {
-		triples = new FOQTriples();
 #endif
 	} else {
 		triples = new BitmapTriples(spec);

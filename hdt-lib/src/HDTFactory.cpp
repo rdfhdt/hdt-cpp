@@ -52,9 +52,6 @@
 #include "triples/PlainTriples.hpp"
 #include "triples/CompactTriples.hpp"
 #include "triples/BitmapTriples.hpp"
-#ifdef USE_FOQ
-#include "triples/FOQTriples.hpp"
-#endif
 
 
 using namespace hdt;
@@ -103,10 +100,6 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 #ifndef WIN32
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		return new TripleListDisk();
-#endif
-#ifdef USE_FOQ
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_FOQ) {
-		return new FOQTriples();
 #endif
 	}
 

@@ -13,8 +13,7 @@ TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += USE_RAPTOR RAPTOR_STATIC USE_FOQ
-#DEFINES += USE_FOQ
+DEFINES += USE_RAPTOR RAPTOR_STATIC
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'
@@ -40,7 +39,6 @@ SOURCES += \
     ../src/triples/TripleOrderConvert.cpp \
     ../src/triples/TripleIterators.cpp \
     ../src/triples/PlainTriples.cpp \
-    ../src/triples/FOQTriples.cpp \
     ../src/triples/CompactTriples.cpp \
     ../src/triples/BitmapTriples.cpp \
     ../src/triples/BitmapTriplesIterators.cpp \
@@ -105,7 +103,6 @@ HEADERS += \
     ../src/triples/TripleListDisk.hpp \
     ../src/triples/TripleIterators.hpp \
     ../src/triples/PlainTriples.hpp \
-    ../src/triples/FOQTriples.hpp \
     ../src/triples/CompactTriples.hpp \
     ../src/triples/BitmapTriples.hpp \
     ../src/stream/WaveletStream.hpp \
