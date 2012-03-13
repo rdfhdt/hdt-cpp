@@ -28,6 +28,7 @@ namespace cds_utils
         in.read((char*)&ret,sizeof(T));
         //cout << "loadValue: " << in.tellg() << " " << sizeof(T) << " " << ret << endl;
         if((size_t)in.gcount()!=sizeof(T)) {
+	    cout << "1Reading: " << sizeof(T) << " Read: " << in.gcount() << endl;
             throw "Could not read the expected bytes from input";
         }
         return ret;
@@ -64,6 +65,7 @@ namespace cds_utils
 #else
         in.read((char*)ret,len*sizeof(T));
         if((size_t)in.gcount()!=len*sizeof(T)) {
+	    cout << "Reading: " << sizeof(T) << " Read: " << in.gcount() << endl;
             throw "Could not read the expected bytes from input";
         }
 #endif

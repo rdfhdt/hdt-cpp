@@ -7,7 +7,7 @@
 QT       -= core gui
 
 CONFIG += debug_and_release
-#macx:CONFIG += x86_64
+macx:CONFIG += x86 x86_64
 
 TARGET = cds 
 TEMPLATE = lib
@@ -65,7 +65,8 @@ SOURCES += \
     ../src/static/sequence/SequenceBuilderAlphPart.cpp \
     ../src/static/sequence/SequenceAlphPart.cpp \
     ../src/static/sequence/Sequence.cpp \
-    ../src/static/sequence/BitmapsSequence.cpp
+    ../src/static/sequence/BitmapsSequence.cpp \
+    ../src/static/bitsequence/BitSequence375.cpp
 
 HEADERS += \ 
     ../src/utils/libcdsTrees.h \
@@ -116,9 +117,12 @@ HEADERS += \
     ../src/static/sequence/SequenceBuilder.h \
     ../src/static/sequence/SequenceAlphPart.h \
     ../src/static/sequence/Sequence.h \
-    ../src/static/sequence/BitmapsSequence.h
+    ../src/static/sequence/BitmapsSequence.h \
+    ../src/static/bitsequence/BitSequence375.h
 
 SRCBASE = ../../libcds-v1.0.7/src
 
 INCLUDEPATH += $${SRCBASE}/utils $${SRCBASE}/static/bitsequence $${SRCBASE}/static/sequence $${SRCBASE}/static/coders $${SRCBASE}/static/mapper $${SRCBASE}/static/permutation
+
+
 
