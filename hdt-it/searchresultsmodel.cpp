@@ -36,7 +36,7 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
     case Qt::ToolTipRole:
     case Qt::DisplayRole:
     {
-        //cout << "SearchResultsModel.data " << index.row() << "," << index.column() << endl;
+	// cout << "SearchResultsModel.data " << index.row() << "," << index.column() << endl;
         // Compiler complains that by calling findTriple we are modifying internal
         // state, which is illegal due to this function being const. But we need to
         // modify the currentIndex and currentTriple, so we can avoid it.
@@ -146,10 +146,12 @@ void SearchResultsModel::findTriple(unsigned int index)
         return;
     }
 
-    if(triples->canGoTo() && (index>currentIndex+5 || index<currentIndex-5)) {
-        triples->goTo(index);
+    if(triples->canGoTo() && abs((long int)currentIndex-(long int)index)>5) {
+	triples->goTo(index);
+	goingUp = true;
         currentTriple = triples->next();
         currentIndex = index;
+	//cout << "Jump: " << currentIndex << " => " << *currentTriple << endl;
         return;
     }
 
