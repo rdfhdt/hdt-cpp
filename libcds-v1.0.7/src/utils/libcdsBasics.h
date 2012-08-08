@@ -48,7 +48,9 @@ typedef uint16_t ushort;
 typedef uint64_t ulong;
 #endif
 
-#define size_t uint32_t
+typedef uint64_t ulong;
+typedef uint32_t uint;
+typedef uint16_t ushort;
 
 namespace cds_utils
 {
@@ -222,18 +224,24 @@ namespace cds_utils
 
     /** Counts the number of 1s in x */
     inline uint popcount(const int x) {
+#if 0
         return __popcount_tab[(x >>  0) & 0xff]  + __popcount_tab[(x >>  8) & 0xff]
             + __popcount_tab[(x >> 16) & 0xff] + __popcount_tab[(x >> 24) & 0xff];
+#else
+        return __builtin_popcount(x);
+#endif
     }
 
     /** Counts the number of 1s in the first 16 bits of x */
     inline uint popcount16(const int x) {
-        return __popcount_tab[x & 0xff]  + __popcount_tab[(x >>  8) & 0xff];
+        //return __popcount_tab[x & 0xff]  + __popcount_tab[(x >>  8) & 0xff];
+    	return __builtin_popcount(x & 0xffff);
     }
 
     /** Counts the number of 1s in the first 8 bits of x */
     inline uint popcount8(const int x) {
-        return __popcount_tab[x & 0xff];
+        //return __popcount_tab[x & 0xff];
+    	return __builtin_popcount(x & 0xff);
     }
 
 };
