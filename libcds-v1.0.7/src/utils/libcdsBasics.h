@@ -224,7 +224,7 @@ namespace cds_utils
 
     /** Counts the number of 1s in x */
     inline uint popcount(const int x) {
-#if 0
+#if 1
         return __popcount_tab[(x >>  0) & 0xff]  + __popcount_tab[(x >>  8) & 0xff]
             + __popcount_tab[(x >> 16) & 0xff] + __popcount_tab[(x >> 24) & 0xff];
 #else
@@ -234,14 +234,20 @@ namespace cds_utils
 
     /** Counts the number of 1s in the first 16 bits of x */
     inline uint popcount16(const int x) {
-        //return __popcount_tab[x & 0xff]  + __popcount_tab[(x >>  8) & 0xff];
+#if 1
+        return __popcount_tab[x & 0xff]  + __popcount_tab[(x >>  8) & 0xff];
+#else
     	return __builtin_popcount(x & 0xffff);
+#endif
     }
 
     /** Counts the number of 1s in the first 8 bits of x */
     inline uint popcount8(const int x) {
-        //return __popcount_tab[x & 0xff];
+#if 1
+        return __popcount_tab[x & 0xff];
+#else
     	return __builtin_popcount(x & 0xff);
+#endif
     }
 
 };
