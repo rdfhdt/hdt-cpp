@@ -150,7 +150,7 @@ namespace cds_static
 
     void BitSequenceRG::save(ofstream & f) const
     {
-        uint wr = BRW32_HDR;
+    	uchar wr = BRW32_HDR;
         saveValue(f,wr);
         saveValue(f,n);
         saveValue(f,factor);
@@ -160,7 +160,7 @@ namespace cds_static
 
     BitSequenceRG * BitSequenceRG::load(ifstream & f) {
         assert(f.good());
-        uint type = loadValue<uint>(f);
+        uchar type = loadValue<uchar>(f);
         if(type!=BRW32_HDR) {    // throw exception
             abort();
         }

@@ -24,12 +24,12 @@
 
 #include <iostream>
 
+#define BRW32_375 1
 #define RRR02_HDR 2
 #define BRW32_HDR 3
 #define RRR02_LIGHT_HDR 4
 #define SDARRAY_HDR 5
 #define DARRAY_HDR 6
-#define BRW32_375 7
 
 #include <libcdsBasics.h>
 #include <Array.h>

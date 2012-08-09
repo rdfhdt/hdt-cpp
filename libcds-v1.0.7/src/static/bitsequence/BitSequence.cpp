@@ -130,9 +130,9 @@ namespace cds_static
     }
 
     BitSequence * BitSequence::load(ifstream & fp) {
-        uint r = loadValue<uint>(fp);
+	uchar r = loadValue<uchar>(fp);
         size_t pos = fp.tellg();
-        fp.seekg(pos-sizeof(uint));
+	fp.seekg(pos-sizeof(uchar));
         switch(r) {
             case RRR02_HDR: return BitSequenceRRR::load(fp);
             case BRW32_HDR: return BitSequenceRG::load(fp);

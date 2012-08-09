@@ -331,7 +331,7 @@ namespace cds_static
         cout << "sample_rate = " << sample_rate << endl;
         cout << "C_alen = " << uint_len(C_len,C_field_bits) << endl;
         cout << "O_alen = " << O_len << endl;*/
-        uint wr = RRR02_HDR;
+    	uchar wr = RRR02_HDR;
         saveValue(f,wr);
         saveValue(f,length);
         saveValue(f,ones);
@@ -349,7 +349,7 @@ namespace cds_static
         try
         {
             ret = new BitSequenceRRR();
-            uint type = loadValue<uint>(f);
+            uchar type = loadValue<uchar>(f);
             // TODO:throw an exception!
             if(type!=RRR02_HDR) {
                 abort();

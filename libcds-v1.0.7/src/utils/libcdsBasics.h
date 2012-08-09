@@ -66,6 +66,8 @@ namespace cds_utils
     /** W-1 */
     const uint Wminusone = 31;
 
+    const uint LOGW = 5;
+
     /** 2W*/
     const uint WW = 64;
 
@@ -223,30 +225,30 @@ namespace cds_utils
     }
 
     /** Counts the number of 1s in x */
-    inline uint popcount(const int x) {
-#if 1
+    inline uint popcount(const unsigned int x) {
+#ifdef __SSE4_2__
+    	return __builtin_popcount(x);
+#else
         return __popcount_tab[(x >>  0) & 0xff]  + __popcount_tab[(x >>  8) & 0xff]
             + __popcount_tab[(x >> 16) & 0xff] + __popcount_tab[(x >> 24) & 0xff];
-#else
-        return __builtin_popcount(x);
 #endif
     }
 
     /** Counts the number of 1s in the first 16 bits of x */
-    inline uint popcount16(const int x) {
-#if 1
-        return __popcount_tab[x & 0xff]  + __popcount_tab[(x >>  8) & 0xff];
-#else
+    inline uint popcount16(const unsigned int x) {
+#ifdef __SSE4_2__
     	return __builtin_popcount(x & 0xffff);
+#else
+    	return __popcount_tab[x & 0xff]  + __popcount_tab[(x >>  8) & 0xff];
 #endif
     }
 
     /** Counts the number of 1s in the first 8 bits of x */
-    inline uint popcount8(const int x) {
-#if 1
-        return __popcount_tab[x & 0xff];
-#else
+    inline uint popcount8(const unsigned int x) {
+#ifdef __SSE4_2__
     	return __builtin_popcount(x & 0xff);
+#else
+    	return __popcount_tab[x & 0xff];
 #endif
     }
 

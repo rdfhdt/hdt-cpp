@@ -1,9 +1,13 @@
 
-all: clean libcompact
+all: libcompact
 
 doc:
 	@echo " [DOC] Generating documentation"
 	@doxygen
+
+re:
+	$(MAKE) clean
+	$(MAKE) libcompact 
 
 libcompact: 
 	@echo " [MSG] Entering directory src"

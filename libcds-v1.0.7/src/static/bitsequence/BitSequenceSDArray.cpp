@@ -97,7 +97,7 @@ namespace cds_static
 
     void BitSequenceSDArray::save(ofstream & fp) const
     {
-        uint wr = SDARRAY_HDR;
+    	uchar wr = SDARRAY_HDR;
         saveValue(fp,wr);
         saveValue(fp,length);
         saveValue(fp,ones);
@@ -106,7 +106,7 @@ namespace cds_static
     }
 
     BitSequenceSDArray * BitSequenceSDArray::load(ifstream & fp) {
-        uint id = loadValue<uint>(fp);
+    	uchar id = loadValue<uchar>(fp);
         if(id!=SDARRAY_HDR) return NULL;
         BitSequenceSDArray * ret = new BitSequenceSDArray();
         ret->length = loadValue<size_t>(fp);

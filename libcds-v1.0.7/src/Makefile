@@ -1,7 +1,13 @@
 
+OS := $(shell uname)
+
 CPP=g++
-#CPP=clang++
-CPPFLAGS=-O3 -arch i386 -arch x86_64 
+CPPFLAGS=-O3
+
+ifeq ($(OS), Darwin)
+CPP=clang++
+CPPFLAGS:=$(CPPFLAGS) -arch x86_64 -msse4.2
+endif
 
 INCL=-I../includes/
 
@@ -26,7 +32,9 @@ OBJECTS=$(UTILS_OBJ) $(STATIC_OBJ)
 	@echo " [C++] Compiling $<"
 	@$(CPP) $(CPPFLAGS) $(INCL) -c $< -o $@
 
-all: pre lib 
+all:
+	${MAKE} pre
+	${MAKE} lib 
 
 clean:
 	@echo " [CLN] Removing object files"

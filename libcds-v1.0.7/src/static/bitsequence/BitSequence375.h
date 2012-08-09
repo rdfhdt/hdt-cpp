@@ -14,7 +14,7 @@
    License along with this library; if not, write to the Free Software
    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-*/
+ */
 
 #ifndef _STATIC_BITSEQUENCE_375_H
 #define _STATIC_BITSEQUENCE_375_H
@@ -25,20 +25,21 @@
 
 namespace cds_static
 {
-    class BitSequence375 : public BitSequence
-    {
-        private:
-		uint *data;
-		uint nn;	// # of ints
-		uint n;		// # of bits
-		uint pop;	// # bits set
-		uint *sdata;	// superblock counters
-		uint sSize;	// size of sdata vector
-		uchar *bdata;	// block counters
-		uint bSize; 	// size of bdata vector
 
-            static uint binsearch (uint *data, uint size, uint val)
-            { 
+class BitSequence375 : public BitSequence
+{
+private:
+	uint *data;
+	uint numwords;	// # of ints
+	uint numbits;		// # of bits
+	uint pop;	// # bits set
+	uint *superblocks;	// superblock counters
+	uint superblocksSize;	// size of sdata vector
+	uchar *blocks;	// block counters
+	uint blocksSize; 	// size of bdata vector
+
+	static uint binsearch (uint *data, uint size, uint val)
+	{
 		uint i,j,m;
 		i = 0; j = size;
 
@@ -46,15 +47,15 @@ namespace cds_static
 		{ 
 			m = (i+j)/2;
 
-	  		if (data[m] >= val) j = m;
+			if (data[m] >= val) j = m;
 			else i = m;
 		}
 
 		return i;
-            }
+	}
 
-            static uint binsearch0 (uint *data, uint size, uint val)
-            { 
+	static uint binsearch0 (uint *data, uint size, uint val)
+	{
 		uint i,j,m;
 		uint zeros;
 		i = 0; j = size;
@@ -64,35 +65,35 @@ namespace cds_static
 			m = (i+j)/2;
 			zeros = m*256-data[m];
 
-	  		if (zeros >= val) j = m;
+			if (zeros >= val) j = m;
 			else i = m;
 		}
 
 		return i;
-            }
+	}
 
-	    void buildIndex();
+	void buildIndex();
 
-        public:
-            BitSequence375(){};
+public:
+	BitSequence375(){};
 
-            BitSequence375(const BitString & bs);
-            BitSequence375(uint *bitarray, size_t n);
-            ~BitSequence375();
-            
-            virtual bool access(const size_t i) const;
-            virtual size_t rank1(const size_t i) const;
-            virtual size_t rank0(const size_t i) const;
-            virtual size_t selectPrev1(const size_t start) const;
-            virtual size_t selectNext1(const size_t start) const;
-            virtual size_t select0(size_t x) const;
-            virtual size_t select1(size_t x) const;
-            virtual size_t getSize() const;
+	BitSequence375(const BitString & bs);
+	BitSequence375(uint *bitarray, size_t numbits);
+	~BitSequence375();
 
-            /*load-save functions*/
-            virtual void save(ofstream & f) const;
-            static BitSequence375 * load(ifstream & f);
-    };
+	virtual bool access(const size_t i) const;
+	virtual size_t rank1(const size_t i) const;
+	virtual size_t rank0(const size_t i) const;
+	virtual size_t selectPrev1(const size_t start) const;
+	virtual size_t selectNext1(const size_t start) const;
+	virtual size_t select0(size_t x) const;
+	virtual size_t select1(size_t x) const;
+	virtual size_t getSize() const;
+
+	/*load-save functions*/
+	virtual void save(ofstream & f) const;
+	static BitSequence375 * load(ifstream & f);
+};
 
 }
 #endif

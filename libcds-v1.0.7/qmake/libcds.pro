@@ -6,8 +6,13 @@
 
 QT       -= core gui
 
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3
+
+macx:QMAKE_CXXFLAGS_RELEASE += -msse4.2
+
 CONFIG += debug_and_release
-macx:CONFIG += x86 x86_64
+macx:CONFIG += x86_64
 
 TARGET = cds 
 TEMPLATE = lib
