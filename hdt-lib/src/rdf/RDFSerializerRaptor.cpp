@@ -95,6 +95,8 @@ raptor_term *getTerm(string &str, raptor_world *world) {
 
 const char *RDFSerializerRaptor::getType(RDFNotation notation) {
 	switch(notation) {
+	case NQUAD:
+		return "nquad";
 	case N3:
 		return "n3";
 	case NTRIPLES:

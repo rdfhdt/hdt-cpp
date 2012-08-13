@@ -1,13 +1,8 @@
 /*
- * File ControlInformation.cpp 
+ * File: ControlInformation.cpp
  * Last modified: $Date$
  * Revision: $Revision$
  * Last modified by: $Author$
- *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Mario Arias, Alejandro Andres.
- * All rights reserved.
- *
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,17 +18,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Mario Arias:               mario.arias@gmail.com
- *   Alejandro Andres:          fuzzy.alej@gmail.com
  *
  */
-
-
-
 
 #include <stdlib.h>
 #include <string.h>
@@ -69,6 +59,8 @@ void ControlInformation::save(std::ostream &out) {
 		out << it->first << ':' << it->second << ';' << std::endl;
 	}
 	out << "$END" << std::endl;
+
+    // CRC16
 
 	//std::cout << "Save ControlInformation OK " << out.tellp() << std::endl;
 }

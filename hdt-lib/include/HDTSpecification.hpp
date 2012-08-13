@@ -1,9 +1,10 @@
 /*
- * HDTSpecification.hpp
+ * File: HDTSpecification.hpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Guillermo Rodriguez-Cano, Alejandro Andres,
- *                     Mario Arias
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -22,15 +23,12 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Guillermo Rodriguez-Cano:  wileeam@acm.org
- *   Alejandro Andres:          fuzzy.alej@gmail.com
- *   Mario Arias:               mario.arias@gmail.com
- *
- * @version $Id$
  *
  */
+
 
 #ifndef HDTSPECIFICATION_
 #define HDTSPECIFICATION_

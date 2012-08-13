@@ -8,9 +8,9 @@
 #include <fstream>
 
 #if 0
-#include "../src/stream/LogStream.hpp"
+#include "../src/sequence/LogSequence.hpp"
 #else
-#include "../src/stream/LogStream2.hpp"
+#include "../src/sequence/LogSequence2.hpp"
 #endif
 
 #include "../src/util/StopWatch.hpp"
@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 #if 0
 	LogStream logStream;
 #else
-	LogStream2 logStream(bits(1000));
+	LogSequence2 logStream(bits(1000));
 #endif
 
 #if 0

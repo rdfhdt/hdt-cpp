@@ -11,7 +11,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "../src/lm_access/gzstream.hpp"
+
 #include "../src/util/StopWatch.hpp"
 
 #include "../src/triples/TripleIterators.hpp"
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 
 		TripleID pat(0,1,0);
 #if 0
-		IteratorTripleID *it = hdt->getTriples().search(pat);
+		IteratorTripleID *it = hdt->getTriples()->search(pat);
 
 		StopWatch st;
 		unsigned int numTriples = 0;
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
 		cout << numTriples << " results in " << st << endl;
 
 #else
-		IteratorTripleID *it = hdt->getTriples().search(pat);
+		IteratorTripleID *it = hdt->getTriples()->search(pat);
 
 #if 1
 		while(it->hasNext()) {

@@ -32,7 +32,7 @@ namespace csd
 CSD_HTFC::CSD_HTFC()
 {
 	this->type = HTFC;
-	this->length = 0;
+	this->numstrings = 0;
 	this->maxlength = 0;
 	this->bytes = 0;
 	this->blocksize = 0;
@@ -41,10 +41,10 @@ CSD_HTFC::CSD_HTFC()
 	this->blocks = NULL;
 }
 
-CSD_HTFC::CSD_HTFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener)
+CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener)
 {
 	this->type = HTFC;
-	this->length = 0;
+	this->numstrings = 0;
 	this->maxlength = 0;
 	this->bytes = 0;
 	this->blocksize = blocksize;
@@ -80,7 +80,7 @@ CSD_HTFC::CSD_HTFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressLis
 			textfc = (uchar*)realloc(textfc, reservedSize*sizeof(uchar));
 		}
 
-		if ((length % blocksize) == 0)
+		if ((numstrings % blocksize) == 0)
 		{
 			// First string in the current block!
 			//cout << "First of block: " << nblocks << " => " << currentStr << endl;
@@ -107,7 +107,7 @@ CSD_HTFC::CSD_HTFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressLis
 			//cout << previousStr << endl << currentStr << endl << " Delta: " << delta << " Difference: " << currentStr + delta << endl << endl;
 
 			// The prefix is differentially encoded
-			bytesfc += VByte::encode(delta, textfc+bytesfc);
+			bytesfc += VByte::encode(textfc+bytesfc, delta);
 
 			// The suffix is copied to the sequence
 			strncpy((char*)(textfc+bytesfc), (char*)currentStr+delta, currentLength-delta);
@@ -119,7 +119,7 @@ CSD_HTFC::CSD_HTFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressLis
 		bytesfc++;
 
 		// New string processed
-		length++;
+		numstrings++;
 		previousStr = currentStr;
 		previousLength = currentLength;
 
@@ -191,10 +191,10 @@ CSD_HTFC::CSD_HTFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressLis
 			if (fo > 0) fb++;
 
 			// Encoding the string length
-			bytes += VByte::encode(fb, text+bytes);
+			bytes += VByte::encode(text+bytes, fb);
 
 			// Copying the encoded string
-			// **** strncpy((char*)(text+bytes), (char*)first, fb); ÀPOR QUE ESTO NO FUNCIONA SIEMPRE BIEN? :(
+			// **** strncpy((char*)(text+bytes), (char*)first, fb); POR QUE ESTO NO FUNCIONA SIEMPRE BIEN? :(
 			for (uint64_t i=0; i<fb; i++) text[bytes+i] = first[i];
 			bytes += fb;
 
@@ -344,7 +344,7 @@ void CSD_HTFC::dumpBlock(uint block) {
 		//cout << "POS: " << pos << "/" << bytes << " Next block: "<< blocks->getField(block+1)<<endl;
 
 		// Decoding the prefix
-		pos += VByte::decode(&delta, text+pos);
+		pos += VByte::decode(text+pos, &delta);
 
 		// Copying the suffix
 		slen = strlen((char*)text+pos)+1;
@@ -365,7 +365,7 @@ uchar* CSD_HTFC::extract(uint32_t id)
 		return NULL;
 	}
 
-	if ((id > 0) && (id <= length))
+	if ((id > 0) && (id <= numstrings))
 	{
 		// Allocating memory for the string
 		uchar *s = new uchar[maxlength+1];
@@ -384,6 +384,10 @@ uchar* CSD_HTFC::extract(uint32_t id)
 	}
 }
 
+void CSD_HTFC::freeString(const unsigned char *str) {
+	delete [] str;
+}
+
 uint64_t CSD_HTFC::getSize()
 {
 	if(!text || !blocks) {
@@ -398,8 +402,8 @@ void CSD_HTFC::save(ofstream & fp)
 		return;
 	}
 
-	saveValue<uint32_t>(fp, type);
-	saveValue<uint32_t>(fp, length);
+	saveValue<uchar>(fp, type);
+	saveValue<uint32_t>(fp, numstrings);
 	saveValue<uint32_t>(fp, tlength);
 	saveValue<uint32_t>(fp, maxlength);
 	saveValue<uint64_t>(fp, bytes);
@@ -421,13 +425,10 @@ void CSD_HTFC::save(ofstream & fp)
 
 CSD* CSD_HTFC::load(ifstream & fp)
 {
-	//	uint32_t type = loadValue<uint32_t>(fp);
-	//	if(type != PFC) return NULL;
-
 	CSD_HTFC *dicc = new CSD_HTFC();
 
-	dicc->type = HTFC;
-	dicc->length = loadValue<uint32_t>(fp);
+	dicc->type = HTFC;  // Type already read by CSD
+	dicc->numstrings = loadValue<uint32_t>(fp);
 	dicc->tlength = loadValue<uint32_t>(fp);
 	dicc->maxlength = loadValue<uint32_t>(fp);
 	dicc->bytes = loadValue<uint64_t>(fp);
@@ -535,7 +536,7 @@ bool CSD_HTFC::locateBlock(const uchar *s, uint *block)
 		uint pos = blocks->getField(c);
 
 		// Reading the compressed string length
-		pos += VByte::decode(&delta, text+pos);
+		pos += VByte::decode(text+pos, &delta);
 
 		// The comparison is performed by considering the
 		// shortest compressed string
@@ -594,7 +595,7 @@ uint CSD_HTFC::locateInBlock(uint block, const uchar *s, uint len)
 	uint offset = 0;
 
 	uint pos = blocks->getField(block);
-	pos += VByte::decode(&delta, text+pos);
+	pos += VByte::decode(text+pos, &delta);
 	tmplen = decompressFirstWord(text, &pos, tmp);
 
 	uint plcp_len = 0;
@@ -609,7 +610,7 @@ uint CSD_HTFC::locateInBlock(uint block, const uchar *s, uint len)
 
 		// Decoding the prefix (delta)
 		decompressDelta(text, &pos, &offset, deltaseq);
-		VByte::decode(&delta, deltaseq);
+		VByte::decode(deltaseq, &delta);
 
 		if (delta < clcp_len)
 		{
@@ -658,14 +659,14 @@ void CSD_HTFC::extractInBlock(uint block, uint o, uchar *s)
 	uint offset = 0;
 
 	uint pos = blocks->getField(block);
-	pos += VByte::decode(&delta, text+pos);
+	pos += VByte::decode(text+pos, &delta);
 	delta = decompressFirstWord(text, &pos, s);
 
 	for (uint j=0; j<o; j++)
 	{
 		// Decoding the prefix (delta)
 		decompressDelta(text, &pos, &offset, deltaseq);
-		VByte::decode(&delta, deltaseq);
+		VByte::decode(deltaseq, &delta);
 
 		// Decoding the suffix
 		delta += decompressWord(text, &pos, &offset, s+delta);
@@ -721,7 +722,7 @@ uchar CSD_HTFC::decodeHT(uchar *seq, uint *pos, uint *offset)
 {
 	// REVISAR: OTRA IMPLEMENTACION QUE HAGA LOS DESPLAZAMIENTOS
 	// DE UNO EN UNO CONSIDERANDO UNA ESTRUCTURA TEMPORAL DONDE
-	// COPIE DESDE LA POSICIîN DE INICIO
+	// COPIE DESDE LA POSICIN DE INICIO
 	uint node = 0;
 
 	while (HTtree[node].symbol < 0)
@@ -753,7 +754,7 @@ void CSD_HTFC::encodeHT(uint code, uint len, uchar *seq, uint *pos, uint *offset
 		uicode = code << (W-len+processed);
 		// Me quedo con los que quiero
 		uccode = (uchar)(uicode >> (W-(8-(*offset))));
-		// Los a–ado en la posici—n actual
+		// Los aado en la posicin actual
 		seq[*pos] = seq[*pos] | uccode;
 
 		processed += 8-(*offset);

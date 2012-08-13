@@ -28,6 +28,7 @@
 #ifndef _VBYTE_H
 #define _VBYTE_H
 
+#include <stdint.h>
 #include <iostream>
 using namespace std;
 
@@ -37,17 +38,34 @@ namespace csd
 class VByte
 {		
   public:
-    /** Encodes the integer 'c' in the sequence of bytes (uchar) 'r'.
-	@c: number to be encoded.
-	@r: encoded sequence.
-    */
-    static unsigned int encode(unsigned int c, unsigned char *r);
+	/**
+	 * Encode value into the buffer using VByte. The caller must make sure that
+	 * at least 9 bytes are available in the buffer for writing.
+	 * Returns the number of read bytes
+	 */
+	static size_t encode(unsigned char *buffer, uint64_t value );
 
-    /** Decodes the sequence of bytes (uchar) 'r' into the integer 'c'.
-	@c: decoded number.
-	@r: sequence to be decoded.
+	/**
+	 * Decode value from the buffer using VByte.
+	 */
+	static size_t decode(unsigned char *buffer, uint64_t *value );
+
+	/**
+	 * Decode value from the buffer using VByte.
+	 */
+	static size_t decode(unsigned char *buffer, uint32_t *value );
+
+    /** Encodes the integer 'c' in the sequence of bytes (uchar) 'r'.
+     * @out Output stream
+	 * @value: number to be encoded.
+     */
+    static void encode(ostream &out, uint64_t value);
+
+    /** Decodes a VByte number from an Input Stream.
     */
-    static unsigned int decode(unsigned int *c, unsigned char *r);
+    static uint64_t decode(istream &in);
+
+
   };
 };
 

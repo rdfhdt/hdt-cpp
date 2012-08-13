@@ -11,7 +11,6 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "../src/lm_access/gzstream.hpp"
 
 using namespace hdt;
 using namespace std;

@@ -42,9 +42,11 @@ using namespace std;
 using namespace cds_utils;
 
 #include <HDTListener.hpp>
+#include <Iterator.hpp>
 
 #include "CSD.h"
 #include "VByte.h"
+#include "../sequence/LogSequence2.hpp"
 
 namespace csd
 {
@@ -55,7 +57,7 @@ class CSD_PFC : public CSD
     /** General constructor **/
     CSD_PFC();
 
-    CSD_PFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener=NULL);
+    CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener=NULL);
 
     /** General destructor. */
     ~CSD_PFC();
@@ -65,19 +67,21 @@ class CSD_PFC : public CSD
 	@s: the string to be located.
 	@len: the length (in characters) of the string s.
     */
-    uint32_t locate(const uchar *s, uint32_t len);
+    uint32_t locate(const unsigned char *s, uint32_t len);
 
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    uchar * extract(uint32_t id);
+    unsigned char * extract(uint32_t id);
+
+    void freeString(const unsigned char *str);
 
     /** Obtains the original Tdict from its CSD_PFC representation. Each string is
 	separated by '\n' symbols.
 	@dict: the plain uncompressed dictionary.
 	@return: number of total symbols in the dictionary.
     */
-    uint decompress(uchar **dict);
+    uint decompress(unsigned char **dict);
 
     void dumpAll();
     void dumpBlock(uint block);
@@ -98,11 +102,11 @@ class CSD_PFC : public CSD
 		
   protected:
     uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
-    uchar *text;	//! Front-Coding encoded sequence.
+    unsigned char *text;	//! Front-Coding encoded sequence.
 
     uint32_t blocksize;	//! Number of strings stored in each block.
-    uint32_t nblocks;	//! Number of total blocks in the dictionary.
-    Array *blocks;	//! Start positions of dictionary blocks.
+    hdt::LogSequence2 *blocks;	//! Start positions of each block in the encoded sequence.
+    uint32_t nblocks;   //! Number of blocks
 
     /** Locates the block in where the string 's' can be stored. This method is
 	based on a binary search comparing the first string in each block and
@@ -112,7 +116,7 @@ class CSD_PFC : public CSD
 	@return: a boolean value pointing if the string is located (this only
 	 occurs when 's' is the first string in 'block').
     */
-    bool locateBlock(const uchar *s, uint *block);
+    bool locateBlock(const unsigned char *s, uint *block);
 
     /** Locates the offset for 's' in 'block' (returning its global ID) or 
 	return 0 if it is  not exist 
@@ -121,14 +125,14 @@ class CSD_PFC : public CSD
 	@len: the length (in characters) of the string s.
 	@return: the ID for 's' or 0 if it is not exist.
     */
-    uint locateInBlock(uint block, const uchar *s, uint len);
+    uint locateInBlock(uint block, const unsigned char *s, uint len);
 
     /** Extracts the o-th string in the given 'block'.
 	@block: block to be accesed.
 	@o: internal offset for the required string in the block.
-	@s: the extracted string.
+	@return: the extracted string.
     */
-    void extractInBlock(uint block, uint o, uchar *s);
+    unsigned char *extractInBlock(uint block, uint o);
 
 
     /** Obtains the length of the long common prefix (lcp) of str1 and str2.
@@ -137,7 +141,7 @@ class CSD_PFC : public CSD
 	@lstr1: length of the first string.
 	@lstr2: length of the second string.
     */
-    uint longest_common_prefix(const uchar* str1, const uchar* str2, uint lstr1, uint lstr2);
+    inline uint longest_common_prefix(const unsigned char* str1, const unsigned char* str2, uint lstr1, uint lstr2);
   };
 };
 

@@ -11,7 +11,6 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "../src/lm_access/gzstream.hpp"
 
 #include "../src/triples/PlainTriples.hpp"
 #include "../src/util/StopWatch.hpp"
@@ -36,9 +35,12 @@ void help() {
 class ConvertProgress : public ProgressListener {
 private:
 public:
+	virtual ~ConvertProgress() { }
+
     void notifyProgress(float level, const char *section) {
-    	cout << "\r " << section << ": " << level << " %                      \r";
-		cout.flush();
+    	cout << section << ": " << level << " %" << endl;
+    	//cout << "\r " << section << ": " << level << " %                      \r";
+		//cout.flush();
 	}
 
 };
@@ -133,6 +135,8 @@ int main(int argc, char **argv) {
 	if(rdfFormat!="") {
 		if(rdfFormat=="ntriples") {
 			notation = NTRIPLES;
+		} else if(rdfFormat=="nquad") {
+			notation = NQUAD;
 		} else if(rdfFormat=="n3") {
 			notation = N3;
 		} else if(rdfFormat=="turtle") {
@@ -159,7 +163,7 @@ int main(int argc, char **argv) {
 		if(dictIn.good()) {
 			ControlInformation ci;
 			ci.load(dictIn);
-			hdt->getDictionary().load(dictIn, ci);
+            hdt->getDictionary()->load(dictIn, ci);
 		}
 
 		// Read RDF
@@ -191,34 +195,34 @@ int main(int argc, char **argv) {
 
 		// Save header
 		if(headerFile!="") {
-			Header &header = hdt->getHeader();
+            Header *header = hdt->getHeader();
 			out.open(headerFile.c_str());
 			if(!out.good()){
 				throw "Could not open Header file.";
 			}
-			header.save(out, controlInformation);
+            header->save(out, controlInformation);
 			out.close();
 		}
 
 		// Save dictionary
 		if(dictionaryFile!="") {
-			Dictionary &dictionary = hdt->getDictionary();
+            Dictionary *dictionary = hdt->getDictionary();
 			out.open(dictionaryFile.c_str());
 			if(!out.good()){
 				throw "Could not open Dictionary file.";
 			}
-			dictionary.save(out, controlInformation);
+            dictionary->save(out, controlInformation);
 			out.close();
 		}
 
 		// Save triples
 		if(triplesFile!=""){
-			Triples &triples = hdt->getTriples();
+            Triples *triples = hdt->getTriples();
 			out.open(triplesFile.c_str());
 			if(!out.good()){
 				throw "Could not open Triples file.";
 			}
-			triples.save(out, controlInformation);
+            triples->save(out, controlInformation);
 			out.close();
 		}
 

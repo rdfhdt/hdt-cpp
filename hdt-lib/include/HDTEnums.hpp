@@ -1,12 +1,11 @@
 /*
- * TriplePosition.hpp
+ * File: HDTEnums.cpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Guillermo Rodriguez-Cano, Alejandro Andres,
- *                     Mario Arias
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
- *
- * Abstract class to implement different forms of the Dictionary component
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,13 +23,9 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Guillermo Rodriguez-Cano:  wileeam@acm.org
- *   Alejandro Andres:
- *   Mario Arias:
- *
- * @version $Id$
  *
  */
 
@@ -136,7 +131,13 @@ enum RDFNotation {
 	 *
 	 * @see <a href="http://en.wikipedia.org/wiki/Notation_3">Wikipedia</a>
 	 */
-	N3
+	N3,
+	/**
+	 * NQUAD notation
+	 *
+	 * @see <a href="http://sw.deri.org/2008/07/n-quads/">Wikipedia</a>
+	 */
+	NQUAD,
 };
 
 enum ResultEstimationType {

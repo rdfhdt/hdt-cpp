@@ -41,6 +41,7 @@ using namespace std;
 #include <libcdsBasics.h>
 using namespace cds_utils;
 
+#include <Iterator.hpp>
 #include <HDTListener.hpp>
 
 #include "CSD.h"
@@ -64,7 +65,7 @@ class CSD_HTFC : public CSD
     /** General constructor **/
     CSD_HTFC();
 
-    CSD_HTFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener=NULL);
+    CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener=NULL);
 
     /** General destructor. */
     ~CSD_HTFC();
@@ -80,6 +81,8 @@ class CSD_HTFC : public CSD
 	@id: the identifier to be extracted.
     */
     uchar * extract(uint32_t id);
+
+    void freeString(const unsigned char *str);
 
     /** Obtains the original Tdict from its CSD_HTFC representation. Each string is
 	separated by '\n' symbols.
@@ -108,6 +111,7 @@ class CSD_HTFC : public CSD
   protected:
     uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
     uchar *text;	//! Front-Coding encoded sequence.
+    uint32_t maxlength; //! Max length of a string
 
     uint32_t blocksize;	//! Number of strings stored in each block.
     uint32_t nblocks;	//! Number of total blocks in the dictionary.

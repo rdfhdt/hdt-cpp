@@ -9,10 +9,10 @@
 #include <HDTFactory.hpp>
 #include <signal.h>
 
+#include <string.h>
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "../src/lm_access/gzstream.hpp"
 #include "../src/util/StopWatch.hpp"
 
 using namespace hdt;
@@ -91,7 +91,20 @@ int main(int argc, char **argv) {
 			TripleString tripleString;
 			tripleString.read(query);
 
-			IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
+			const char *subj = tripleString.getSubject().c_str();
+			const char *pred = tripleString.getPredicate().c_str();
+			const char *obj = tripleString.getObject().c_str();
+			if(strcmp(subj, "?")==0) {
+				subj="";
+			}
+			if(strcmp(pred, "?")==0) {
+				subj="";
+			}
+			if(strcmp(obj, "?")==0) {
+				obj="";
+			}
+
+			IteratorTripleString *it = hdt->search(subj, pred, obj);
 
 			StopWatch st;
 			unsigned int numTriples=0;
@@ -116,15 +129,30 @@ int main(int argc, char **argv) {
 			signal(SIGINT, &signalHandler);
 			cout << ">> ";
 			while(cin.getline(line, 1024*10)) {
-				if(line==""||line=="exit"||line=="quit") {
-					break;
+				if(line[0]=='\0'||strcmp(line, "exit")==0|| strcmp(line,"quit")==0) {
+					//break;
 				}
 
 				tripleString.read(line);
+
+
+				const char *subj = tripleString.getSubject().c_str();
+				const char *pred = tripleString.getPredicate().c_str();
+				const char *obj = tripleString.getObject().c_str();
+				if(strcmp(subj, "?")==0) {
+					subj="";
+				}
+				if(strcmp(pred, "?")==0) {
+					pred="";
+				}
+				if(strcmp(obj, "?")==0) {
+					obj="";
+				}
+
 				cout << "Query: " << tripleString << endl;
 
 				try {
-					IteratorTripleString *it = hdt->search(tripleString.getSubject().c_str(), tripleString.getPredicate().c_str(), tripleString.getObject().c_str());
+					IteratorTripleString *it = hdt->search(subj, pred, obj);
 
 					StopWatch st;
 					unsigned int numTriples = 0;

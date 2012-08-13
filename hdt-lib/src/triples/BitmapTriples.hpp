@@ -1,8 +1,32 @@
 /*
- * BitmapTriples.hpp
+ * File: BitmapTriples.hpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- *  Created on: 12/05/2011
- *      Author: mck
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
+ *   Javier D. Fernandez:       jfergar@infor.uva.es
+ *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
+ *
  */
 
 #ifndef BITMAPTRIPLES_HPP_
@@ -15,10 +39,10 @@
 #include <BitSequenceRG.h>
 #include <BitString.h>
 
+#include "../sequence/WaveletSequence.hpp"
+#include "../sequence/LogSequence2.hpp"
+#include "../sequence/AdjacencyList.hpp"
 
-#include "../stream/WaveletStream.hpp"
-#include "../stream/AdjacencyList.hpp"
-#include "../stream/LogStream2.hpp"
 #include "TripleOrderConvert.hpp"
 
 #undef size_t
@@ -29,12 +53,11 @@ class BitmapTriples : public Triples {
 private:
 	ControlInformation controlInformation;
 	HDTSpecification spec;
-	StreamElements *streamY, *streamZ, *streamIndex;
+	IntSequence *arrayY, *arrayZ, *streamIndex;
 	cds_static::BitSequence *bitmapY, *bitmapZ, *bitmapIndex;
-	LogStream2 *predicateCount;
-	WaveletStream *waveletY;
+	LogSequence2 *predicateCount;
+	WaveletSequence *waveletY;
 
-	unsigned int numTriples;
 	TripleComponentOrder order;
 
 	void generateWavelet(ProgressListener *listener = NULL);
@@ -67,7 +90,7 @@ public:
 	 */
 	unsigned int getNumberOfElements();
 
-	unsigned int size();
+    size_t size();
 
 	/**
 	 * Saves the triples
@@ -94,6 +117,7 @@ public:
 	void populateHeader(Header &header, string rootNode);
 
 	string getType();
+	TripleComponentOrder getOrder();
 
 	friend class BitmapTriplesSearchIterator;
 	friend class MiddleWaveletIterator;
@@ -140,7 +164,7 @@ private:
 	TripleID pattern, returnTriple;
 
 	AdjacencyList adjY, adjZ;
-	WaveletStream *wavelet;
+	WaveletSequence *wavelet;
 	unsigned int patX, patY, patZ;
 	unsigned int posY, posZ;
 	unsigned int predicateOcurrence, numOcurrences;
@@ -190,6 +214,8 @@ public:
 	unsigned int estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
+	bool canGoTo();
+	void goTo(unsigned int pos);
 	bool findNextOccurrence(unsigned int value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };

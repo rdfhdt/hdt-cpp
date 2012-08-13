@@ -25,6 +25,8 @@
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
 
+#include <stdlib.h>
+
 #include "CSD_PFC.h"
 
 namespace csd
@@ -32,8 +34,7 @@ namespace csd
 CSD_PFC::CSD_PFC()
 {
 	this->type = PFC;
-	this->length = 0;
-	this->maxlength = 0;
+	this->numstrings = 0;
 	this->bytes = 0;
 	this->blocksize = 0;
 	this->nblocks = 0;
@@ -41,72 +42,60 @@ CSD_PFC::CSD_PFC()
 	this->blocks = NULL;
 }
 
-CSD_PFC::CSD_PFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener)
+CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListener *listener)
 {
 	this->type = PFC;
-	this->length = 0;
-	this->maxlength = 0;
+	this->numstrings = 0;
 	this->bytes = 0;
 	this->blocksize = blocksize;
 	this->nblocks = 0;
 
-	size_t reservedSize = 1024;
-	text = (uchar*)malloc(reservedSize*sizeof(uchar));
+	uint64_t reservedSize = 1024;
+	text = (unsigned char*)malloc(reservedSize*sizeof(unsigned char));
 
-	vector<uint> xblocks; // Temporal storage for start positions
+	// Representing the vector of positions with log(bytes) bits
+	blocks = new hdt::LogSequence2(32);
 
-	uchar *previousStr, *currentStr = NULL;
-	uint previousLength = 0, currentLength = 0;
+	unsigned char *previousStr, *currentStr = NULL;
+	size_t previousLength = 0, reservedLength=10, currentLength = 0;
+
+	previousStr = (unsigned char *) malloc(reservedLength);
 
 	while (it->hasNext())
 	{
 		currentStr = it->next();
-
 		currentLength = strlen( (char*) currentStr);
+		//cout << "CSD_PFC insert: " << currentStr << " ("<<currentLength << ")" << endl;
 
-		if (currentLength > maxlength) maxlength = currentLength;
-
-		// Checking the current size of the encoded
-		// sequence: realloc if necessary
-		if ((bytes+currentLength+1) > reservedSize)
+		// Realloc size of the buffer if necessary.
+		// +1 for string terminator +9 for VByte encoding (worst case)
+		if ((bytes+currentLength+10) > reservedSize)
 		{
-			while(((size_t)bytes+currentLength+1) > reservedSize) {
-				reservedSize <<= 1;
-				if(reservedSize==0) {
-					reservedSize = ((size_t)bytes+currentLength)*2;
-				}
-			}
-			text = (uchar*)realloc(text, reservedSize*sizeof(uchar));
+			reservedSize = (bytes+currentLength+10)*2;
+
+			text = (unsigned char*)realloc(text, reservedSize*sizeof(unsigned char));
 		}
 
-		if ((length % blocksize) == 0)
+		if ((numstrings % blocksize) == 0)
 		{
 			// First string in the current block!
-			//cout << "First of block: " << nblocks << " => " << currentStr << endl;
-			// The current byte is the first one for the
-			// current block,
-			xblocks.push_back(bytes);
+			blocks->push_back(bytes);
 			nblocks++;
 
-			// The string is explicitly copied to the
-			// encoded sequence.
+			// The string is explicitly copied to the encoded sequence.
 			strncpy((char*)(text+bytes), (char*)currentStr, currentLength);
 			bytes+=currentLength;
-
-			//cout << nblocks-1 << "," << length << " => " << currentStr << endl;
-		}
-		else
-		{
+		} else {
 			// Regular string
 
-			// Calculating the length of the long common prefix
+			// Calculate the length of the long common prefix
 			uint delta = longest_common_prefix(previousStr, currentStr, previousLength, currentLength);
 
 			//cout << "Block: " << nblocks << " Pos: "<< length << endl;
 			//cout << previousStr << endl << currentStr << endl << " Delta: " << delta << " Difference: " << currentStr + delta << endl << endl;
 
 			// The prefix is differentially encoded
-			bytes += VByte::encode(delta, text+bytes);
+			bytes += VByte::encode(text+bytes, delta);
 
 			// The suffix is copied to the sequence
 			strncpy((char*)(text+bytes), (char*)currentStr+delta, currentLength-delta);
@@ -118,21 +107,30 @@ CSD_PFC::CSD_PFC(IteratorUCharString *it, uint32_t blocksize, hdt::ProgressListe
 		bytes++;
 
 		// New string processed
-		length++;
-		previousStr = currentStr;
+		numstrings++;
+
+		// Save previous
+		if(reservedLength<currentLength) {
+			previousStr = (unsigned char *)realloc(previousStr, currentLength);
+		}
+		memcpy(previousStr, currentStr, currentLength);
 		previousLength = currentLength;
 
-		NOTIFYCOND(listener, "Converting dictionary to PFC", length, it->getNumberOfElements());
+		//NOTIFYCOND(listener, "Converting dictionary to PFC", numstrings, it->getNumberOfElements());
+		if((numstrings%100000)==0) {
+			listener->notifyProgress(numstrings, " Loading to PFC ");
+		}
 	}
 
+	free(previousStr);
+
 	// Storing the final byte position in the vector of positions
-	xblocks.push_back(bytes);
+	blocks->push_back(bytes);
 
 	// Trunc encoded sequence to save unused memory
-	text = (uchar *) realloc(text, bytes*sizeof(uchar));
+	text = (unsigned char *) realloc(text, bytes*sizeof(unsigned char));
 
-	// Representing the vector of positions with log(bytes) bits
-	blocks = new Array(xblocks, bits(bytes));
+	blocks->reduceBits();
 }
 
 CSD_PFC::~CSD_PFC()
@@ -143,7 +141,7 @@ CSD_PFC::~CSD_PFC()
                 delete blocks;
 }
 
-uint32_t CSD_PFC::locate(const uchar *s, uint32_t len)
+uint32_t CSD_PFC::locate(const unsigned char *s, uint32_t len)
 {
 	if(!text || !blocks)
 		return 0;
@@ -183,10 +181,12 @@ void CSD_PFC::dumpBlock(uint block) {
 		return;
 	}
 	cout << "Dump block: " << block << endl;
-	uint pos = blocks->getField(block);
-	uchar *string = new uchar[maxlength+1];
+	size_t pos = blocks->get(block);
 
-	uint slen = strlen((char*)text+pos)+1;
+	size_t slen = strlen((char*)text+pos)+1;
+
+	size_t bufLen = slen;
+	unsigned char *string = (unsigned char*)malloc(bufLen);
 
 	uint delta = 0;
 	uint idInBlock = 0;
@@ -203,13 +203,21 @@ void CSD_PFC::dumpBlock(uint block) {
 	// of 's' can be made.
 	while ( (idInBlock<blocksize) && (pos<bytes))
 	{
-		//cout << "POS: " << pos << "/" << bytes << " Next block: "<< blocks->getField(block+1)<<endl;
+		//cout << "POS: " << pos << "/" << bytes << " Next block: "<< blocks->get(block+1)<<endl;
 
-		// Decoding the prefix
-		pos += VByte::decode(&delta, text+pos);
+		// Decode the prefix
+		pos += VByte::decode(text+pos, &delta);
 
-		// Copying the suffix
+		// Guess suffix size
 		slen = strlen((char*)text+pos)+1;
+
+		// Ensure there is room in the buffer
+		if((delta+slen+1)>bufLen) {
+		    bufLen = delta+slen+1;
+		    string = (unsigned char*)realloc(string, bufLen);
+		}
+
+		// Copy the suffix
 		strncpy((char*)(string+delta), (char*)(text+pos), slen);
 
 		cout << block*blocksize+idInBlock << " (" << idInBlock << ") => " << string << " Delta=" << delta << " Len="<< slen<< endl;
@@ -221,22 +229,19 @@ void CSD_PFC::dumpBlock(uint block) {
 	delete [] string;
 }
 
-uchar* CSD_PFC::extract(uint32_t id)
+unsigned char* CSD_PFC::extract(uint32_t id)
 {
 	if(!text || !blocks) {
 		return NULL;
 	}
 
-	if ((id > 0) && (id <= length))
+	if ((id > 0) && (id <= numstrings))
 	{
-		// Allocating memory for the string
-		uchar *s = new uchar[maxlength+1];
-
 		// Calculating block and offset
 		uint block = (id-1)/blocksize;
 		uint offset = (id-1)%blocksize;
 
-		extractInBlock(block, offset, s);
+		unsigned char *s = extractInBlock(block, offset);
 
 		return s;
 	}
@@ -246,12 +251,16 @@ uchar* CSD_PFC::extract(uint32_t id)
 	}
 }
 
+void CSD_PFC::freeString(const unsigned char *str) {
+	free((void*)str);
+}
+
 uint64_t CSD_PFC::getSize()
 {
 	if(!text || !blocks) {
 		return 0;
 	}
-	return bytes*sizeof(uchar)+blocks->getSize()+sizeof(CSD_PFC);
+	return bytes*sizeof(unsigned char)+blocks->size()+sizeof(CSD_PFC);
 }
 
 void CSD_PFC::save(ofstream & fp)
@@ -259,14 +268,16 @@ void CSD_PFC::save(ofstream & fp)
 	if(!text || !blocks) {
 		return;
 	}
-	saveValue<uint32_t>(fp, type);
-	saveValue<uint32_t>(fp, length);
-	saveValue<uint32_t>(fp, maxlength);
-	saveValue<uint32_t>(fp, bytes);
-	saveValue<uchar>(fp, text, bytes);
-	saveValue<uint32_t>(fp, blocksize);
-	saveValue<uint32_t>(fp, nblocks);
+	saveValue<unsigned char>(fp, type);
+	VByte::encode(fp, numstrings);
+	VByte::encode(fp, bytes);
+	VByte::encode(fp, blocksize);
+
+    // CRC16
 	blocks->save(fp);
+	saveValue<unsigned char>(fp, text, bytes);
+
+    // CRC32
 }
 
 CSD* CSD_PFC::load(ifstream & fp)
@@ -276,12 +287,24 @@ CSD* CSD_PFC::load(ifstream & fp)
 
 	CSD_PFC *dicc = new CSD_PFC();
 
-	dicc->type = PFC;
-	dicc->length = loadValue<uint32_t>(fp);
-	dicc->maxlength = loadValue<uint32_t>(fp);
-	dicc->bytes = loadValue<uint32_t>(fp);
+	dicc->type = PFC;   // Type already read by CSD
+	dicc->numstrings = (uint32_t) VByte::decode(fp);
 
-#ifdef WIN32
+	// Load packed strings.{
+	dicc->bytes = VByte::decode(fp);
+    dicc->blocksize = (uint32_t) VByte::decode(fp);
+
+    // CRC16
+
+	// Load blocks
+	dicc->blocks = new hdt::LogSequence2();
+	dicc->blocks->load(fp);
+	dicc->nblocks = dicc->blocks->getNumberOfElements()-1;
+
+
+	// Load strings
+#if 1
+//#ifdef WIN32
 	dicc->text = (unsigned char *)malloc(dicc->bytes);
 	const unsigned int blocksize = 8192;
 	unsigned int counter=0;
@@ -293,18 +316,16 @@ CSD* CSD_PFC::load(ifstream & fp)
 	}
 	//cout << "FINAL Read: " << counter << " / " << dicc->bytes << endl;
 #else
-	dicc->text = (uchar *) malloc(dicc->bytes*sizeof(unsigned char*));
+	dicc->text = (unsigned char *) malloc(dicc->bytes*sizeof(unsigned char*));
 	fp.read((char *)dicc->text, dicc->bytes);
 #endif
 
-	dicc->blocksize = loadValue<uint32_t>(fp);
-	dicc->nblocks = loadValue<uint32_t>(fp);
-	dicc->blocks = new Array(fp);
+    // CRC32
 
 	return dicc;
 }
 
-bool CSD_PFC::locateBlock(const uchar *s, uint *block)
+bool CSD_PFC::locateBlock(const unsigned char *s, uint *block)
 {
 	if(nblocks==0) {
 		return false;
@@ -320,10 +341,10 @@ bool CSD_PFC::locateBlock(const uchar *s, uint *block)
 		//cout << "Binary: " << left << "," << center << "," << right << endl;
 
 		// Comparing s and the first string in the c-th block
-		//cout << "Compare: " << (char*)(text+blocks->getField(center)) << " with " << (char*)s << endl;
-		cmp = strcmp((char*)(text+blocks->getField(center)), (char*)s);
+		//cout << "Compare: " << (char*)(text+blocks->get(center)) << " with " << (char*)s << endl;
+		cmp = strcmp((char*)(text+blocks->get(center)), (char*)s);
 
-		char *compared = (char*)(text+blocks->getField(center));
+		char *compared = (char*)(text+blocks->get(center));
 
 		if (cmp > 0)
 		{
@@ -361,20 +382,26 @@ bool CSD_PFC::locateBlock(const uchar *s, uint *block)
 	return false;
 }
 
-uint CSD_PFC::locateInBlock(uint block, const uchar *s, uint len)
+uint CSD_PFC::locateInBlock(uint block, const unsigned char *s, uint len)
 {
 	if(block>=nblocks){
 		return 0;
 	}
 
-	uint pos = blocks->getField(block);
-	uchar *string = new uchar[maxlength+1];
+	uint pos = blocks->get(block);
+	uint bufLen = 100;
+	unsigned char *string = (unsigned char*)malloc(bufLen);
 
 	uint slen = strlen((char*)text+pos)+1;
 
 	uint delta = 0;
 	uint idInBlock = 0;
 	uint pshared = 0, cshared = 0;
+
+	if(slen>=bufLen) {
+	    bufLen = slen;
+	    string = (unsigned char*)realloc(string, bufLen);
+	}
 
 	// Reading the first string
 	strncpy((char*)string, (char*)(text+pos), slen);
@@ -388,11 +415,19 @@ uint CSD_PFC::locateInBlock(uint block, const uchar *s, uint len)
 	while ( (idInBlock<blocksize) && (pos<bytes))
 	{
 
-		// Decoding the prefix
-		pos += VByte::decode(&delta, text+pos);
+		// Decode the prefix
+		pos += VByte::decode(text+pos, &delta);
 
-		// Copying the suffix
+		// Guess suffix size
 		slen = strlen((char*)text+pos)+1;
+
+		// Make sure there is room in the buffer
+		if((delta+slen+1)>bufLen) {
+		    bufLen = delta+slen+1;
+		    string = (unsigned char*)realloc(string, bufLen);
+		}
+
+		// Copy the suffix
 		strncpy((char*)(string+delta), (char*)(text+pos), slen);
 		//cout << "New string: " << string << endl;
 
@@ -427,12 +462,15 @@ uint CSD_PFC::locateInBlock(uint block, const uchar *s, uint len)
 	return idInBlock;
 }
 
-void CSD_PFC::extractInBlock(uint block, uint o, uchar *s)
+unsigned char *CSD_PFC::extractInBlock(uint block, uint o)
 {
-	uint pos = blocks->getField(block);
+	uint pos = blocks->get(block);
 	uint len = strlen((char*)text+pos)+1;
 
 	uint delta = 0;
+
+	uint bufLen = len+1;
+	unsigned char *s = (unsigned char*)malloc(bufLen);
 
 	// Reading the first string
 	strncpy((char*)s, (char*)(text+pos), len);
@@ -441,15 +479,26 @@ void CSD_PFC::extractInBlock(uint block, uint o, uchar *s)
 	{
 		pos += len;
 
-		// Decoding the prefix
-		pos += VByte::decode(&delta, text+pos);
-		// Copying the suffix
+		// Decode the prefix
+		pos += VByte::decode(text+pos, &delta);
+
+		// Guess suffix size
 		len = strlen((char*)text+pos)+1;
+
+		// Ensure there is room in the buffer
+		if((delta+len+1)>=bufLen) {
+		    bufLen = delta+len+1;
+		    s = (unsigned char*)realloc(s, bufLen);
+		}
+
+		// Copy the suffix
 		strncpy((char*)(s+delta), (char*)(text+pos), len);
 	}
+
+	return s;
 }
 
-uint CSD_PFC::longest_common_prefix(const uchar* str1, const uchar* str2, uint lstr1, uint lstr2)
+uint CSD_PFC::longest_common_prefix(const unsigned char* str1, const unsigned char* str2, uint lstr1, uint lstr2)
 {
 	uint delta = 0;
 	uint length = lstr1;
@@ -469,24 +518,31 @@ uint CSD_PFC::longest_common_prefix(const uchar* str1, const uchar* str2, uint l
 void csd::CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
 {
     uint block;
-    locateBlock((cds_utils::uchar *)base, &block);
+    locateBlock((unsigned char *)base, &block);
 
     if(!text || !blocks || block>=nblocks){
             return;
     }
 
-    uchar *string = new uchar[maxlength+1];
+    uint bufLen = 100;
+    unsigned char *string = (unsigned char*)malloc(bufLen);
     uint baselen = strlen(base);
 
     bool terminate = false;
 
     while(block<nblocks && !terminate) {
-        uint pos = blocks->getField(block);
+	uint pos = blocks->get(block);
         uint slen = strlen((char*)text+pos)+1;
         uint delta = 0;
         uint idInBlock = 0;
 
-        // Reading the first string
+	// Ensure size in the buffer
+	if(bufLen<slen) {
+	    string = (unsigned char *)realloc(string, bufLen);
+	    bufLen = slen;
+	}
+
+	// Read the first string
         strncpy((char*)string, (char*)(text+pos), slen);
         string[slen] = '\0';
         pos+=slen;
@@ -507,13 +563,21 @@ void csd::CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, i
         // of 's' can be made.
         while ( (idInBlock<blocksize) && (pos<bytes) && !terminate)
         {
-            //cout << "POS: " << pos << "/" << bytes << " Next block: "<< blocks->getField(block+1)<<endl;
+	    //cout << "POS: " << pos << "/" << bytes << " Next block: "<< blocks->get(block+1)<<endl;
 
-            // Decoding the prefix
-            pos += VByte::decode(&delta, text+pos);
+	    // Decode the prefix
+            pos += VByte::decode(text+pos, &delta);
 
-            // Copying the suffix
-            slen = strlen((char*)text+pos)+1;
+	    // Guess suffix size
+	    slen = strlen((char*)text+pos)+1;
+
+	    // Ensure there is size in the buffer.
+	    if((delta+slen+1)>=bufLen) {
+		bufLen = delta+slen+1;
+		string = (unsigned char*)realloc(string, bufLen);
+	    }
+
+	    // Copy the suffix
             strncpy((char*)(string+delta), (char*)(text+pos), slen);
 
             int cmp = strncmp(base, (char *)string, baselen);

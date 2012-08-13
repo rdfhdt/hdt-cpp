@@ -13,10 +13,9 @@ namespace hdt {
 
 string getString(raptor_term *term) {
 	string out;
+
 	if(term->type==RAPTOR_TERM_TYPE_URI) {
-		out.append("<");
 		out.append((char *)raptor_uri_as_string(term->value.uri));
-		out.append(">");
 	} else if(term->type==RAPTOR_TERM_TYPE_LITERAL) {
 		out.append("\"");
 		out.append((char *)term->value.literal.string);
@@ -40,36 +39,38 @@ string getString(raptor_term *term) {
 void raptor_callback_process_triple(void *user_data, raptor_statement *triple) {
 	 //raptor_statement_print_as_ntriples(triple, stdout);
 
-#if 0
 	TripleString ts( getString(triple->subject), getString(triple->predicate), getString(triple->object));
-#else
-	const char *s = (const char*)raptor_term_to_string(triple->subject);
-	const char *p = (const char*)raptor_term_to_string(triple->predicate);
-	const char *o = (const char*)raptor_term_to_string(triple->object);
-
-	TripleString ts(s,p,o);
-
-	raptor_free_memory((void*)s);
-	raptor_free_memory((void*)p);
-	raptor_free_memory((void*)o);
-#endif
 
 	RDFParserRaptorCallback *raptorParser = reinterpret_cast<RDFParserRaptorCallback *>(user_data);
-
-	raptor_locator *locator = raptor_parser_get_locator(raptorParser->rdf_parser);
-	//cout << "RaptorCallback Pos: " << raptor_locator_byte(locator) << endl;
-
-	int pos = raptor_locator_byte(locator);
-	raptorParser->callback->processTriple(ts, pos==-1 ? 0 : pos);
+	raptorParser->callback->processTriple(ts, 0);
 }
 
 void raptor_callback_log_handler(void *user_data, raptor_log_message *message) {
 	RDFParserRaptorCallback *raptorParser = reinterpret_cast<RDFParserRaptorCallback *>(user_data);
 
-	cout << "Parser message: => " << message->text << " at " << message->locator->line << endl;
-	if(message->level>=RAPTOR_LOG_LEVEL_ERROR) {
-		raptorParser->error = "Parsing error";
-		raptor_parser_parse_abort(raptorParser->rdf_parser);
+	if(message!=NULL) {
+		/*if(message->level>=RAPTOR_LOG_LEVEL_ERROR) {
+			raptorParser->error = (char *)message->text;
+			raptor_parser_parse_abort(raptorParser->rdf_parser);
+		}*/
+
+		cerr << "Parser message: => " << message->text;
+
+		if(message->locator) {
+			int line = raptor_locator_line(message->locator);
+			int column = raptor_locator_column(message->locator);
+			int byte = raptor_locator_byte(message->locator);
+			if(line>=0) {
+				cerr << " at line " << 	line;
+			}
+			if(column>=0) {
+				cerr << " at column " << column;
+			}
+			if(byte>=0) {
+				cerr << " at byte " << byte;
+			}
+			cerr << endl;
+		}
 	}
 }
 
@@ -83,6 +84,8 @@ RDFParserRaptorCallback::~RDFParserRaptorCallback() {
 
 const char *RDFParserRaptorCallback::getParserType(RDFNotation notation){
 	switch(notation){
+	case NQUAD:
+		return "nquads";
 	case N3:
 		return "n3";
 	case NTRIPLES:
@@ -91,10 +94,15 @@ const char *RDFParserRaptorCallback::getParserType(RDFNotation notation){
 		return "turtle";
 	case XML:
 		return "rdfxml";
+	default:
+		return "ntriples";
 	}
 }
 
 void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback) {
+	if(callback==NULL) {
+		return;
+	}
 	this->callback = callback;
 
 	raptor_world *world = raptor_new_world();
@@ -105,18 +113,20 @@ void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri,
 
 	string file(fileName);
 	raptor_uri *fileUri;
+
+	raptor_uri *base_uri = raptor_new_uri(world, (const unsigned char *)baseUri);
+	error = NULL;
+
 	if(file.substr(0,7)=="http://") {
 		fileUri = raptor_new_uri(world, (const unsigned char *) fileName);
+		raptor_parser_parse_uri(rdf_parser, fileUri, base_uri);
 	} else {
 		unsigned char *fileUri_string = raptor_uri_filename_to_uri_string(fileName);
 		fileUri = raptor_new_uri(world, fileUri_string);
 		raptor_free_memory(fileUri_string);
+
+		raptor_parser_parse_file(rdf_parser, fileUri, base_uri);
 	}
-
-	raptor_uri *base_uri = raptor_new_uri(world, (const unsigned char *)baseUri);
-
-	error = NULL;
-	raptor_parser_parse_uri(rdf_parser, fileUri, base_uri);
 
 	raptor_free_parser(rdf_parser);
 	raptor_free_uri(base_uri);

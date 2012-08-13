@@ -1,8 +1,32 @@
 /*
- * CompactTriples.cpp
+ * File: CompactTriples.cpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- *  Created on: 11/05/2011
- *      Author: mck
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
+ *   Javier D. Fernandez:       jfergar@infor.uva.es
+ *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
+ *
  */
 
 #include <HDTVocabulary.hpp>
@@ -14,8 +38,8 @@ namespace hdt {
 
 
 CompactTriples::CompactTriples() : numTriples(0), order(SPO) {
-	streamY = StreamElements::getStream(spec.get("stream.y"));
-	streamZ = StreamElements::getStream(spec.get("stream.z"));
+	streamY = IntSequence::getArray(spec.get("stream.y"));
+	streamZ = IntSequence::getArray(spec.get("stream.z"));
 }
 
 CompactTriples::CompactTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
@@ -24,8 +48,8 @@ CompactTriples::CompactTriples(HDTSpecification &specification) : numTriples(0),
 	if(order==Unknown)
 		order = SPO;
 
-	streamY = StreamElements::getStream(spec.get("stream.y"));
-	streamZ = StreamElements::getStream(spec.get("stream.z"));
+	streamY = IntSequence::getArray(spec.get("stream.y"));
+	streamZ = IntSequence::getArray(spec.get("stream.z"));
 }
 
 CompactTriples::~CompactTriples() {
@@ -102,8 +126,8 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 
 	delete it;
 
-	VectorIterator itY(vectorY);
-	VectorIterator itZ(vectorZ);
+	VectorUIntIterator itY(vectorY);
+	VectorUIntIterator itZ(vectorZ);
 
 	streamY->add(itY);
 	streamZ->add(itZ);
@@ -111,14 +135,14 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 #if 0
 	// Debug Adjacency Lists
 	cout << "Y" << vectorY.size() << "): ";
-	for(unsigned int i=0;i<streamY->getNumberOfElements();i++){
-		cout << streamY->get(i) << " ";
+	for(unsigned int i=0;i<arrayY->getNumberOfElements();i++){
+		cout << arrayY->get(i) << " ";
 	}
 	cout << endl;
 
 	cout << "Z" << vectorZ.size() << "): ";
-	for(unsigned int i=0;i<streamZ->getNumberOfElements();i++){
-		cout << streamZ->get(i) << " ";
+	for(unsigned int i=0;i<arrayZ->getNumberOfElements();i++){
+		cout << arrayZ->get(i) << " ";
 	}
 	cout << endl;
 #endif
@@ -182,8 +206,8 @@ void CompactTriples::load(std::istream &input, ControlInformation &controlInform
 
 	delete streamY;
 	delete streamZ;
-	streamY = StreamElements::getStream(typeY);
-	streamZ = StreamElements::getStream(typeZ);
+	streamY = IntSequence::getArray(typeY);
+	streamZ = IntSequence::getArray(typeZ);
 
 	IntermediateListener iListener(listener);
 
@@ -213,13 +237,18 @@ unsigned int CompactTriples::getNumberOfElements()
 	return numTriples;
 }
 
-unsigned int CompactTriples::size()
+size_t CompactTriples::size()
 {
 	return streamY->size()+streamZ->size();
 }
 
 string CompactTriples::getType() {
-	return HDTVocabulary::TRIPLES_TYPE_COMPACT;
+    return HDTVocabulary::TRIPLES_TYPE_COMPACT;
+}
+
+TripleComponentOrder CompactTriples::getOrder()
+{
+    return order;
 }
 
 /// ITERATOR

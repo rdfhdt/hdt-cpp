@@ -1,8 +1,32 @@
 /*
- * TripleListDisk.cpp
+ * File: TripleListDisk.cpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- *  Created on: 07/03/2011
- *      Author: mck
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
+ *   Javier D. Fernandez:       jfergar@infor.uva.es
+ *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
+ *
  */
 
 #include <HDTVocabulary.hpp>
@@ -29,8 +53,7 @@ TripleListDisk::TripleListDisk() :
 		capacity(0),
 		numValidTriples(0),
 		numTotalTriples(0),
-		arrayTriples(NULL),
-		isTemp(true)
+		arrayTriples(NULL)
 {
 	std::string s("triplelistdiskXXXXXX");
 	std::vector<char> v(100);
@@ -52,8 +75,8 @@ TripleListDisk::TripleListDisk() :
 	fileName.assign( &v[0] );
 
 	cout << "TriplelistDisk: " <<fileName << endl;
-//	cout << "\t: " <<&v[0] << endl;
-//	cout << "\t: " <<s << endl;
+	cout << "\t: " <<&v[0] << endl;
+	cout << "\t: " <<s << endl;
 
 	this->increaseSize();
 	this->mapFile();
@@ -76,6 +99,7 @@ void TripleListDisk::mapFile() {
 	getFileSize();
 
 #ifndef WIN32
+	cout << "Mapping: " << mappedSize << endl;
 	// Map File to memory
 	arrayTriples = (TripleID *) mmap(0, mappedSize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 #endif
@@ -86,7 +110,7 @@ void TripleListDisk::mapFile() {
 
 void TripleListDisk::unmapFile() {
 	if(arrayTriples!=NULL && arrayTriples!=(TripleID *)-1) {
-		//cout << "UNMAP" << endl;
+		cout << "UNMAP" << endl;
 
 #ifndef WIN32
 		munmap(arrayTriples, mappedSize);
@@ -107,7 +131,7 @@ void TripleListDisk::getFileSize() {
 }
 
 void TripleListDisk::increaseSize() {
-	ensureSize(capacity+4096);
+    ensureSize(capacity+(1024*1024));
 }
 
 void TripleListDisk::ensureSize(unsigned int newsize) {
@@ -147,10 +171,6 @@ TripleID *TripleListDisk::getTripleID(unsigned int num) {
 	return &arrayTriples[num];
 }
 
-bool invalidTriple(TripleID *triple) {
-	return triple->getSubject()==0 || triple->getPredicate()==0 || triple->getObject()==0;
-}
-
 void TripleListDisk::load(ModifiableTriples & input, ProgressListener *listener)
 {
 	TripleID all(0,0,0);
@@ -186,7 +206,7 @@ void TripleListDisk::save(std::ostream & output, ControlInformation &controlInfo
 
 	for(unsigned int i=0; i<numTotalTriples; i++) {
 		TripleID *tid = getTripleID(i);
-		if(!invalidTriple(tid)) {
+		if(tid->isValid()) {
 			//cout << "Write: " << tid << " " << *tid << endl;
 			output.write((char *)tid, sizeof(TripleID));
 		}
@@ -217,7 +237,7 @@ unsigned int TripleListDisk::getNumberOfElements()
 	return numValidTriples;
 }
 
-unsigned int TripleListDisk::size()
+size_t TripleListDisk::size()
 {
 	return getNumberOfElements()*sizeof(TripleID);
 }
@@ -257,7 +277,7 @@ void TripleListDisk::loadIndex(std::istream &input, ControlInformation &controlI
 
 
 
-bool TripleListDisk::insert(TripleID &triple)
+void TripleListDisk::insert(TripleID &triple)
 {
 	if(arrayTriples==NULL) {
 		throw "Invalid pointer";
@@ -273,11 +293,9 @@ bool TripleListDisk::insert(TripleID &triple)
 	numTotalTriples++;
 	numValidTriples++;
 	//cout << "Inserted: "<< numTotalTriples << endl;
-
-	return true;
 }
 
-bool TripleListDisk::insert(IteratorTripleID *triples)
+void TripleListDisk::insert(IteratorTripleID *triples)
 {
 	while(triples->hasNext()) {
 		TripleID *triple = triples->next();
@@ -289,12 +307,16 @@ bool TripleListDisk::remove(TripleID & pattern)
 {
 	TripleID *tid;
 
+	bool removed = false;
 	for(tid=arrayTriples; tid<arrayTriples+numTotalTriples; tid++) {
 		if (tid->match(pattern)) {
 			tid->clear();
 			numValidTriples--;
+			removed = true;
 		}
 	}
+
+	return removed;
 }
 
 bool TripleListDisk::remove(IteratorTripleID *triples)
@@ -307,14 +329,18 @@ bool TripleListDisk::remove(IteratorTripleID *triples)
 		allPat.push_back(*triples->next());
 	}
 
+	bool removed = false;
 	for(tid=arrayTriples; tid<arrayTriples+numTotalTriples; tid++) {
 		for(int i=0; i<allPat.size(); i++) {
 			if (tid->match(allPat[i])) {
 				tid->clear();
 				numValidTriples--;
+				removed = true;
+				break;
 			}
 		}
 	}
+	return removed;
 }
 
 
@@ -378,32 +404,35 @@ void TripleListDisk::sort(TripleComponentOrder order, ProgressListener *listener
 	// FIXME: USE specified order
 	// FIXME: Use TripleComparator class
 	// FIXME: Sort by blocks and merge
-	StopWatch st;
+//	StopWatch st;
 
-	qsort(arrayTriples, numTotalTriples, sizeof(TripleID), tripleIDcmp);
-
-	cout << "Sorted in " << st << endl;
+	if(this->order != order) {
+		qsort(arrayTriples, numTotalTriples, sizeof(TripleID), tripleIDcmp);
+		this->order = order;
+	}
 }
 
 void TripleListDisk::removeDuplicates(ProgressListener *listener) {
+    if(numTotalTriples<=1)
+	    return;
 
-	TripleID previous = *arrayTriples;
-	StopWatch st;
+    if(order==Unknown){
+	    throw "Cannot remove duplicates on unordered triples";
+    }
 
-	unsigned int numduplicates = 0;
+    unsigned int j = 0;
+    //StopWatch st;
 
-	for(TripleID *tid = arrayTriples+1; tid<arrayTriples+numTotalTriples; tid++) {
-		//cout << "Compare: " << &previous << " "<<previous << " New: " << tid << " "<<*tid << endl;
-		if(previous == *tid) {
-			tid->clear();
-			numValidTriples--;
-			numduplicates++;
-		} else {
-			previous = *tid;
-		}
-	}
+    for(unsigned int i=1; i<numTotalTriples; i++) {
+	    if(arrayTriples[i] != arrayTriples[j]) {
+		    j++;
+		    arrayTriples[j] = arrayTriples[i];
+	    }
+	    NOTIFYCOND(listener, "Removing duplicate triples", i, numTotalTriples);
+    }
 
-	cout << "Removed "<< numduplicates << " duplicates in " << st << endl;
+    //cout << "Removed "<< arrayOfTriples.size()-j-1 << " duplicates in " << st << endl;
+    numValidTriples = j+1;
 }
 
 void TripleListDisk::setOrder(TripleComponentOrder order)
@@ -412,37 +441,51 @@ void TripleListDisk::setOrder(TripleComponentOrder order)
 
 
 string TripleListDisk::getType() {
-	return HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK;
+    return HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK;
+}
+
+TripleComponentOrder TripleListDisk::getOrder()
+{
+    return order;
 }
 
 ///// ITERATOR
 
-void TripleListDiskIterator::doFetch() {
-	do {
-		nextv = triples->getTripleID(pos);
-		pos++;
-	} while(pos<=triples->numTotalTriples && (!nextv->isValid() || !nextv->match(pattern)));
-
-	hasNextv= pos<=triples->numTotalTriples;
+TripleListDiskIterator::TripleListDiskIterator(TripleListDisk *t, TripleID p) : triples(t), pattern(p) {
 }
 
-TripleListDiskIterator::TripleListDiskIterator(TripleListDisk *t, TripleID p) : triples(t), pattern(p), hasNextv(true) {
-	doFetch();
+TripleListDiskIterator::~TripleListDiskIterator()
+{
 }
 
-TripleListDiskIterator::~TripleListDiskIterator(){
 
+bool TripleListDiskIterator::hasNext()
+{
+	return pos<triples->numValidTriples;
 }
 
-bool TripleListDiskIterator::hasNext() {
-	return hasNextv;
+TripleID *TripleListDiskIterator::next()
+{
+	returnTriple = *triples->getTripleID(pos++);
+	return &returnTriple;
 }
 
-TripleID *TripleListDiskIterator::next() {
-	ret = *nextv;
-	doFetch();
-	return &ret;
+bool TripleListDiskIterator::hasPrevious()
+{
+	return pos>0;
 }
+
+TripleID *TripleListDiskIterator::previous()
+{
+	returnTriple = *triples->getTripleID(--pos);
+	return &returnTriple;
+}
+
+void TripleListDiskIterator::goToStart()
+{
+    pos=0;
+}
+
 
 
 }

@@ -1,3 +1,35 @@
+/*
+ * File: BitmapTriplesIterators.cpp
+ * Last modified: $Date: 2011-08-21 05:35:30 +0100 (dom, 21 ago 2011) $
+ * Revision: $Revision: 180 $
+ * Last modified by: $Author: mario.arias $
+ *
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
+ *   Javier D. Fernandez:       jfergar@infor.uva.es
+ *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
+ *
+ */
+
+
 #include "BitmapTriples.hpp"
 
 #include "TripleIterators.hpp"
@@ -11,8 +43,8 @@ namespace hdt {
 BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, TripleID &pat) :
     triples(trip),
     pattern(pat),
-    adjY(trip->streamY, trip->bitmapY),
-    adjZ(trip->streamZ, trip->bitmapZ)
+    adjY(trip->arrayY, trip->bitmapY),
+    adjZ(trip->arrayZ, trip->bitmapZ)
 {
     // Convert pattern to local order.
     swapComponentOrder(&pattern, SPO, triples->order);
@@ -235,7 +267,7 @@ TripleComponentOrder BitmapTriplesSearchIterator::getOrder() {
 }
 
 bool BitmapTriplesSearchIterator::findNextOccurrence(unsigned int value, unsigned char component) {
-    if(triples->order=SPO) {
+    if(triples->order==SPO) {
 	if(component==3 && patY!=0) {
 
 	}
@@ -243,7 +275,7 @@ bool BitmapTriplesSearchIterator::findNextOccurrence(unsigned int value, unsigne
 	if(component==2 && patX!=0) {
 
 	}
-    } else if(triples->order=OPS) {
+    } else if(triples->order==OPS) {
 	if(component==1 && patY!=0) {
 
 	}
@@ -286,8 +318,8 @@ bool BitmapTriplesSearchIterator::isSorted(TripleComponentRole role) {
 MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat) :
     triples(trip),
     pattern(pat),
-    adjY(trip->streamY, trip->bitmapY),
-    adjZ(trip->streamZ, trip->bitmapZ),
+    adjY(trip->arrayY, trip->bitmapY),
+    adjZ(trip->arrayZ, trip->bitmapZ),
     predicateOcurrence(1),
     wavelet(trip->waveletY)
 {
@@ -488,8 +520,8 @@ bool MiddleWaveletIterator::isSorted(TripleComponentRole role) {
 ObjectIndexIterator::ObjectIndexIterator(BitmapTriples *trip, TripleID &pat) :
     triples(trip),
     pattern(pat),
-    adjY(trip->streamY, trip->bitmapY),
-    adjZ(trip->streamZ, trip->bitmapZ),
+    adjY(trip->arrayY, trip->bitmapY),
+    adjZ(trip->arrayZ, trip->bitmapZ),
     adjIndex(trip->streamIndex, trip->bitmapIndex)
 {
     // Convert pattern to local order.
@@ -564,12 +596,10 @@ bool ObjectIndexIterator::hasNext()
 
 TripleID *ObjectIndexIterator::next()
 {
+    unsigned int posY = adjIndex.get(posIndex);
 
-    unsigned int posZ = getPosZ(posIndex);
-    unsigned int posY = adjZ.findListIndex(posZ);
-
-    z = adjZ.get(posZ);
-    y = adjY.get(posY);
+    z = patZ;
+    y = patY!=0 ? patY : adjY.get(posY);
     x = adjY.findListIndex(posY)+1;
 
     posIndex++;
@@ -580,18 +610,17 @@ TripleID *ObjectIndexIterator::next()
 
 bool ObjectIndexIterator::hasPrevious()
 {
-    return posIndex>=minIndex;
+    return posIndex>minIndex;
 }
 
 TripleID *ObjectIndexIterator::previous()
 {
     posIndex--;
 
-    unsigned int posZ = getPosZ(posIndex);
-    unsigned int posY = adjZ.findListIndex(posZ);
+    unsigned int posY = adjIndex.get(posIndex);
 
-    z = adjZ.get(posZ);
-    y = adjY.get(posY);
+    z = patZ;
+    y = patY!=0 ? patY : adjY.get(posY);
     x = adjY.findListIndex(posY)+1;
 
     updateOutput();
@@ -713,6 +742,19 @@ ResultEstimationType ObjectIndexIterator::numResultEstimation()
 
 TripleComponentOrder ObjectIndexIterator::getOrder() {
     return invertOrder(triples->order);
+}
+
+bool ObjectIndexIterator::canGoTo()
+{
+    return true;
+}
+
+void ObjectIndexIterator::goTo(unsigned int pos)
+{
+    if(minIndex+pos>maxIndex) {
+	throw "Cannot goto beyond last element";
+    }
+    posIndex = minIndex+pos;
 }
 
 bool ObjectIndexIterator::findNextOccurrence(unsigned int value, unsigned char component) {

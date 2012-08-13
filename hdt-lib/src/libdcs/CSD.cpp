@@ -32,17 +32,24 @@
  */
 
 #include "CSD.h"
+#include "CSD_PFC.h"
+#include "CSD_HTFC.h"
+#include "CSD_FMIndex.h"
+
+#include <libcdsBasics.h>
+
+using namespace cds_utils;
 
 namespace csd
 {
 
-CSD::CSD() : length(0) {
+CSD::CSD() : numstrings(0) {
 
 }
 
 CSD * CSD::load(ifstream & fp)
 {
-	uint32_t r = loadValue<uint32_t>(fp);
+	uchar r = loadValue<uchar>(fp);
 	//uint32_t pos = fp.tellg();
 	//fp.seekg(pos-sizeof(uint32_t));
 	//fp.seekg(-sizeof(uint32_t), ios_base::cur);
@@ -50,13 +57,7 @@ CSD * CSD::load(ifstream & fp)
 	{
 	case HTFC: return CSD_HTFC::load(fp);
 	case PFC: return CSD_PFC::load(fp);
-	//	case REPAIRDAC: return CSD_RePairDAC::load(fp);
-	//	case FMINDEX: return CSD_FMIndex::load(fp);
-	//	case HASHHUFF: return CSD_HashHuff::load(fp);
-	/*
-	 * case DELTA: return URICDDelta::load(fp);
-	 * case DELTA_HT: return URICDDelta_HT::load(fp);
-	 */
+	case FMINDEX: return CSD_FMIndex::load(fp);
 	}
 
 	return NULL;
@@ -64,7 +65,7 @@ CSD * CSD::load(ifstream & fp)
 
 uint32_t CSD::getLength()
 {
-	return length;
+	return numstrings;
 }
 
 };

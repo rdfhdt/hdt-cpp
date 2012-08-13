@@ -11,7 +11,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "../src/lm_access/gzstream.hpp"
+
 #include "../src/util/StopWatch.hpp"
 
 using namespace hdt;

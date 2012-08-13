@@ -1,11 +1,11 @@
 /*
- * TriplesList.cpp
+ * File: TriplesList.cpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Guillermo Rodriguez-Cano, Alejandro Andres,
- *                     Mario Arias
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
- *
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,13 +23,9 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Guillermo Rodriguez-Cano:  wileeam@acm.org
- *   Alejandro Andres:          fuzzy.alej@gmail.com
- *   Mario Arias:               mario.arias@gmail.com
- *
- * @version $Id$
  *
  */
 
@@ -45,7 +41,7 @@
 
 namespace hdt {
 
-TriplesList::TriplesList() : numValidTriples(0), order(Unknown)
+TriplesList::TriplesList() : order(Unknown), numValidTriples(0)
 {
 }
 
@@ -82,7 +78,7 @@ unsigned int TriplesList::getNumberOfElements()
 	return numValidTriples;
 }
 
-unsigned int TriplesList::size()
+size_t TriplesList::size()
 {
 	return numValidTriples*sizeof(TripleID);
 }
@@ -162,30 +158,31 @@ void TriplesList::stopProcessing(ProgressListener *listener)
 }
 
 string TriplesList::getType() {
-	return HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST;
+    return HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST;
+}
+
+TripleComponentOrder TriplesList::getOrder()
+{
+    return order;
 }
 
 // From ModifiableTriples
 
-bool TriplesList::insert(TripleID &triple)
+void TriplesList::insert(TripleID &triple)
 {
 	// Add the triple
 	order = Unknown;
 	arrayOfTriples.push_back(triple);
 	numValidTriples++;
-
-	return true;
 }
 
-bool TriplesList::insert(IteratorTripleID *triples)
+void TriplesList::insert(IteratorTripleID *triples)
 {
 	while( triples->hasNext() ) {
 		arrayOfTriples.push_back(*triples->next());
 		numValidTriples++;
 	}
 	order = Unknown;
-
-	return true;
 }
 
 bool TriplesList::remove(TripleID &pattern)
@@ -213,11 +210,12 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 
 	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
-		for(int j=0; j<allPat.size(); j++) {
+        for(size_t j=0; j<allPat.size(); j++) {
 			if (tid->match(allPat[i])) {
 				tid->clear();
 				numValidTriples--;
 				removed = true;
+				break;
 			}
 		}
 	}
@@ -227,7 +225,7 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 void TriplesList::sort(TripleComponentOrder order, ProgressListener *listener)
 {
 	if(this->order != order) {
-		StopWatch st;
+		//StopWatch st;
 		NOTIFY(listener, "Sorting triples", 0, 100);
 		std::sort(arrayOfTriples.begin(), arrayOfTriples.end(), TriplesComparator(order));
 		//cout << "Sorted in " << st << endl;
@@ -261,7 +259,10 @@ void TriplesList::removeDuplicates(ProgressListener *listener) {
 	StopWatch st;
 
 	for(unsigned int i=1; i<arrayOfTriples.size(); i++) {
-		if(arrayOfTriples[i] != arrayOfTriples[j]) {
+        if(!arrayOfTriples[i].isValid()) {
+            cerr << "WARNING: Triple with null component: " << arrayOfTriples[i] << endl;
+        }
+        if(arrayOfTriples[i] != arrayOfTriples[j] && arrayOfTriples[i].isValid()) {
 			j++;
 			arrayOfTriples[j] = arrayOfTriples[i];
 		}
@@ -295,12 +296,12 @@ void TriplesList::calculateDegree(string path) {
         currentTriple = arrayOfTriples[0];
         swapComponentOrder(&currentTriple, SPO, order);
 
-        int x = currentTriple.getSubject();
-        int y = currentTriple.getPredicate();
-        int z = currentTriple.getObject();
+        unsigned int x = currentTriple.getSubject();
+        unsigned int y = currentTriple.getPredicate();
+        unsigned int z = currentTriple.getObject();
 
         //cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
-        for (int i = 1; i < getNumberOfElements(); i++) {
+        for (unsigned int i = 1; i < getNumberOfElements(); i++) {
             currentTriple = arrayOfTriples[i];
             swapComponentOrder(&currentTriple, SPO, order);
                 //cout<<currentTriple.getSubject()<< " " << currentTriple.getPredicate() << " " << currentTriple.getObject()<<"\n";
@@ -460,7 +461,7 @@ void TriplesList::calculateDegrees(string path) {
 // ITERATOR
 
 TriplesListIterator::TriplesListIterator(TriplesList *triples, TripleID & pattern) :
-		triples(triples), pattern(pattern), pos(0)
+         pattern(pattern), triples(triples), pos(0)
 {
 }
 

@@ -236,31 +236,31 @@ namespace URICompressed{
     }
 
     THuff loadHuff (ifstream & f) {
-      uint i,d,dold,dact;  
-			THuff H;
-        H.max = loadValue<uint>(f);
-        H.lim = loadValue<uint>(f);
-        H.depth = loadValue<uint>(f);
-        H.symb = loadValue<uint>(f,H.lim+1);
-				H.spos = new uint[H.max+1];				
-				for (i=0;i<=H.max;i++) 
-					H.spos[i] = (uint)~0;
-				for (i=0;i<=H.lim;i++) 
-					H.spos[H.symb[i]] = i;         
-				H.num_enc = loadValue<uint>(f,H.depth+1);
-				H.fst = new uint[H.depth+1];
-				H.num_dec = new uint[H.depth+1];
-				H.fst[H.depth] = 0; dold = 0;
-				for (d=H.depth-1;d>=0;d--) {  
-					dact = H.num_enc[d+1];
-					H.fst[d] = (H.fst[d+1]+dact) >> 1;
-					H.num_dec[d+1] = dold;
-					dold += dact;
-					if(d==0)
-						break;
-				}
-				H.num_dec[0] = dold;
-				return H;
-		}
+    	uint i,dold,dact;
+    	THuff H;
+    	H.max = loadValue<uint>(f);
+    	H.lim = loadValue<uint>(f);
+    	H.depth = loadValue<uint>(f);
+    	H.symb = loadValue<uint>(f,H.lim+1);
+    	H.spos = new uint[H.max+1];
+    	for (i=0;i<=H.max;i++)
+    		H.spos[i] = (uint)~0;
+    	for (i=0;i<=H.lim;i++)
+    		H.spos[H.symb[i]] = i;
+    	H.num_enc = loadValue<uint>(f,H.depth+1);
+    	H.fst = new uint[H.depth+1];
+    	H.num_dec = new uint[H.depth+1];
+    	H.fst[H.depth] = 0; dold = 0;
+    	for (long d=H.depth-1;d>=0;d--) {
+    		dact = H.num_enc[d+1];
+    		H.fst[d] = (H.fst[d+1]+dact) >> 1;
+    		H.num_dec[d+1] = dold;
+    		dold += dact;
+    		if(d==0)
+    			break;
+    	}
+    	H.num_dec[0] = dold;
+    	return H;
+    }
 
 };

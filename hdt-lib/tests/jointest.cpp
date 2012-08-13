@@ -11,8 +11,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "../src/lm_access/gzstream.hpp"
 #include "../src/util/StopWatch.hpp"
+#include "../src/sparql/QueryProcessor.hpp"
 
 #include <sstream>
 
@@ -149,42 +149,80 @@ int main(int argc, char **argv) {
 		hdt->loadFromHDT(inputFile.c_str());
  		hdt->generateIndex();
 
-		// Read file:
-		std::ifstream ifs( queryFile.c_str() );
-		string line;
+ 		QueryProcessor processor(hdt);
 
-		uint64_t numqueries=0;
-		StopWatch global;
-		StopWatch st;
-		while( getline( ifs, line ) ) {
-			try {
-				cerr << line << endl;
-				st.reset();
-				SparqlQuery a = parseSparql(line);
+#if 0
+		{
+			std::ifstream ifs( queryFile.c_str() );
+			string line;
 
-				VarBindingString *binding = hdt->searchJoin(a.patterns, a.vars);
+			while( getline( ifs, line ) ) {
+				try {
+					SparqlQuery a = parseSparql(line);
 
-				uint64_t count = 0;
-				while(binding->findNext()) {
-					for(unsigned int i=0;i<binding->getNumVars();i++) {
-						//cout << binding->getVarName(i) << "=" << binding->getVar(i) << endl;
-						cout << binding->getVar(i) << " "; 
+					VarBindingString *binding = hdt->searchJoin(a.patterns, a.vars);
+
+					while(binding->findNext()) {
+						for(unsigned int i=0;i<binding->getNumVars();i++) {
+							binding->getVar(i);
+						}
 					}
-					cout << endl;
-					count++;
-				}
-				cerr << "Join Results: " << count << endl;
-				cerr << "Join time: " << st << endl;
-				cerr << "Query time real: " << st.getReal() << endl;
-				cerr << "Query time user: " << st.getUser() << endl << endl;
 
-				delete binding;
-				numqueries++;
-			} catch (const char *e) {
-				cerr << "Error in query: " << line << endl;
-			} catch (char *e) {
-				cerr << "Error in query: " << line << endl;
+					delete binding;
+				} catch (const char *e) {
+					cerr << "Error in query: " << line << endl;
+				} catch (char *e) {
+					cerr << "Error in query: " << line << endl;
+				}
 			}
+
+			ifs.close();
+		}
+#endif
+
+		StopWatch global;
+		uint64_t numqueries=0;
+
+		int iter=1;
+		for(int i=0;i<iter;i++) {
+			// Read file
+			std::ifstream ifs( queryFile.c_str() );
+			string line;
+
+			StopWatch st;
+			while( getline( ifs, line ) ) {
+				try {
+					//cerr << line << endl;
+					st.reset();
+					SparqlQuery a = parseSparql(line);
+
+					VarBindingString *binding = processor.searchJoin(a.patterns, a.vars);
+
+					uint64_t count = 0;
+					while(binding->findNext()) {
+						for(unsigned int i=0;i<binding->getNumVars();i++) {
+							//cout << binding->getVarName(i) << "=" << binding->getVar(i) << endl;
+							cout << binding->getVar(i) << " "; 
+						}
+						cout << endl;
+						count++;
+					}
+					#if 0
+					cerr << "Join Results: " << count << endl;
+					cerr << "Join time: " << st << endl;
+					cerr << "Query time real: " << st.getReal() << endl;
+					cerr << "Query time user: " << st.getUser() << endl << endl;
+					#endif
+
+					delete binding;
+					numqueries++;
+				} catch (const char *e) {
+					cerr << "Error in query: " << line << endl;
+				} catch (char *e) {
+					cerr << "Error in query: " << line << endl;
+				}
+			}
+			ifs.close();
 		}
 
 		cerr << "Total time: " << global << endl;

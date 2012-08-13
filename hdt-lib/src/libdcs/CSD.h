@@ -34,14 +34,12 @@
 #ifndef _COMPRESSEDSTRINGDICTIONARY_H
 #define _COMPRESSEDSTRINGDICTIONARY_H
 
+#include <Iterator.hpp>
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <vector>
 using namespace std;
-
-#include <libcdsBasics.h>
-using namespace cds_utils;
 
 namespace csd
 {
@@ -50,41 +48,6 @@ static const uint32_t HTFC = 3;
 static const uint32_t FMINDEX = 4;
 static const uint32_t REPAIRDAC = 5;
 static const uint32_t HASHHUFF = 6;
-
-
-class IteratorUCharString {
-public:
-	virtual bool hasNext() {
-		return false;
-	}
-
-	virtual unsigned char *next() {
-		return 0;
-	}
-
-	virtual unsigned int getNumberOfElements() {
-		return 0;
-	}
-};
-
-class VectorIteratorUCharString : public IteratorUCharString {
-private:
-	std::vector<std::string> &vector;
-	unsigned int pos;
-public:
-	VectorIteratorUCharString(std::vector<std::string> &vector) : vector(vector), pos(0){
-
-	}
-
-	virtual bool hasNext() {
-		return pos<vector.size();
-	}
-
-	virtual unsigned char *next() {
-		return (unsigned char *)vector[pos++].c_str();
-	}
-};
-
 
 class CSD
 {		
@@ -98,12 +61,17 @@ class CSD
 	@s: the string to be located.
 	@len: the length (in characters) of the string s.
     */
-    virtual uint32_t locate(const uchar *s, uint32_t len)=0;
+    virtual uint32_t locate(const unsigned char *s, uint32_t len)=0;
 
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    virtual uchar * extract(uint32_t id)=0;
+    virtual unsigned char * extract(uint32_t id)=0;
+
+    /**
+     * Free the string returned by extract()
+     */
+    virtual void freeString(const unsigned char *)=0;
 
     /** Returns the size of the structure in bytes. */
     virtual uint64_t getSize()=0;
@@ -125,17 +93,10 @@ class CSD
     static CSD * load(ifstream & fp);
 		
   protected:
-    uint32_t type; 	//! Dictionary type.
+    unsigned char type; 	//! Dictionary type.
     uint32_t tlength;	//! Original Tdict size.
-    uint32_t length;	//! Number of elements in the dictionary.
-    uint32_t maxlength; 	//! Length of the largest string in the dictionary.
+    uint32_t numstrings;	//! Number of elements in the dictionary.
   };
 };
-
-#include "CSD_PFC.h"
-#include "CSD_HTFC.h"
-//#include "CSD_RePairDAC.h"
-//#include "CSD_FMIndex.h"
-//#include "CSD_HashHuff.h"
 
 #endif  

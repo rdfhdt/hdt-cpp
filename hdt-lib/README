@@ -21,7 +21,7 @@ It provides two components:
 Compiling
 =================
 Dependencies: *Libcds (http://libcds.recoded.cl/)
-	      *(Optional) Raptor RDF Parser Library v.1.4  (for more information see: http://http://librdf.org/raptor/)
+	      *(Optional) Raptor RDF Parser Library v.2  (for more information see: http://http://librdf.org/raptor/)
 		Note: Without Raptor the library is only capable of importing and exporting RDF in N3 format.
 			
 Configuration: Edit the Makefile to set the LIBCDSPATH variable pointing to the directory where you extracted and compiled Libcds.

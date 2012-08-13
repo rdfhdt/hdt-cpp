@@ -1,8 +1,32 @@
 /*
- * SingleTriple.hpp
+ * File: SingleTriple.hpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- *  Created on: 02/03/2011
- *      Author: mck
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
+ *   Javier D. Fernandez:       jfergar@infor.uva.es
+ *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
+ *
  */
 
 #ifndef SINGLETRIPLE_HPP_
@@ -445,22 +469,19 @@ public:
 		// Reads the subject
 		pos_b = line.find(" ", pos_a);
 		subject = line.substr(pos_a, pos_b - pos_a);
-		if(subject[0]=='?')
-			subject = "";
+		//if(subject[0]=='?')	subject = "";
 		pos_a = pos_b + 1;
 
 		// Reads the predicate
 		pos_b = line.find(" ", pos_a);
 		predicate = line.substr(pos_a, pos_b - pos_a);
-		if(predicate[0]=='?')
-			predicate = "";
+		//if(predicate[0]=='?') predicate = "";
 		pos_a = pos_b + 1;
 
 		// Reads the predicate
 		pos_b = line.find(" ", pos_a);
 		object = line.substr(pos_a, pos_b - pos_a);
-		if(object[0]=='?')
-			object = "";
+		//if(object[0]=='?') object = "";
 		pos_a = pos_b;
 	}
 };
@@ -512,67 +533,6 @@ public:
 	}
 };
 
-class IteratorTripleID {
-public:
-	virtual bool hasNext() {
-		return false;
-	}
-
-	virtual TripleID *next() {
-		return NULL;
-	}
-
-	virtual bool hasPrevious() {
-		return false;
-	}
-
-	virtual TripleID *previous() {
-		return NULL;
-	}
-	virtual void goToStart() {
-	}
-	virtual unsigned int estimatedNumResults() {
-		return 0;
-	}
-	virtual ResultEstimationType numResultEstimation() {
-		return UNKNOWN;
-	}
-	virtual bool canGoTo() {
-		return false;
-	}
-	virtual void goTo(unsigned int pos) {
-	}
-	virtual bool findNextOccurrence(unsigned int value, unsigned char component) {
-		return false;
-	}
-	virtual TripleComponentOrder getOrder() {
-		return Unknown;
-	}
-
-    virtual bool isSorted(TripleComponentRole role) {
-	return false;
-    }
-};
-
-
-class IteratorTripleString {
-public:
-	virtual bool hasNext() {
-		return false;
-	}
-	virtual TripleString *next() {
-		return NULL;
-	}
-	virtual bool hasPrevious() {
-		return false;
-	}
-	virtual TripleString *previous() {
-		return NULL;
-	}
-	virtual void goToStart() {
-
-	}
-};
 }
 
 #endif /* SINGLETRIPLE_HPP_ */

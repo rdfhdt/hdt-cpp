@@ -1,9 +1,34 @@
 /*
- * HDTVocabulary.hpp
+ * File: HDTVocabulary.hpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- *  Created on: 05/06/2011
- *      Author: mck
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
+ *   Javier D. Fernandez:       jfergar@infor.uva.es
+ *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
+ *
  */
+
 
 #ifndef HDTVOCABULARY_HPP_
 #define HDTVOCABULARY_HPP_
@@ -16,7 +41,7 @@ namespace HDTVocabulary {
 	const std::string HDT_HEADER = HDT_BASE+"header";
 	const std::string HDT_DICTIONARY_BASE = HDT_BASE+"dictionary";
 	const std::string HDT_TRIPLES_BASE = HDT_BASE+"triples";
-	const std::string HDT_STREAM_BASE = HDT_BASE+"stream";
+	const std::string HDT_ARRAY_BASE = HDT_BASE+"array";
 
 	const std::string HDT_DATASET = HDT_BASE+"Dataset>";
 	const std::string HDT_FORMAT_INFORMATION = HDT_BASE+"formatInformation>";
@@ -25,12 +50,15 @@ namespace HDTVocabulary {
 	const std::string HDT_DICTIONARY = HDT_DICTIONARY_BASE+">";
 	const std::string HDT_TRIPLES = HDT_TRIPLES_BASE+">";
 
+    // MISC
+	const std::string ORIGINAL_SIZE = HDT_BASE+"originalSize>";
+	const std::string HDT_SIZE = HDT_BASE+"hdtSize>";
+
 	const std::string RDF = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	const std::string RDF_TYPE = RDF+"type>";
 	const std::string DUBLIN_CORE = "<http://purl.org/dc/terms/";
 
 	const std::string DUBLIN_CORE_ISSUED = DUBLIN_CORE+"issued>";
-
 
 	// Header
 	const std::string HEADER_PLAIN = HDT_HEADER+"plain>";
@@ -52,6 +80,7 @@ namespace HDTVocabulary {
 	const std::string DICTIONARY_TYPE_PLAIN = HDT_DICTIONARY_BASE+"Plain>";
 	const std::string DICTIONARY_TYPE_PFC = HDT_DICTIONARY_BASE+"FrontCoding>";
 	const std::string DICTIONARY_TYPE_HTFC = HDT_DICTIONARY_BASE+"FrontCodingHuTucker>";
+	const std::string DICTIONARY_TYPE_LITERAL = HDT_DICTIONARY_BASE+"Literal>";
 
 	// Triples
 	const std::string TRIPLES_TYPE = DUBLIN_CORE+"format>";
@@ -74,17 +103,15 @@ namespace HDTVocabulary {
 	const std::string TRIPLES_TYPE_COMPACT = HDT_TRIPLES_BASE+"Compact>";
 	const std::string TRIPLES_TYPE_BITMAP = HDT_TRIPLES_BASE+"Bitmap>";
 	const std::string TRIPLES_TYPE_FOQ = HDT_TRIPLES_BASE+"FOQ>";
+	const std::string TRIPLES_TYPE_KYOTO = HDT_TRIPLES_BASE+"KYOTO>";
 
 	// Streams
-	const std::string STREAM_TYPE_INTEGER = HDT_STREAM_BASE+"Integer>";
-	const std::string STREAM_TYPE_LOG = HDT_STREAM_BASE+"Log>";
-	const std::string STREAM_TYPE_LOG2 = HDT_STREAM_BASE+"Log2>";
-	const std::string STREAM_TYPE_HUFFMAN = HDT_STREAM_BASE+"Huffman>";
-	const std::string STREAM_TYPE_WAVELET = HDT_STREAM_BASE+"Wavelet>";
+	const std::string SEQ_TYPE_INTEGER = HDT_ARRAY_BASE+"Integer>";
+	const std::string SEQ_TYPE_LOG = HDT_ARRAY_BASE+"Log>";
+	const std::string SEQ_TYPE_LOG2 = HDT_ARRAY_BASE+"Log2>";
+	const std::string SEQ_TYPE_HUFFMAN = HDT_ARRAY_BASE+"Huffman>";
+	const std::string SEQ_TYPE_WAVELET = HDT_ARRAY_BASE+"Wavelet>";
 
-        // OTHER
-	const std::string ORIGINAL_SIZE = HDT_BASE+"originalSize>";
-	const std::string HDT_SIZE = HDT_BASE+"hdtSize>";
 }
 }
 

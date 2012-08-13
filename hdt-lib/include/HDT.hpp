@@ -1,9 +1,10 @@
 /*
- * HDT.hpp
+ * File: HDT.hpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Guillermo Rodriguez-Cano, Alejandro Andres,
- *                     Mario Arias
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -22,15 +23,12 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Guillermo Rodriguez-Cano:  wileeam@acm.org
- *   Alejandro Andres:          fuzzy.alej@gmail.com
- *   Mario Arias:               mario.arias@gmail.com
- *
- * @version $Id$
  *
  */
+
 
 #ifndef HDT_
 #define HDT_
@@ -65,17 +63,17 @@ public:
 	/**
 	 * Obtain the Header part of this HDT.
 	 */
-	virtual Header &getHeader() = 0;
+	virtual Header *getHeader() = 0;
 
 	/**
 	 * Obtain the Dictionary part of this HDT
 	 */
-	virtual Dictionary &getDictionary() = 0;
+	virtual Dictionary *getDictionary() = 0;
 
 	/**
 	 * Obtain the Triples of this HDT.
 	 */
-	virtual Triples &getTriples() = 0;
+	virtual Triples *getTriples() = 0;
 
 	virtual void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL) = 0;
 
@@ -132,8 +130,6 @@ public:
     IteratorTripleString *search(TripleString &pattern) {
         return search(pattern.getSubject().c_str(), pattern.getPredicate().c_str(), pattern.getObject().c_str());
     }
-
-    virtual VarBindingString *searchJoin(vector<TripleString> &patterns, set<string> &vars)=0;
 };
 
 

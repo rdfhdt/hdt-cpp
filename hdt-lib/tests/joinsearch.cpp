@@ -11,8 +11,9 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "../src/lm_access/gzstream.hpp"
+
 #include "../src/util/StopWatch.hpp"
+#include "../src/sparql/QueryProcessor.hpp"
 
 using namespace hdt;
 using namespace std;
@@ -119,10 +120,12 @@ int main(int argc, char **argv) {
 		hdt->loadFromHDT(inputFile.c_str());
 		hdt->generateIndex();
 
+		QueryProcessor processor(hdt);
+
 		SparqlQuery a = parseFile(queryFile);
 
 		StopWatch st;
-		VarBindingString *binding = hdt->searchJoin(a.patterns, a.vars);
+		VarBindingString *binding = processor.searchJoin(a.patterns, a.vars);
 
 		unsigned int count=0;
 		while(binding->findNext()) {

@@ -1,9 +1,10 @@
 /*
- * Triples.hpp
+ * File: Triples.hpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Guillermo Rodriguez-Cano, Alejandro Andres,
- *                     Mario Arias
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -22,13 +23,9 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Guillermo Rodriguez-Cano:  wileeam@acm.org
- *   Alejandro Andres:          fuzzy.alej@gmail.com
- *   Mario Arias:               mario.arias@gmail.com
- *
- * @version $Id$
  *
  */
 
@@ -92,7 +89,7 @@ public:
 	/**
 	 * Returns size in bytes of the overall structure.
 	 */
-	virtual unsigned int size()=0;
+    virtual size_t size()=0;
 
 	/**
 	 * Serialize the triples to a stream in implementation-specific format.
@@ -130,6 +127,8 @@ public:
 	virtual void populateHeader(Header &header, string rootNode)=0;
 
 	virtual string getType()=0;
+
+	virtual TripleComponentOrder getOrder()=0;
 }; // Triples{}
 
 /**
@@ -145,11 +144,10 @@ public:
 	 *
 	 * @param triples
 	 *            The triples to be inserted
-	 * @return boolean
 	 */
-	virtual bool insert(TripleID &triple)=0;
+	virtual void insert(TripleID &triple)=0;
 
-	virtual bool insert(IteratorTripleID *triples)=0;
+	virtual void insert(IteratorTripleID *triples)=0;
 
 	/**
 	 * Deletes one or more triples according to a pattern

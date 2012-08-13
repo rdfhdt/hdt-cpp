@@ -1,10 +1,11 @@
 /*
- * Dictionary.hpp
+ * File: Dictionary.hpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Mario Arias, Alejandro Andres.
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
- *
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,11 +23,9 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Guillermo Rodriguez-Cano:  wileeam@acm.org
- *   Alejandro Andres:          fuzzy.alej@gmail.com
- *   Mario Arias:               mario.arias@gmail.com
  *
  */
 
@@ -38,14 +37,16 @@
 
 #include <HDTListener.hpp>
 #include <SingleTriple.hpp>
+#include <Iterator.hpp>
 #include <HDTEnums.hpp>
 #include <Header.hpp>
 #include <ControlInformation.hpp>
+#include <Triples.hpp>
 
 namespace hdt {
 
 /**
- * Intreface representing the Dictionary part of the HDT representation.
+ * Interface representing the Dictionary part of the HDT representation.
  * Provides a means to convert Strings to ID and the other way around.
  */
 class Dictionary
@@ -102,7 +103,7 @@ public:
     *
     * @return
     */
-    virtual unsigned int getNumberOfElements()=0;
+    virtual unsigned int getNumberOfElements() =0;
 
     /**
      * Returns size in bytes of the overall structure.
@@ -119,7 +120,7 @@ public:
     virtual unsigned int getNobjects()=0;
 
     /* Return the number of shared subjects-objects of the current dictionary */
-    virtual unsigned int getSsubobj()=0;
+    virtual unsigned int getNshared()=0;
 
     /* Return the maximum id assigned to the overall dictionary. */
     virtual unsigned int getMaxID()=0;
@@ -132,6 +133,13 @@ public:
 
     /* Return the maximum object ID of the dictionary. */
     virtual unsigned int getMaxObjectID()=0;
+
+    virtual void import(Dictionary *other, ProgressListener *listener=NULL)=0;
+
+    virtual IteratorUCharString *getSubjects()=0;
+    virtual IteratorUCharString *getPredicates()=0;
+    virtual IteratorUCharString *getObjects()=0;
+    virtual IteratorUCharString *getShared()=0;
 
     /**
     * Add to the supplied header all relevant information about the current Dictionary
@@ -154,6 +162,18 @@ public:
     */
     virtual void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
+    virtual string getType()=0;
+	virtual unsigned int getMapping()=0;
+
+    virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)=0;
+};
+
+class ModifiableDictionary : public Dictionary {
+public:
+	virtual ~ModifiableDictionary(){
+
+	}
+
     /**
     * Insert a new entry to the dictionary in the corresponding section according to the role (Subject, Predicate, Object).
     * @param str
@@ -171,11 +191,9 @@ public:
     */
     virtual void stopProcessing(ProgressListener *listener = NULL)=0;
 
-    virtual string getType()=0;
+};
 
-    virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)=0;
-}; // IDictionary{}
+}
 
-} // dictionary{}
 
 #endif  /* HDT_DICTIONARY_ */

@@ -14,7 +14,7 @@ private:
     vector<int> varIds;
 public:
     VarFilterBinding(VarBindingInterface *child, set<string> neededVars) : child(child) {
-	for(int i=0;i<child->getNumVars();i++) {
+    for(unsigned int i=0;i<child->getNumVars();i++) {
 	    const char *varName = child->getVarName(i);
 
 	    if(neededVars.size()==0 || neededVars.find(varName)!=neededVars.end()) {

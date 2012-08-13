@@ -4,10 +4,8 @@
  * Revision: $Revision$
  * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Mario Arias, Alejandro Andres.
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
- *
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,10 +23,9 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Mario Arias:               mario.arias@gmail.com
- *   Alejandro Andres:          fuzzy.alej@gmail.com
  *
  */
 
@@ -74,16 +71,16 @@ PlainDictionary::PlainDictionary(HDTSpecification &specification) : spec(specifi
 PlainDictionary::~PlainDictionary() {
 	unsigned int i;
 
-	for(i=0;i<subjects_shared.size();i++) {
-		delete subjects_shared[i];
+	for(i=0;i<shared.size();i++) {
+		delete shared[i];
 	}
 
-	for(i=0;i<subjects_not_shared.size();i++) {
-		delete subjects_not_shared[i];
+	for(i=0;i<subjects.size();i++) {
+		delete subjects[i];
 	}
 
-	for(i=0;i<objects_not_shared.size();i++) {
-		delete objects_not_shared[i];
+	for(i=0;i<objects.size();i++) {
+		delete objects[i];
 	}
 
 	for(i=0;i<predicates.size();i++) {
@@ -137,9 +134,9 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 
 void PlainDictionary::startProcessing(ProgressListener *listener)
 {
-	subjects_not_shared.clear();
-	subjects_shared.clear();
-	objects_not_shared.clear();
+	subjects.clear();
+	shared.clear();
+	objects.clear();
 	predicates.clear();
 
 	hashSubject.clear(); //hashSubject.resize(nsubjects);
@@ -165,20 +162,7 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 {
 	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 	controlInformation.set("format", "text/plain");
-	controlInformation.setUint("$elements", getNumberOfElements());
-
-	controlInformation.setUint("$subjects", getNsubjects());
-	controlInformation.setUint("$objects", getNobjects());
-	controlInformation.setUint("$predicates", getNpredicates());
-	controlInformation.setUint("$sharedso", getSsubobj());
-
-	controlInformation.setUint("$maxid", getMaxID());
-	controlInformation.setUint("$maxsubjectid",getMaxSubjectID());
-	controlInformation.setUint("$maxpredicateid", getMaxPredicateID());
-	controlInformation.setUint("$maxobjectid", getMaxObjectID());
-
 	controlInformation.setUint("$mapping", this->mapping);
-
 	controlInformation.setUint("$sizeStrings", this->sizeStrings);
 
 	controlInformation.save(output);
@@ -188,9 +172,9 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 	const char marker = '\n';
 
 	//shared subjects-objects from subjects
-	for (i = 0; i < subjects_shared.size(); i++) {
-		output << *subjects_shared[i]->prefix;
-		output << *subjects_shared[i]->str;
+	for (i = 0; i < shared.size(); i++) {
+		output << *shared[i]->prefix;
+		output << *shared[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "PlainDictionary saving shared", counter, getNumberOfElements());
@@ -199,9 +183,9 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 	output.put(marker); //extra line to set the begining of next part of dictionary
 
 	//not shared subjects
-	for (i = 0; i < subjects_not_shared.size(); i++) {
-		output << *subjects_not_shared[i]->prefix;
-		output << *subjects_not_shared[i]->str;
+	for (i = 0; i < subjects.size(); i++) {
+		output << *subjects[i]->prefix;
+		output << *subjects[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "PlainDictionary saving subjects", counter, getNumberOfElements());
@@ -210,9 +194,9 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 	output.put(marker); //extra line to set the begining of next part of dictionary
 
 	//not shared objects
-	for (i = 0; i < objects_not_shared.size(); i++) {
-		output << *objects_not_shared[i]->prefix;
-		output << *objects_not_shared[i]->str;
+	for (i = 0; i < objects.size(); i++) {
+		output << *objects[i]->prefix;
+		output << *objects[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "PlainDictionary saving objects", counter, getNumberOfElements());
@@ -275,9 +259,26 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 	updateIDs();
 }
 
+void PlainDictionary::import(Dictionary *other, ProgressListener *listener) {
+	throw "Not implemented";
+}
+
+IteratorUCharString *PlainDictionary::getSubjects() {
+	return new DictIterator(this->subjects);
+}
+IteratorUCharString *PlainDictionary::getPredicates() {
+	return new DictIterator(this->predicates);
+}
+IteratorUCharString *PlainDictionary::getObjects(){
+	return new DictIterator(this->objects);
+}
+IteratorUCharString *PlainDictionary::getShared() {
+	return new DictIterator(this->shared);
+}
+
 unsigned int PlainDictionary::getNumberOfElements()
 {
-	return subjects_shared.size() + subjects_not_shared.size() + objects_not_shared.size() + predicates.size();
+	return shared.size() + subjects.size() + objects.size() + predicates.size();
 }
 
 unsigned int PlainDictionary::size()
@@ -374,18 +375,18 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
 	switch(pos) {
 	case SHARED_SUBJECT:
 	case SHARED_OBJECT:
-		subjects_shared.push_back(entry);
+		shared.push_back(entry);
 		//entry->id = subjects_shared.size();
 		hashSubject[entry->str->c_str()] = entry;
 		hashObject[entry->str->c_str()] = entry;
 		break;
 	case NOT_SHARED_SUBJECT:
-		subjects_not_shared.push_back(entry);
+		subjects.push_back(entry);
 		//entry->id = subjects_shared.size()+subjects_not_shared.size();
 		hashSubject[entry->str->c_str()] = entry;
 		break;
 	case NOT_SHARED_OBJECT:
-		objects_not_shared.push_back(entry);
+		objects.push_back(entry);
 		//entry->id = subjects_shared.size()+objects_not_shared.size();
 		hashObject[entry->str->c_str()] = entry;
 		break;
@@ -393,6 +394,7 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
 		predicates.push_back(entry);
 		//entry->id = predicates.size();
 		hashPredicate[entry->str->c_str()] = entry;
+		break;
 	}
 }
 
@@ -400,9 +402,9 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
  * @return void
  */
 void PlainDictionary::split(ProgressListener *listener) {
-	subjects_not_shared.clear();
-	subjects_shared.clear();
-	objects_not_shared.clear();
+	subjects.clear();
+	shared.clear();
+	objects.clear();
 
 	unsigned int total = hashSubject.size()+hashObject.size();
 	unsigned int count = 0;
@@ -413,10 +415,10 @@ void PlainDictionary::split(ProgressListener *listener) {
 
 		if(other==hashObject.end()) {
 			// Only subject
-			subjects_not_shared.push_back(subj_it->second);
+			subjects.push_back(subj_it->second);
 		} else {
 			// Exist in both
-			subjects_shared.push_back(subj_it->second);
+			shared.push_back(subj_it->second);
 		}
 		count++;
 		NOTIFYCOND(listener, "Extracting shared subjects", count, total);
@@ -428,7 +430,7 @@ void PlainDictionary::split(ProgressListener *listener) {
 
 		if(other==hashSubject.end()) {
 			// Only object
-			objects_not_shared.push_back(obj_it->second);
+			objects.push_back(obj_it->second);
 		}
 		count++;
 		NOTIFYCOND(listener, "Extracting shared objects", count, total);
@@ -441,13 +443,13 @@ void PlainDictionary::split(ProgressListener *listener) {
  */
 void PlainDictionary::lexicographicSort(ProgressListener *listener) {
 	NOTIFY(listener, "Sorting shared", 0, 100);
-	sort(subjects_shared.begin(), subjects_shared.end(), DictionaryEntry::cmpLexicographic);
+	sort(shared.begin(), shared.end(), DictionaryEntry::cmpLexicographic);
 
 	NOTIFY(listener, "Sorting subjects", 20, 100);
-	sort(subjects_not_shared.begin(), subjects_not_shared.end(), DictionaryEntry::cmpLexicographic);
+	sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpLexicographic);
 
 	NOTIFY(listener, "Sorting objects", 50, 100);
-	sort(objects_not_shared.begin(), objects_not_shared.end(), DictionaryEntry::cmpLexicographic);
+	sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographic);
 
 	NOTIFY(listener, "Sorting predicates", 90, 100);
 	sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic);
@@ -459,11 +461,11 @@ void PlainDictionary::lexicographicSort(ProgressListener *listener) {
 
 void PlainDictionary::idSort() {
 	//sort shared and not shared subjects
-	sort(subjects_shared.begin(), subjects_shared.end(), DictionaryEntry::cmpID);
-	sort(subjects_not_shared.begin(), subjects_not_shared.end(), DictionaryEntry::cmpID);
+	sort(shared.begin(), shared.end(), DictionaryEntry::cmpID);
+	sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpID);
 
 	//sort not shared objects
-	sort(objects_not_shared.begin(), objects_not_shared.end(), DictionaryEntry::cmpID);
+	sort(objects.begin(), objects.end(), DictionaryEntry::cmpID);
 
 	//sort predicates
 	sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpID);
@@ -479,16 +481,16 @@ void PlainDictionary::idSort() {
 void PlainDictionary::updateIDs() {
 	unsigned int i;
 
-	for (i = 0; i < subjects_shared.size(); i++) {
-		subjects_shared[i]->id = getGlobalId(i, SHARED_SUBJECT);
+	for (i = 0; i < shared.size(); i++) {
+		shared[i]->id = getGlobalId(i, SHARED_SUBJECT);
 	}
 
-	for (i = 0; i < subjects_not_shared.size(); i++) {
-		subjects_not_shared[i]->id = getGlobalId(i, NOT_SHARED_SUBJECT);
+	for (i = 0; i < subjects.size(); i++) {
+		subjects[i]->id = getGlobalId(i, NOT_SHARED_SUBJECT);
 	}
 
-	for (i = 0; i < objects_not_shared.size(); i++) {
-		objects_not_shared[i]->id = getGlobalId(i, NOT_SHARED_OBJECT);
+	for (i = 0; i < objects.size(); i++) {
+		objects[i]->id = getGlobalId(i, NOT_SHARED_OBJECT);
 	}
 
 	for (i = 0; i < predicates.size(); i++) {
@@ -543,20 +545,20 @@ void PlainDictionary::setPrefixAndString(DictionaryEntry *entry, const string st
 vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
-		if(id<= subjects_shared.size()) {
-			return subjects_shared;
+		if(id<= shared.size()) {
+			return shared;
 		} else {
-			return subjects_not_shared;
+			return subjects;
 		}
 
 	case PREDICATE:
 		return predicates;
 
 	case OBJECT:
-		if(id<= subjects_shared.size()) {
-			return subjects_shared;
+		if(id<= shared.size()) {
+			return shared;
 		} else {
-			return objects_not_shared;
+			return objects;
 		}
 	}
 
@@ -566,16 +568,16 @@ vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int
 unsigned int PlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
-			return subjects_shared.size()+id+1;
+			return shared.size()+id+1;
 
 		case NOT_SHARED_PREDICATE:
 			return id+1;
 
 		case NOT_SHARED_OBJECT:
 			if(mapping==MAPPING2) {
-				return subjects_shared.size()+id+1;
+				return shared.size()+id+1;
 			} else {
-				return subjects_shared.size()+subjects_not_shared.size()+id+1;
+				return shared.size()+subjects.size()+id+1;
 			}
 
 		case SHARED_SUBJECT:
@@ -594,20 +596,20 @@ unsigned int PlainDictionary::getGlobalId(unsigned int id, DictionarySection pos
 unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
 	switch (position) {
 		case SUBJECT:
-			if(id<=subjects_shared.size()) {
+			if(id<=shared.size()) {
 				return id-1;
 			} else {
-				return id-subjects_shared.size()-1;
+				return id-shared.size()-1;
 			}
 			break;
 		case OBJECT:
-			if(id<=subjects_shared.size()) {
+			if(id<=shared.size()) {
 				return id-1;
 			} else {
 				if(mapping==MAPPING2) {
-					return id-subjects_shared.size()-1;
+					return id-shared.size()-1;
 				} else {
-					return id-subjects_shared.size()-subjects_not_shared.size()-1;
+					return id-shared.size()-subjects.size()-1;
 				}
 			}
 			break;
@@ -628,23 +630,23 @@ unsigned int PlainDictionary::getLocalId(unsigned int id, TripleComponentRole po
  * @return The expected result
  */
 unsigned int PlainDictionary::getMaxID() {
-	unsigned int s = subjects_not_shared.size();
-	unsigned int o = objects_not_shared.size();
-	unsigned int shared = subjects_shared.size();
+	unsigned int s = subjects.size();
+	unsigned int o = objects.size();
+	unsigned int nshared = shared.size();
 	unsigned int max = s>o ? s : o;
 
 	if(mapping ==MAPPING2) {
-		return shared+max;
+		return nshared+max;
 	} else {
-		return shared+s+o;
+		return nshared+s+o;
 	}
 }
 
 unsigned int PlainDictionary::getMaxSubjectID() {
-	unsigned int shared = subjects_shared.size();
-	unsigned int s = subjects_not_shared.size();
+	unsigned int nshared = shared.size();
+	unsigned int s = subjects.size();
 
-	return shared+s;
+	return nshared+s;
 }
 
 unsigned int PlainDictionary::getMaxPredicateID() {
@@ -652,50 +654,31 @@ unsigned int PlainDictionary::getMaxPredicateID() {
 }
 
 unsigned int PlainDictionary::getMaxObjectID() {
-	unsigned int shared = subjects_shared.size();
-	unsigned int s = subjects_not_shared.size();
-	unsigned int o = objects_not_shared.size();
+	unsigned int nshared = shared.size();
+	unsigned int s = subjects.size();
+	unsigned int o = objects.size();
 
 	if(mapping ==MAPPING2) {
-		return shared+o;
+		return nshared+o;
 	} else {
-		return shared+s+o;
+		return nshared+s+o;
 	}
 }
 
-/** Get Mapping
- * @return The expected result
- */
-unsigned int PlainDictionary::getMapping() {
-	return mapping;
-}
-
-/** Get N Subjects
- * @return The expected result
- */
 unsigned int PlainDictionary::getNsubjects() {
-	return subjects_shared.size()+subjects_not_shared.size();
+	return shared.size()+subjects.size();
 }
 
-/** Get N Predicates
- * @return The expected result
- */
 unsigned int PlainDictionary::getNpredicates() {
 	return predicates.size();
 }
 
-/** Get N Objects
- * @return The expected result
- */
 unsigned int PlainDictionary::getNobjects() {
-	return subjects_shared.size()+objects_not_shared.size();
+	return shared.size()+objects.size();
 }
 
-/** Get S Subobj
- * @return The expected result
- */
-unsigned int PlainDictionary::getSsubobj() {
-	return subjects_shared.size();
+unsigned int PlainDictionary::getNshared() {
+	return shared.size();
 }
 
 
@@ -704,16 +687,16 @@ void PlainDictionary::updateID(unsigned int oldid, unsigned int newid, Dictionar
 	switch (position) {
 	case SHARED_SUBJECT:
 	case SHARED_OBJECT:
-			subjects_shared[oldid]->id = newid;
+			shared[oldid]->id = newid;
 			break;
 	case NOT_SHARED_SUBJECT:
-		subjects_not_shared[oldid]->id = newid;
+		subjects[oldid]->id = newid;
 		break;
 	case NOT_SHARED_PREDICATE:
 		predicates[oldid]->id = newid;
 		break;
 	case NOT_SHARED_OBJECT:
-		objects_not_shared[oldid]->id = newid;
+		objects[oldid]->id = newid;
 		break;
 	}
 }
@@ -724,7 +707,7 @@ void PlainDictionary::populateHeader(Header &header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSUBJECTS, getNsubjects());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMPREDICATES, getNpredicates());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMOBJECTS, getNobjects());
-	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSHARED, getSsubobj());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSHARED, getNshared());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXSUBJECTID, getMaxSubjectID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXPREDICATEID, getMaxPredicateID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXOBJECTTID, getMaxObjectID());
@@ -732,118 +715,17 @@ void PlainDictionary::populateHeader(Header &header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_SIZE_STRINGS, size());
 }
 
-void PlainDictionary::dumpSizes(ostream &out) {
-	cout << "\n\t [Dictionary stats:\n";
-	cout << "\t   shared subjects-objects:" << getSsubobj() << "\n";
-	cout << "\t   not shared subjects:" << getNsubjects() - getSsubobj() << "\n";
-	cout << "\t   not shared objects:" << getNobjects() - getSsubobj() << "\n";
-	cout << "\t total subjects:" << getNsubjects() << "\n";
-	cout << "\t total objects:" << getNobjects() << "\n";
-	cout << "\t total predicates:" << getNpredicates() << " ]\n\n";
-}
-
-/** Dump Stats
- * @param output Description of the param.
- * @return void
- */
-void PlainDictionary::dumpStats(string &output) {
-	unsigned int i = 0;
-
-	const int maxval = 50000;
-	const int nbins = 50000;
-
-	Histogram histoURI(0, maxval, nbins);
-	Histogram histoLiteral(0, maxval, nbins);
-	Histogram histoBlank(0, maxval, nbins);
-
-	string tmp;
-	//shared subjects-objects from subjects
-	for (i = 0; i < subjects_shared.size(); i++) {
-		tmp.clear();
-
-		tmp.append(*subjects_shared[i]->prefix);
-		tmp.append(*subjects_shared[i]->str);
-
-		if (tmp[0] == '<') {
-                        histoURI.add(tmp.length());
-		} else if (tmp[0] == '"') {
-                        histoLiteral.add(tmp.length());
-		} else if (tmp[0] == '_') {
-                        histoBlank.add(tmp.length());
-		} else {
-			cout << "String not URI/Lit?: " << tmp << endl;
-		}
-	}
-
-	//not shared subjects
-	for (i = 0; i < subjects_not_shared.size(); i++) {
-		tmp.clear();
-		tmp.append(*subjects_not_shared[i]->prefix);
-		tmp.append(*subjects_not_shared[i]->str);
-
-		if (tmp[0] == '<') {
-                        histoURI.add(tmp.length());
-		} else if (tmp[0] == '"') {
-                        histoLiteral.add(tmp.length());
-		} else if (tmp[0] == '_') {
-                        histoBlank.add(tmp.length());
-		} else {
-			cout << "String not URI/Lit?: " << tmp << endl;
-		}
-	}
-
-	//not shared objects
-	for (i = 0; i < objects_not_shared.size(); i++) {
-		tmp.clear();
-		tmp.append(*objects_not_shared[i]->prefix);
-		tmp.append(*objects_not_shared[i]->str);
-
-		if (tmp[0] == '<') {
-                        histoURI.add(tmp.length());
-		} else if (tmp[0] == '"') {
-                        histoLiteral.add(tmp.length());
-		} else if (tmp[0] == '_') {
-                        histoBlank.add(tmp.length());
-		} else {
-			cout << "String not URI/Lit?: " << tmp << endl;
-		}
-	}
-
-	//predicates
-	for (i = 0; i < predicates.size(); i++) {
-		tmp.clear();
-		tmp.append(*predicates[i]->prefix);
-		tmp.append(*predicates[i]->str);
-
-		if (tmp[0] == '<') {
-                        histoURI.add(tmp.length());
-		} else if (tmp[0] == '"') {
-                        histoLiteral.add(tmp.length());
-		} else if (tmp[0] == '_') {
-                        histoBlank.add(tmp.length());
-		} else {
-			cout << "String not URI/Lit?: " << tmp << endl;
-		}
-	}
-
-	histoURI.end();
-	histoURI.dump(output.c_str(), "URI");
-
-	histoLiteral.end();
-	histoLiteral.dump(output.c_str(), "Literal");
-
-	histoBlank.end();
-	histoBlank.dump(output.c_str(), "Blank");
-}
-
 string PlainDictionary::getType() {
 	return HDTVocabulary::DICTIONARY_TYPE_PLAIN;
 }
 
-
+unsigned int PlainDictionary::getMapping() {
+	return mapping;
 }
 
-void hdt::PlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+void PlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
     throw "getSuggestions not implemented";
+}
+
 }

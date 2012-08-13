@@ -1,13 +1,11 @@
 /*
- * File: PFCDictionary.h
+ * File: PFCDictionary.hpp
  * Last modified: $Date$
  * Revision: $Revision$
  * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Mario Arias, Alejandro Andres.
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
- *
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,18 +23,18 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Mario Arias:               mario.arias@gmail.com
- *   Alejandro Andres:          fuzzy.alej@gmail.com
  *
  */
 
 #ifndef PFCDICTIONARY_HPP_
 #define PFCDICTIONARY_HPP_
 
+#include <Iterator.hpp>
 #include <HDTSpecification.hpp>
-#include "PlainDictionary.hpp"
+#include <Dictionary.hpp>
 
 #include "../libdcs/CSD.h"
 
@@ -71,7 +69,7 @@ public:
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();
 	unsigned int getNobjects();
-	unsigned int getSsubobj();
+	unsigned int getNshared();
 
 	unsigned int getMaxID();
 	unsigned int getMaxSubjectID();
@@ -82,15 +80,17 @@ public:
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
-	unsigned int insert(std::string &str, TripleComponentRole position);
+    void import(Dictionary *other, ProgressListener *listener=NULL);
 
-	void startProcessing(ProgressListener *listener = NULL);
-	void stopProcessing(ProgressListener *listener = NULL);
+    IteratorUCharString *getSubjects();
+    IteratorUCharString *getPredicates();
+    IteratorUCharString *getObjects();
+    IteratorUCharString *getShared();
 
 	string getType();
+	unsigned int getMapping();
 
-	void import(PlainDictionary *dictionary, ProgressListener *listener = NULL);
-        void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
+    void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
 private:
 	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);

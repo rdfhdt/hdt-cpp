@@ -25,9 +25,9 @@ protected:
 
 public:
 	BaseJoinBinding(char *var, VarBindingInterface *left, VarBindingInterface *right)
-	: left(left),
-	  right(right),
-	  bindingVarName(var)
+    : bindingVarName(var),
+      left(left),
+      right(right)
 	{
 		// First is always the join variable.
 		varnames.push_back(var);

@@ -1,11 +1,11 @@
 /*
- * TriplesComparator.cpp
+ * File: TriplesComparator.cpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Guillermo Rodriguez-Cano, Alejandro Andres,
- *                     Mario Arias
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
- *
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,13 +23,9 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Guillermo Rodriguez-Cano:  wileeam@acm.org
- *   Alejandro Andres:          fuzzy.alej@gmail.com
- *   Mario Arias:               mario.arias@gmail.com
- *
- * @version $Id$
  *
  */
 
@@ -155,8 +151,13 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 		}
 	} else {
 		return (x2 > x1);
-	}
+    }
 
-} // operator()
+}
+
+void TriplesComparator::setOrder(TripleComponentOrder order)
+{
+    this->order = order;
+}
 
 } // hdt{}

@@ -4,10 +4,8 @@
  * Revision: $Revision$
  * Last modified by: $Author$
  *
- * Copyright (C) 2011, Javier D. Fernandez, Miguel A. Martinez-Prieto
- *                     Mario Arias, Alejandro Andres.
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
- *
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,44 +23,20 @@
  *
  *
  * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
  *   Javier D. Fernandez:       jfergar@infor.uva.es
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
- *   Mario Arias:               mario.arias@gmail.com
- *   Alejandro Andres:          fuzzy.alej@gmail.com
  *
  */
 
-
-
-
 #include "PFCDictionary.hpp"
 #include <HDTVocabulary.hpp>
+
 #include "../libdcs/CSD_PFC.h"
 #include "../libdcs/CSD_HTFC.h"
+#include "../libdcs/CSD_Cache.h"
 
 namespace hdt {
-
-class DictIterator : public csd::IteratorUCharString {
-private:
-	std::vector<DictionaryEntry *> &vector;
-	unsigned int pos;
-public:
-	DictIterator(std::vector<DictionaryEntry *> &vector) : vector(vector), pos(0){
-
-	}
-
-	virtual bool hasNext() {
-		return pos<vector.size();
-	}
-
-	virtual unsigned char *next() {
-		return (unsigned char*)vector[pos++]->str->c_str();
-	}
-
-	virtual unsigned int getNumberOfElements() {
-		return vector.size();
-	}
-};
 
 PFCDictionary::PFCDictionary() : blocksize(8)
 {
@@ -72,7 +46,7 @@ PFCDictionary::PFCDictionary() : blocksize(8)
 	shared = new csd::CSD_PFC();
 }
 
-PFCDictionary::PFCDictionary(HDTSpecification & spec) : blocksize(32)
+PFCDictionary::PFCDictionary(HDTSpecification & spec) : blocksize(8)
 {
 	subjects = new csd::CSD_PFC();
 	predicates = new csd::CSD_PFC();
@@ -81,7 +55,7 @@ PFCDictionary::PFCDictionary(HDTSpecification & spec) : blocksize(32)
 
 	string blockSizeStr = spec.get("dict.block.size");
 	if(blockSizeStr!=""){
-		blocksize = atoi(blockSizeStr.c_str());
+		//blocksize = atoi((const char*)blockSizeStr.c_str());
 	}
 }
 
@@ -93,75 +67,9 @@ PFCDictionary::~PFCDictionary()
 	delete shared;
 }
 
-csd::CSD *loadSection(DictIterator *iterator, uint32_t blocksize, ProgressListener *listener) {
+csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, ProgressListener *listener) {
 	return new csd::CSD_PFC(iterator, blocksize, listener);
 	//return new csd::CSD_HTFC(iterator, blocksize, listener);
-}
-
-void PFCDictionary::import(PlainDictionary *dictionary, ProgressListener *listener)
-{
-	DictIterator itSubj(dictionary->subjects_not_shared);
-	DictIterator itPred(dictionary->predicates);
-	DictIterator itObj(dictionary->objects_not_shared);
-	DictIterator itShared(dictionary->subjects_shared);
-
-	IntermediateListener iListener(listener);
-	try {
-
-		//NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
-		delete subjects;
-		iListener.setRange(0, 20);
-		subjects = loadSection(&itSubj, blocksize, &iListener);
-
-		//NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
-		delete predicates;
-		iListener.setRange(20, 21);
-		predicates = loadSection(&itPred, blocksize, &iListener);
-
-		//NOTIFY(listener, "DictionaryPFC loading objects", 30, 90);
-		delete objects;
-		iListener.setRange(21, 90);
-		objects = loadSection(&itObj, blocksize, &iListener);
-
-		//NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
-		delete shared;
-		iListener.setRange(90, 100);
-		shared = loadSection(&itShared, blocksize, &iListener);
-
-		this->sizeStrings = dictionary->sizeStrings;
-		this->mapping = dictionary->mapping;
-	} catch (const char *e) {
-		delete subjects;
-		delete predicates;
-		delete objects;
-		delete shared;
-		subjects = new csd::CSD_PFC();
-		predicates = new csd::CSD_PFC();
-		objects = new csd::CSD_PFC();
-		shared = new csd::CSD_PFC();
-		throw e;
-	}
-
-#if 0
-	cout << "Shared: " << shared->getLength() << endl;
-	cout << "Subjects: " << subjects->getLength() << endl;
-	cout << "Predicates: " << predicates->getLength() << endl;
-	cout << "Objects: " << objects->getLength() << endl;
-
-	cout << "Ensure same: " << endl;
-	for(unsigned int i=1;i<getMaxObjectID();i++){
-		string str1 = dictionary->idToString(i, OBJECT);
-		string str2 = this->idToString(i, OBJECT);
-		unsigned int id1 = dictionary->stringToId(str1, OBJECT);
-		unsigned int id2 = this->stringToId(str1, OBJECT);
-
-		if( (str1!=str2) || (id1!=id2)) {
-			cout << i << " Objects difer: " << endl;
-			cout << "\tPlain: " << id1 << " => " << str1 << endl;
-			cout << "\tPFC__: " << id2 << " => " << str2 << endl;
-		}
-	}
-#endif
 }
 
 
@@ -175,7 +83,7 @@ std::string PFCDictionary::idToString(unsigned int id, TripleComponentRole posit
 		const char * ptr = (const char *)section->extract(localid);
 		if(ptr!=NULL) {
 			string out = ptr;
-			delete [] ptr;
+			section->freeString((unsigned char*)ptr);
 			return out;
 		} else {
 			//cout << "Not found: " << id << " as " << position << endl;
@@ -189,43 +97,42 @@ unsigned int PFCDictionary::stringToId(std::string &key, TripleComponentRole pos
 {
 	unsigned int ret;
 
-        if(key.length()==0 || key.at(0) == '?') {
+        if(key.length()==0) {
 		return 0;
         }
 
 	switch (position) {
 	case SUBJECT:
-		ret = shared->locate((const uchar *)key.c_str(), key.length());
+		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
 		if( ret != 0) {
 			return getGlobalId(ret,SHARED_SUBJECT);
 		}
-		ret = subjects->locate((const uchar *)key.c_str(), key.length());
+		ret = subjects->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret != 0) {
 			return getGlobalId(ret,NOT_SHARED_SUBJECT);
 		}
-		throw "Subject not found in dictionary";
+        return 0;
 	case PREDICATE:
-		ret = predicates->locate((const uchar *)key.c_str(), key.length());
+		ret = predicates->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret!=0) {
 			return getGlobalId(ret, NOT_SHARED_PREDICATE);
 		}
-		throw "Predicate not found in dictionary";
+        return 0;
 
 	case OBJECT:
-		ret = shared->locate((const uchar *)key.c_str(), key.length());
+		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
 		if( ret != 0) {
 			return getGlobalId(ret,SHARED_OBJECT);
 		}
-		ret = objects->locate((const uchar *)key.c_str(), key.length());
+		ret = objects->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret != 0) {
 			return getGlobalId(ret,NOT_SHARED_OBJECT);
 		}
-		cout << "Search for: " << key << endl;
-		ret = objects->locate((const uchar *)key.c_str(), key.length());
+		ret = objects->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret != 0) {
 			return getGlobalId(ret,NOT_SHARED_OBJECT);
 		}
-		throw "Object not found in dictionary";
+        return 0;
 	}
 }
 
@@ -248,6 +155,7 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 		shared = new csd::CSD_PFC();
 		throw "Could not read shared.";
 	}
+	shared = new csd::CSD_Cache(shared);
 
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
@@ -258,6 +166,7 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 		subjects = new csd::CSD_PFC();
 		throw "Could not read subjects.";
 	}
+	subjects = new csd::CSD_Cache(subjects);
 
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
@@ -268,6 +177,7 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 		predicates = new csd::CSD_PFC();
 		throw "Could not read predicates.";
 	}
+	subjects = new csd::CSD_Cache(subjects);
 
 	iListener.setRange(75,100);
 	iListener.notifyProgress(0, "Dictionary read objects.");
@@ -278,7 +188,100 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 		objects = new csd::CSD_PFC();
 		throw "Could not read objects.";
 	}
+	objects = new csd::CSD_Cache(objects);
 	//cout << "Dictionary loaded " << in->tellg() << endl;
+}
+
+
+void PFCDictionary::import(Dictionary *other, ProgressListener *listener) {
+
+	try {
+		IntermediateListener iListener(listener);
+
+		//NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
+		iListener.setRange(0, 20);
+		IteratorUCharString *itSubj = other->getSubjects();
+		delete subjects;
+		subjects = loadSection(itSubj, blocksize, &iListener);
+		delete itSubj;
+
+		//NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
+		iListener.setRange(20, 21);
+		IteratorUCharString *itPred = other->getPredicates();
+		delete predicates;
+
+		predicates = loadSection(itPred, blocksize, &iListener);
+
+		//NOTIFY(listener, "DictionaryPFC loading objects", 30, 90);
+		iListener.setRange(21, 90);
+		IteratorUCharString *itObj = other->getObjects();
+		delete objects;
+		objects = loadSection(itObj, blocksize, &iListener);
+		delete itObj;
+
+		//NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
+		iListener.setRange(90, 100);
+		IteratorUCharString *itShared = other->getShared();
+		delete shared;
+		shared = loadSection(itShared, blocksize, &iListener);
+		delete itShared;
+
+		this->sizeStrings = other->size();
+		this->mapping = other->getMapping();
+	} catch (const char *e) {
+		delete subjects;
+		delete predicates;
+		delete objects;
+		delete shared;
+		subjects = new csd::CSD_PFC();
+		predicates = new csd::CSD_PFC();
+		objects = new csd::CSD_PFC();
+		shared = new csd::CSD_PFC();
+		throw e;
+	}
+
+	#if 0
+		cout << "Shared: " << shared->getLength() << endl;
+		cout << "Subjects: " << subjects->getLength() << endl;
+		cout << "Predicates: " << predicates->getLength() << endl;
+		cout << "Objects: " << objects->getLength() << endl;
+
+		cout << "Ensure same: " << endl;
+		for(unsigned int i=1;i<getMaxObjectID();i++){
+			string str1 = other->idToString(i, OBJECT);
+			string str2 = this->idToString(i, OBJECT);
+			unsigned int id1 = other->stringToId(str1, OBJECT);
+			unsigned int id2 = this->stringToId(str1, OBJECT);
+
+			if( (str1!=str2) || (id1!=id2)) {
+				cout << i << " Objects difer: " << endl;
+				cout << "\tPlain: " << id1 << " => " << str1 << endl;
+				cout << "\tPFC__: " << id2 << " => " << str2 << endl;
+			}
+		}
+		for(unsigned int i=1;i<getMaxObjectID();i++){
+			string str2 = this->idToString(i, OBJECT);
+			unsigned int id2 = this->stringToId(str2, OBJECT);
+
+			//cout << "ID: "<< i << " Back id: "<< id2 << " => " << str2 << endl;
+		}
+	#endif
+}
+
+IteratorUCharString *PFCDictionary::getSubjects() {
+	throw "Not implemented";
+}
+
+IteratorUCharString *PFCDictionary::getPredicates() {
+	throw "Not implemented";
+}
+
+IteratorUCharString *PFCDictionary::getObjects() {
+	throw "Not implemented";
+}
+
+IteratorUCharString *PFCDictionary::getShared() {
+	throw "Not implemented";
 }
 
 void PFCDictionary::save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener)
@@ -290,7 +293,7 @@ void PFCDictionary::save(std::ostream & output, ControlInformation & controlInfo
 	controlInformation.setUint("$subjects", getNsubjects());
 	controlInformation.setUint("$objects", getNobjects());
 	controlInformation.setUint("$predicates", getNpredicates());
-	controlInformation.setUint("$sharedso", getSsubobj());
+	controlInformation.setUint("$sharedso", getNshared());
 
 	controlInformation.setUint("$maxid", getMaxID());
 	controlInformation.setUint("$maxsubjectid",getMaxSubjectID());
@@ -336,7 +339,7 @@ void PFCDictionary::populateHeader(Header & header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSUBJECTS, getNsubjects());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMPREDICATES, getNpredicates());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMOBJECTS, getNobjects());
-	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSHARED, getSsubobj());
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSHARED, getNshared());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXSUBJECTID, getMaxSubjectID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXPREDICATEID, getMaxPredicateID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXOBJECTTID, getMaxObjectID());
@@ -354,7 +357,7 @@ unsigned int PFCDictionary::getNpredicates(){
 unsigned int PFCDictionary::getNobjects(){
 	return shared->getLength()+objects->getLength();
 }
-unsigned int PFCDictionary::getSsubobj(){
+unsigned int PFCDictionary::getNshared(){
 	return shared->getLength();
 }
 
@@ -406,31 +409,13 @@ unsigned int PFCDictionary::size()
 	return shared->getSize()+subjects->getSize()+predicates->getSize()+objects->getSize();
 }
 
-void PFCDictionary::startProcessing(ProgressListener *listener){
-}
-
-void PFCDictionary::stopProcessing(ProgressListener *listener){
-	cout << "************ SHARED ***********" << endl;
-	shared->dumpAll();
-
-	cout << "************ SUBJECTS ***********" << endl;
-	subjects->dumpAll();
-
-	cout << "************ PREDS ***********" << endl;
-	predicates->dumpAll();
-
-	cout << "************ OBJS ***********" << endl;
-	objects->dumpAll();
-}
-
-unsigned int PFCDictionary::insert(std::string & str, TripleComponentRole position)
-{
-	throw "This dictionary does not support insertions.";
-}
-
 string PFCDictionary::getType()
 {
 	return HDTVocabulary::DICTIONARY_TYPE_PFC;
+}
+
+unsigned int PFCDictionary::getMapping() {
+	return mapping;
 }
 
 

@@ -1,8 +1,32 @@
 /*
- * TripleListDisk.h
+ * File: TripleListDisk.hpp
+ * Last modified: $Date$
+ * Revision: $Revision$
+ * Last modified by: $Author$
  *
- *  Created on: 07/03/2011
- *      Author: mck
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *
+ * Contacting the authors:
+ *   Mario Arias:               mario.arias@gmail.com
+ *   Javier D. Fernandez:       jfergar@infor.uva.es
+ *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
+ *
  */
 
 #ifndef TRIPLELISTDISK_H_
@@ -17,15 +41,14 @@ namespace hdt {
 class TripleListDisk : public ModifiableTriples {
 private:
 	TripleComponentOrder order;
-	unsigned int capacity;
+	size_t capacity;
 
 	TripleID *arrayTriples;
-	unsigned int numValidTriples;
-	unsigned int numTotalTriples;
+	size_t numValidTriples;
+	size_t numTotalTriples;
 	size_t mappedSize;
 	string fileName;
 	int fd;
-	bool isTemp;
 
 	void mapFile();
 	void unmapFile();
@@ -70,7 +93,7 @@ public:
 	/**
 	 * Returns size in bytes
 	 */
-	unsigned int size();
+    size_t size();
 
 	/**
 	 * Saves the triples
@@ -103,6 +126,7 @@ public:
 	void stopProcessing(ProgressListener *listener=NULL);
 
 	string getType();
+	TripleComponentOrder getOrder();
 
 
 
@@ -115,9 +139,9 @@ public:
 	 *            The triples to be inserted
 	 * @return boolean
 	 */
-	bool insert(TripleID &triple);
+	void insert(TripleID &triple);
 
-	bool insert(IteratorTripleID *triples);
+	void insert(IteratorTripleID *triples);
 
 	/**
 	 * Deletes one or more triples according to a pattern
@@ -155,9 +179,8 @@ public:
 class TripleListDiskIterator : public IteratorTripleID {
 private:
 	TripleListDisk *triples;
-	TripleID *nextv, pattern, ret;
-	bool hasNextv;
-	unsigned int pos;
+	TripleID pattern, returnTriple;
+	size_t pos;
 
 	void doFetch();
 
@@ -167,6 +190,9 @@ public:
 
 	bool hasNext();
 	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
 };
 
 

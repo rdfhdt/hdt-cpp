@@ -7,8 +7,10 @@
 
 #include "RDFParserNtriplesCallback.hpp"
 #include "../util/fileUtil.hpp"
+#include "../util/unicode.hpp"
 
 #include <fstream>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -61,7 +63,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 					errorParsing = true;
 					break;
 				}
-				node[pos] = line.substr(0, lastIndex + 1);
+				node[pos] = line.substr(1, lastIndex-1);
 				pos++;
 			}
 			//Literal
@@ -105,7 +107,49 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 					errorParsing = true;
 					break;
 				}
-				node[pos] = line.substr(0, lastIndex + 1);
+
+				// Substitute encoded unicode chars \uXXXX
+				string replaced;
+
+				int previous=0, current=0;
+
+				// If the string is bigger than 6 chars (otherwise it wont have any \uXXXX code)
+				if(lastIndex>5) {
+
+					// Check until 6 characters before end.
+					while(current<lastIndex-5) {
+
+						// If we found a \u ocurrence
+						if(line.at(current)=='\\' && line.at(current+1)=='u') {
+
+							// Append to the output all characters before the found \u code
+							if(previous!=current) {
+								replaced.append(line, previous, current-previous);
+							}
+
+							// Parse code as hexadecimal string
+							long value = strtol(line.substr(current+2, 4).c_str(), NULL, 16);
+
+							// Convert unicode character to UTF8
+							appendUnicodeUTF8(replaced, (unsigned int) value);
+
+							// Skip the whole \uXXXX sequence
+							current+=6;
+
+							// Mark to copy plain bytes just after \uXXXX sequence
+							previous=current;
+						} else {
+							current++;
+						}
+					}
+				}
+				// Append remaining plain characters to the output
+				if(previous<=lastIndex) {
+					replaced.append(line, previous, lastIndex-previous+1);
+				}
+
+				node[pos] = replaced;
+
 				pos++;
 			}
 			//blank, a variable, a relative predicate
