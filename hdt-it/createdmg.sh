@@ -4,7 +4,7 @@ SRCAPP="macx/HDT-it.app"
 FOLDER="macdmg"
 VOL="HDT-it"
 NAME="HDT-it!"
-VERS="0.9beta"
+VERS="0.91beta"
 DMG="$VOL-$VERS.dmg"
 
 FRAMEWORK_BASE="$SRCAPP/Contents/Frameworks/"
@@ -15,11 +15,6 @@ DATASETS="test.nt"
 DATASETHDTBASE="$HOME/rdf/hdt/"
 DATASETSHDT="3kbo.hdt aaronland.hdt 3dnews.hdt aisricom.hdt"
 #DATASETSHDT="aifb.hdt apex.hdt 2blog.hdt 3kbo.hdt aaronland.hdt 3dnews.hdt aisricom.hdt"
-
-echo hdiutil create -srcfolder "$FOLDER" -volname "$VOL" -format UDZO -imagekey zlib-level=9 "$DMG"
-hdiutil create -srcfolder "$FOLDER" -volname "$NAME" -format UDZO -imagekey zlib-level=9 "$DMG"
-
-exit
 
 mkdir -p $FOLDER
 rm -Rf $FOLDER/*
@@ -50,6 +45,9 @@ rm -Rf "$SRCAPP/Contents/PlugIns/*"
 # CREATE TMP FOLDER
 echo mkdir -p $FOLDER/datasets
 mkdir -p $FOLDER/datasets
+
+echo "Fill moredatasets.txt"
+echo "You can download more datasets from http://www.rdfhdt.org/datasets or import your own ones using the 'Import RDF' option!" > $FOLDER/datasets/moredatasets.txt
 
 # COPY APP to folder
 echo cp -R $SRCAPP $FOLDER 

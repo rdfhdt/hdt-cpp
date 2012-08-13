@@ -53,7 +53,7 @@ void MatrixViewWidget::initializeGL()
 
 void MatrixViewWidget::paintShared()
 {
-    unsigned int nshared = hdtmanager->getHDT()->getDictionary().getSsubobj();
+    unsigned int nshared = hdtmanager->getHDT()->getDictionary()->getNshared();
 
     glColor4f(SHARED_AREA_COLOR);
     glBegin(GL_QUADS);
@@ -73,10 +73,10 @@ void MatrixViewWidget::paintShared()
 
 void MatrixViewWidget::paintScales()
 {
-    hdt::Dictionary &dict = hdtmanager->getHDT()->getDictionary();
-    unsigned int nsubjects = dict.getMaxSubjectID();
-    unsigned int nobjects = dict.getMaxObjectID();
-    unsigned int npredicates = dict.getMaxPredicateID();
+    hdt::Dictionary *dict = hdtmanager->getHDT()->getDictionary();
+    unsigned int nsubjects = dict->getMaxSubjectID();
+    unsigned int nobjects = dict->getMaxObjectID();
+    unsigned int npredicates = dict->getMaxPredicateID();
 
     // Draw subject scale
     for (unsigned int i = 0; i <= nsubjects; i += 1+nsubjects / 15) {
@@ -175,8 +175,8 @@ void MatrixViewWidget::paintPoints()
     if(hdtmanager->getNumResults()==0) {
         // Do not render anything
     } else if(hdtmanager->getNumResults()<5000) {
-
-        hdt::IteratorTripleID *it = hdtmanager->getHDT()->getTriples().search(hdtmanager->getSearchPatternID());
+	// Render directly from iterator.
+        hdt::IteratorTripleID *it = hdtmanager->getHDT()->getTriples()->search(hdtmanager->getSearchPatternID());
 
         glPointSize(3);
         glBegin(GL_POINTS);
@@ -197,6 +197,7 @@ void MatrixViewWidget::paintPoints()
         delete it;
 
     } else {
+	// Render from cached points.
         glPointSize(RDF_POINT_SIZE);
         glBegin(GL_POINTS);
         vector<hdt::TripleID> triples = hdtmanager->getTriples();
@@ -228,9 +229,9 @@ void MatrixViewWidget::paintSelected()
 
     // Draw selected triple
     if (selectedTriple.isValid()) {
-        unsigned int nsubjects = hdtmanager->getHDT()->getDictionary().getMaxSubjectID();
-        unsigned int npredicates = hdtmanager->getHDT()->getDictionary().getMaxPredicateID();
-        unsigned int nobjects = hdtmanager->getHDT()->getDictionary().getMaxObjectID();
+        unsigned int nsubjects = hdtmanager->getHDT()->getDictionary()->getMaxSubjectID();
+        unsigned int npredicates = hdtmanager->getHDT()->getDictionary()->getMaxPredicateID();
+        unsigned int nobjects = hdtmanager->getHDT()->getDictionary()->getMaxObjectID();
 
         float x = selectedTriple.getObject();
         float y = selectedTriple.getSubject();
@@ -271,9 +272,9 @@ void MatrixViewWidget::paintGL()
 
     camera.applyTransform();
 
-    unsigned int nsubjects = hdtmanager->getHDT()->getDictionary().getMaxSubjectID();
-    unsigned int nobjects = hdtmanager->getHDT()->getDictionary().getMaxObjectID();
-    unsigned int npredicates = hdtmanager->getHDT()->getDictionary().getMaxPredicateID();
+    unsigned int nsubjects = hdtmanager->getHDT()->getDictionary()->getMaxSubjectID();
+    unsigned int nobjects = hdtmanager->getHDT()->getDictionary()->getMaxObjectID();
+    unsigned int npredicates = hdtmanager->getHDT()->getDictionary()->getMaxPredicateID();
 
     glScalef(1.0f / (float) nobjects, 1.0f / (float) nsubjects, 1.0f / (float) npredicates);
 
@@ -332,11 +333,11 @@ void MatrixViewWidget::unProject(int x, int y, double *outx, double *outy, doubl
 
     camera.applyTransform();
 
-    hdt::Dictionary &dict = hdtmanager->getHDT()->getDictionary();
+    hdt::Dictionary *dict = hdtmanager->getHDT()->getDictionary();
 
-    glScalef(1.0f / (float) dict.getMaxObjectID(),
-             1.0f / (float) dict.getMaxSubjectID(),
-             1.0f / (float) dict.getMaxPredicateID());
+    glScalef(1.0f / (float) dict->getMaxObjectID(),
+             1.0f / (float) dict->getMaxSubjectID(),
+             1.0f / (float) dict->getMaxPredicateID());
 
     // UnProject
     GLint viewport[4];
@@ -388,15 +389,15 @@ void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
     GLdouble subject, predicate, object;
     this->unProject(event->x(), event->y(), &object, &subject, &predicate);
 
-    hdt::Dictionary &dictionary = hdtmanager->getHDT()->getDictionary();
-    if ( (subject > 0 && subject < dictionary.getMaxSubjectID()) &&
-         (object > 0 && object <= dictionary.getMaxObjectID())
+    hdt::Dictionary *dictionary = hdtmanager->getHDT()->getDictionary();
+    if ( (subject > 0 && subject < dictionary->getMaxSubjectID()) &&
+         (object > 0 && object <= dictionary->getMaxObjectID())
        ) {
         hdtmanager->selectNearestTriple(subject,predicate, object);
 
-        QString subjStr = stringutils::asRich(stringutils::cleanN3String(dictionary.idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT).c_str()));
-        QString predStr = stringutils::asRich(stringutils::cleanN3String(dictionary.idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE).c_str()));
-        QString objStr = stringutils::asRich(stringutils::cleanN3String(dictionary.idToString(hdtmanager->getSelectedTriple().getObject(), hdt::OBJECT).c_str()));
+    QString subjStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT).c_str()));
+    QString predStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE).c_str()));
+    QString objStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtmanager->getSelectedTriple().getObject(), hdt::OBJECT).c_str()));
         stringutils::cut(objStr, 1000);
         QString tooltip = QString("<p style='white-space:pre'><b>S</b>: %1</p><p style='white-space:pre'><b>P</b>: %2</p><p><b>O</b>:&nbsp;%3</p>").arg(subjStr).arg(predStr).arg(objStr);
         QPoint point = this->mapToGlobal(event->pos());

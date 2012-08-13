@@ -5,6 +5,12 @@
 #include <QtOpenGL>
 #include <QGLWidget>
 
+#ifdef __APPLE__
+#include <glu.h>
+#else
+#include <GL/glu.h>
+#endif
+
 #include <HDT.hpp>
 #include <HDTFactory.hpp>
 #include <HDTSpecification.hpp>

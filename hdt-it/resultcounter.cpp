@@ -14,7 +14,7 @@ void ResultCounter::startCounting()
     if(!manager->hasHDT()){
         return;
     }
-    iterator = manager->getHDT()->getTriples().search(manager->getSearchPatternID());
+    iterator = manager->getHDT()->getTriples()->search(manager->getSearchPatternID());
     shouldCancel = false;
     QtConcurrent::run(this, &ResultCounter::run);
 }

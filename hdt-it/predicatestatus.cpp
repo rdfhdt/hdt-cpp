@@ -33,8 +33,8 @@ void PredicateStatus::refreshAll()
 {
     activePredicate.clear();
     if(manager->hasHDT()) {
-        activePredicate.resize(manager->getHDT()->getDictionary().getNpredicates(), true);
-        this->maxPredicateCount = manager->getHDTCachedInfo()->maxPredicateCount;
+        activePredicate.resize(manager->getHDT()->getDictionary()->getNpredicates(), true);
+	this->maxPredicateCount = manager->getHDTCachedInfo()->getMaxPredicateCount();
         setMinimumPredicateCountInternal(0);
     }
 }
@@ -89,7 +89,7 @@ void PredicateStatus::setMinimumPredicateCount(int count)
     if(count!=minPredicateCount) {
         minPredicateCount = count;
         for(unsigned int i=0;i<activePredicate.size();i++) {
-            activePredicate[i] = manager->getHDTCachedInfo()->predicateCount[i]>=(unsigned int)count;
+	    activePredicate[i] = manager->getHDTCachedInfo()->getPredicateUsages(i)>=(unsigned int)count;
         }
         emit predicatesChanged(0, activePredicate.size());
         emit minimumPredicateCountChanged(count);

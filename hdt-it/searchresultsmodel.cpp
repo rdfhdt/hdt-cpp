@@ -43,16 +43,16 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
         SearchResultsModel *noConstThis = const_cast<SearchResultsModel *>(this);
         noConstThis->findTriple(index.row());
 
-        hdt::Dictionary &d = hdtManager->getHDT()->getDictionary();
+        hdt::Dictionary *d = hdtManager->getHDT()->getDictionary();
 
         try {
             switch(index.column()) {
             case 0:
-                return stringutils::cleanN3String(d.idToString(currentTriple->getSubject(), hdt::SUBJECT).c_str());
+        return stringutils::toQString(d->idToString(currentTriple->getSubject(), hdt::SUBJECT).c_str());
             case 1:
-                return stringutils::cleanN3String(d.idToString(currentTriple->getPredicate(), hdt::PREDICATE).c_str());
+        return stringutils::toQString(d->idToString(currentTriple->getPredicate(), hdt::PREDICATE).c_str());
             case 2:
-                return stringutils::cleanN3String(d.idToString(currentTriple->getObject(), hdt::OBJECT).c_str());
+        return stringutils::toQString(d->idToString(currentTriple->getObject(), hdt::OBJECT).c_str());
             }
         } catch (char *e) {
             cout << "Error accesing dictionary: " << e << endl;
@@ -107,7 +107,7 @@ void SearchResultsModel::updateResultListChanged() {
     }
 
     if(hdtManager->hasHDT()) {
-        triples = hdtManager->getHDT()->getTriples().search(hdtManager->getSearchPatternID());
+        triples = hdtManager->getHDT()->getTriples()->search(hdtManager->getSearchPatternID());
         if(triples->hasNext()) {
             currentTriple = triples->next();
         }

@@ -9,11 +9,13 @@
 #include "searchresultsmodel.hpp"
 #include "headermodel.hpp"
 #include "predicatestatus.hpp"
+#include "regexmodel.hpp"
 
 class TripleComponentModel;
 class SearchResultsModel;
 class PredicateStatus;
 class HeaderModel;
+class RegexModel;
 
 class HDTManager : public QObject
 {
@@ -36,6 +38,7 @@ private:
     HeaderModel *headerModel;
     PredicateStatus *predicateStatus;
     HDTCachedInfo *hdtCachedInfo;
+    RegexModel *regexModel;
 
     // Search pattern / results
     hdt::TripleID selectedTriple;
@@ -58,6 +61,7 @@ public:
     TripleComponentModel *getSubjectModel();
     TripleComponentModel *getPredicateModel();
     TripleComponentModel *getObjectModel();
+    RegexModel *getRegexModel();
     SearchResultsModel *getSearchResultsModel();
     HeaderModel *getHeaderModel();
     PredicateStatus *getPredicateStatus();
@@ -76,7 +80,6 @@ public:
 
     unsigned int getNumResults();
 
-    QString getTime();
     QString getFileName();
 
 signals:

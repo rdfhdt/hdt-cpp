@@ -83,6 +83,8 @@ SparqlQuery parseSparql(string query) {
 
 void SparqlModel::setQuery(QString queryTxt)
 {
+    throw "Not implemented";
+#if 0
     SparqlQuery query = parseSparql(string(queryTxt.toAscii()));
 
     if(binding) {
@@ -95,6 +97,7 @@ void SparqlModel::setQuery(QString queryTxt)
     currentIndex = 0;
 
     emit layoutChanged();
+#endif
 }
 
 int SparqlModel::rowCount(const QModelIndex &parent) const {

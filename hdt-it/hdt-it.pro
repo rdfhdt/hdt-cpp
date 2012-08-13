@@ -6,8 +6,13 @@
 
 QT       += core gui opengl
 
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3
+
+macx:QMAKE_CXXFLAGS_RELEASE += -msse4.2
+
 CONFIG += debug_and_release
-macx:CONFIG += x86 x86_64
+macx:CONFIG += x86_64
 
 TARGET = HDT-it
 TEMPLATE = app
@@ -44,7 +49,8 @@ SOURCES += main.cpp\
     dictionarysuggestions.cpp \
     myapplication.cpp \
     sparqlmodel.cpp \
-    sparqlform.cpp
+    sparqlform.cpp \
+    regexmodel.cpp
 
 HEADERS  += hdtit.hpp \
     matrixviewwidget.hpp \
@@ -69,7 +75,8 @@ HEADERS  += hdtit.hpp \
     dictionarysuggestions.hpp \
     myapplication.hpp \
     sparqlmodel.hpp \
-    sparqlform.hpp
+    sparqlform.hpp \
+    regexmodel.hpp
 
 FORMS    += hdtit.ui \
     hdtspecform.ui \
@@ -80,19 +87,21 @@ TRANSLATIONS += hdt-it_es.ts
 
 INCLUDEPATH += ../hdt-lib/include/ .
 
+LIBCDS = ../libcds-v1.0.12
+
 # Using Traditional Makefile
-#LIBS += ../libcds-v1.0.7/lib/libcds.a ../hdt-lib/libhdt.a
+#LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
 
 # Using Qt Projects
-win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a ../libcds-v1.0.7/qmake/win32/libcds.a
+win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a $${LIBCDS}/qmake/win32/libcds.a
 win32:LIBS += c:/mingw/lib/libraptor2.a c:/mingw/lib/libexpat.a
 
-unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a ../libcds-v1.0.7/qmake/unix/libcds.a 
-macx:LIBS += ../libcds-v1.0.7/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
+unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a $${LIBCDS}/qmake/unix/libcds.a
+macx:LIBS += $${LIBCDS}/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
 
 PRE_TARGETDEPS += $$LIBS
 
-unix:LIBS += -lraptor2
+unix:LIBS += -lraptor2 -lkyotocabinet
 
 RESOURCES += \
     hdtresources.qrc
@@ -102,13 +111,3 @@ win32:RC_FILE = hdtico.rc
 QMAKE_INFO_PLIST = Info.plist
 
 ICON = hdtico.icns
-
-
-
-
-
-
-
-
-
-

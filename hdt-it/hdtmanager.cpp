@@ -31,6 +31,7 @@ HDTManager::HDTManager(QObject *parent) :
     searchResultsModel = new SearchResultsModel(this);
     headerModel = new HeaderModel(this);
     predicateStatus = new PredicateStatus(this);
+    regexModel = new RegexModel(this);
 }
 
 HDTManager::~HDTManager() {
@@ -41,11 +42,12 @@ HDTManager::~HDTManager() {
     delete searchResultsModel;
     delete headerModel;
     delete predicateStatus;
+    delete regexModel;
 }
 
 void HDTManager::updateOnHDTChanged()
 {
-    this->numResults = hdtCachedInfo->numResults;
+    this->numResults = hdt->getTriples()->getNumberOfElements();
 
     subjectModel->notifyLayoutChanged();
     predicateModel->notifyLayoutChanged();
@@ -53,6 +55,7 @@ void HDTManager::updateOnHDTChanged()
     objectModel->notifyLayoutChanged();
     searchResultsModel->updateResultListChanged();
     headerModel->updateDatasetChanged();
+    regexModel->updateDatasetChanged();
 
     emit datasetChanged();
 }
@@ -196,6 +199,7 @@ void HDTManager::closeHDT()
         objectModel->notifyLayoutChanged();
         searchResultsModel->updateResultListChanged();
         headerModel->updateDatasetChanged();
+        regexModel->updateDatasetChanged();
 
         emit datasetChanged();
     }
@@ -224,6 +228,11 @@ SearchResultsModel * HDTManager::getSearchResultsModel()
 HeaderModel * HDTManager::getHeaderModel()
 {
     return headerModel;
+}
+
+RegexModel *HDTManager::getRegexModel()
+{
+    return regexModel;
 }
 
 PredicateStatus *HDTManager::getPredicateStatus()
@@ -256,20 +265,20 @@ void HDTManager::setSearchPattern(hdt::TripleString &pattern)
         try {
             this->searchPatternString = pattern;
 
-            hdt->getDictionary().tripleStringtoTripleID(pattern, searchPatternID);
+            hdt->getDictionary()->tripleStringtoTripleID(pattern, searchPatternID);
 
             if(!searchPatternID.isEmpty()) {
                 if(iteratorResults!=NULL) {
                     delete iteratorResults;
                 }
-                iteratorResults = hdt->getTriples().search(searchPatternID);
+                iteratorResults = hdt->getTriples()->search(searchPatternID);
 
                 numResults=0;
                 resultsTime.reset();
                 resultsTime.stop();
                 updateNumResults();
             } else {
-                numResults = hdt->getTriples().getNumberOfElements();
+                numResults = hdt->getTriples()->getNumberOfElements();
                 iteratorResults = NULL;
             }
 
@@ -347,23 +356,12 @@ void HDTManager::selectNearestTriple(int subject, int predicate, int object)
 
 vector<hdt::TripleID> & HDTManager::getTriples()
 {
-    return hdtCachedInfo->triples;
+    return hdtCachedInfo->getTriples();
 }
 
 unsigned int HDTManager::getNumResults()
 {
     return numResults;
-}
-
-QString HDTManager::getTime()
-{
-    if(!hasHDT()) {
-        return QString("0");
-    }
-    if(searchPatternID.isEmpty()) {
-        return hdtCachedInfo->resultsTime.getRealStr().c_str();
-    }
-    return resultsTime.getRealStr().c_str();
 }
 
 void HDTManager::numResultsValueChanged(int numResults)
@@ -385,7 +383,6 @@ void HDTManager::updateNumResults()
         return;
     }
 
-#if 1
     if(iteratorResults->numResultEstimation()==hdt::EXACT) {
         numResults = iteratorResults->estimatedNumResults();
         resultsTime.stop();
@@ -394,16 +391,6 @@ void HDTManager::updateNumResults()
         emit numResultsChanged(numResults);
         return;
     }
-
-    if(getSearchPatternID().getPatternString()=="?P?") {
-        numResults = hdtCachedInfo->predicateCount[getSearchPatternID().getPredicate()-1];
-        resultsTime.stop();
-
-        searchResultsModel->updateNumResultsChanged();
-        emit numResultsChanged(numResults);
-        return;
-    }
-#endif
 
 #if 0
     ResultCounter *counter = new ResultCounter(this, this);

@@ -79,16 +79,16 @@ std::string HDTSpecForm::getStreamType(int index) {
     switch(index) {
     case 0:
         // LogStream
-        return hdt::HDTVocabulary::STREAM_TYPE_LOG;
+        return hdt::HDTVocabulary::SEQ_TYPE_LOG;
     case 1:
         // IntegerStream
-        return hdt::HDTVocabulary::STREAM_TYPE_INTEGER;
+        return hdt::HDTVocabulary::SEQ_TYPE_INTEGER;
     case 2:
         // HuffmanStream
-        return hdt::HDTVocabulary::STREAM_TYPE_HUFFMAN;
+        return hdt::HDTVocabulary::SEQ_TYPE_HUFFMAN;
     case 3:
         // WaveletStream
-        return hdt::HDTVocabulary::STREAM_TYPE_WAVELET;
+        return hdt::HDTVocabulary::SEQ_TYPE_WAVELET;
     }
     return "";
 }
@@ -101,10 +101,14 @@ void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
 
     switch(ui->dictionaryTypeCombo->currentIndex()) {
     case 0:
+        // LiteralDictionary
+        hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_LITERAL);
+        break;
+    case 1:
         // PFCDictionary
         hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PFC);
         break;
-    case 1:
+    case 2:
         // PlainDictionary
         hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PLAIN);
         break;

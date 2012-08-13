@@ -17,7 +17,7 @@ HeaderModel::~HeaderModel()
 int HeaderModel::rowCount(const QModelIndex &parent) const
 {
     if(hdtManager->hasHDT()) {
-        return hdtManager->getHDT()->getHeader().getNumberOfElements();
+        return hdtManager->getHDT()->getHeader()->getNumberOfElements();
     }
     return 0;
 }
@@ -100,7 +100,7 @@ void HeaderModel::updateDatasetChanged() {
     }
 
     if(hdtManager->hasHDT()) {
-        triples = hdtManager->getHDT()->getHeader().search("","","");
+        triples = hdtManager->getHDT()->getHeader()->search("","","");
         if(triples->hasNext()) {
             currentTriple = triples->next();
         }

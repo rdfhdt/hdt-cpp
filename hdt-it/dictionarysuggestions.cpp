@@ -33,7 +33,7 @@ DictionarySuggestions::DictionarySuggestions(QLineEdit *parent) :
 
     timer = new QTimer(this);
     timer->setSingleShot(true);
-    timer->setInterval(500);
+    timer->setInterval(100);
     connect(timer, SIGNAL(timeout()), SLOT(autoSuggest()));
     connect(editor, SIGNAL(textEdited(QString)), timer, SLOT(start()));
 }
@@ -102,7 +102,7 @@ void DictionarySuggestions::showCompletion(const vector<string> &choices)
     for (int i = 0; i < choices.size(); ++i) {
         QTreeWidgetItem * item;
         item = new QTreeWidgetItem(popup);
-        item->setText(0, stringutils::cleanN3String(choices[i].c_str()));
+	item->setText(0, stringutils::toQString(choices[i].c_str()));
         maxWidth = qMax(maxWidth, metrics.boundingRect(item->text(0)).width());
     }
     popup->setCurrentItem(popup->topLevelItem(0));
@@ -143,18 +143,14 @@ void DictionarySuggestions::autoSuggest()
         }
 
         // If not URI, Literal, Blank
-        if(str.at(0)!='<' && str.at(0)!='"' && str.at(0)!='_') {
-            if(str.left(4)=="http") {
-                str.prepend("<");
-            } else {
+        if( str.at(0)!='"' && str.at(0)!='_' && str.left(4)!="http") {
                 // Assume literal otherwise
                 str.prepend("\"");
-            }
         }
         vector<string> choices;
 
         // FETCH RESULTS FROM DICTIONARY
-        manager->getHDT()->getDictionary().getSuggestions(str.toUtf8(), role, choices, NUM_SUGGESTIONS);
+        manager->getHDT()->getDictionary()->getSuggestions(str.toUtf8(), role, choices, NUM_SUGGESTIONS);
 
         if(choices.size()==1 && choices[0]==string(str.toUtf8())) {
             return;

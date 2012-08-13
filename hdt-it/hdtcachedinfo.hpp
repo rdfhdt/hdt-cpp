@@ -10,24 +10,24 @@
 
 class HDTCachedInfo
 {
-public:
+private:
+
     hdt::HDT *hdt;
     vector<hdt::TripleID> triples;
-    vector<unsigned int> predicateCount;
+
     vector<Color> predicateColors;
-    unsigned int numResults;
     unsigned int maxPredicateCount;
-    StopWatch resultsTime;
+    vector<unsigned int> predicateCount;
 
 public:
     HDTCachedInfo(hdt::HDT *hdt);
 
     Color *getPredicateColor(unsigned int npred);
+    unsigned int getPredicateUsages(unsigned int predicate);
+    unsigned int getMaxPredicateCount();
+    vector<hdt::TripleID> &getTriples();
 
-    void updatePredicateColors();
     void generateInfo(hdt::ProgressListener *listener=NULL);
-    void save(std::string &file, hdt::ProgressListener *listener=NULL);
-    void load(std::string &file, hdt::ProgressListener *listener=NULL);
 };
 
 #endif // HDTCACHEDINFO_HPP

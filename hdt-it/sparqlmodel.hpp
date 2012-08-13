@@ -11,6 +11,7 @@ class SparqlModel : public QAbstractTableModel {
    Q_OBJECT
 private:
    HDTManager *hdtManager;
+
    hdt::VarBindingString *binding;
    unsigned int currentIndex;
    unsigned int numresults;

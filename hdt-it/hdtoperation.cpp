@@ -36,12 +36,11 @@ void HDTOperation::execute() {
             iListener.setRange(0,70);
             hdt->loadFromHDT(fileName.toAscii(), &iListener );
 
-            iListener.setRange(70, 90);
-            string file = (const char*)fileName.append("cache").toAscii();
-            hdtInfo->load(file, &iListener);
-
-            iListener.setRange(90, 100);
+	    iListener.setRange(70, 90);
 	    hdt->generateIndex( &iListener );
+
+	    iListener.setRange(90, 100);
+	    hdtInfo->generateInfo(&iListener);
 
             break;
         }
@@ -51,11 +50,11 @@ void HDTOperation::execute() {
             iListener.setRange(0,80);
             hdt->loadFromRDF(fileName.toAscii(), baseUri, notation, &iListener);
 
-            iListener.setRange(80, 90);
-            hdtInfo->generateInfo(&iListener);
-
-            iListener.setRange(90, 100);
+	    iListener.setRange(80, 90);
 	    hdt->generateIndex( &iListener );
+
+	    iListener.setRange(90, 100);
+	    hdtInfo->generateInfo(&iListener);
 
             break;
             }
@@ -141,7 +140,7 @@ int HDTOperation::exec()
 {
     dialog.setRange(0,100);
     dialog.setAutoClose(false);
-    dialog.setFixedSize(300,130);
+    dialog.setFixedSize(400,130);
 
     switch(op) {
     case HDT_READ:

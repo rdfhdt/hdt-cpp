@@ -10,44 +10,53 @@ HDTCachedInfo::HDTCachedInfo(hdt::HDT *hdt) : hdt(hdt)
 
 void HDTCachedInfo::generateInfo(hdt::ProgressListener *listener)
 {
-    cout << "Generating info" << endl;
-    unsigned int nPred = hdt->getDictionary().getNpredicates();
+
+    hdt::Triples *t = hdt->getTriples();
+
+    // Count predicates
+    unsigned int nPred = hdt->getDictionary()->getNpredicates();
+
+    hdt::TripleID triplePredicate;
     maxPredicateCount = 0;
-    numResults = 0;
     predicateCount.clear();
     predicateCount.resize(nPred);
-    hdt::Triples &t = hdt->getTriples();
 
-    unsigned int increment = t.getNumberOfElements()/RENDER_NUM_POINTS;
+    for(int p=1;p<=nPred;p++) {
+	triplePredicate.setAll(0, p, 0);
+    hdt::IteratorTripleID *predIt = t->search(triplePredicate);
+
+	predicateCount[p] = predIt->estimatedNumResults();
+
+	maxPredicateCount = max(maxPredicateCount, predicateCount[p]);
+
+	cout << "Predicate " << p << " Count: " << predicateCount[p] << endl;
+
+	delete predIt;
+    }
+
+    // Generate array
+    unsigned int increment = t->getNumberOfElements()/RENDER_NUM_POINTS;
     increment = increment < 1 ? 1 : increment;
 
-    resultsTime.reset();
-    hdt::IteratorTripleID *it = t.searchAll();
+    hdt::IteratorTripleID *it = t->searchAll();
 
-    while(it->hasNext()) {
-        hdt::TripleID *tid = it->next();
+    for(int i=0;i<t->getNumberOfElements();i+=increment) {
+	it->goTo(i);
+	hdt::TripleID *tid = it->next();
+	triples.push_back(*tid);
 
-        if( (numResults%increment)==0) {
-            triples.push_back(*tid);
-        }
-
-        //subjectCount[tid->getSubject()-1]++;
-        predicateCount[tid->getPredicate()-1]++;
-        //objectCount[tid->getObject()-1]++;
-
-        if(maxPredicateCount<predicateCount[tid->getPredicate()-1]) {
-            maxPredicateCount = predicateCount[tid->getPredicate()-1];
-        }
-
-        numResults++;
-
-        NOTIFYCOND(listener, "PostProcessing HDT data", numResults, t.getNumberOfElements());
+    NOTIFYCOND(listener, "Generating Matrix", i, t->getNumberOfElements());
     }
-    resultsTime.stop();
+
     delete it;
 
     // Calculate Predicate Colors
-    updatePredicateColors();
+    predicateColors.clear();
+    predicateColors.resize(nPred);
+    ColorRamp2 cr;
+    for(unsigned int i=0;i<nPred; i++) {
+	cr.apply(&predicateColors[i], i, 0, nPred-1);
+    }
 }
 
 Color * HDTCachedInfo::getPredicateColor(unsigned int npred)
@@ -55,54 +64,17 @@ Color * HDTCachedInfo::getPredicateColor(unsigned int npred)
     return &predicateColors[npred];
 }
 
-void HDTCachedInfo::save(std::string &fileName, hdt::ProgressListener *listener)
+unsigned int HDTCachedInfo::getPredicateUsages(unsigned int predicate)
 {
-    cout << fileName << endl;
-    std::ofstream out(fileName.c_str(), ios::binary);
-    unsigned int numTriples = triples.size();
-    out.write((char *)&numTriples, sizeof(unsigned int));
-    out.write((char *)&triples[0], sizeof(hdt::TripleID)*numTriples);
-    unsigned int numPredicates = predicateCount.size();
-    out.write((char *)&numPredicates, sizeof(numPredicates));
-    out.write((char *)&maxPredicateCount, sizeof(maxPredicateCount));
-    out.write((char *)&predicateCount[0], sizeof(unsigned int)*numPredicates);
-    out.write((char *)&resultsTime, sizeof(StopWatch));
-    out.close();
+    return predicateCount[predicate];
 }
 
-void HDTCachedInfo::load(std::string &fileName, hdt::ProgressListener *listener)
+unsigned int HDTCachedInfo::getMaxPredicateCount()
 {
-    std::ifstream in(fileName.c_str(), ios::binary);
-    if(in.good()) {
-        unsigned int numTriples;
-        in.read((char *)&numTriples, sizeof(unsigned int));
-        cout << "num triples: " << numTriples << endl;
-        triples.resize(numTriples);
-        in.read((char *)&triples[0], sizeof(hdt::TripleID)*numTriples);
-        numResults = hdt->getTriples().getNumberOfElements();
-        unsigned int numPredicates;
-        in.read((char *)&numPredicates, sizeof(numPredicates));
-        in.read((char *)&maxPredicateCount, sizeof(maxPredicateCount));
-        predicateCount.reserve(numPredicates);
-        in.read((char *)&predicateCount[0], sizeof(unsigned int)*numPredicates);
-        in.read((char *)&resultsTime, sizeof(StopWatch));
-        in.close();
-    } else {
-        generateInfo(listener);
-        save(fileName, listener);
-    }
-
-    // Calculate Predicate Colors
-    updatePredicateColors();
+    return maxPredicateCount;
 }
 
-void HDTCachedInfo::updatePredicateColors()
+vector<hdt::TripleID> &HDTCachedInfo::getTriples()
 {
-    unsigned int nPred = hdt->getDictionary().getNpredicates();
-    predicateColors.clear();
-    predicateColors.resize(nPred);
-    ColorRamp2 cr;
-    for(unsigned int i=0;i<nPred; i++) {
-	cr.apply(&predicateColors[i], i, 0, nPred-1);
-    }
+    return triples;
 }

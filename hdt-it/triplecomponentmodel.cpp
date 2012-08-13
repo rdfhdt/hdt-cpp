@@ -15,14 +15,14 @@ int TripleComponentModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     if(hdtManager->getHDT() != NULL) {
-        hdt::Dictionary &dict = hdtManager->getHDT()->getDictionary();
+        hdt::Dictionary *dict = hdtManager->getHDT()->getDictionary();
         switch(tripleComponentRole) {
         case hdt::SUBJECT:
-            return dict.getNsubjects();
+            return dict->getNsubjects();
         case hdt::PREDICATE:
-            return dict.getNpredicates();
+            return dict->getNpredicates();
         case hdt::OBJECT:
-            return dict.getNobjects();
+            return dict->getNobjects();
         }
     }
     return 0;
@@ -44,9 +44,9 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
     {
         //cout << "Data: " << index.row() << " role: " << role << " type: " << tripleComponentRole << endl;
-        hdt::Dictionary &d = hdtManager->getHDT()->getDictionary();
+        hdt::Dictionary *d = hdtManager->getHDT()->getDictionary();
         try {
-            return stringutils::cleanN3String(d.idToString(index.row()+1, tripleComponentRole).c_str());
+        return stringutils::toQString(d->idToString(index.row()+1, tripleComponentRole).c_str());
         } catch (char *e) {
             cout << "Error accessing dictionary: " << e << endl;
         } catch (const char *e) {

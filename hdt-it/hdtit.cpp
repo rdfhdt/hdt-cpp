@@ -16,8 +16,7 @@ HDTit::HDTit(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::HDTit),
     hdtManager(new HDTManager()),
-//    lastDir(QDir::currentPath())
-    lastDir("/Users/mck/rdf/hdt/")
+    lastDir(QDir::currentPath())
 {
     ui->setupUi(this);
     //this->setUnifiedTitleAndToolBarOnMac(true);
@@ -28,6 +27,7 @@ HDTit::HDTit(QWidget *parent) :
     ui->objectView->setModel(hdtManager->getObjectModel());
     ui->resultsTable->setModel(hdtManager->getSearchResultsModel());
     ui->headerView->setModel(hdtManager->getHeaderModel());
+    ui->regexResultsView->setModel(hdtManager->getRegexModel());
 
     ui->subjectPatternEdit->getSuggestions()->setManager(hdtManager);
     ui->predicatePatternEdit->getSuggestions()->setManager(hdtManager);
@@ -80,9 +80,9 @@ void HDTit::updateNumResults()
 
 void HDTit::searchPatternEdited()
 {
-    std::string subject = std::string(ui->subjectPatternEdit->text().toUtf8());
-    std::string predicate = std::string(ui->predicatePatternEdit->text().toUtf8());
-    std::string object = std::string(ui->objectPatternEdit->text().toUtf8());
+    std::string subject = ui->subjectPatternEdit->text().toUtf8().constData();
+    std::string predicate = ui->predicatePatternEdit->text().toUtf8().constData();
+    std::string object = ui->objectPatternEdit->text().toUtf8().constData();
 
     hdt::TripleString ts(subject, predicate, object);
     hdtManager->setSearchPattern(ts);
@@ -107,9 +107,9 @@ void HDTit::refreshSearchPattern()
         ui->objectPatternEdit->clear();
     } else {
         hdt::TripleString &ts = hdtManager->getSearchPatternString();
-        ui->subjectPatternEdit->setText(ts.getSubject().c_str());
-        ui->predicatePatternEdit->setText(ts.getPredicate().c_str());
-        ui->objectPatternEdit->setText(ts.getObject().c_str());
+	ui->subjectPatternEdit->setText(QString::fromUtf8(ts.getSubject().c_str()));
+	ui->predicatePatternEdit->setText(QString::fromUtf8(ts.getPredicate().c_str()));
+	ui->objectPatternEdit->setText(QString::fromUtf8(ts.getObject().c_str()));
     }
 }
 
@@ -362,4 +362,23 @@ void HDTit::on_actionSparql_triggered()
     SparqlForm *jf = new SparqlForm(this);
 
     jf->show();
+}
+
+void HDTit::on_regexSearchButton_clicked()
+{
+    this->on_regexEdit_editingFinished();
+}
+
+void HDTit::on_regexEdit_editingFinished()
+{
+    hdtManager->getRegexModel()->setQuery(ui->regexEdit->text());
+    ui->regexResultsView->scrollToTop();
+}
+
+void HDTit::on_regexResultsView_doubleClicked(const QModelIndex &index)
+{
+    if(index.column()==1) {
+        ui->objectPatternEdit->setText(hdtManager->getRegexModel()->data(index).toString());
+        ui->resultTabs->setCurrentIndex(1);
+    }
 }

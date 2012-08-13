@@ -67,6 +67,9 @@ private slots:
     void updateNumResults();
     void on_actionFull_Screen_triggered();
     void on_actionSparql_triggered();
+    void on_regexSearchButton_clicked();
+    void on_regexEdit_editingFinished();
+    void on_regexResultsView_doubleClicked(const QModelIndex &index);
 };
 
 #endif // HDTIT_HPP

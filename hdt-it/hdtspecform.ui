@@ -29,7 +29,11 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLineEdit" name="rdfInputFile"/>
+         <widget class="QLineEdit" name="rdfInputFile">
+          <property name="text">
+           <string>/Users/mck/rdf/dataset/nytimes</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="inputFileButton">
@@ -72,7 +76,11 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLineEdit" name="baseUriText"/>
+         <widget class="QLineEdit" name="baseUriText">
+          <property name="text">
+           <string>&lt;file:///Users/mck/rdf/dataset/nytimes&gt;</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -129,6 +137,11 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <item>
+           <property name="text">
+            <string>FMIndex</string>
+           </property>
+          </item>
           <item>
            <property name="text">
             <string>Plain Front Coding</string>
