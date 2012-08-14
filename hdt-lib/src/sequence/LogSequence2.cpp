@@ -34,6 +34,8 @@
 #include <HDTVocabulary.hpp>
 #include "LogSequence2.hpp"
 #include "../libdcs/VByte.h"
+#include "../util/crc8.h"
+#include "../util/crc32.h"
 
 using namespace std;
 
@@ -144,26 +146,88 @@ void LogSequence2::load(std::istream & input)
 	input.read((char*)&numbits, sizeof(numbits));
 	uint64_t numentries64 = csd::VByte::decode(input);
 
+	maxval = maxVal(numbits);
+	numentries = (size_t) numentries64;
+
+#ifndef NO_CRC
+	crc8_t filecrch;
+	input.read((char*)&filecrch, sizeof(filecrch));
+
+	crc8_t crch = crc8_init();
+
+	crch = crc8_update(crch, (unsigned char*)&numbits, sizeof(numbits));
+	unsigned char data[9];
+	unsigned int pos = csd::VByte::encode(data, numentries);
+
+	crch = crc8_update(crch, data, pos);
+
+	crch = crc8_finalize(crch);
+
+	if(crch!=filecrch) {
+		throw "Checksum error while reading LogSequence2 header.";
+	}
+#endif
+
 	if(numbits>sizeof(size_t)*8 || numentries64>std::numeric_limits<size_t>::max()) {
 		throw "This data structure is too big for a 32 bit machine";
 	}
 
-	maxval = maxVal(numbits);
-	numentries = (size_t) numentries64;
-
 	array.resize(numElementsFor(numbits, numentries));
 	size_t sizeBytes = numBytesFor(numbits, numentries);
 	input.read((char*)&array[0], sizeBytes );
+
+#ifndef NO_CRC
+	crc32_t filecrcd;
+	input.read((char*)&filecrcd, sizeof(filecrcd));
+	crc32_t crcd = crc32_init();
+
+	crcd = crc32_update(crcd, (unsigned char*)&array[0], sizeBytes);
+
+	crcd = crc32_finalize(crcd);
+
+	if(crcd!=filecrcd) {
+		throw "Checksum error while reading LogSequence2 Data";
+	}
+#endif
 }
 
 void LogSequence2::save(std::ostream & output)
 {
 	output.write((char*)&numbits, sizeof(numbits));
 	csd::VByte::encode(output, numentries);
-    // CRC16
 
-	output.write((char*)&array[0], numBytesFor(numbits, numentries));
-    // CRC32
+#ifndef NO_CRC
+	crc8_t crch = crc8_init();
+
+	crch = crc8_update(crch, (unsigned char*)&numbits, sizeof(numbits));
+	unsigned char data[9];
+	unsigned int pos = csd::VByte::encode(data, numentries);
+
+	crch = crc8_update(crch, data, pos);
+
+	crch = crc8_finalize(crch);
+
+	output.write((char*)&crch, sizeof(crch));
+#else
+	crc8_t nullcrch = 0;
+	output.write((char*)&nullcrch, sizeof(nullcrch));
+#endif
+
+	size_t numbytes = numBytesFor(numbits, numentries);
+	output.write((char*)&array[0], numbytes);
+
+#ifndef NO_CRC
+	crc32_t crcd = crc32_init();
+
+	crcd = crc32_update(crcd, (unsigned char*)&array[0], numbytes);
+
+	crcd = crc32_finalize(crcd);
+
+	output.write((char*)&crcd, sizeof(crcd));
+#else
+	crc32_t nullcrcd = 0;
+	output.write((char*)&nullcrcd, sizeof(nullcrcd));
+#endif
 }
 
 size_t LogSequence2::getNumberOfElements()

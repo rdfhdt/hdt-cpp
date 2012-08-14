@@ -288,21 +288,9 @@ void PFCDictionary::save(std::ostream & output, ControlInformation & controlInfo
 {
 	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PFC);
 	controlInformation.set("format", "text/plain");
-	controlInformation.setUint("$elements", getNumberOfElements());
-
-	controlInformation.setUint("$subjects", getNsubjects());
-	controlInformation.setUint("$objects", getNobjects());
-	controlInformation.setUint("$predicates", getNpredicates());
-	controlInformation.setUint("$sharedso", getNshared());
-
-	controlInformation.setUint("$maxid", getMaxID());
-	controlInformation.setUint("$maxsubjectid",getMaxSubjectID());
-	controlInformation.setUint("$maxpredicateid", getMaxPredicateID());
-	controlInformation.setUint("$maxobjectid", getMaxObjectID());
 
 	controlInformation.setUint("$mapping", this->mapping);
 	controlInformation.setUint("$sizeStrings", this->sizeStrings);
-	controlInformation.setUint("$blockSize", this->blocksize);
 
 	controlInformation.save(output);
 

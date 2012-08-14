@@ -1,0 +1,79 @@
+/**
+ * \file crc32.h
+ * Functions and types for CRC checks.
+ *
+ * Generated on Tue Aug 14 12:43:17 2012,
+ * by pycrc32 v0.7.10, http://www.tty1.net/pycrc32/
+ * using the configuration:
+ *    Width        = 32
+ *    Poly         = 0x1edc6f41
+ *    XorIn        = 0xffffffff
+ *    ReflectIn    = True
+ *    XorOut       = 0xffffffff
+ *    ReflectOut   = True
+ *    Algorithm    = table-driven
+ *****************************************************************************/
+#ifndef __CRC___H__
+#define __CRC___H__
+
+#include <stdlib.h>
+#include <stdint.h>
+
+/**
+ * The definition of the used algorithm.
+ *****************************************************************************/
+#define CRC_ALGO_TABLE_DRIVEN 1
+
+
+/**
+ * The type of the CRC values.
+ *
+ * This type must be big enough to contain at least 32 bits.
+ *****************************************************************************/
+typedef uint32_t crc32_t;
+
+
+/**
+ * Reflect all bits of a \a data word of \a data_len bytes.
+ *
+ * \param data         The data word to be reflected.
+ * \param data_len     The width of \a data expressed in number of bits.
+ * \return             The reflected data.
+ *****************************************************************************/
+crc32_t crc32_reflect(crc32_t data, size_t data_len);
+
+
+/**
+ * Calculate the initial crc32 value.
+ *
+ * \return     The initial crc32 value.
+ *****************************************************************************/
+static inline crc32_t crc32_init(void)
+{
+    return 0xffffffff;
+}
+
+
+/**
+ * Update the crc32 value with new data.
+ *
+ * \param crc32      The current crc32 value.
+ * \param data     Pointer to a buffer of \a data_len bytes.
+ * \param data_len Number of bytes in the \a data buffer.
+ * \return         The updated crc32 value.
+ *****************************************************************************/
+crc32_t crc32_update(crc32_t crc32, const unsigned char *data, const size_t data_len);
+
+
+/**
+ * Calculate the final crc32 value.
+ *
+ * \param crc32  The current crc32 value.
+ * \return     The final crc32 value.
+ *****************************************************************************/
+static inline crc32_t crc32_finalize(crc32_t crc32)
+{
+    return crc32 ^ 0xffffffff;
+}
+
+#endif      /* __CRC___H__ */

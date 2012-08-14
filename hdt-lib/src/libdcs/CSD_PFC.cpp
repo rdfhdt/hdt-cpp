@@ -27,6 +27,9 @@
 
 #include <stdlib.h>
 
+#include "../util/crc8.h"
+#include "../util/crc32.h"
+
 #include "CSD_PFC.h"
 
 namespace csd
@@ -273,18 +276,49 @@ void CSD_PFC::save(ofstream & fp)
 	VByte::encode(fp, bytes);
 	VByte::encode(fp, blocksize);
 
-    // CRC16
+#ifndef NO_CRC
+	crc8_t crc = crc8_init();
+
+	crc = crc8_update(crc, &type, sizeof(type));
+
+	unsigned char buf[27]; // 9 bytes per VByte (max) * 3 values.
+	uint8_t pos = 0;
+	pos += VByte::encode(&buf[pos], numstrings);
+	pos += VByte::encode(&buf[pos], bytes);
+	pos += VByte::encode(&buf[pos], blocksize);
+
+	crc = crc8_update(crc, buf, pos);
+
+	crc = crc8_finalize(crc);
+
+	fp.write((char *)&crc, sizeof(crc));
+#else
+	uint8_t nullcrch=0;
+	fp.write((char *)&nullcrc, sizeof(nullcrch));
+#endif
+
 	blocks->save(fp);
+
 	saveValue<unsigned char>(fp, text, bytes);
 
-    // CRC32
+#ifndef NO_CRC
+	crc32_t crcd = crc32_init();
+
+#ifndef NO_CRC
+		crcd = crc32_update(crcd, text, bytes);
+#endif
+
+	crcd = crc32_finalize(crcd);
+
+	fp.write((char *)&crcd, sizeof(crcd));
+#else
+	crc32_t nullcrcd=0;
+	fp.write((char *)&nullcrcd, sizeof(nullcrcd));
+#endif
 }
 
 CSD* CSD_PFC::load(ifstream & fp)
 {
-	//	uint32_t type = loadValue<uint32_t>(fp);
-	//	if(type != PFC) return NULL;
-
 	CSD_PFC *dicc = new CSD_PFC();
 
 	dicc->type = PFC;   // Type already read by CSD
@@ -294,33 +328,64 @@ CSD* CSD_PFC::load(ifstream & fp)
 	dicc->bytes = VByte::decode(fp);
     dicc->blocksize = (uint32_t) VByte::decode(fp);
 
-    // CRC16
+    crc8_t filecrc;
+    fp.read((char*)&filecrc, sizeof(filecrc));
+
+#ifndef NO_CRC
+	crc8_t crc = crc8_init();
+
+	crc = crc8_update(crc, &dicc->type, sizeof(dicc->type));
+
+	unsigned char buf[27]; // 9 bytes per VByte (max) * 3 values.
+	uint8_t pos = 0;
+	pos += VByte::encode(&buf[pos], dicc->numstrings);
+	pos += VByte::encode(&buf[pos], dicc->bytes);
+	pos += VByte::encode(&buf[pos], dicc->blocksize);
+
+	crc = crc8_update(crc, buf, pos);
+
+	crc = crc8_finalize(crc);
+
+	if(crc!=filecrc) {
+		throw "Checksum error while reading Plain Front Coding Header.";
+	}
+#endif
 
 	// Load blocks
 	dicc->blocks = new hdt::LogSequence2();
 	dicc->blocks->load(fp);
 	dicc->nblocks = dicc->blocks->getNumberOfElements()-1;
 
-
 	// Load strings
-#if 1
-//#ifdef WIN32
+
 	dicc->text = (unsigned char *)malloc(dicc->bytes);
 	const unsigned int blocksize = 8192;
 	unsigned int counter=0;
-	char *ptr = (char *)dicc->text;
+	crc32_t crcd = crc32_init();
+	unsigned char *ptr = (unsigned char *)dicc->text;
 	while(counter<dicc->bytes && fp.good()) {
-		fp.read(ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);
+		fp.read((char*)ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);
+
+#ifndef NO_CRC
+		crcd = crc32_update(crcd, ptr, fp.gcount());
+#endif
 		ptr += fp.gcount();
 		counter += fp.gcount();
 	}
-	//cout << "FINAL Read: " << counter << " / " << dicc->bytes << endl;
-#else
-	dicc->text = (unsigned char *) malloc(dicc->bytes*sizeof(unsigned char*));
-	fp.read((char *)dicc->text, dicc->bytes);
-#endif
+	if(counter!=dicc->bytes) {
+		throw "Could not read all the data section of the Plain Front Coding.";
+	}
 
-    // CRC32
+	crcd = crc32_finalize(crcd);
+
+	crc32_t filecrcd;
+	fp.read((char*)&filecrcd, sizeof(filecrcd));
+
+#ifndef NO_CRC
+	if(filecrcd!=crcd) {
+		throw "Checksum error in the data section of the Plain Front Coding.";
+	}
+#endif
 
 	return dicc;
 }
