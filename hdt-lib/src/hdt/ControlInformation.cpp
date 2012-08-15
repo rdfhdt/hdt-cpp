@@ -53,15 +53,14 @@ ControlInformation::~ControlInformation() {
 }
 
 void ControlInformation::save(std::ostream &out) {
+	CRC16 crc;
 
-	//std::cout << "Save ControlInformation " << out.tellp() << std::endl;
-	out << "$HDT";
+	crc.writeData(out, (unsigned char*)"$HDT", 4);
 
-	out.write((char *)&this->version, sizeof(uint16_t));
-	out.write((char *)&this->components, sizeof(uint16_t));
+	crc.writeData(out, (unsigned char *)&this->version, sizeof(uint16_t));
+	crc.writeData(out, (unsigned char *)&this->components, sizeof(uint16_t));
 
 	string all;
-
 	for(PropertyMapIt it = map.begin(); it!=map.end(); it++) {
 		all.append(it->first);
 		all.append(":");
@@ -70,42 +69,28 @@ void ControlInformation::save(std::ostream &out) {
 		//out << it->first << ':' << it->second << ';' << std::endl;
 	}
 	all.append("$END\n");
-	out.write((char *)all.c_str(), all.length());
+	crc.writeData(out, (unsigned char *)all.c_str(), all.length());
 
     // CRC16
-#ifndef NO_CRC
-	crc16_t crc = crc16_init();
-	crc = crc16_update(crc, (unsigned char *)"$HDT", 4);
-	crc = crc16_update(crc, (unsigned char *)&this->version, sizeof(uint16_t));
-	crc = crc16_update(crc, (unsigned char *)&this->components, sizeof(uint16_t));
-
-	crc = crc16_update(crc, (unsigned char *)all.c_str(), all.length());
-
-
-	crc = crc16_finalize(crc);
-
-	out.write((char *)&crc, sizeof(crc));
-#else
-	uint16_t nullcrc=0;
-	out.write((char *)&nullcrc, sizeof(nullcrc));
-#endif
+	crc.writeCRC(out);
 }
 
 void ControlInformation::load(std::istream &in) {
-	//std::cout << "Load ControlInformation" << in.tellg() << std::endl;
+	CRC16 crc;
+
 	std::string line;
 	std::string all;
 
 	// Read input
-	char hdt[5];
-	in.read(hdt, 4);
+	unsigned char hdt[5];
+	crc.readData(in, hdt, 4);
 	hdt[4]=0;
-	if(strcmp(hdt,"$HDT")!=0) {
+	if(strcmp((char*)hdt,"$HDT")!=0) {
 		throw "Non-HDT Section";
 	}
 
-	in.read((char *)&this->version, sizeof(uint16_t));
-	in.read((char *)&this->components, sizeof(uint16_t));
+	crc.readData(in, (unsigned char *)&this->version, sizeof(uint16_t));
+	crc.readData(in, (unsigned char *)&this->components, sizeof(uint16_t));
 
 	while(getline(in,line)) {
 		all.append(line);
@@ -131,24 +116,14 @@ void ControlInformation::load(std::istream &in) {
 	}
 
 	all.append("\n");
+	crc.update((unsigned char *)all.c_str(), all.length());
 
-	crc16_t filecrc;
-	in.read((char *)&filecrc, sizeof(filecrc));
+	crc16_t filecrc = crc16_read(in);
 
     // CRC16
-#ifndef NO_CRC
-	crc16_t crc = crc16_init();
-	crc = crc16_update(crc, (unsigned char *)"$HDT", 4);
-	crc = crc16_update(crc, (unsigned char *)&this->version, sizeof(uint16_t));
-	crc = crc16_update(crc, (unsigned char *)&this->components, sizeof(uint16_t));
-	crc = crc16_update(crc, (unsigned char *)all.c_str(), all.length());
-
-	crc = crc16_finalize(crc);
-
-	if(filecrc!=crc) {
+	if(filecrc!=crc.getValue()) {
 		throw "CRC of control information does not match.";
 	}
-#endif
 }
 
 void ControlInformation::clear() {

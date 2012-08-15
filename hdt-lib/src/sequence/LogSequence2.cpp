@@ -143,91 +143,68 @@ void LogSequence2::reduceBits() {
 
 void LogSequence2::load(std::istream & input)
 {
-	input.read((char*)&numbits, sizeof(numbits));
-	uint64_t numentries64 = csd::VByte::decode(input);
-
-	maxval = maxVal(numbits);
-	numentries = (size_t) numentries64;
-
-#ifndef NO_CRC
-	crc8_t filecrch;
-	input.read((char*)&filecrch, sizeof(filecrch));
-
-	crc8_t crch = crc8_init();
-
-	crch = crc8_update(crch, (unsigned char*)&numbits, sizeof(numbits));
+	CRC8 crch;
+	CRC32 crcd;
 	unsigned char data[9];
-	unsigned int pos = csd::VByte::encode(data, numentries);
 
-	crch = crc8_update(crch, data, pos);
+	// Read numbits
+	crch.readData(input, (unsigned char*)&numbits, sizeof(numbits));
 
-	crch = crc8_finalize(crch);
+	// Read numentries
+	uint64_t numentries64 = csd::VByte::decode(input);
+	unsigned int pos = csd::VByte::encode(data, numentries64);
+	crch.update(data, pos);
 
-	if(crch!=filecrch) {
+	// Validate Checksum Header
+	crc8_t filecrch = crc8_read(input);
+	if(crch.getValue()!=filecrch) {
 		throw "Checksum error while reading LogSequence2 header.";
 	}
-#endif
 
+	// Update local variables and validate
+	maxval = maxVal(numbits);
+	numentries = (size_t) numentries64;
 	if(numbits>sizeof(size_t)*8 || numentries64>std::numeric_limits<size_t>::max()) {
-		throw "This data structure is too big for a 32 bit machine";
+		throw "This data structure is too big for this machine";
 	}
 
+	// Calculate data size, reserve buffer.
+	size_t numbytes = numBytesFor(numbits, numentries);
 	array.resize(numElementsFor(numbits, numentries));
-	size_t sizeBytes = numBytesFor(numbits, numentries);
-	input.read((char*)&array[0], sizeBytes );
 
-#ifndef NO_CRC
-	crc32_t filecrcd;
-	input.read((char*)&filecrcd, sizeof(filecrcd));
-	crc32_t crcd = crc32_init();
+	// Read data
+	crcd.readData(input, (unsigned char*)&array[0], numbytes);
 
-	crcd = crc32_update(crcd, (unsigned char*)&array[0], sizeBytes);
-
-	crcd = crc32_finalize(crcd);
-
-	if(crcd!=filecrcd) {
+	// Validate checksum data
+	crc32_t filecrcd = crc32_read(input);
+	if(crcd.getValue()!=filecrcd) {
 		throw "Checksum error while reading LogSequence2 Data";
 	}
-#endif
 }
 
-void LogSequence2::save(std::ostream & output)
+void LogSequence2::save(std::ostream & out)
 {
-	output.write((char*)&numbits, sizeof(numbits));
-	csd::VByte::encode(output, numentries);
-
-#ifndef NO_CRC
-	crc8_t crch = crc8_init();
-
-	crch = crc8_update(crch, (unsigned char*)&numbits, sizeof(numbits));
+	CRC8 crch;
+	CRC32 crcd;
 	unsigned char data[9];
-	unsigned int pos = csd::VByte::encode(data, numentries);
+	unsigned int len;
 
-	crch = crc8_update(crch, data, pos);
+	// Write numbits
+	crch.writeData(out, &numbits, sizeof(numbits));
 
-	crch = crc8_finalize(crch);
+	// Write numentries
+	len=csd::VByte::encode(data, numentries);
+	crch.writeData(out, data, len);
 
-	output.write((char*)&crch, sizeof(crch));
-#else
-	crc8_t nullcrch = 0;
-	output.write((char*)&nullcrch, sizeof(nullcrch));
-#endif
+	// Write Header CRC
+	crch.writeCRC(out);
 
+	// Write data
 	size_t numbytes = numBytesFor(numbits, numentries);
-	output.write((char*)&array[0], numbytes);
+	crcd.writeData(out, (unsigned char*)&array[0], numbytes);
 
-#ifndef NO_CRC
-	crc32_t crcd = crc32_init();
-
-	crcd = crc32_update(crcd, (unsigned char*)&array[0], numbytes);
-
-	crcd = crc32_finalize(crcd);
-
-	output.write((char*)&crcd, sizeof(crcd));
-#else
-	crc32_t nullcrcd = 0;
-	output.write((char*)&nullcrcd, sizeof(nullcrcd));
-#endif
+	// Write Data CRC
+	crcd.writeCRC(out);
 }
 
 size_t LogSequence2::getNumberOfElements()

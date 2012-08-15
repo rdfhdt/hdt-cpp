@@ -34,20 +34,17 @@
 #define ADJACENCYLIST_HPP_
 
 #include "IntSequence.hpp"
-
-#include <libcdsBasics.h>
-#include <BitSequenceRG.h>
-#include <BitString.h>
+#include "../bitsequence/BitSeq.h"
 
 namespace hdt {
 
 class AdjacencyList {
 private:
 	IntSequence *elements;
-	cds_static::BitSequence *bitmap;
+	BitSeq *bitmap;
 
 public:
-	AdjacencyList(IntSequence *el, cds_static::BitSequence *bit);
+	AdjacencyList(IntSequence *el, BitSeq *bit);
 	virtual ~AdjacencyList();
 
 	size_t find(size_t x);

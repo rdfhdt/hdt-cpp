@@ -13,9 +13,11 @@
  *    ReflectOut   = False
  *    Algorithm    = table-driven
  *****************************************************************************/
-#ifndef __CRC__H__
-#define __CRC__H__
+#ifndef __CRC8__H__
+#define __CRC8__H__
 
+#include <iostream>
+#include <assert.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -56,6 +58,9 @@ static inline crc8_t crc8_init(void)
 crc8_t crc8_update(crc8_t crc8, const unsigned char *data, const size_t data_len);
 
 
+crc8_t crc8_read(std::istream &in);
+
+
 /**
  * Calculate the final crc8 value.
  *
@@ -66,5 +71,46 @@ static inline crc8_t crc8_finalize(crc8_t crc8)
 {
     return crc8;
 }
+
+class CRC8 {
+private:
+	crc8_t crc;
+
+public:
+	CRC8() : crc(crc8_init()) {
+
+	}
+
+	inline void update(unsigned char *buf, size_t len) {
+		crc = crc8_update(crc, buf, len);
+	}
+
+	inline void writeData(std::ostream &out, unsigned char *buf, size_t len) {
+		crc = crc8_update(crc, buf, len);
+		out.write((char*)buf, len);
+	}
+
+	inline void writeCRC(std::ostream &out) {
+		crc8_t end = crc8_finalize(crc);
+		out.write((char*)&end, sizeof(end));
+	}
+
+	inline void readData(std::istream &in, unsigned char *buf, size_t len) {
+		in.read((char*)buf, len);
+		crc = crc8_update(crc, buf, in.gcount());
+	}
+
+	inline crc8_t getValue(){
+		return crc8_finalize(crc);
+	}
+
+	inline void reset() {
+		crc = crc8_init();
+	}
+
+	inline bool equal(CRC8 &other) {
+		return other.crc==crc;
+	}
+};
 
 #endif      /* __CRC__H__ */

@@ -29,19 +29,32 @@ inline unsigned int popcountTable2(const unsigned int x) {
 
 inline unsigned int popCountParallel(unsigned int v) {
 	unsigned int c; 	// store the total here
-	static const int S[] = {1, 2, 4, 8, 16}; // Magic Binary Numbers
-	static const int B[] = {0x55555555, 0x33333333, 0x0F0F0F0F, 0x00FF00FF, 0x0000FFFF};
-
-	c = v - ((v >> 1) & B[0]);
-	c = ((c >> S[1]) & B[1]) + (c & B[1]);
-	c = ((c >> S[2]) + c) & B[2];
-	c = ((c >> S[3]) + c) & B[3];
-	c = ((c >> S[4]) + c) & B[4];
 
 	v = v - ((v >> 1) & 0x55555555);                    // reuse input as temporary
 	v = (v & 0x33333333) + ((v >> 2) & 0x33333333);     // temp
 	c = ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
 
+	return c;
+}
+
+inline unsigned int popCountParallel64(unsigned int v) {
+	unsigned int c;
+	c =  ((v & 0xfff) * 0x1001001001001ULL & 0x84210842108421ULL) % 0x1f;
+	c += (((v & 0xfff000) >> 12) * 0x1001001001001ULL & 0x84210842108421ULL) %
+			0x1f;
+	c += ((v >> 24) * 0x1001001001001ULL & 0x84210842108421ULL) % 0x1f;
+
+	return c;
+}
+
+inline unsigned int popCountLoopSet(unsigned int v) {
+	unsigned int c = 0;
+	// strip one set bit per iteration
+	while (v != 0)
+	{
+		v &= v-1;
+		c++;
+	}
 	return c;
 }
 
@@ -409,8 +422,10 @@ int main(void)
 		//unsigned int pop = popcountTable1(i);
 		//unsigned int pop = popcountTable2(i);
 		//unsigned int pop = popCountParallel(i);
+		//unsigned int pop = popCountParallel64(i);
+		unsigned int pop = popCountLoopSet(i);
 		//unsigned int pop = popcount_sse2_32bit(&i, sizeof(unsigned int));
-		unsigned int pop = popcount_ssse3(&i, sizeof(unsigned int));
+		//unsigned int pop = popcount_ssse3(&i, sizeof(unsigned int));
 		total+=pop;
 	}
 

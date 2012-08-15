@@ -35,10 +35,7 @@
 #include <Triples.hpp>
 #include <HDTSpecification.hpp>
 
-#include <libcdsBasics.h>
-#include <BitSequenceRG.h>
-#include <BitString.h>
-
+#include "../bitsequence/BitSequence375.h"
 #include "../sequence/WaveletSequence.hpp"
 #include "../sequence/LogSequence2.hpp"
 #include "../sequence/AdjacencyList.hpp"
@@ -53,8 +50,8 @@ class BitmapTriples : public Triples {
 private:
 	ControlInformation controlInformation;
 	HDTSpecification spec;
-	IntSequence *arrayY, *arrayZ, *streamIndex;
-	cds_static::BitSequence *bitmapY, *bitmapZ, *bitmapIndex;
+	IntSequence *arrayY, *arrayZ, *arrayIndex;
+	BitSequence375 *bitmapY, *bitmapZ, *bitmapIndex;
 	LogSequence2 *predicateCount;
 	WaveletSequence *waveletY;
 

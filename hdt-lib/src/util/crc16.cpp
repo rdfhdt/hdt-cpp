@@ -103,5 +103,9 @@ crc16_t crc16_update(crc16_t crc16, const unsigned char *data, const size_t data
     return crc16 & 0xffff;
 }
 
-
+crc16_t crc16_read(std::istream &in){
+	crc16_t value;
+	in.read((char*)&value, sizeof(value));
+	return value;
+}
 

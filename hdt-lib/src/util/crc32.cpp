@@ -133,4 +133,11 @@ crc32_t crc32_update(crc32_t crc32, const unsigned char *data, const size_t data
 }
 
 
+crc32_t crc32_read(std::istream &in){
+	crc32_t value;
+	in.read((char*)&value, sizeof(value));
+	return value;
+}
+
+
 

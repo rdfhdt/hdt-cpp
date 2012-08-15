@@ -13,9 +13,10 @@
  *    ReflectOut   = True
  *    Algorithm    = table-driven
  *****************************************************************************/
-#ifndef __CRC___H__
-#define __CRC___H__
+#ifndef __CRC32___H__
+#define __CRC32___H__
 
+#include <iostream>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -53,6 +54,8 @@ static inline crc32_t crc32_init(void)
     return 0xffffffff;
 }
 
+crc32_t crc32_read(std::istream &in);
+
 
 /**
  * Update the crc32 value with new data.
@@ -75,5 +78,43 @@ static inline crc32_t crc32_finalize(crc32_t crc32)
 {
     return crc32 ^ 0xffffffff;
 }
+
+class CRC32 {
+private:
+	crc32_t crc;
+
+public:
+	CRC32() : crc(crc32_init()) {
+
+	}
+
+	inline void update(unsigned char *buf, size_t len) {
+		crc = crc32_update(crc, buf, len);
+	}
+
+	inline void writeData(std::ostream &out, unsigned char *buf, size_t len) {
+		crc = crc32_update(crc, buf, len);
+		out.write((char*)buf, len);
+	}
+
+	inline void writeCRC(std::ostream &out) {
+		crc32_t end = crc32_finalize(crc);
+		out.write((char*)&end, sizeof(end));
+	}
+
+	inline void readData(std::istream &in, unsigned char *buf, size_t len) {
+		in.read((char*)buf, len);
+		crc = crc32_update(crc, buf, in.gcount());
+	}
+
+	inline crc32_t getValue(){
+		return crc32_finalize(crc);
+	}
+
+	inline void reset() {
+		crc = crc32_init();
+	}
+};
+
 
 #endif      /* __CRC___H__ */

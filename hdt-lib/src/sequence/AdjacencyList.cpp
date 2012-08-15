@@ -33,7 +33,7 @@
 
 namespace hdt {
 
-AdjacencyList::AdjacencyList(IntSequence *el, cds_static::BitSequence *bit) :
+AdjacencyList::AdjacencyList(IntSequence *el, BitSeq *bit) :
 		elements(el),
 		bitmap(bit) {
 

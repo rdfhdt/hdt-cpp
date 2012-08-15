@@ -522,7 +522,7 @@ ObjectIndexIterator::ObjectIndexIterator(BitmapTriples *trip, TripleID &pat) :
     pattern(pat),
     adjY(trip->arrayY, trip->bitmapY),
     adjZ(trip->arrayZ, trip->bitmapZ),
-    adjIndex(trip->streamIndex, trip->bitmapIndex)
+    adjIndex(trip->arrayIndex, trip->bitmapIndex)
 {
     // Convert pattern to local order.
     swapComponentOrder(&pattern, SPO, triples->order);

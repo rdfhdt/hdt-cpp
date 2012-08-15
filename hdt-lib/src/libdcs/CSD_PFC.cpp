@@ -266,90 +266,62 @@ uint64_t CSD_PFC::getSize()
 	return bytes*sizeof(unsigned char)+blocks->size()+sizeof(CSD_PFC);
 }
 
-void CSD_PFC::save(ofstream & fp)
+void CSD_PFC::save(ofstream &out)
 {
+	CRC8 crch;
+	CRC32 crcd;
+	unsigned char buf[27]; // 9 bytes per VByte (max) * 3 values.
+
 	if(!text || !blocks) {
 		return;
 	}
-	saveValue<unsigned char>(fp, type);
-	VByte::encode(fp, numstrings);
-	VByte::encode(fp, bytes);
-	VByte::encode(fp, blocksize);
 
-#ifndef NO_CRC
-	crc8_t crc = crc8_init();
+	// Save type
+	crch.writeData(out, (unsigned char *)&type, sizeof(type));
 
-	crc = crc8_update(crc, &type, sizeof(type));
-
-	unsigned char buf[27]; // 9 bytes per VByte (max) * 3 values.
+	// Save sizes
 	uint8_t pos = 0;
 	pos += VByte::encode(&buf[pos], numstrings);
 	pos += VByte::encode(&buf[pos], bytes);
 	pos += VByte::encode(&buf[pos], blocksize);
 
-	crc = crc8_update(crc, buf, pos);
+	crch.writeData(out, buf, pos);
+	crch.writeCRC(out);
 
-	crc = crc8_finalize(crc);
+	// Write block pointers
+	blocks->save(out);
 
-	fp.write((char *)&crc, sizeof(crc));
-#else
-	uint8_t nullcrch=0;
-	fp.write((char *)&nullcrc, sizeof(nullcrch));
-#endif
-
-	blocks->save(fp);
-
-	saveValue<unsigned char>(fp, text, bytes);
-
-#ifndef NO_CRC
-	crc32_t crcd = crc32_init();
-
-#ifndef NO_CRC
-		crcd = crc32_update(crcd, text, bytes);
-#endif
-
-	crcd = crc32_finalize(crcd);
-
-	fp.write((char *)&crcd, sizeof(crcd));
-#else
-	crc32_t nullcrcd=0;
-	fp.write((char *)&nullcrcd, sizeof(nullcrcd));
-#endif
+	// Write packed data
+	crcd.writeData(out, text, bytes);
+	crcd.writeCRC(out);
 }
 
 CSD* CSD_PFC::load(ifstream & fp)
 {
+	CRC8 crch;
+	CRC32 crcd;
+	unsigned char buf[27]; // 9 bytes per VByte (max) * 3 values.
 	CSD_PFC *dicc = new CSD_PFC();
 
+	// Load variables
 	dicc->type = PFC;   // Type already read by CSD
 	dicc->numstrings = (uint32_t) VByte::decode(fp);
-
-	// Load packed strings.{
 	dicc->bytes = VByte::decode(fp);
     dicc->blocksize = (uint32_t) VByte::decode(fp);
 
-    crc8_t filecrc;
-    fp.read((char*)&filecrc, sizeof(filecrc));
+    // Calculate variables CRC
+	crch.update(&dicc->type, sizeof(dicc->type));
 
-#ifndef NO_CRC
-	crc8_t crc = crc8_init();
-
-	crc = crc8_update(crc, &dicc->type, sizeof(dicc->type));
-
-	unsigned char buf[27]; // 9 bytes per VByte (max) * 3 values.
 	uint8_t pos = 0;
 	pos += VByte::encode(&buf[pos], dicc->numstrings);
 	pos += VByte::encode(&buf[pos], dicc->bytes);
 	pos += VByte::encode(&buf[pos], dicc->blocksize);
+	crch.update(buf, pos);
 
-	crc = crc8_update(crc, buf, pos);
-
-	crc = crc8_finalize(crc);
-
-	if(crc!=filecrc) {
+	crc8_t filecrc = crc8_read(fp);
+	if(crch.getValue()!=filecrc) {
 		throw "Checksum error while reading Plain Front Coding Header.";
 	}
-#endif
 
 	// Load blocks
 	dicc->blocks = new hdt::LogSequence2();
@@ -357,18 +329,13 @@ CSD* CSD_PFC::load(ifstream & fp)
 	dicc->nblocks = dicc->blocks->getNumberOfElements()-1;
 
 	// Load strings
-
 	dicc->text = (unsigned char *)malloc(dicc->bytes);
 	const unsigned int blocksize = 8192;
 	unsigned int counter=0;
-	crc32_t crcd = crc32_init();
 	unsigned char *ptr = (unsigned char *)dicc->text;
 	while(counter<dicc->bytes && fp.good()) {
-		fp.read((char*)ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);
+		crcd.readData(fp, ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);
 
-#ifndef NO_CRC
-		crcd = crc32_update(crcd, ptr, fp.gcount());
-#endif
 		ptr += fp.gcount();
 		counter += fp.gcount();
 	}
@@ -376,16 +343,10 @@ CSD* CSD_PFC::load(ifstream & fp)
 		throw "Could not read all the data section of the Plain Front Coding.";
 	}
 
-	crcd = crc32_finalize(crcd);
-
-	crc32_t filecrcd;
-	fp.read((char*)&filecrcd, sizeof(filecrcd));
-
-#ifndef NO_CRC
-	if(filecrcd!=crcd) {
+	crc32_t filecrcd = crc32_read(fp);
+	if(filecrcd!=crcd.getValue()) {
 		throw "Checksum error in the data section of the Plain Front Coding.";
 	}
-#endif
 
 	return dicc;
 }

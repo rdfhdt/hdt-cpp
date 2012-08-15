@@ -13,9 +13,10 @@
  *    ReflectOut   = True
  *    Algorithm    = table-driven
  *****************************************************************************/
-#ifndef __CRC___H__
-#define __CRC___H__
+#ifndef __CRC16___H__
+#define __CRC16___H__
 
+#include <iostream>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -64,6 +65,7 @@ static inline crc16_t crc16_init(void)
  *****************************************************************************/
 crc16_t crc16_update(crc16_t crc16, const unsigned char *data, const size_t data_len);
 
+crc16_t crc16_read(std::istream &in);
 
 /**
  * Calculate the final crc16 value.
@@ -75,5 +77,43 @@ static inline crc16_t crc16_finalize(crc16_t crc16)
 {
     return crc16 ^ 0x0000;
 }
+
+class CRC16 {
+private:
+	crc16_t crc;
+
+public:
+	CRC16() : crc(crc16_init()) {
+
+	}
+
+	inline void update(unsigned char *buf, size_t len) {
+		crc = crc16_update(crc, buf, len);
+	}
+
+	inline void writeData(std::ostream &out, unsigned char *buf, size_t len) {
+		crc = crc16_update(crc, buf, len);
+		out.write((char *)buf, len);
+	}
+
+	inline void writeCRC(std::ostream &out) {
+		crc16_t end = crc16_finalize(crc);
+		out.write((char*)&end, sizeof(end));
+	}
+
+	inline void readData(std::istream &in, unsigned char *buf, size_t len) {
+		in.read((char*)buf, len);
+		crc = crc16_update(crc, buf, in.gcount());
+	}
+
+	inline crc16_t getValue(){
+		return crc16_finalize(crc);
+	}
+
+	inline void reset() {
+		crc = crc16_init();
+	}
+};
+
 
 #endif      /* __CRC___H__ */

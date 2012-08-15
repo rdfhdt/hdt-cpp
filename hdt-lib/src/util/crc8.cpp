@@ -16,6 +16,7 @@
 #include "crc8.h"     /* include the header file generated with pycrc8 */
 #include <stdlib.h>
 #include <stdint.h>
+#include <iostream>
 
 /**
  * Static table used for the table_driven implementation.
@@ -63,5 +64,10 @@ crc8_t crc8_update(crc8_t crc8, const unsigned char *data, const size_t data_len
     return crc8 & 0xff;
 }
 
-
+crc8_t crc8_read(std::istream &in){
+	assert(in.good());
+	crc8_t value;
+	in.read((char*)&value, sizeof(value));
+	return value;
+}
 

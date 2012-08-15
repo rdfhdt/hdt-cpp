@@ -46,7 +46,7 @@ namespace hdt {
 BitmapTriples::BitmapTriples() : order(SPO) {
 	arrayY = IntSequence::getArray(spec.get("stream.y"));
 	arrayZ = IntSequence::getArray(spec.get("stream.z"));
-	streamIndex = NULL;
+	arrayIndex = NULL;
 	bitmapY = NULL;
 	bitmapZ = NULL;
 	bitmapIndex = NULL;
@@ -61,7 +61,7 @@ BitmapTriples::BitmapTriples(HDTSpecification &specification) : spec(specificati
 		order = SPO;
 	arrayY = IntSequence::getArray(spec.get("stream.y"));
 	arrayZ = IntSequence::getArray(spec.get("stream.z"));
-	streamIndex = NULL;
+	arrayIndex = NULL;
 	bitmapY = NULL;
 	bitmapZ = NULL;
 	bitmapIndex = NULL;
@@ -82,8 +82,8 @@ BitmapTriples::~BitmapTriples() {
 	if(bitmapIndex!=NULL) {
 		delete bitmapIndex;
 	}
-	if(streamIndex!=NULL) {
-		delete streamIndex;
+	if(arrayIndex!=NULL) {
+		delete arrayIndex;
 	}
 	if(predicateCount!=NULL) {
 		delete predicateCount;
@@ -104,10 +104,11 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 
 	IteratorTripleID *it = triples.searchAll();
 
+	bitmapY = new BitSequence375(triples.getNumberOfElements()/2);
+	bitmapZ = new BitSequence375(triples.getNumberOfElements());
+
 	LogSequence2 *vectorY = new LogSequence2(bits(triples.getNumberOfElements()));
 	LogSequence2 *vectorZ = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
-
-	vector<bool> bitY, bitZ;
 
 	unsigned int lastX, lastY, lastZ;
 	unsigned int x, y, z;
@@ -135,25 +136,25 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
             if(x!=lastX+1) {
                 throw "Error: The subjects must be correlative.";
             }
-			bitY.push_back(1);
+			bitmapY->append(true);
 			vectorY->push_back(y);
 
-			bitZ.push_back(1);
+			bitmapZ->append(true);
 			vectorZ->push_back(z);
 		} else if(y!=lastY) {
             if(y<lastY) {
                 throw "Error: The predicates must be in increasing order.";
             }
-			bitY.push_back(0);
+            bitmapY->append(false);
 			vectorY->push_back(y);
 
-			bitZ.push_back(1);
+			bitmapZ->append(true);
 			vectorZ->push_back(z);
 		} else {
             if(z<=lastZ) {
                 throw "Error, The objects must be in increasing order.";
             }
-			bitZ.push_back(0);
+            bitmapZ->append(false);
 			vectorZ->push_back(z);
 		}
 
@@ -165,8 +166,8 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 		numTriples++;
 	}
 
-	bitY.push_back(1);
-	bitZ.push_back(1);
+	bitmapY->append(true);
+	bitmapZ->append(true);
 
 	delete it;
 
@@ -177,24 +178,6 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 
 	delete arrayZ;
 	arrayZ = vectorZ;
-
-	BitString *bsy = new BitString(bitY.size());
-	for(unsigned int i=0;i<bitY.size();i++) {
-		bsy->setBit(i, bitY[i]);
-	}
-
-	BitString *bsz = new BitString(bitZ.size());
-	for(unsigned int i=0;i<bitZ.size();i++) {
-		bsz->setBit(i, bitZ[i]);
-	}
-
-	bitY.clear();
-	bitZ.clear();
-
-	//bitmapY = new cds_static::BitSequenceRG(*bsy, 20);
-	//bitmapZ = new cds_static::BitSequenceRG(*bsz, 20);
-	bitmapY = new cds_static::BitSequence375(*bsy);
-	bitmapZ = new cds_static::BitSequence375(*bsz);
 
 #if 0
 	AdjacencyList adjY(arrayY, bitmapY);
@@ -234,6 +217,12 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
     cout << "Generate Object Index" << endl;
     cout << " Gather object lists..." << endl;
 
+    cout << "ArrayY: " << arrayY->getNumberOfElements() << endl;
+    cout << "ArrayZ: " << arrayZ->getNumberOfElements() << endl;
+    cout << "BitmapY: " << bitmapY->getNumBits() << endl;
+    cout << "BitmapZ: " << bitmapZ->getNumBits() << endl;
+    cout << "BitmapZ Ones: " << bitmapZ->countOnes() << endl;
+
 	// For each object, a list of (zpos, predicate)
 	vector<vector<pair<unsigned int, unsigned int> > > index;
 	int maxpred = 0;
@@ -265,7 +254,10 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 	}
 
 	// Generate list and bitmap.
-	BitString *indexBitmapObjectTmp = new BitString(arrayZ->getNumberOfElements());
+	if(bitmapIndex!=NULL) {
+		delete bitmapIndex;
+	}
+	bitmapIndex = new BitSequence375(arrayZ->getNumberOfElements());
 
     cout << " Serialize object lists..." << endl;
 	iListener.setRange(40, 80);
@@ -273,7 +265,7 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 	unsigned int numBits = bits(arrayY->getNumberOfElements());
 	unsigned int numElements = arrayZ->getNumberOfElements();
 	LogSequence2 *stream = new LogSequence2(numBits, numElements );
-	streamIndex = stream;
+	arrayIndex = stream;
 	for(unsigned int i=0;i<index.size();i++){
 		if(index[i].size()<=0) {
 			cerr << "Error, object "<< i << " never appears" << endl;
@@ -289,10 +281,10 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 
 			if(j==index[i].size()-1) {
 				// Last element of the list
-				indexBitmapObjectTmp->setBit(pos, true);
+				bitmapIndex->set(pos, true);
 			} else {
 				// Elements inside the list
-				indexBitmapObjectTmp->setBit(pos, false);
+				bitmapIndex->set(pos, false);
 			}
 			pos++;
 		}
@@ -301,11 +293,6 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 	index.clear();
 
 	predicateCount->reduceBits();
-
-	NOTIFY(listener, "Creating object bitmap", 80, 85 );
-	//bitmapIndex = new cds_static::BitSequenceRG(*indexBitmapObjectTmp, 20);
-	bitmapIndex = new cds_static::BitSequence375(*indexBitmapObjectTmp);
-	delete indexBitmapObjectTmp;
 
 	cout << "Index generated in " << st << endl;
 
@@ -317,11 +304,11 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 	cout << "Num triples: " << getNumberOfElements() << endl;
 	cout << "Order: " << getOrderStr(order) << endl;
 	cout << "Original triples size: " << size() << endl;
-	cout << "Stream size: " << streamIndex->size() << " <" << ((unsigned long long)(streamIndex->size())*100) / size() << "%>"<< endl;
-	cout << "Bitmap Object size: " << bitmapIndex->getSize() << " <" << ((unsigned long long)(bitmapIndex->getSize()))*100 / size() << "%>"<< endl;
+	cout << "Stream size: " << arrayIndex->size() << " <" << ((unsigned long long)(arrayIndex->size())*100) / size() << "%>"<< endl;
+	cout << "Bitmap Object size: " << bitmapIndex->getSizeBytes() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()))*100 / size() << "%>"<< endl;
 
-        cout << "Total Index size: " << bitmapIndex->getSize()+streamIndex->size() << " <" << ((unsigned long long)(bitmapIndex->getSize()+streamIndex->size()))*100 / size() << "%>"<< endl;
-        cout << "Total size: " << size()+bitmapIndex->getSize()+streamIndex->size() << endl;
+    cout << "Total Index size: " << bitmapIndex->getSizeBytes()+arrayIndex->size() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()+arrayIndex->size()))*100 / size() << "%>"<< endl;
+    cout << "Total size: " << size()+bitmapIndex->getSizeBytes()+arrayIndex->size() << endl;
 
 	cout << "Number of lists: " << bitmapZ->countOnes() << " Bits: " << bits(bitmapZ->countOnes()) << endl;
 }
@@ -335,10 +322,10 @@ void BitmapTriples::populateHeader(Header &header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_SIZE, arrayY->size() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_SIZE, arrayZ->size() );
 	if(bitmapY!=NULL) {
-		header.insert(rootNode, HDTVocabulary::TRIPLES_BITMAPY_SIZE, bitmapY->getSize() );
+		header.insert(rootNode, HDTVocabulary::TRIPLES_BITMAPY_SIZE, bitmapY->getSizeBytes() );
 	}
 	if(bitmapZ!=NULL) {
-		header.insert(rootNode, HDTVocabulary::TRIPLES_BITMAPZ_SIZE, bitmapZ->getSize() );
+		header.insert(rootNode, HDTVocabulary::TRIPLES_BITMAPZ_SIZE, bitmapZ->getSizeBytes() );
 	}
 }
 
@@ -362,12 +349,12 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	if(patternString=="S?O") {
 	    if(this->order == SPO) {
 		return new SequentialSearchIteratorTripleID(pattern, new BitmapTriplesSearchIterator(this, pattern));
-	    } else if( (this->order == OPS) && (streamIndex!=NULL)) {
+	    } else if( (this->order == OPS) && (arrayIndex!=NULL)) {
 		return new SequentialSearchIteratorTripleID(pattern, new ObjectIndexIterator(this, pattern));
 	    }
 	}
 
-	if((streamIndex!=NULL) && (patternString=="??O" || patternString=="?PO" )) {
+	if((arrayIndex!=NULL) && (patternString=="??O" || patternString=="?PO" )) {
 		//if(patternString=="??O") {
 			return new ObjectIndexIterator(this, pattern);
 		//} else {
@@ -442,7 +429,7 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	iListener.setRange(0,5);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Y");
 	//cout << "Load BitmapY " << in->tellg() << endl;
-	bitmapY = cds_static::BitSequence::load(*in);
+	bitmapY = BitSequence375::load(*in);
 	if(bitmapY==NULL){
 		throw "Could not read bitmapY.";
 	}
@@ -450,7 +437,7 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	iListener.setRange(5,10);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Z");
 	//cout << "Load BitmapZ " << in->tellg() << endl;
-	bitmapZ = cds_static::BitSequence::load(*in);
+	bitmapZ = BitSequence375::load(*in);
 	if(bitmapZ==NULL){
 		throw "Could not read bitmapZ.";
 	}
@@ -475,14 +462,14 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,70);
 
-	if(streamIndex==NULL || bitmapIndex==NULL) {
+	if(arrayIndex==NULL || bitmapIndex==NULL) {
 		generateIndex(&iListener);
 	}
 
 	controlInformation.clear();
 	controlInformation.setIndex(true);
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("stream.index", streamIndex->getType());
+	controlInformation.set("stream.index", arrayIndex->getType());
 	controlInformation.save(output);
 
 	ofstream *out = dynamic_cast<ofstream *>(&output);
@@ -497,7 +484,7 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 
 	iListener.setRange(90,100);
 	iListener.notifyProgress(0, "BitmapTriples saving Stream Index");
-	streamIndex->save(*out);
+	arrayIndex->save(*out);
 }
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
@@ -526,16 +513,16 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 	}
 	iListener.setRange(10,20);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Index");
-	bitmapIndex = cds_static::BitSequence::load(*in);
+	bitmapIndex = BitSequence375::load(*in);
 
 	// LOAD STREAM
-	if(streamIndex!=NULL) {
-		delete streamIndex;
+	if(arrayIndex!=NULL) {
+		delete arrayIndex;
 	}
-	streamIndex = IntSequence::getArray(typeIndex);
+	arrayIndex = IntSequence::getArray(typeIndex);
 	iListener.setRange(10,50);
 	iListener.notifyProgress(0, "BitmapTriples loading Stream Index");
-	streamIndex->load(input);
+	arrayIndex->load(input);
 
 	// Make sure wavelet is generated
 	iListener.setRange(50,100);
@@ -550,16 +537,16 @@ unsigned int BitmapTriples::getNumberOfElements()
 size_t BitmapTriples::size()
 {
 	if(bitmapY!=NULL && bitmapZ!=NULL && predicateCount!=NULL) {
-		return bitmapY->getSize()+bitmapZ->getSize()+
-			arrayY->size()+arrayZ->size()+
-			streamIndex->size()+bitmapIndex->getSize()+
-			predicateCount->size();
+		return bitmapY->getSizeBytes()
+				+bitmapZ->getSizeBytes()
+				+arrayY->size()
+				+arrayZ->size()
+				+arrayIndex->size()
+				+bitmapIndex->getSizeBytes();
+				//+predicateCount->size();
 	}
-	return arrayY->size()+arrayZ->size()+bitmapY->getSize()+bitmapZ->getSize();
+	return arrayY->size()+arrayZ->size()+bitmapY->getSizeBytes()+bitmapZ->getSizeBytes();
 }
 
 
 }
-
-
-
