@@ -35,19 +35,17 @@ namespace hdt {
 
 TriplesComparator::TriplesComparator()
 {
-	// TODO Auto-generated constructor stub
-} // TriplesComparator()
+}
 
 TriplesComparator::TriplesComparator(TripleComponentOrder order)
 {
 	this->order = order;
-} // TriplesComparator()
+}
 
 
 TriplesComparator::~TriplesComparator()
 {
-	// TODO Auto-generated destructor stub
-} // TriplesComparator()
+}
 
 bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 {

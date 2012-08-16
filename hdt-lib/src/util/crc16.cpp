@@ -94,7 +94,6 @@ crc16_t crc16_update(crc16_t crc16, const unsigned char *data, const size_t data
     size_t len = data_len;
 
     while (len--) {
-    	//cout << "crc16 " << hex << (uint32_t) *data << dec << endl;
         tbl_idx = (crc16 ^ *data) & 0xff;
         crc16 = (crc16_table[tbl_idx] ^ (crc16 >> 8)) & 0xffff;
 

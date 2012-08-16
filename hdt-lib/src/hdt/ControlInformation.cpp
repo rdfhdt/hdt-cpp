@@ -44,12 +44,11 @@ namespace hdt {
 #define INDEX_BIT 8
 
 ControlInformation::ControlInformation() : version(0), components(0) {
-	// TODO Auto-generated constructor stub
 
 }
 
 ControlInformation::~ControlInformation() {
-	// TODO Auto-generated destructor stub
+
 }
 
 void ControlInformation::save(std::ostream &out) {
