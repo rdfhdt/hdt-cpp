@@ -1,8 +1,10 @@
-
 OS := $(shell uname)
 
+# CPPFLAGS=-g3 -Wall -O0
+#-DVERBOSE
+CPPFLAGS=-O3 -Wall -DNDEBUG
+
 CPP=g++
-CPPFLAGS=-O3
 
 ifeq ($(OS), Darwin)
 CPP=clang++
@@ -16,7 +18,7 @@ UTILS_OBJ=utils/Array.o utils/BitString.o utils/cppUtils.o utils/timing.o
 
 # OBJECTS FROM cds_static PACKAGE
 STATIC_MAPPER_OBJ=static/mapper/Mapper.o static/mapper/MapperNone.o static/mapper/MapperCont.o static/mapper/MapperRev.o
-STATIC_BITSEQ_OBJ= static/bitsequence/BitSequence.o static/bitsequence/BitSequenceRG.o static/bitsequence/BitSequenceSDArray.o static/bitsequence/sdarraySadakane.o static/bitsequence/BitSequenceDArray.o static/bitsequence/BitSequenceRRR.o static/bitsequence/BitSequenceBuilderRG.o static/bitsequence/BitSequenceBuilderRRR.o static/bitsequence/BitSequenceBuilderSDArray.o static/bitsequence/BitSequenceBuilderDArray.o static/bitsequence/TableOffsetRRR.o static/bitsequence/BitSequence375.o
+STATIC_BITSEQ_OBJ= static/bitsequence/BitSequence.o static/bitsequence/BitSequenceRG.o static/bitsequence/BitSequenceSDArray.o static/bitsequence/sdarraySadakane.o static/bitsequence/BitSequenceDArray.o static/bitsequence/BitSequenceRRR.o static/bitsequence/BitSequenceBuilderRG.o static/bitsequence/BitSequenceBuilderRRR.o static/bitsequence/BitSequenceBuilderSDArray.o static/bitsequence/BitSequenceBuilderDArray.o static/bitsequence/TableOffsetRRR.o
 STATIC_CODER_OBJ=static/coders/huff.o static/coders/HuffmanCoder.o
 STATIC_SEQ_OBJ=static/sequence/Sequence.o static/sequence/BitmapsSequence.o static/sequence/wt_coder.o static/sequence/wt_coder_binary.o static/sequence/wt_coder_huff.o static/sequence/wt_node.o static/sequence/wt_node_internal.o static/sequence/wt_node_leaf.o static/sequence/WaveletTree.o static/sequence/WaveletTreeNoptrs.o static/sequence/WaveletTreeNoptrsS.o static/sequence/WaveletMatrix.o static/sequence/SequenceGMR.o static/sequence/SequenceGMRChunk.o static/sequence/SequenceBuilderWaveletTreeNoptrs.o static/sequence/SequenceBuilderWaveletTreeNoptrsS.o static/sequence/SequenceBuilderWaveletTree.o static/sequence/SequenceBuilderGMR.o static/sequence/SequenceBuilderGMRChunk.o static/sequence/SequenceAlphPart.o static/sequence/SequenceBuilderStr.o static/sequence/SequenceBuilderAlphPart.o static/sequence/SequenceBuilderWaveletMatrix.o
 

@@ -1,8 +1,4 @@
 
-# CPPFLAGS=-g3 -Wall -O0
-#-DVERBOSE
-CPPFLAGS=-O9 -Wall -DNDEBUG
-
 all:	libcompact
 
 doc:

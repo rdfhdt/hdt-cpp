@@ -29,7 +29,6 @@
 #define RRR02_LIGHT_HDR 4
 #define SDARRAY_HDR 5
 #define DARRAY_HDR 6
-#define BIT375_HDR 7
 
 #include <libcdsBasics.h>
 #include <Array.h>
@@ -127,5 +126,4 @@ namespace cds_static
 #include<BitSequenceRRR.h>
 #include<BitSequenceSDArray.h>
 #include<BitSequenceDArray.h>
-#include<BitSequence375.h>
 #endif							 /* _STATIC_BITSEQUENCE_H */

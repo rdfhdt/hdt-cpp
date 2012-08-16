@@ -71,7 +71,6 @@ SOURCES += \
     ../src/static/sequence/SequenceAlphPart.cpp \
     ../src/static/sequence/Sequence.cpp \
     ../src/static/sequence/BitmapsSequence.cpp \
-    ../src/static/bitsequence/BitSequence375.cpp \
     ../src/utils/timing.cpp \
     ../src/static/textindex/TextIndexCSA.cpp \
     ../src/static/textindex/TextIndex.cpp \
@@ -156,7 +155,6 @@ HEADERS += \
     ../src/static/sequence/SequenceAlphPart.h \
     ../src/static/sequence/Sequence.h \
     ../src/static/sequence/BitmapsSequence.h \
-    ../src/static/bitsequence/BitSequence375.h \
     ../src/utils/timing.h \
     ../src/static/textindex/TextIndexCSA.h \
     ../src/static/textindex/TextIndex.h \

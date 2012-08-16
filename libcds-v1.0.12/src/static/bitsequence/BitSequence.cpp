@@ -151,7 +151,6 @@ namespace cds_static
 			//case RRR02_LIGHT_HDR: return BitSequence_rrr02_light::load(fp);
 			case SDARRAY_HDR: return BitSequenceSDArray::load(fp);
 			case DARRAY_HDR: return BitSequenceDArray::load(fp);
-			case BIT375_HDR: return BitSequence375::load(fp);
 		}
 		return NULL;
 	}
