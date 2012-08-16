@@ -124,11 +124,14 @@ crc32_t crc32_update(crc32_t crc32, const unsigned char *data, const size_t data
 
     size_t len = data_len;
     while (len--) {
+
         tbl_idx = (crc32 ^ *data) & 0xff;
         crc32 = (crc32_table[tbl_idx] ^ (crc32 >> 8)) & 0xffffffff;
 
+        //std::cout << "   CRC32 Update " << std::hex << (int)*data << "   Accum " << std::hex << (crc32 & 0xffffffff) << std::endl;
         data++;
     }
+
     return crc32 & 0xffffffff;
 }
 
@@ -136,6 +139,7 @@ crc32_t crc32_update(crc32_t crc32, const unsigned char *data, const size_t data
 crc32_t crc32_read(std::istream &in){
 	crc32_t value;
 	in.read((char*)&value, sizeof(value));
+	std::cout << "CRC32 " << std::hex << value << std::endl;
 	return value;
 }
 

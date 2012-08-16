@@ -68,6 +68,7 @@ crc8_t crc8_read(std::istream &in){
 	assert(in.good());
 	crc8_t value;
 	in.read((char*)&value, sizeof(value));
+	//std::cout << "CRC8 " << std::hex << (int)value << std::endl;
 	return value;
 }
 

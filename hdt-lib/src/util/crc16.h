@@ -21,12 +21,6 @@
 #include <stdint.h>
 
 /**
- * The definition of the used algorithm.
- *****************************************************************************/
-#define CRC_ALGO_TABLE_DRIVEN 1
-
-
-/**
  * The type of the CRC values.
  *
  * This type must be big enough to contain at least 16 bits.
