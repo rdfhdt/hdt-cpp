@@ -87,7 +87,11 @@ SOURCES += \
     ../src/sequence/AdjacencyList.cpp \
     ../src/hdt/TripleIDStringIterator.cpp \
     ../src/hdt/BasicModifiableHDT.cpp \
-    ../src/sparql/QueryProcessor.cpp
+    ../src/sparql/QueryProcessor.cpp \
+    ../src/bitsequence/BitSequence375.cpp \
+    ../src/util/crc32.cpp \
+    ../src/util/crc16.cpp \
+    ../src/util/crc8.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
@@ -160,7 +164,12 @@ HEADERS += \
     ../src/util/StopWatch.hpp \
     ../src/util/fdstream.hpp \
     ../src/util/propertyutil.h \
-    ../src/util/Histogram.h
+    ../src/util/Histogram.h \
+    ../src/bitsequence/BitSequence375.h \
+    ../src/bitsequence/BitSeq.h \
+    ../src/util/crc32.h \
+    ../src/util/crc16.h \
+    ../src/util/crc8.h
 
 #For hdt-lib
 INCLUDEPATH += ../include
