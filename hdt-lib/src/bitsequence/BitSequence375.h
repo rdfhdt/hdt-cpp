@@ -19,6 +19,7 @@
 #ifndef _STATIC_BITSEQUENCE_375_H
 #define _STATIC_BITSEQUENCE_375_H
 
+#include <stdint.h>
 #include <fstream>
 #include <vector>
 

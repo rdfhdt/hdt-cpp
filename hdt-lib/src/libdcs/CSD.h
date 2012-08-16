@@ -34,6 +34,7 @@
 #ifndef _COMPRESSEDSTRINGDICTIONARY_H
 #define _COMPRESSEDSTRINGDICTIONARY_H
 
+#include <stdint.h>
 #include <Iterator.hpp>
 #include <iostream>
 #include <fstream>
