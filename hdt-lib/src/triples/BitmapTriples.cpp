@@ -217,12 +217,6 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
     cout << "Generate Object Index" << endl;
     cout << " Gather object lists..." << endl;
 
-    cout << "ArrayY: " << arrayY->getNumberOfElements() << endl;
-    cout << "ArrayZ: " << arrayZ->getNumberOfElements() << endl;
-    cout << "BitmapY: " << bitmapY->getNumBits() << endl;
-    cout << "BitmapZ: " << bitmapZ->getNumBits() << endl;
-    cout << "BitmapZ Ones: " << bitmapZ->countOnes() << endl;
-
 	// For each object, a list of (zpos, predicate)
 	vector<vector<pair<unsigned int, unsigned int> > > index;
 	int maxpred = 0;
