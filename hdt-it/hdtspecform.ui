@@ -31,7 +31,7 @@
         <item>
          <widget class="QLineEdit" name="rdfInputFile">
           <property name="text">
-           <string>/Users/mck/rdf/dataset/nytimes</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -78,7 +78,7 @@
         <item>
          <widget class="QLineEdit" name="baseUriText">
           <property name="text">
-           <string>&lt;file:///Users/mck/rdf/dataset/nytimes&gt;</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -139,17 +139,17 @@
           </property>
           <item>
            <property name="text">
-            <string>FMIndex</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
             <string>Plain Front Coding</string>
            </property>
           </item>
           <item>
            <property name="text">
             <string>Plain</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>FMIndex</string>
            </property>
           </item>
          </widget>

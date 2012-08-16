@@ -101,16 +101,16 @@ void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
 
     switch(ui->dictionaryTypeCombo->currentIndex()) {
     case 0:
-        // LiteralDictionary
-        hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_LITERAL);
-        break;
-    case 1:
         // PFCDictionary
         hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PFC);
         break;
-    case 2:
+    case 1:
         // PlainDictionary
         hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PLAIN);
+        break;
+    case 2:
+        // LiteralDictionary
+        hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_LITERAL);
         break;
     }
 
