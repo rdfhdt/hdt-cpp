@@ -17,6 +17,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include <smmintrin.h>
+
+#ifndef __SSE4_2__
 /**
  * Static table used for the table_driven implementation.
  *****************************************************************************/
@@ -87,6 +90,8 @@ static const crc32_t crc32_table[256] = {
     0xbe2da0a5, 0x4c4623a6, 0x5f16d052, 0xad7d5351
 };
 
+#endif
+
 /**
  * Reflect all bits of a \a data word of \a data_len bytes.
  *
@@ -107,9 +112,6 @@ crc32_t crc32_reflect(crc32_t data, size_t data_len)
     return ret;
 }
 
-
-// FIXME: Use SSE4.2 where available.
-
 /**
  * Update the crc32 value with new data.
  *
@@ -124,11 +126,13 @@ crc32_t crc32_update(crc32_t crc32, const unsigned char *data, const size_t data
 
     size_t len = data_len;
     while (len--) {
-
+#ifdef __SSE4_2__
+    	// Use Intel crc instructions to accelerate process.
+   		crc32 = __builtin_ia32_crc32qi(crc32, *data);
+#else
         tbl_idx = (crc32 ^ *data) & 0xff;
         crc32 = (crc32_table[tbl_idx] ^ (crc32 >> 8)) & 0xffffffff;
-
-        //std::cout << "   CRC32 Update " << std::hex << (int)*data << "   Accum " << std::hex << (crc32 & 0xffffffff) << std::endl;
+#endif
         data++;
     }
 
@@ -139,7 +143,6 @@ crc32_t crc32_update(crc32_t crc32, const unsigned char *data, const size_t data
 crc32_t crc32_read(std::istream &in){
 	crc32_t value;
 	in.read((char*)&value, sizeof(value));
-	std::cout << "CRC32 " << std::hex << value << std::endl;
 	return value;
 }
 
