@@ -54,6 +54,10 @@ public:
 	virtual unsigned int getNumberOfElements() {
 		return 0;
 	}
+
+	virtual void freeStr(unsigned char *ptr) {
+
+	}
 };
 
 class VectorIteratorUCharString : public IteratorUCharString {
