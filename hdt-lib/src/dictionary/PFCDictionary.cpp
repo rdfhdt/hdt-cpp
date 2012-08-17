@@ -269,19 +269,19 @@ void PFCDictionary::import(Dictionary *other, ProgressListener *listener) {
 }
 
 IteratorUCharString *PFCDictionary::getSubjects() {
-	throw "Not implemented";
+	return subjects->listAll();
 }
 
 IteratorUCharString *PFCDictionary::getPredicates() {
-	throw "Not implemented";
+	return predicates->listAll();
 }
 
 IteratorUCharString *PFCDictionary::getObjects() {
-	throw "Not implemented";
+	return objects->listAll();
 }
 
 IteratorUCharString *PFCDictionary::getShared() {
-	throw "Not implemented";
+	return shared->listAll();
 }
 
 void PFCDictionary::save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener)

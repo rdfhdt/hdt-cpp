@@ -27,7 +27,7 @@ void help() {
 	cout << "\t-i\t\tAlso generate index to solve all triple patterns." << endl;
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
 	cout << "\t-o\t<options>\tHDT Additional options (option1:value1;option2:value2;...)" << endl;
-	cout << "\t-f\t<format>\tFormat of the RDF input (N3, Turtle, RDF-XML)" << endl;
+	cout << "\t-f\t<format>\tFormat of the RDF input (ntriples, nquad, n3, turtle, rdfxml)" << endl;
 	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
@@ -38,9 +38,9 @@ public:
 	virtual ~ConvertProgress() { }
 
     void notifyProgress(float level, const char *section) {
-    	cout << section << ": " << level << " %" << endl;
-    	//cout << "\r " << section << ": " << level << " %                      \r";
-		//cout.flush();
+    	cout << section << ": " << level << " %";
+    	cout << "\r " << section << ": " << level << " %                      \r";
+		cout.flush();
 	}
 
 };
@@ -109,10 +109,6 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	/*for (int i = optind; i < argc; i++) {
-		cout << "Non opt: " << argv[i] << endl;
-	}*/
-
 	inputFile = argv[optind];
 	outputFile = argv[optind+1];
 
@@ -144,7 +140,7 @@ int main(int argc, char **argv) {
 		} else if(rdfFormat=="rdfxml") {
 			notation = XML;
 		} else {
-			cout << "ERROR: The RDF input format must be one of: (ntriples, n3, turtle, rdfxml)" << endl;
+			cout << "ERROR: The RDF input format must be one of: (ntriples, nquad, n3, turtle, rdfxml)" << endl;
 			help();
 			return 1;
 		}

@@ -103,6 +103,7 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence, 
 			samplingsPositions.push_back(total);
 		}
 
+		it->freeStr(currentStr);
 		total++;
 	}
 
@@ -126,7 +127,7 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence, 
 
 	if (use_sample) {
 		 bitmap = new uint[(total + 1 + W) / W];
-		 memset((void*)bitmap, (total + 1 + W) / W, 0);
+		 memset((void*)bitmap, 0, 4*((total + 1 + W) / W));
 		 bitset(bitmap, 0);
 		 for (size_t i=0;i<samplingsPositions.size();i++){
 			 bitset(bitmap, samplingsPositions[i]);

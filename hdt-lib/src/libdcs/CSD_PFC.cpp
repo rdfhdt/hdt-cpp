@@ -123,6 +123,8 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progress
 		if((numstrings%100000)==0) {
 			listener->notifyProgress(numstrings, " Loading to PFC ");
 		}
+
+		it->freeStr(currentStr);
 	}
 
 	free(previousStr);
@@ -539,9 +541,12 @@ uint CSD_PFC::longest_common_prefix(const unsigned char* str1, const unsigned ch
 	return delta;
 }
 
+
+hdt::IteratorUCharString *CSD_PFC::listAll() {
+	return new PFCIterator(this);
 }
 
-void csd::CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
+void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
 {
     uint block;
     locateBlock((unsigned char *)base, &block);
@@ -625,4 +630,6 @@ void csd::CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, i
     }
 
     delete [] string;
+}
+
 }

@@ -51,6 +51,8 @@ using namespace cds_utils;
 namespace csd
 {
 
+class PFCIterator;
+
 class CSD_PFC : public CSD
 {		
   public:		
@@ -100,6 +102,7 @@ class CSD_PFC : public CSD
 
     void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 		
+    hdt::IteratorUCharString *listAll();
   protected:
     uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
     unsigned char *text;	//! Front-Coding encoded sequence.
@@ -142,7 +145,43 @@ class CSD_PFC : public CSD
 	@lstr2: length of the second string.
     */
     inline uint longest_common_prefix(const unsigned char* str1, const unsigned char* str2, uint lstr1, uint lstr2);
+
+    friend class PFCIterator;
   };
+
+class PFCIterator : public hdt::IteratorUCharString {
+private:
+	CSD_PFC *pfc;
+	size_t max;
+	size_t count;
+public:
+	PFCIterator(CSD_PFC *pfc) : pfc(pfc), count(1) {
+		max = pfc->getLength();
+	}
+
+	virtual ~PFCIterator() { }
+
+	bool hasNext() {
+		return count<=max;
+	}
+
+	unsigned char *next() {
+		return pfc->extract(count++);
+	}
+
+	unsigned int getNumberOfElements() {
+		return max;
+	}
+
+	virtual void freeStr(unsigned char *ptr) {
+		pfc->freeString(ptr);
+	}
 };
+
+
+
+}
+
+
 
 #endif  

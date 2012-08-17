@@ -209,11 +209,11 @@ void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	Prog
 class LiteralIterator : public IteratorUCharString {
 private:
 	IteratorUCharString *child;
-	unsigned char *nextItem;
+	unsigned char *previous, *nextItem;
 	bool goon;
 
 public:
-	LiteralIterator(IteratorUCharString *child) : child(child), nextItem(NULL), goon(false) {
+	LiteralIterator(IteratorUCharString *child) : child(child), previous(NULL), nextItem(NULL), goon(false) {
 		if(child->hasNext()) {
 			nextItem = child->next();
 		}
@@ -232,7 +232,10 @@ public:
 	}
 
 	unsigned char *next() {
-		unsigned char *previous = nextItem;
+		if(previous) {
+			child->freeStr(previous);
+		}
+		previous = nextItem;
 		if(child->hasNext()) {
 			nextItem = child->next();
 		} else {

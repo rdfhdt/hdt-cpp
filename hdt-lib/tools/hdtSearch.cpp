@@ -35,6 +35,49 @@ void help() {
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
+void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
+	TripleString tripleString;
+	tripleString.read(query);
+
+	const char *subj = tripleString.getSubject().c_str();
+	const char *pred = tripleString.getPredicate().c_str();
+	const char *obj = tripleString.getObject().c_str();
+	if(strcmp(subj, "?")==0) {
+		subj="";
+	}
+	if(strcmp(pred, "?")==0) {
+		pred="";
+	}
+	if(strcmp(obj, "?")==0) {
+		obj="";
+	}
+
+#if 0
+	cout << "Subject: |" << subj <<"|"<< endl;
+	cout << "Predicate: |" << pred <<"|"<< endl;
+	cout << "Object: |" << obj << "|"<<endl;
+#endif
+
+	try {
+		IteratorTripleString *it = hdt->search(subj, pred, obj);
+
+		StopWatch st;
+		unsigned int numTriples=0;
+		while(it->hasNext() && interruptSignal==0) {
+			TripleString *ts = it->next();
+			if(!measure)
+				out << *ts << endl;
+			numTriples++;
+		}
+		cout << numTriples << " results in " << st << endl;
+		delete it;
+
+		interruptSignal=0;	// Interrupt caught, enable again.
+	} catch (char *e) {
+		cerr << e << endl;
+	}
+
+}
 
 int main(int argc, char **argv) {
 	int c;
@@ -77,103 +120,46 @@ int main(int argc, char **argv) {
 
 		hdt->generateIndex();
 
-		if(query!="") {
-			ostream *out;
-			ofstream outF;
+		ostream *out;
+		ofstream outF;
 
-			if(outputFile!="") {
-				outF.open(outputFile.c_str());
-				out = &outF;
-			} else {
-				out = &cout;
-			}
-
-			TripleString tripleString;
-			tripleString.read(query);
-
-			const char *subj = tripleString.getSubject().c_str();
-			const char *pred = tripleString.getPredicate().c_str();
-			const char *obj = tripleString.getObject().c_str();
-			if(strcmp(subj, "?")==0) {
-				subj="";
-			}
-			if(strcmp(pred, "?")==0) {
-				subj="";
-			}
-			if(strcmp(obj, "?")==0) {
-				obj="";
-			}
-
-			IteratorTripleString *it = hdt->search(subj, pred, obj);
-
-			StopWatch st;
-			unsigned int numTriples=0;
-			while(it->hasNext()) {
-				TripleString *ts = it->next();
-				if(!measure)
-					*out << *ts << endl;
-				numTriples++;
-			}
-			if(measure)
-				cout << numTriples << " results in " << st << endl;
-			delete it;
-
-			if(outputFile!="") {
-				outF.close();
-			}
-
+		if(outputFile!="") {
+			outF.open(outputFile.c_str());
+			out = &outF;
 		} else {
-			TripleString tripleString;
+			out = &cout;
+		}
+
+		if(query!="") {
+			// Supplied query, search and exit.
+			iterate(hdt, (char*)query.c_str(), *out, measure);
+		} else {
+			// No supplied query, show terminal.
 			char line[1024*10];
 
 			signal(SIGINT, &signalHandler);
 			cout << ">> ";
 			while(cin.getline(line, 1024*10)) {
-				if(line[0]=='\0'||strcmp(line, "exit")==0|| strcmp(line,"quit")==0) {
-					//break;
+				if(strcmp(line, "exit")==0|| strcmp(line,"quit")==0) {
+					break;
+				}
+				if(strcmp(line, "help")==0) {
+					cout << "Please write Triple Search Pattern, using '?' for wildcards. e.g " << endl;
+					cout << "   http://www.somewhere.com/mysubject ? ?" << endl;
+					cout << "If you just press 'enter', all triples will be shown, Interrupt with Control+C."<< endl;
+					cout << "Type 'exit', 'quit' or Control+D to exit the shell." << endl;
+					cout << ">> ";
+					continue;
 				}
 
-				tripleString.read(line);
-
-
-				const char *subj = tripleString.getSubject().c_str();
-				const char *pred = tripleString.getPredicate().c_str();
-				const char *obj = tripleString.getObject().c_str();
-				if(strcmp(subj, "?")==0) {
-					subj="";
-				}
-				if(strcmp(pred, "?")==0) {
-					pred="";
-				}
-				if(strcmp(obj, "?")==0) {
-					obj="";
-				}
-
-				cout << "Query: " << tripleString << endl;
-
-				try {
-					IteratorTripleString *it = hdt->search(subj, pred, obj);
-
-					StopWatch st;
-					unsigned int numTriples = 0;
-					interruptSignal = 0;
-					while(it->hasNext() && !interruptSignal) {
-						TripleString *ts = it->next();
-
-						if(!measure) {
-							cout << *ts << endl;
-						}
-
-						numTriples++;
-					}
-					cout << numTriples << " results in " << st << endl;
-					delete it;
-				} catch (char *e) {
-					cout << e << endl;
-				}
+				iterate(hdt, line, *out, measure);
 
 				cout << ">> ";
 			}
+		}
+
+		if(outputFile!="") {
+			outF.close();
 		}
 
 		delete hdt;

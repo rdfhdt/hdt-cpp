@@ -79,6 +79,8 @@ class CSD
 
     virtual void dumpAll()=0;
 
+    virtual hdt::IteratorUCharString *listAll()=0;
+
     /** Returns the number of strings in the dictionary. */
     uint32_t getLength();
 

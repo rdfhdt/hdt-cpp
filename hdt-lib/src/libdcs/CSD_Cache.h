@@ -90,6 +90,8 @@ private:
     */
     uint decompress(unsigned char **dict);
 
+    hdt::IteratorUCharString *listAll() { return child->listAll(); }
+
     /** Returns the size of the structure in bytes. */
     uint64_t getSize();
 

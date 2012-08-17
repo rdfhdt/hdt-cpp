@@ -51,12 +51,12 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 	this->nblocks = 0;
 
 	uint64_t reservedSize = 1024;
-	uchar *textfc = (uchar*)malloc(reservedSize*sizeof(uchar));
+	unsigned char *textfc = (unsigned char*)malloc(reservedSize*sizeof(unsigned char));
 	uint64_t bytesfc = 0;
 
 	vector<uint> xblocks; // Temporal storage for start positions
 
-	uchar *previousStr, *currentStr = NULL;
+	unsigned char *previousStr, *currentStr = NULL;
 	uint previousLength = 0, currentLength = 0;
 
 	while (it->hasNext())
@@ -77,7 +77,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 					reservedSize=(bytesfc+currentLength+1)*2;
 				}
 			}
-			textfc = (uchar*)realloc(textfc, reservedSize*sizeof(uchar));
+			textfc = (unsigned char*)realloc(textfc, reservedSize*sizeof(unsigned char));
 		}
 
 		if ((numstrings % blocksize) == 0)
@@ -120,9 +120,10 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 
 		// New string processed
 		numstrings++;
-		previousStr = currentStr;
+		memcpy(previousStr, currentStr, currentLength);
 		previousLength = currentLength;
 
+		it->freeStr(currentStr);
 		//NOTIFYCOND(listener, "Converting dictionary to HTFC", length, it->getNumberOfElements());
 	}
 
@@ -130,7 +131,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 	xblocks.push_back(bytesfc);
 
 	// Trunc encoded sequence to save unused memory
-	textfc = (uchar *) realloc(textfc, bytesfc*sizeof(uchar));
+	textfc = (unsigned char *) realloc(textfc, bytesfc*sizeof(unsigned char));
 
 	/********************************
 	 * HERE STARTS HuTucker
@@ -143,7 +144,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 	leafs = ht.getCodes(&HTcode, &tree);
 
 	uint64_t tsize = reservedSize/2;
-	text = (uchar*)malloc(tsize*sizeof(uchar));
+	text = (unsigned char*)malloc(tsize*sizeof(unsigned char));
 	for (uint64_t i=0; i<tsize; i++) text[i] = 0; // Fixme: Replace for calloc
 
 	// Auxiliar variables for Hu-Tucker encoding
@@ -162,7 +163,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
                                         tsize=(bytes+maxlength+1)*2;
                                 }
                         }
-			text = (uchar*)realloc(text, tsize*sizeof(uchar));
+			text = (unsigned char*)realloc(text, tsize*sizeof(unsigned char));
 
 			for (uint64_t j=bytes+1; j<tsize; j++) text[j] = 0;
 		}
@@ -177,7 +178,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 			cblocks++;
 
 			// Encoding the first string
-			uchar *first = new uchar[maxlength*2];
+			unsigned char *first = new unsigned char[maxlength*2];
 			first[0] = 0;
 			uint fb = 0, fo = 0; // Variables managing bytes and offsets in the string 'first'
 
@@ -281,7 +282,7 @@ CSD_HTFC::~CSD_HTFC()
                 delete blocks;
 }
 
-uint32_t CSD_HTFC::locate(const uchar *s, uint32_t len)
+uint32_t CSD_HTFC::locate(const unsigned char *s, uint32_t len)
 {
 	if(!text || !blocks)
 		return 0;
@@ -322,7 +323,7 @@ void CSD_HTFC::dumpBlock(uint block) {
 	}
 	cout << "Dump block: " << block << endl;
 	uint pos = blocks->getField(block);
-	uchar *string = new uchar[maxlength+1];
+	unsigned char *string = new unsigned char[maxlength+1];
 
 	uint slen = strlen((char*)text+pos)+1;
 
@@ -359,7 +360,7 @@ void CSD_HTFC::dumpBlock(uint block) {
 	delete [] string;
 }
 
-uchar* CSD_HTFC::extract(uint32_t id)
+unsigned char* CSD_HTFC::extract(uint32_t id)
 {
 	if(!text || !blocks) {
 		return NULL;
@@ -368,7 +369,7 @@ uchar* CSD_HTFC::extract(uint32_t id)
 	if ((id > 0) && (id <= numstrings))
 	{
 		// Allocating memory for the string
-		uchar *s = new uchar[maxlength+1];
+		unsigned char *s = new unsigned char[maxlength+1];
 
 		// Calculating block and offset
 		uint block = (id-1)/blocksize;
@@ -393,7 +394,7 @@ uint64_t CSD_HTFC::getSize()
 	if(!text || !blocks) {
 		return 0;
 	}
-	return bytes*sizeof(uchar)+blocks->getSize()+sizeof(CSD_HTFC);
+	return bytes*sizeof(unsigned char)+blocks->getSize()+sizeof(CSD_HTFC);
 }
 
 void CSD_HTFC::save(ofstream & fp)
@@ -402,12 +403,12 @@ void CSD_HTFC::save(ofstream & fp)
 		return;
 	}
 
-	saveValue<uchar>(fp, type);
+	saveValue<unsigned char>(fp, type);
 	saveValue<uint32_t>(fp, numstrings);
 	saveValue<uint32_t>(fp, tlength);
 	saveValue<uint32_t>(fp, maxlength);
 	saveValue<uint64_t>(fp, bytes);
-	saveValue<uchar>(fp, text, bytes);
+	saveValue<unsigned char>(fp, text, bytes);
 	saveValue<uint32_t>(fp, blocksize);
 	saveValue<uint32_t>(fp, nblocks);
 	blocks->save(fp);
@@ -446,7 +447,7 @@ CSD* CSD_HTFC::load(ifstream & fp)
 	}
 	//cout << "FINAL Read: " << counter << " / " << dicc->bytes << endl;
 #else
-	dicc->text = (uchar *) malloc(dicc->bytes*sizeof(unsigned char*));
+	dicc->text = (unsigned char *) malloc(dicc->bytes*sizeof(unsigned char*));
 	fp.read((char *)dicc->text, dicc->bytes);
 #endif
 
@@ -515,10 +516,10 @@ CSD* CSD_HTFC::load(ifstream & fp)
 	return dicc;
 }
 
-bool CSD_HTFC::locateBlock(const uchar *s, uint *block)
+bool CSD_HTFC::locateBlock(const unsigned char *s, uint *block)
 {
 	uint slen = strlen((char*)s)+1;
-	uchar *encoded = new uchar[2*slen];
+	unsigned char *encoded = new unsigned char[2*slen];
 	encoded[0] = 0;
 
 	// Pattern (s) encoding
@@ -583,14 +584,14 @@ bool CSD_HTFC::locateBlock(const uchar *s, uint *block)
 	return false;
 }
 
-uint CSD_HTFC::locateInBlock(uint block, const uchar *s, uint len)
+uint CSD_HTFC::locateInBlock(uint block, const unsigned char *s, uint len)
 {
 	if(block>=nblocks){
 		return 0;
 	}
 
-	uchar *deltaseq = new uchar[DELTA];
-	uchar *tmp = new uchar[maxlength];
+	unsigned char *deltaseq = new unsigned char[DELTA];
+	unsigned char *tmp = new unsigned char[maxlength];
 	uint delta, tmplen;
 	uint offset = 0;
 
@@ -652,9 +653,9 @@ uint CSD_HTFC::locateInBlock(uint block, const uchar *s, uint len)
 	return id;
 }
 
-void CSD_HTFC::extractInBlock(uint block, uint o, uchar *s)
+void CSD_HTFC::extractInBlock(uint block, uint o, unsigned char *s)
 {
-	uchar *deltaseq = new uchar[DELTA];
+	unsigned char *deltaseq = new unsigned char[DELTA];
 	uint delta;
 	uint offset = 0;
 
@@ -676,19 +677,19 @@ void CSD_HTFC::extractInBlock(uint block, uint o, uchar *s)
 	delete [] deltaseq;
 }
 
-void CSD_HTFC::decompressDelta(uchar *seq, uint *pos, uint *offset, uchar *deltaseq)
+void CSD_HTFC::decompressDelta(unsigned char *seq, uint *pos, uint *offset, unsigned char *deltaseq)
 {
 	uint i = 0;
 
 	do
 	{
-		deltaseq[i] = (uchar)decodeHT(seq, pos, offset);
+		deltaseq[i] = (unsigned char)decodeHT(seq, pos, offset);
 		i++;
 	}
 	while (deltaseq[i-1] < 128);
 }
 
-uint CSD_HTFC::decompressFirstWord(uchar *seq, uint *pos, uchar *word)
+uint CSD_HTFC::decompressFirstWord(unsigned char *seq, uint *pos, unsigned char *word)
 {
 	uint ptr = 0, offset = 0;
 
@@ -703,7 +704,7 @@ uint CSD_HTFC::decompressFirstWord(uchar *seq, uint *pos, uchar *word)
 	return ptr;
 }
 
-uint CSD_HTFC::decompressWord(uchar *seq, uint *pos, uint* offset, uchar *suffix)
+uint CSD_HTFC::decompressWord(unsigned char *seq, uint *pos, uint* offset, unsigned char *suffix)
 {
 	uint ptr = 0;
 
@@ -718,7 +719,7 @@ uint CSD_HTFC::decompressWord(uchar *seq, uint *pos, uint* offset, uchar *suffix
 	return ptr;
 }
 
-uchar CSD_HTFC::decodeHT(uchar *seq, uint *pos, uint *offset)
+unsigned char CSD_HTFC::decodeHT(unsigned char *seq, uint *pos, uint *offset)
 {
 	// REVISAR: OTRA IMPLEMENTACION QUE HAGA LOS DESPLAZAMIENTOS
 	// DE UNO EN UNO CONSIDERANDO UNA ESTRUCTURA TEMPORAL DONDE
@@ -739,12 +740,12 @@ uchar CSD_HTFC::decodeHT(uchar *seq, uint *pos, uint *offset)
 		}
 	}
 
-	return (uchar)HTtree[node].symbol;
+	return (unsigned char)HTtree[node].symbol;
 }
 
-void CSD_HTFC::encodeHT(uint code, uint len, uchar *seq, uint *pos, uint *offset)
+void CSD_HTFC::encodeHT(uint code, uint len, unsigned char *seq, uint *pos, uint *offset)
 {
-	uchar uccode;
+	unsigned char uccode;
 	uint uicode;
 	uint processed = 0;
 
@@ -753,7 +754,7 @@ void CSD_HTFC::encodeHT(uint code, uint len, uchar *seq, uint *pos, uint *offset
 		// "Saco fuera" los bits ya procesados en 'code'.
 		uicode = code << (W-len+processed);
 		// Me quedo con los que quiero
-		uccode = (uchar)(uicode >> (W-(8-(*offset))));
+		uccode = (unsigned char)(uicode >> (W-(8-(*offset))));
 		// Los aado en la posicin actual
 		seq[*pos] = seq[*pos] | uccode;
 
@@ -766,13 +767,13 @@ void CSD_HTFC::encodeHT(uint code, uint len, uchar *seq, uint *pos, uint *offset
 	if (len-processed > 0)
 	{
 		uicode = code << (W-len+processed);
-		uccode = (uchar)(uicode >> (W-(8-(*offset))));
+		uccode = (unsigned char)(uicode >> (W-(8-(*offset))));
 		seq[*pos] = seq[*pos] | uccode;
 		(*offset) += len-processed;
 	}
 }
 
-uint CSD_HTFC::longest_common_prefix(const uchar* str1, const uchar* str2, uint lstr1, uint lstr2)
+uint CSD_HTFC::longest_common_prefix(const unsigned char* str1, const unsigned char* str2, uint lstr1, uint lstr2)
 {
 	uint delta = 0;
 	uint length = lstr1;

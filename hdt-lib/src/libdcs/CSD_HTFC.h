@@ -108,6 +108,8 @@ class CSD_HTFC : public CSD
 
     void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 		
+    hdt::IteratorUCharString *listAll() { throw "Not implemented"; }
+
   protected:
     uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
     uchar *text;	//! Front-Coding encoded sequence.

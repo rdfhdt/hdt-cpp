@@ -112,6 +112,8 @@ namespace csd{
 
 			void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 
+		    hdt::IteratorUCharString *listAll() { throw "Not implemented"; }
+
 			/** General destructor. */
 			~CSD_FMIndex();
 		
