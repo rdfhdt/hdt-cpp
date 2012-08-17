@@ -49,23 +49,23 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence, 
 
 	this->type = FMINDEX;
 	string element;
-	uchar *text;
+	unsigned char *text;
 	uint *bitmap = 0;
 	//uint32_t *bitmap = 0;
 
 	size_t len = 0;
 	size_t reservedSize = 1024;
-	text = (uchar*) malloc(reservedSize * sizeof(uchar));
-	std:vector < uint > samplingsPositions;
+	text = (unsigned char*) malloc(reservedSize * sizeof(unsigned char));
+	std:vector < size_t > samplingsPositions;
 
 	text[0] = '\1'; //We suppose that \1 is not part of the text
 	maxlength = 0;
 	numstrings = 0;
 	uint m_l = 0;
 
-	uint total = 1;
+	size_t total = 1;
 
-	uchar *currentStr = NULL;
+	unsigned char *currentStr = NULL;
 	uint currentLength = 0;
 
 	while (it->hasNext()) {
@@ -91,7 +91,7 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence, 
 					reservedSize = ((size_t) total + currentLength) * 2;
 				}
 			}
-			text = (uchar*) realloc(text, reservedSize * sizeof(uchar));
+			text = (unsigned char*) realloc(text, reservedSize * sizeof(unsigned char));
 		}
 		strncpy((char*)(text+total), (char*)currentStr, currentLength);
 
@@ -126,17 +126,16 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence, 
 
 	if (use_sample) {
 		 bitmap = new uint[(total + 1 + W) / W];
-		 for (uint i = 0; i < (total + 1 + W) / W; i++)
-		 bitmap[i] = 0;
+		 memset((void*)bitmap, (total + 1 + W) / W, 0);
 		 bitset(bitmap, 0);
-		 for (uint i=0;i<samplingsPositions.size();i++){
+		 for (size_t i=0;i<samplingsPositions.size();i++){
 			 bitset(bitmap, samplingsPositions[i]);
 		 }
 	}
 //	cout<<"testing:len:"<<len<<endl;
 //	cout<<"testing:textFinal:"<<textFinal<<endl;
 
-	build_ssa((uchar *) textFinal, len, sparse_bitsequence, bparam, use_sample,	bwt_sample);
+	build_ssa((unsigned char *) textFinal, len, sparse_bitsequence, bparam, use_sample,	bwt_sample);
 	if (use_sample) {
 		//separators = new BitSequenceRRR(bitmap, len);
 		separators = new BitSequenceRG(bitmap, len, 4);
@@ -146,14 +145,14 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence, 
 
 }
 
-void CSD_FMIndex::build_ssa(uchar *text, size_t len, bool sparse_bitsequence,
+void CSD_FMIndex::build_ssa(unsigned char *text, size_t len, bool sparse_bitsequence,
 		int bparam, bool use_sample, size_t bwt_sample) {
 	use_sampling = use_sample;
-	fm_index = new SSA((uchar *) text, len, false, use_sample);
+	fm_index = new SSA((unsigned char *) text, len, false, use_sample);
 
 	Mapper * am = new MapperNone();
     am->use();
-    wt_coder * wc = new wt_coder_huff((uchar *) text, len, am);
+    wt_coder * wc = new wt_coder_huff((unsigned char *) text, len, am);
 	BitSequenceBuilder * sbb;
 	if (sparse_bitsequence)
 		sbb = new BitSequenceBuilderRRR(bparam);
@@ -178,8 +177,8 @@ CSD_FMIndex::~CSD_FMIndex() {
 			delete separators;
 }
 
-uint32_t CSD_FMIndex::locate(const uchar *s, uint32_t len) {
-	uchar *n_s = new uchar[len + 2];
+uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len) {
+	unsigned char *n_s = new unsigned char[len + 2];
 	uint o;
 	n_s[0] = '\1';
 	for (uint32_t i = 1; i <= len; i++)
@@ -192,7 +191,7 @@ uint32_t CSD_FMIndex::locate(const uchar *s, uint32_t len) {
 	return 0;
 }
 
-uint32_t CSD_FMIndex::locate_substring(uchar *s, uint32_t len, uint32_t **occs) {
+uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint32_t **occs) {
 	if (!use_sampling) {
 		*occs = NULL;
 		return 0;
@@ -219,7 +218,7 @@ uint32_t CSD_FMIndex::locate_substring(uchar *s, uint32_t len, uint32_t **occs) 
 	return res + 1;
 }
 
-uchar * CSD_FMIndex::extract(uint32_t id) {
+unsigned char * CSD_FMIndex::extract(uint32_t id) {
 	if (id == 0 || id > numstrings)
 		return NULL;
 	uint i;
@@ -234,10 +233,10 @@ void CSD_FMIndex::freeString(const unsigned char *str) {
 	delete [] str;
 }
 
-uint CSD_FMIndex::decompress(uchar **dict) {
+uint CSD_FMIndex::decompress(unsigned char **dict) {
 	uint len = 0;
-	uchar *text = new uchar[tlength];
-	uchar *str;
+	unsigned char *text = new unsigned char[tlength];
+	unsigned char *str;
 	uint j;
 	for (uint i = 0; i < numstrings; i++) {
 		str = extract(i + 1);
