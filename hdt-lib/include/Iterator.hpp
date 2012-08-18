@@ -34,6 +34,7 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 #include <SingleTriple.hpp>
 
@@ -79,10 +80,10 @@ public:
 
 class FileteratorUCharString : public IteratorUCharString {
 private:
-    ifstream in;
-    string line;
+    std::ifstream in;
+    std::string line;
 public:
-    FileteratorUCharString(string file) : in(file, ios::binary) { }
+    FileteratorUCharString(std::string file) : in(file.c_str(), ios::binary) { }
     virtual ~FileteratorUCharString() {
         in.close();
     }
@@ -93,7 +94,7 @@ public:
 
     virtual unsigned char *next() {
         std::getline(in, line);
-        return line.c_str();
+        return (unsigned char*)line.c_str();
     }
 };
 
