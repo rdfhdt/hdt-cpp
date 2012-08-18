@@ -89,7 +89,7 @@ namespace csd
 
 		while ( !(buffer[i] & 0x80) )
 		{
-		   	if(shift>16) {
+            if(shift>50) {
 		   		throw "VByte Read too many bytes and still did not find a terminating byte";
 		   	}
 
