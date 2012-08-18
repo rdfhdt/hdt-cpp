@@ -83,7 +83,9 @@ private:
     string line;
 public:
     FileteratorUCharString(string file) : in(file, ios::binary) { }
-    virtual ~FileteratorUCharString() { }
+    virtual ~FileteratorUCharString() {
+        in.close();
+    }
 
     virtual bool hasNext() {
         return in.good();
