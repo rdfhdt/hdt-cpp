@@ -77,6 +77,26 @@ public:
 	}
 };
 
+class FileteratorUCharString : public IteratorUCharString {
+private:
+    ifstream in;
+    string line;
+public:
+    FileteratorUCharString(string file) : in(file, ios::binary) { }
+    virtual ~FileteratorUCharString() { }
+
+    virtual bool hasNext() {
+        return in.good();
+    }
+
+    virtual unsigned char *next() {
+        std::getline(in, line);
+        return line.c_str();
+    }
+};
+
+
+
 
 class IteratorTripleID {
 public:
