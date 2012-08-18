@@ -235,7 +235,7 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 		unsigned int pred = arrayY->get(adjZlist);
 		maxpred = pred>maxpred ? pred : maxpred;
 
-        index[val-1].push_back(std::make_pair(adjZlist, (unsigned short)pred));
+        index[val-1].push_back(std::make_pair(adjZlist, pred));
 		NOTIFYCOND(&iListener, "Generating Object lists", i, arrayZ->getNumberOfElements());
 	}
 
