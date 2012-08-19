@@ -17,7 +17,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#ifdef __SSE4_2__
 #include <smmintrin.h>
+#endif
 
 #ifndef __SSE4_2__
 /**
