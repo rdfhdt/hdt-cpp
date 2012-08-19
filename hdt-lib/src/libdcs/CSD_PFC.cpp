@@ -91,7 +91,7 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progress
 		} else {
 			// Regular string
 
-			// Calculate the length of the long common prefix
+            // Calculate the length of the common prefix
 			uint delta = longest_common_prefix(previousStr, currentStr, previousLength, currentLength);
 
 			//cout << "Block: " << nblocks << " Pos: "<< length << endl;
@@ -274,10 +274,6 @@ void CSD_PFC::save(ofstream &out)
 	CRC32 crcd;
 	unsigned char buf[27]; // 9 bytes per VByte (max) * 3 values.
 
-	if(!text || !blocks) {
-		return;
-	}
-
 	// Save type
 	crch.writeData(out, (unsigned char *)&type, sizeof(type));
 
@@ -291,10 +287,20 @@ void CSD_PFC::save(ofstream &out)
 	crch.writeCRC(out);
 
 	// Write block pointers
-	blocks->save(out);
+    if(!blocks) {
+        hdt::LogSequence2 log;
+        log.save(out);
+    } else {
+        blocks->save(out);
+    }
 
 	// Write packed data
-	crcd.writeData(out, text, bytes);
+    if(text) {
+        crcd.writeData(out, text, bytes);
+    } else {
+        assert(numstrings==0);
+        assert(bytes==0);
+    }
 	crcd.writeCRC(out);
 }
 
@@ -330,20 +336,29 @@ CSD* CSD_PFC::load(ifstream & fp)
 	dicc->blocks->load(fp);
 	dicc->nblocks = dicc->blocks->getNumberOfElements()-1;
 
-	// Load strings
-	dicc->text = (unsigned char *)malloc(dicc->bytes);
-	const unsigned int blocksize = 8192;
-	unsigned int counter=0;
-	unsigned char *ptr = (unsigned char *)dicc->text;
-	while(counter<dicc->bytes && fp.good()) {
-		crcd.readData(fp, ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);
+    // Load strings
+    if(dicc->bytes && dicc->numstrings) {
+        dicc->text = (unsigned char *)malloc(dicc->bytes);
+        const unsigned int blocksize = 8192;
+        unsigned int counter=0;
+        unsigned char *ptr = (unsigned char *)dicc->text;
+        while(counter<dicc->bytes && fp.good()) {
+            crcd.readData(fp, ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);
 
-		ptr += fp.gcount();
-		counter += fp.gcount();
-	}
-	if(counter!=dicc->bytes) {
-		throw "Could not read all the data section of the Plain Front Coding.";
-	}
+            ptr += fp.gcount();
+            counter += fp.gcount();
+        }
+        if(counter!=dicc->bytes) {
+            throw "Could not read all the data section of the Plain Front Coding.";
+        }
+    } else {
+        // Make sure that all is zero.
+        dicc->text = NULL;
+        dicc->numstrings = 0;
+        dicc->bytes = 0;
+        dicc->nblocks = 0;
+        delete dicc->blocks;
+    }
 
 	crc32_t filecrcd = crc32_read(fp);
 	if(filecrcd!=crcd.getValue()) {
