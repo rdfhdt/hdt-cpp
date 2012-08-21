@@ -103,37 +103,19 @@ void HDTManager::openHDTFile(QString file)
 {
     closeHDT();
 
-    hdt::HDT *hdt = hdt::HDTFactory::createDefaultHDT();
-    HDTCachedInfo *hdtInfo = new HDTCachedInfo(hdt);
-
-#ifdef SHOW_DIALOGS
-    HDTOperation *hdtop = new HDTOperation(hdt, hdtInfo);
+    HDTOperation *hdtop = new HDTOperation(file);
     hdtop->loadFromHDT(file);
     int result = hdtop->exec();
-    delete hdtop;
-#else
-    int result=1;
-    try {
-        hdt->loadFromHDT(file.toAscii());
-        hdtInfo->loadInfo();
-        result=0;
-    } catch (const char *ex) {
-        cout << "Error: " << ex;
-    } catch (char *ex) {
-        cout << "Error: " << ex;
-    }
-#endif
 
     if(result==0) {
-        this->hdt = hdt;
-        this->hdtCachedInfo = hdtInfo;
+        this->hdt = hdtop->getHDT();
+        this->hdtCachedInfo = hdtop->getHDTInfo();
         this->fileName = file;
 
         updateOnHDTChanged();
-    } else {
-        delete hdt;
-        delete hdtInfo;
     }
+
+    delete hdtop;
 }
 
 void HDTManager::saveHDTFile(QString file)

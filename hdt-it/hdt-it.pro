@@ -9,7 +9,7 @@ QT       += core gui opengl
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
 
-macx:QMAKE_CXXFLAGS_RELEASE += -msse4.2
+macx:QMAKE_CXXFLAGS += -msse4.2
 
 CONFIG += debug_and_release
 macx:CONFIG += x86_64

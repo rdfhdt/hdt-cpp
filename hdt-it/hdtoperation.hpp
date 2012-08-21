@@ -42,6 +42,7 @@ private:
     } op;
 
 public:
+    HDTOperation(QString fileName);
     HDTOperation(hdt::HDT *hdt);
     HDTOperation(hdt::HDT *hdt, HDTCachedInfo *hdtInfo);
     void saveToRDF(QString &fileName, hdt::RDFNotation notation);
@@ -49,6 +50,8 @@ public:
     void loadFromRDF(QString &fileName, hdt::RDFNotation notation, string &baseUri);
     void loadFromHDT(QString &fileName);
     void exportResults(QString &fileName, hdt::IteratorTripleString *iterator, unsigned int numResults, hdt::RDFNotation notation);
+    hdt::HDT *getHDT();
+    HDTCachedInfo *getHDTInfo();
     void execute();
     int exec();
     void notifyProgress(float level, const char *section);

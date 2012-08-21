@@ -1,6 +1,8 @@
 #include <QMessageBox>
 #include <QtGui>
 
+#include <HDTFactory.hpp>
+
 #include "hdtoperation.hpp"
 
 //#define OPERATION_CANCELABLE
@@ -18,6 +20,9 @@ void HDTOperationDialog::closeEvent(QCloseEvent *event)
 #endif
 }
 
+HDTOperation::HDTOperation(QString fileName) : fileName(fileName), hdt(NULL), hdtInfo(NULL), errorMessage(NULL)
+{
+}
 
 HDTOperation::HDTOperation(hdt::HDT *hdt) : hdt(hdt), hdtInfo(NULL), errorMessage(NULL)
 {
@@ -32,14 +37,17 @@ void HDTOperation::execute() {
         switch(op) {
         case HDT_READ: {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
-
             iListener.setRange(0,70);
-            hdt->loadFromHDT(fileName.toAscii(), &iListener );
+#if 1
+            hdt = hdt::HDTFactory::mapHDT(fileName.toAscii(), &iListener);
+#else            
+            hdt = hdt::HDTFactory::readHDT(fileName.toAscii(), &iListener);
+#endif
+            iListener.setRange(70, 90);
+            hdt->loadOrCreateIndex( &iListener );
 
-	    iListener.setRange(70, 90);
-	    hdt->generateIndex( &iListener );
-
-	    iListener.setRange(90, 100);
+        iListener.setRange(90, 100);
+        hdtInfo = new HDTCachedInfo(hdt);
 	    hdtInfo->generateInfo(&iListener);
 
             break;
@@ -51,7 +59,7 @@ void HDTOperation::execute() {
             hdt->loadFromRDF(fileName.toAscii(), baseUri, notation, &iListener);
 
 	    iListener.setRange(80, 90);
-	    hdt->generateIndex( &iListener );
+	    hdt->loadOrCreateIndex( &iListener );
 
 	    iListener.setRange(90, 100);
 	    hdtInfo->generateInfo(&iListener);
@@ -60,6 +68,7 @@ void HDTOperation::execute() {
             }
         case HDT_WRITE:
             hdt->saveToHDT(fileName.toAscii(), dynamic_cast<ProgressListener *>(this));
+            hdt->saveIndex(dynamic_cast<ProgressListener *>(this));
             break;
         case RDF_WRITE:{
             hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toAscii(), notation);
@@ -133,6 +142,16 @@ void HDTOperation::exportResults(QString &fileName, hdt::IteratorTripleString *i
     this->iterator = iterator;
     this->numResults = numResults;
     this->notation = notation;
+}
+
+hdt::HDT *HDTOperation::getHDT()
+{
+    return hdt;
+}
+
+HDTCachedInfo *HDTOperation::getHDTInfo()
+{
+    return hdtInfo;
 }
 
 
