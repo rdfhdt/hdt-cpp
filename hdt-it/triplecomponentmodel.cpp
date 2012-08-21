@@ -13,19 +13,26 @@ TripleComponentModel::TripleComponentModel(HDTManager *view, hdt::TripleComponen
 
 int TripleComponentModel::rowCount(const QModelIndex &parent) const
 {
+    int numResults = 0;
+
     Q_UNUSED(parent);
     if(hdtManager->getHDT() != NULL) {
         hdt::Dictionary *dict = hdtManager->getHDT()->getDictionary();
         switch(tripleComponentRole) {
         case hdt::SUBJECT:
-            return dict->getNsubjects();
+            numResults = dict->getNsubjects();
+            break;
         case hdt::PREDICATE:
-            return dict->getNpredicates();
+            numResults = dict->getNpredicates();
+            break;
         case hdt::OBJECT:
-            return dict->getNobjects();
+            numResults = dict->getNobjects();
+            break;
         }
     }
-    return 0;
+
+    // FIXME: QTableView crashes when returning more than 100 Million rows :(
+    return numResults > 100000000 ? 100000000 : numResults;
 }
 
 int TripleComponentModel::columnCount(const QModelIndex &parent) const
