@@ -168,7 +168,7 @@ namespace cds_static
 		return sizeof(SequenceGMRChunk)+permutation->getSize()+X->getSize();
 	}
 
-	void SequenceGMRChunk::save(ofstream & fp) const
+	void SequenceGMRChunk::save(ostream & fp) const
 	{
 		uint wr = GMR_CHUNK_HDR;
 		saveValue(fp,wr);
@@ -178,7 +178,7 @@ namespace cds_static
 		permutation->save(fp);
 	}
 
-	SequenceGMRChunk * SequenceGMRChunk::load(ifstream & fp) {
+	SequenceGMRChunk * SequenceGMRChunk::load(istream & fp) {
 		uint rd = loadValue<uint>(fp);
 		if(rd!=GMR_CHUNK_HDR) return NULL;
 		SequenceGMRChunk * ret = new SequenceGMRChunk();

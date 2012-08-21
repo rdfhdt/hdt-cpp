@@ -175,7 +175,7 @@ namespace cds_static
 		return get_field(P->elems, P->nbits, i);
 	}
 
-	uint savePerm(const perm P, ofstream & f) {
+	uint savePerm(const perm P, ostream & f) {
 		uint aux;
 		uint v;
 
@@ -201,7 +201,7 @@ namespace cds_static
 		return 0;
 	}
 
-	perm loadPerm(ifstream & f) {
+	perm loadPerm(istream & f) {
 		uint aux;
 		perm P;
 		uint v;

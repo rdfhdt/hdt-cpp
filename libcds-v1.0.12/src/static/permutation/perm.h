@@ -77,13 +77,13 @@ namespace cds_static
 	 *
 	 *  @author Diego Arroyuelo
 	 */
-	uint savePerm(const perm P, ofstream & f);
+	uint savePerm(const perm P, ostream & f);
 
 	/** Loads a permutation
 	 *
 	 *  @author Diego Arroyuelo
 	 */
-	perm loadPerm(ifstream & f);
+	perm loadPerm(istream & f);
 
 	/** Returns the size of the data structure
 	 *

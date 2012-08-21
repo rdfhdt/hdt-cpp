@@ -57,10 +57,10 @@ namespace cds_static
 			virtual size_t getSize() const = 0;
 
 			/** Saves permutation to stream */
-			virtual void save(ofstream & fp) const;
+			virtual void save(ostream & fp) const;
 
 			/** Loads the permutation */
-			static Permutation * load(ifstream & fp);
+			static Permutation * load(istream & fp);
 
 		protected:
 			size_t length;

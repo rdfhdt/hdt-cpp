@@ -44,8 +44,8 @@ namespace cds_static
 			virtual size_t get_LCP(size_t i, TextIndex *csa) const;
 			virtual size_t get_seq_LCP(size_t i, TextIndex *csa, size_t **next_pos, size_t *n_next, bool dir) const;
 			virtual size_t getSize() const;
-			virtual void save(ofstream & fp) const;
-			static LCP_PhiSpare * load(ifstream & fp);
+			virtual void save(ostream & fp) const;
+			static LCP_PhiSpare * load(istream & fp);
 			virtual ~LCP_PhiSpare();
 	};
 };

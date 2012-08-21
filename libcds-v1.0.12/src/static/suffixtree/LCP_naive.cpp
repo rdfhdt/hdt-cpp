@@ -68,7 +68,7 @@ namespace cds_static
 		return result + sizeof(LCP_naive);
 	}
 
-	void LCP_naive::save(ofstream & fp) const
+	void LCP_naive::save(ostream & fp) const
 	{
 		size_t wr = NAIVE;
 		saveValue(fp,wr);
@@ -77,7 +77,7 @@ namespace cds_static
 		saveValue(fp, lcp_array, ((b*length+W-1)/W));
 	}
 
-	LCP_naive* LCP_naive::load(ifstream & fp) {
+	LCP_naive* LCP_naive::load(istream & fp) {
 		LCP_naive *lcp = new LCP_naive();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=NAIVE) {

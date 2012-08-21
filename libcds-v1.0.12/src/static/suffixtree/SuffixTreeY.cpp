@@ -437,7 +437,7 @@ namespace cds_static
 		return mem;
 	}
 
-	void SuffixTreeY::save(ofstream & fp) const
+	void SuffixTreeY::save(ostream & fp) const
 	{
 		size_t wr =  CSTY;
 		saveValue(fp,wr);
@@ -447,7 +447,7 @@ namespace cds_static
 		csa->save(fp);
 	}
 
-	SuffixTreeY * SuffixTreeY::load(ifstream & fp) {
+	SuffixTreeY * SuffixTreeY::load(istream & fp) {
 		SuffixTreeY *cst = new SuffixTreeY();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=CSTY) {

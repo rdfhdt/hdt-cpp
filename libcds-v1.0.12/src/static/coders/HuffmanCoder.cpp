@@ -89,13 +89,13 @@ namespace cds_static
 		return decodeHuff(huff_table, symb, stream, pos);
 	}
 
-	void HuffmanCoder::save(ofstream & fp) const
+	void HuffmanCoder::save(ostream & fp) const
 	{
 		saveValue<uint>(fp,HUFF_HDR);
 		saveHuff(huff_table,fp);
 	}
 
-	HuffmanCoder * HuffmanCoder::load(ifstream & fp) {
+	HuffmanCoder * HuffmanCoder::load(istream & fp) {
 		uint type = loadValue<uint>(fp);
 		if(type != HUFF_HDR) {	 //throw exception
 			return NULL;

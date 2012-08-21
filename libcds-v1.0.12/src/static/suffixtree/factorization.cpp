@@ -220,7 +220,7 @@ namespace cds_static
 		return partialSum;
 	}
 
-	void factorization::save(ofstream & fp) {
+	void factorization::save(ostream & fp) {
 		saveValue(fp, listLength);
 		saveValue(fp, nLevels);
 		saveValue(fp, levelsIndex, nLevels+1);
@@ -229,7 +229,7 @@ namespace cds_static
 		bS->save(fp);
 	}
 
-	factorization* factorization::load(ifstream & fp) {
+	factorization* factorization::load(istream & fp) {
 		factorization *rep = new factorization();
 		rep->listLength = loadValue<uint>(fp);
 		rep->nLevels = loadValue<byte>(fp);

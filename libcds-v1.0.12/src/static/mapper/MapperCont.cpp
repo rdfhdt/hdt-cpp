@@ -65,7 +65,7 @@ namespace cds_static
 		return sizeof(MapperCont)+m->getSize();
 	}
 
-	void MapperCont::save(ofstream & out) const
+	void MapperCont::save(ostream & out) const
 	{
 		assert(out.good());
 		uint wr = MAPPER_CONT_HDR;
@@ -73,7 +73,7 @@ namespace cds_static
 		m->save(out);
 	}
 
-	MapperCont * MapperCont::load(ifstream & input) {
+	MapperCont * MapperCont::load(istream & input) {
 		assert(input.good());
 		uint rd = loadValue<uint>(input);
 		if(rd!=MAPPER_CONT_HDR) return NULL;

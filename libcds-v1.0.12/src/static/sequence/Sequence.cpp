@@ -78,7 +78,7 @@ namespace cds_static
 		return s;
 	}
 
-	Sequence * Sequence::load(ifstream & fp) {
+	Sequence * Sequence::load(istream & fp) {
 		uint type = loadValue<uint>(fp);
 		size_t pos = fp.tellg();
 		fp.seekg(pos-sizeof(uint),ios::beg);

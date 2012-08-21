@@ -261,7 +261,7 @@ namespace cds_static
 		return mem;
 	}
 
-	void factorization_var::save(ofstream & fp) {
+	void factorization_var::save(ostream & fp) {
 		saveValue(fp, tamCode);
 		saveValue(fp, tamtablebase);
 		saveValue(fp, listLength);
@@ -276,7 +276,7 @@ namespace cds_static
 		bS->save(fp);
 	}
 
-	factorization_var* factorization_var::load(ifstream & fp) {
+	factorization_var* factorization_var::load(istream & fp) {
 		factorization_var *rep = new factorization_var();
 		rep->tamCode = loadValue<uint>(fp);
 		rep->tamtablebase = loadValue<uint>(fp);

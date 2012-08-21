@@ -44,11 +44,11 @@ namespace cds_static
 			/** Computes the inverse of i */
 			virtual uint revpi(uint i) const;
 			/** Saves the permutation to fp, returns 0 in case of success */
-			virtual void save(ofstream & fp) const;
+			virtual void save(ostream & fp) const;
 			/** Returns the size of the permutation */
 			virtual size_t getSize() const;
 			/** Loads a static_permutation from fp */
-			static PermutationMRRR * load(ifstream & fp);
+			static PermutationMRRR * load(istream & fp);
 		protected:
 			perm permutation;
 			PermutationMRRR();

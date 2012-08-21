@@ -63,14 +63,14 @@ namespace cds_static
 
 	size_t MapperRev::getSize() const { return sizeof(MapperNone); }
 
-	void MapperRev::save(ofstream & out) const
+	void MapperRev::save(ostream & out) const
 	{
 		uint wr = MAPPER_REV_HDR;
 		out.write((char*)&wr,sizeof(uint));
 		out.write((char*)&this->bits,sizeof(uint));
 	}
 
-	MapperRev * MapperRev::load(ifstream & input) {
+	MapperRev * MapperRev::load(istream & input) {
 		uint rd;
 		input.read((char*)&rd,sizeof(uint));
 		if(rd!=MAPPER_REV_HDR) return NULL;

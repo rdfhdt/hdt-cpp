@@ -125,7 +125,7 @@ namespace cds_static
 		return U->getSize()+sizeof(LCP_Sad);
 	}
 
-	void LCP_Sad::save(ofstream & fp) const
+	void LCP_Sad::save(ostream & fp) const
 	{
 		saveValue(fp, lcp_type);
 		saveValue(fp,U_type);
@@ -133,7 +133,7 @@ namespace cds_static
 		U->save(fp);
 	}
 
-	LCP_Sad* LCP_Sad::load(ifstream & fp) {
+	LCP_Sad* LCP_Sad::load(istream & fp) {
 		LCP_Sad *lcp = new LCP_Sad();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=SAD_GON_OS) {

@@ -434,7 +434,7 @@ namespace cds_static
 		return mem;
 	}
 
-	void NPR_CN::save(ofstream & fp) const
+	void NPR_CN::save(ostream & fp) const
 	{
 		saveValue(fp, npr_type);
 		saveValue(fp, n);
@@ -448,7 +448,7 @@ namespace cds_static
 			saveValue(fp, min_pos[i], (level_size[i]*bits_b+W-1)/W);
 	}
 
-	NPR_CN * NPR_CN::load(ifstream & fp) {
+	NPR_CN * NPR_CN::load(istream & fp) {
 		NPR_CN *npr = new NPR_CN();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=CN_NPR) {

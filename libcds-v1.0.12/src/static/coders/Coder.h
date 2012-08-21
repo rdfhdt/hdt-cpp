@@ -34,8 +34,8 @@ namespace cds_static
 			virtual size_t decode(uint * symb, uint *stream, size_t pos) const = 0;
 			virtual size_t maxLength() const = 0;
 			virtual size_t getSize() const = 0;
-			virtual void save(ofstream & fp) const = 0;
-			static Coder * load(ifstream & fp);
+			virtual void save(ostream & fp) const = 0;
+			static Coder * load(istream & fp);
 	};
 
 };

@@ -69,7 +69,7 @@ namespace cds_static
 	 *
 	 *  @author Gonzalo Navarro
 	 */
-	void saveHuff (const THuff H, ofstream & f);
+	void saveHuff (const THuff H, ostream & f);
 
 	/** Size of H written on file
 	 *
@@ -88,7 +88,7 @@ namespace cds_static
 	 *
 	 *  @author Gonzalo Navarro
 	 */
-	THuff loadHuff (ifstream &f, int enc);
+	THuff loadHuff (istream &f, int enc);
 
 };
 #endif

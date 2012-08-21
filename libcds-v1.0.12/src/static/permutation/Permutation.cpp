@@ -58,12 +58,12 @@ namespace cds_static
 		return length;
 	}
 
-	void Permutation::save(ofstream & fp) const
+	void Permutation::save(ostream & fp) const
 	{
 		saveValue(fp,length);
 	}
 
-	Permutation * Permutation::load(ifstream & fp) {
+	Permutation * Permutation::load(istream & fp) {
 		uint rd = loadValue<uint>(fp);
 		size_t pos = fp.tellg();
 		fp.seekg(pos - sizeof(uint),ios::beg);

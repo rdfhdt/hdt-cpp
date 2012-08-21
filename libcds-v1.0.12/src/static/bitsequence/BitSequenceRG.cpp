@@ -146,7 +146,7 @@ namespace cds_static
 		return (1u << (i % W)) & data[i/W];
 	}
 
-	void BitSequenceRG::save(ofstream & f) const
+	void BitSequenceRG::save(ostream & f) const
 	{
 		uchar wr = BRW32_HDR;
 		saveValue(f,wr);
@@ -156,7 +156,7 @@ namespace cds_static
 		saveValue(f,Rs,n/s+1);
 	}
 
-	BitSequenceRG * BitSequenceRG::load(ifstream & f) {
+	BitSequenceRG * BitSequenceRG::load(istream & f) {
 		assert(f.good());
 		uchar type = loadValue<uchar>(f);
 		if(type!=BRW32_HDR) {	 // throw exception

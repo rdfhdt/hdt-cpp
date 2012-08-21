@@ -177,7 +177,7 @@ namespace cds_static
 		delete [] C;
 	}
 
-	void WaveletMatrix::save(ofstream & fp) const
+	void WaveletMatrix::save(ostream & fp) const
 	{
 		uint wr = WVMATRIX_HDR;
 		saveValue(fp,wr);
@@ -192,7 +192,7 @@ namespace cds_static
 		saveValue<uint>(fp, OCC, max_v + 2);
 	}
 
-	WaveletMatrix * WaveletMatrix::load(ifstream & fp) {
+	WaveletMatrix * WaveletMatrix::load(istream & fp) {
 		uint rd = loadValue<uint>(fp);
 		if(rd!=WVMATRIX_HDR) return NULL;
 		WaveletMatrix * ret = new WaveletMatrix();

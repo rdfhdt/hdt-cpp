@@ -199,7 +199,7 @@ namespace cds_static
 		return mem;
 	}
 
-	void LCP_PT::save(ofstream & fp) const
+	void LCP_PT::save(ostream & fp) const
 	{
 		saveValue(fp, lcp_type);
 		saveValue(fp, logv);
@@ -211,7 +211,7 @@ namespace cds_static
 		rmq->save(fp);
 	}
 
-	LCP_PT * LCP_PT::load(ifstream & fp) {
+	LCP_PT * LCP_PT::load(istream & fp) {
 		LCP_PT *lcp = new LCP_PT();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=PT) {

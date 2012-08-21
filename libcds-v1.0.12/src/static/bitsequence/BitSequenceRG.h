@@ -93,8 +93,8 @@ namespace cds_static
 			virtual size_t getSize() const;
 
 			/*load-save functions*/
-			virtual void save(ofstream & f) const;
-			static BitSequenceRG * load(ifstream & f);
+			virtual void save(ostream & f) const;
+			static BitSequenceRG * load(istream & f);
 	};
 
 }

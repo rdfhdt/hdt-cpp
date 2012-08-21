@@ -13,7 +13,7 @@ namespace cds_utils
 
 	uint transform(const string & s);
 
-	template <typename T> void saveValue(ofstream & out, const T val) {
+	template <typename T> void saveValue(ostream & out, const T val) {
         //assert(out.good());
         //cout << "saveValue: " << sizeof(T) << " " << val << endl;
 	if(!out.good()) {
@@ -22,7 +22,7 @@ namespace cds_utils
 		out.write((char*)&val,sizeof(T));
 	}
 
-	template <typename T> T loadValue(ifstream & in) {
+	template <typename T> T loadValue(istream & in) {
         //assert(in.good());
 	if(!in.good()) {
 		throw "Input not ready";
@@ -37,7 +37,7 @@ namespace cds_utils
 		return ret;
 	}
 
-	template <typename T> void saveValue(ofstream & out, const T * val, const size_t len) {
+	template <typename T> void saveValue(ostream & out, const T * val, const size_t len) {
         //assert(out.good());
 	if(!out.good()) {
 		throw "Output not ready";
@@ -46,7 +46,7 @@ namespace cds_utils
 		out.write((char*)val,len*sizeof(T));
 	}
 
-	template <typename T> T * loadValue(ifstream & in, const size_t len) {
+	template <typename T> T * loadValue(istream & in, const size_t len) {
         //assert(in.good());
 	if(!in.good()) {
 		throw "Input not ready";
@@ -76,7 +76,7 @@ namespace cds_utils
 	}
 
 	template <typename T> T * loadValue(const char * name, size_t & slen) {
-		ifstream in(name);
+        ifstream in(name);
 		assert(in.good());
 		in.seekg(0,ios_base::end);
 		size_t len = in.tellg();

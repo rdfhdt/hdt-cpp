@@ -142,7 +142,7 @@ namespace cds_static
 		return mem;
 	}
 
-	void LCP_PhiSpare::save(ofstream & fp) const
+	void LCP_PhiSpare::save(ostream & fp) const
 	{
 		saveValue(fp, lcp_type);
 		saveValue(fp, q);
@@ -151,7 +151,7 @@ namespace cds_static
 			saveValue(fp, plcp, (1+(n-1)/q));
 	}
 
-	LCP_PhiSpare * LCP_PhiSpare::load(ifstream & fp) {
+	LCP_PhiSpare * LCP_PhiSpare::load(istream & fp) {
 		LCP_PhiSpare *lcp = new LCP_PhiSpare();
 		size_t type = loadValue<uint>(fp);
 		if(type!=PHI) {

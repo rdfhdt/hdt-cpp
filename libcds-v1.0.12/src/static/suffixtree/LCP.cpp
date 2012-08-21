@@ -98,7 +98,7 @@ namespace cds_static
 		return lcp;
 	}
 
-	LCP * LCP::load(ifstream & fp) {
+	LCP * LCP::load(istream & fp) {
 		size_t r = loadValue<size_t>(fp);
 		size_t pos = fp.tellg();
 		fp.seekg(pos-sizeof(size_t));

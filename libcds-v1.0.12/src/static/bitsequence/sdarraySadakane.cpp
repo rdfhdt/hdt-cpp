@@ -48,7 +48,7 @@ namespace cds_static
 		}
 	}
 
-	void selectd2_save(const selectd2 * s, ofstream & fp) {
+	void selectd2_save(const selectd2 * s, ostream & fp) {
 		assert(fp.good());
 		saveValue(fp,s->n);
 		saveValue(fp,s->m);
@@ -63,7 +63,7 @@ namespace cds_static
 		saveValue(fp,s->sl,s->sl_len);
 	}
 
-	void selectd2_load(selectd2 * s, ifstream & fp) {
+	void selectd2_load(selectd2 * s, istream & fp) {
 		s->n = loadValue<int>(fp);
 		s->m = loadValue<int>(fp);
 		s->size = loadValue<int>(fp);
@@ -345,7 +345,7 @@ namespace cds_static
 		return p;
 	}
 
-	void selects3_save(const selects3 * s, ofstream & fp) {
+	void selects3_save(const selects3 * s, ostream & fp) {
 		saveValue(fp,s->n);
 		saveValue(fp,s->m);
 		saveValue(fp,s->size);
@@ -358,7 +358,7 @@ namespace cds_static
 		selectd2_save(s->sd1,fp);
 	}
 
-	void selects3_load(selects3 * s, ifstream & fp) {
+	void selects3_load(selects3 * s, istream & fp) {
 		s->n = loadValue<int>(fp);
 		s->m = loadValue<int>(fp);
 		s->size = loadValue<int>(fp);

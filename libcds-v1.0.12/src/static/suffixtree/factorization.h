@@ -51,9 +51,9 @@ namespace cds_static
 			factorization(uint *list,uint l_Length);
 			virtual uint access(uint param);
 			virtual uint access_seq(uint param, size_t *next_pos, bool dir);
-			virtual void save(ofstream & fp);
+			virtual void save(ostream & fp);
 			virtual uint getSize();
-			static factorization* load(ifstream & fp);
+			static factorization* load(istream & fp);
 			virtual ~factorization();
 	};
 };

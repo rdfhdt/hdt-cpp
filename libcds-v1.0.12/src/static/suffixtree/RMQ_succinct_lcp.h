@@ -47,9 +47,9 @@ namespace cds_static
 
 			virtual uint getSize();
 
-			virtual void save(ofstream & fp);
+			virtual void save(ostream & fp);
 
-			static RMQ_succinct_lcp * load(ifstream & fp);
+			static RMQ_succinct_lcp * load(istream & fp);
 
 			virtual ~RMQ_succinct_lcp();
 

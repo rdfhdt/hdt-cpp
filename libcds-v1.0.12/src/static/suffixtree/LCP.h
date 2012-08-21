@@ -65,10 +65,10 @@ namespace cds_static
 			virtual  uint * create_lcp(TextIndex *csa, char *text, uint n, int q) const;
 
 			/** Stores the structure given a file pointer*/
-			virtual void save(ofstream & fp) const=0;
+			virtual void save(ostream & fp) const=0;
 
 			/** Reads a LCP determining the type */
-			static LCP * load(ifstream & fp);
+			static LCP * load(istream & fp);
 	};
 };
 

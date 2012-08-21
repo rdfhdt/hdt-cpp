@@ -52,8 +52,8 @@ namespace cds_static
 			virtual uint unmap(uint s) const;
 			virtual size_t getSize() const;
 
-			virtual void save(ofstream & out) const;
-			static MapperCont * load(ifstream & input);
+			virtual void save(ostream & out) const;
+			static MapperCont * load(istream & input);
 
 		protected:
 			MapperCont();

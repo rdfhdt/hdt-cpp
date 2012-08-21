@@ -190,7 +190,7 @@ namespace cds_static
 		return ptr;
 	}
 
-	void saveHuff (const THuff H, ofstream & f) {
+	void saveHuff (const THuff H, ostream & f) {
 		uint *symb = new uint[H.lim+1];
 		uint i;
 		for(i=0;i<(H.lim+1);i++) symb[i] = 0;
@@ -214,7 +214,7 @@ namespace cds_static
 		delete [] H.num;
 	}
 
-	THuff loadHuff (ifstream & f, int enc) {
+	THuff loadHuff (istream & f, int enc) {
 		THuff H;
 		uint *symb;
 		//uint *num;

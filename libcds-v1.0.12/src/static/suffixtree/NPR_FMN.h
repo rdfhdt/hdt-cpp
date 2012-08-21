@@ -60,9 +60,9 @@ namespace cds_static
 
 			virtual  size_t getSize() const;
 
-			virtual void save(ofstream & fp) const;
+			virtual void save(ostream & fp) const;
 
-			static NPR_FMN * load(ifstream & fp);
+			static NPR_FMN * load(istream & fp);
 	};
 
 };

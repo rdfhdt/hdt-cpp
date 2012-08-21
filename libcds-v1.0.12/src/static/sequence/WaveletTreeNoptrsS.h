@@ -58,8 +58,8 @@ namespace cds_static
 
             size_t count(uint symbol) const;
 
-            virtual void save(ofstream & fp) const;
-            static WaveletTreeNoptrsS * load(ifstream & fp);
+            virtual void save(ostream & fp) const;
+            static WaveletTreeNoptrsS * load(istream & fp);
 
         protected:
             WaveletTreeNoptrsS();

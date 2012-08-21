@@ -48,8 +48,8 @@ namespace cds_static
             virtual uint access(size_t pos) const;
             virtual uint access(size_t pos, size_t & rankp) const;
             virtual size_t getSize() const;
-            virtual void save(ofstream & fp) const;
-            static wt_node_internal * load(ifstream & fp);
+            virtual void save(ostream & fp) const;
+            static wt_node_internal * load(istream & fp);
 
         protected:
             wt_node_internal();

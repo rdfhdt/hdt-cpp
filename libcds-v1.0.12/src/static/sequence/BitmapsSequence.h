@@ -55,10 +55,10 @@ namespace cds_static
 
 			virtual size_t getSize() const;
 
-			virtual void save(ofstream & fp) const;
+			virtual void save(ostream & fp) const;
 
 			/** Reads a bitmap determining the type */
-			static BitmapsSequence * load(ifstream & fp);
+			static BitmapsSequence * load(istream & fp);
 
 		protected:
 			uint sigma;

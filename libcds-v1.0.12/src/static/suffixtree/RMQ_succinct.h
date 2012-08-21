@@ -52,8 +52,8 @@ namespace cds_static
 			RMQ_succinct(int* a, unsigned int n);
 
 			uint getSize();
-			void  save(ofstream & fp);
-			RMQ_succinct * load(ifstream & fp);
+			void  save(ostream & fp);
+			RMQ_succinct * load(istream & fp);
 
 			~RMQ_succinct();
 

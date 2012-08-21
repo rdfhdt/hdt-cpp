@@ -49,8 +49,8 @@ namespace cds_static
             virtual uint access(size_t pos) const = 0;
             virtual uint access(size_t pos, size_t & rankp) const = 0;
             virtual size_t getSize() const = 0;
-            virtual void save(ofstream & fp) const = 0;
-            static wt_node * load(ifstream & fp);
+            virtual void save(ostream & fp) const = 0;
+            static wt_node * load(istream & fp);
     };
 
 };

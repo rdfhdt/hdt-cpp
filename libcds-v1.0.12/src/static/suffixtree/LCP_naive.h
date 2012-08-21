@@ -46,10 +46,10 @@ namespace cds_static
 			virtual  size_t getSize() const;
 
 			/** Stores the structure given a file pointer, return 0 in case of success */
-			virtual void save(ofstream & fp) const;
+			virtual void save(ostream & fp) const;
 
 			/** Reads a LCP determining the type */
-			static LCP_naive * load(ifstream & fp);
+			static LCP_naive * load(istream & fp);
 
 			virtual ~LCP_naive();
 	};

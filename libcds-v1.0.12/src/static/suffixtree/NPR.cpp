@@ -20,7 +20,7 @@
 
 namespace cds_static
 {
-	NPR * NPR::load(ifstream & fp) {
+	NPR * NPR::load(istream & fp) {
 		size_t r = loadValue<size_t>(fp);
 		size_t pos = fp.tellg();
 		fp.seekg(pos-sizeof(size_t));

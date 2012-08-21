@@ -85,10 +85,10 @@ namespace cds_static
 
 			/** Saves the structure to the stream
 			 */
-			virtual void save(ofstream & fp) const = 0;
+			virtual void save(ostream & fp) const = 0;
 
 			/** Reads a bitmap determining the type */
-			static Sequence * load(ifstream & fp);
+			static Sequence * load(istream & fp);
 
 		protected:
 			size_t length;

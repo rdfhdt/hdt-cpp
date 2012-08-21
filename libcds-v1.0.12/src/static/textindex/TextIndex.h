@@ -96,10 +96,10 @@ namespace cds_static
 			virtual size_t getSize() const=0;
 
 			/** Stores the text index in the  given a file pointer*/
-			virtual void save(ofstream & fp) const=0;
+			virtual void save(ostream & fp) const=0;
 
 			/** Reads a text index determining the type */
-			static TextIndex * load(ifstream & fp);
+			static TextIndex * load(istream & fp);
 	};
 };
 

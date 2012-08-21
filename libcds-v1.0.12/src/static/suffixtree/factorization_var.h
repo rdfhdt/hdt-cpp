@@ -60,8 +60,8 @@ namespace cds_static
 			virtual uint access(uint param);
 			virtual uint access_seq(uint param, size_t *next_pos, bool dir);
 			virtual uint getSize();
-			virtual void save(ofstream & fp);
-			static factorization_var* load(ifstream & fp);
+			virtual void save(ostream & fp);
+			static factorization_var* load(istream & fp);
 			virtual ~factorization_var();
 	};
 };

@@ -57,7 +57,7 @@ namespace cds_utils
 			/** Reads and Array from a file stream
 			 * @param input input file stream
 			 */
-			Array(ifstream & input);
+			Array(istream & input);
 
 			/** Creates an array from a vector
 			 * @param A vector with the elements
@@ -138,7 +138,7 @@ namespace cds_utils
 			}
 
 			/** Saves the array into a file */
-			void save(ofstream & out) const;
+			void save(ostream & out) const;
 
 			/** Returns the size of the array in bytes
 			 */

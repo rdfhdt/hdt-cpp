@@ -145,7 +145,7 @@ namespace cds_static
 		return O->getSize() + Z->getSize() + sizeof(LCP_FMN);
 	}
 
-	void LCP_FMN::save(ofstream & fp) const
+	void LCP_FMN::save(ostream & fp) const
 	{
 		saveValue(fp,lcp_type);
 		saveValue(fp,b_length);
@@ -154,7 +154,7 @@ namespace cds_static
 		Z->save(fp);
 	}
 
-	LCP_FMN* LCP_FMN::load(ifstream & fp) {
+	LCP_FMN* LCP_FMN::load(istream & fp) {
 		LCP_FMN *lcp = new LCP_FMN();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=FMN_RRR_OS) {

@@ -63,8 +63,8 @@ namespace cds_static
 			virtual size_t select(uint i, size_t j) const;
 			virtual size_t rank(uint i, size_t j) const;
 			virtual size_t getSize() const;
-			virtual void save(ofstream & fp) const;
-			static SequenceGMRChunk * load(ifstream & fp);
+			virtual void save(ostream & fp) const;
+			static SequenceGMRChunk * load(istream & fp);
 
 		protected:
 			/** Bitmap */

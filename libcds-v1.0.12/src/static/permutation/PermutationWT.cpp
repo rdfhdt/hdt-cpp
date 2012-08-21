@@ -69,7 +69,7 @@ namespace cds_static
 		return marks->getSize()+wt->getSize()+sizeof(PermutationWT);
 	}
 
-	void PermutationWT::save(ofstream & out) const
+	void PermutationWT::save(ostream & out) const
 	{
 		saveValue(out,WTPERM);
 		saveValue(out, length);
@@ -77,7 +77,7 @@ namespace cds_static
 		marks->save(out);
 	}
 
-	PermutationWT * PermutationWT::load(ifstream &in) {
+	PermutationWT * PermutationWT::load(istream &in) {
 		uint rd = loadValue<uint>(in);
 		if(rd!=WTPERM) return NULL;
 		PermutationWT * ret = new PermutationWT();

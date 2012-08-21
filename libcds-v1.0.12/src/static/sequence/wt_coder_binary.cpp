@@ -79,14 +79,14 @@ namespace cds_static
         return sizeof(wt_coder_binary);
     }
 
-    void wt_coder_binary::save(ofstream & fp) const
+    void wt_coder_binary::save(ostream & fp) const
     {
         uint wr = WT_CODER_BINARY_HDR;
         saveValue(fp,wr);
         saveValue(fp,h);
     }
 
-    wt_coder_binary * wt_coder_binary::load(ifstream & fp) {
+    wt_coder_binary * wt_coder_binary::load(istream & fp) {
         uint rd = loadValue<uint>(fp);
         if(rd!=WT_CODER_BINARY_HDR) return NULL;
         wt_coder_binary * ret = new wt_coder_binary();

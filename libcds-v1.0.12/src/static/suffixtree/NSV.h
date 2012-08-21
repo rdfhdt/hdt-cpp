@@ -57,9 +57,9 @@ namespace cds_static
 			//memory use for NSV in bytes
 			virtual size_t getSize() const;
 
-			virtual void save(ofstream & fp) const;
+			virtual void save(ostream & fp) const;
 
-			static NSV* load(ifstream & fp);
+			static NSV* load(istream & fp);
 
 			virtual ~NSV();
 	};

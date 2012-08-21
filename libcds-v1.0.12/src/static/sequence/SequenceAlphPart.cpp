@@ -369,7 +369,7 @@ namespace cds_static
 		return ret;
 	}
 
-	void SequenceAlphPart::save(ofstream & fp) const
+	void SequenceAlphPart::save(ostream & fp) const
 	{
 		uint type = ALPHPART_HDR;
 		saveValue(fp,type);
@@ -385,7 +385,7 @@ namespace cds_static
 			indexesByLength[i]->save(fp);
 	}
 
-	SequenceAlphPart * SequenceAlphPart::load(ifstream & fp) {
+	SequenceAlphPart * SequenceAlphPart::load(istream & fp) {
 		uint type = loadValue<uint>(fp);
 		if(type!=ALPHPART_HDR)
 			return NULL;

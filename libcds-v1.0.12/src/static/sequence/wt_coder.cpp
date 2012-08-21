@@ -37,7 +37,7 @@ namespace cds_static
         if(user_count==0) delete this;
     }
 
-    wt_coder * wt_coder::load(ifstream & fp) {
+    wt_coder * wt_coder::load(istream & fp) {
         uint rd = loadValue<uint>(fp);
         size_t pos = fp.tellg();
         fp.seekg(pos-sizeof(uint));

@@ -88,8 +88,8 @@ namespace cds_static
 
 			virtual size_t getSize() const;
 
-			virtual void save(ofstream & fp) const;
-			static WaveletTree * load(ifstream & fp);
+			virtual void save(ostream & fp) const;
+			static WaveletTree * load(istream & fp);
 
 		protected:
 

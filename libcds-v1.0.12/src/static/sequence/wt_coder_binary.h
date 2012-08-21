@@ -50,8 +50,8 @@ namespace cds_static
             virtual uint depth() const{ return h; }
 	    virtual uint * get_symbol(uint symbol) const;
             virtual size_t getSize() const;
-            virtual void save(ofstream & fp) const;
-            static wt_coder_binary * load(ifstream & fp);
+            virtual void save(ostream & fp) const;
+            static wt_coder_binary * load(istream & fp);
 
         protected:
             wt_coder_binary();

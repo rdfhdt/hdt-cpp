@@ -63,10 +63,10 @@ namespace cds_static
 			virtual size_t getSize() const;
 
 			/** Saves the coder to a file */
-			virtual void save(ofstream & fp) const;
+			virtual void save(ostream & fp) const;
 
 			/** Loads a coder from a file */
-			static HuffmanCoder * load(ifstream & fp);
+			static HuffmanCoder * load(istream & fp);
 
 		protected:
 			HuffmanCoder();

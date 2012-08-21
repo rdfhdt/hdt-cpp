@@ -103,7 +103,7 @@ namespace cds_utils
 
 	inline size_t loadText(char *filename, char **textt, size_t *length) {
 		char *text;
-		ifstream in(filename);
+        ifstream in(filename);
 		if(!in.good())
 			return 1;
 		in.seekg(0,ios_base::end);

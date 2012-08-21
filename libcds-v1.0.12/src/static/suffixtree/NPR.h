@@ -52,9 +52,9 @@ namespace cds_static
 			//Return the size, in bytes, of the NPR structure
 			virtual  size_t getSize() const = 0;
 
-			virtual void save(ofstream & fp) const=0;
+			virtual void save(ostream & fp) const=0;
 
-			static NPR * load(ifstream & fp);
+			static NPR * load(istream & fp);
 	};
 
 };

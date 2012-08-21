@@ -38,7 +38,7 @@ namespace cds_static
 			delete this;
 	}
 
-	Mapper * Mapper::load(ifstream & input) {
+	Mapper * Mapper::load(istream & input) {
 		uint rd;
 		input.read((char*)&rd,sizeof(uint));
 		size_t pos = input.tellg();

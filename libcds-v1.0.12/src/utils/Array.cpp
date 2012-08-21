@@ -24,7 +24,7 @@
 namespace cds_utils
 {
 
-	Array::Array(ifstream & input) {
+	Array::Array(istream & input) {
 		length = loadValue<size_t>(input);
 		maxValue = loadValue<uint>(input);
 		bitsPerItem = loadValue<uint>(input);
@@ -139,7 +139,7 @@ namespace cds_utils
 		delete [] data;
 	}
 
-	void Array::save(ofstream & out) const
+	void Array::save(ostream & out) const
 	{
 		saveValue(out,length);
 		saveValue(out,maxValue);

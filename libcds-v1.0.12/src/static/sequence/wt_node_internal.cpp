@@ -247,7 +247,7 @@ namespace cds_static
         return s;
     }
 
-    void wt_node_internal::save(ofstream & fp) const
+    void wt_node_internal::save(ostream & fp) const
     {
         uint wr = WT_NODE_INTERNAL_HDR;
         saveValue(fp,wr);
@@ -268,7 +268,7 @@ namespace cds_static
         }
     }
 
-    wt_node_internal * wt_node_internal::load(ifstream & fp) {
+    wt_node_internal * wt_node_internal::load(istream & fp) {
         uint rd = loadValue<uint>(fp);
         if(rd!=WT_NODE_INTERNAL_HDR) return NULL;
         wt_node_internal * ret = new wt_node_internal();

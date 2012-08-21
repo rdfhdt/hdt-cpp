@@ -89,9 +89,9 @@ namespace cds_static
 			//Memory use in bytes
 			virtual size_t getSize() const =0;
 
-			virtual void save(ofstream & fp) const =0;
+			virtual void save(ostream & fp) const =0;
 
-			static SuffixTree * load(ifstream & fp);
+			static SuffixTree * load(istream & fp);
 
 			virtual ~SuffixTree() {};
 	};

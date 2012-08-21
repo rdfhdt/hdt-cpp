@@ -51,10 +51,10 @@ namespace cds_static
 			virtual size_t getSize() const;
 
 			/** Saves permutation to stream */
-			virtual void save(ofstream & fp) const;
+			virtual void save(ostream & fp) const;
 
 			/** Loads the permutation */
-			static PermutationWT * load(ifstream & fp);
+			static PermutationWT * load(istream & fp);
 
 		protected:
 			PermutationWT() {}

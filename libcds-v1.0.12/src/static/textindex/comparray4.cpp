@@ -561,7 +561,7 @@ namespace cds_static
 		}
 	}
 
-	void csa_save(CSA *SA, ofstream & fp) {
+	void csa_save(CSA *SA, ostream & fp) {
 		saveValue(fp, SA->m);
 		saveValue(fp, SA->two);
 		saveValue(fp, SA->two2);
@@ -583,7 +583,7 @@ namespace cds_static
 		#endif
 	}
 
-	CSA *csa_load(ifstream & fp) {
+	CSA *csa_load(istream & fp) {
 		CSA *SA;
 		SA = (CSA *) malloc(sizeof(CSA));
 		csa_init(SA);

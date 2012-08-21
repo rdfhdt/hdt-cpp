@@ -172,14 +172,14 @@ namespace cds_static
 		return mem;
 	}
 
-	void LCP_DAC_VAR::save(ofstream & fp) const
+	void LCP_DAC_VAR::save(ostream & fp) const
 	{
 		saveValue(fp, lcp_type);
 		saveValue(fp, n);
 		rep->save(fp);
 	}
 
-	LCP_DAC_VAR* LCP_DAC_VAR::load(ifstream & fp) {
+	LCP_DAC_VAR* LCP_DAC_VAR::load(istream & fp) {
 		LCP_DAC_VAR *lcp = new LCP_DAC_VAR();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=DAC_VAR) {

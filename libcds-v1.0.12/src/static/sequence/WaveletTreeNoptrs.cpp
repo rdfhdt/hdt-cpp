@@ -226,7 +226,7 @@ namespace cds_static
 			am->unuse();
 	}
 
-	void WaveletTreeNoptrs::save(ofstream & fp) const
+	void WaveletTreeNoptrs::save(ostream & fp) const
 	{
 		uint wr = WVTREE_NOPTRS_HDR;
 		saveValue(fp, wr);
@@ -239,7 +239,7 @@ namespace cds_static
 		saveValue<uint>(fp, OCC, max_v + 2);
 	}
 
-	WaveletTreeNoptrs * WaveletTreeNoptrs::load(ifstream & fp) {
+	WaveletTreeNoptrs * WaveletTreeNoptrs::load(istream & fp) {
 		uint rd = loadValue<uint>(fp);
 		if (rd != WVTREE_NOPTRS_HDR) return NULL;
 		WaveletTreeNoptrs * ret = new WaveletTreeNoptrs();

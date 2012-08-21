@@ -25,7 +25,7 @@
 namespace cds_utils
 {
 
-	BitString::BitString(ifstream & input) {
+	BitString::BitString(istream & input) {
 		assert(input.good());
 		input.read((char*)&length,sizeof(size_t));
 		input.read((char*)&uintLength,sizeof(size_t));
@@ -61,7 +61,7 @@ namespace cds_utils
 		delete [] data;
 	}
 
-	void BitString::save(ofstream & out) const
+	void BitString::save(ostream & out) const
 	{
 		assert(out.good());
 		out.write((char*)&length,sizeof(size_t));

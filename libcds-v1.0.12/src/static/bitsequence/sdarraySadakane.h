@@ -67,11 +67,11 @@ namespace cds_static
 	int selects3_selectnext(const selects3 *select, const int i);
 
 	void make___selecttbl(void);
-	void selectd2_save(const selectd2 * s, ofstream & fp);
-	void selects3_save(const selects3 * s, ofstream & fp);
+	void selectd2_save(const selectd2 * s, ostream & fp);
+	void selects3_save(const selects3 * s, ostream & fp);
 
-	void selectd2_load(selectd2 * s, ifstream & fp);
-	void selects3_load(selects3 * s, ifstream & fp);
+	void selectd2_load(selectd2 * s, istream & fp);
+	void selects3_load(selects3 * s, istream & fp);
 
 	void selectd2_free(selectd2 * s);
 	void selects3_free(selects3 * s);

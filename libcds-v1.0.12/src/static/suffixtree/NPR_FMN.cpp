@@ -95,7 +95,7 @@ namespace cds_static
 		return mem;
 	}
 
-	void NPR_FMN::save(ofstream & fp) const
+	void NPR_FMN::save(ostream & fp) const
 	{
 		saveValue(fp, npr_type);
 		nsv->save(fp);
@@ -103,7 +103,7 @@ namespace cds_static
 		rmq->save(fp);
 	}
 
-	NPR_FMN * NPR_FMN::load(ifstream & fp) {
+	NPR_FMN * NPR_FMN::load(istream & fp) {
 		NPR_FMN *npr = new NPR_FMN();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=FMN_NPR) {

@@ -48,8 +48,8 @@ namespace cds_static
             virtual bool done(uint symbol, uint l) const;
             virtual size_t getSize() const;
 	    virtual uint * get_symbol(uint symbol) const;
-            virtual void save(ofstream & fp) const;
-            static wt_coder_huff * load(ifstream & fp);
+            virtual void save(ostream & fp) const;
+            static wt_coder_huff * load(istream & fp);
             //uint * get_buffer(uint symbol, uint *n);
 
         protected:

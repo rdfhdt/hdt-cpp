@@ -141,7 +141,7 @@ namespace cds_static
 		return length-ones;
 	}
 
-	BitSequence * BitSequence::load(ifstream & fp) {
+	BitSequence * BitSequence::load(istream & fp) {
 		uchar r = loadValue<uchar>(fp);
 		size_t pos = fp.tellg();
 		fp.seekg(pos-sizeof(uchar));

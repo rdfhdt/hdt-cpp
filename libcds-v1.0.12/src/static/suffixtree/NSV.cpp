@@ -274,7 +274,7 @@ namespace cds_static
 		return n;
 	}
 
-	void NSV::save(ofstream & fp) const
+	void NSV::save(ostream & fp) const
 	{
 		saveValue(fp, r);
 		saveValue(fp, b);
@@ -289,7 +289,7 @@ namespace cds_static
 		saveValue(fp, A, (num_elements*b_A + W -1)/W);
 	}
 
-	NSV* NSV::load(ifstream & fp) {
+	NSV* NSV::load(istream & fp) {
 		NSV *nsv = new NSV();
 		nsv->r = loadValue<size_t>(fp);
 		nsv->b = loadValue<size_t>(fp);

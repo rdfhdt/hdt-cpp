@@ -192,7 +192,7 @@ namespace cds_static
 		return s+B->getSize()+sizeof(SequenceGMR);
 	}
 
-	void SequenceGMR::save(ofstream & fp) const
+	void SequenceGMR::save(ostream & fp) const
 	{
 		uint wr = GMR_HDR;
 		saveValue(fp,wr);
@@ -204,7 +204,7 @@ namespace cds_static
 			chunk[i]->save(fp);
 	}
 
-	SequenceGMR * SequenceGMR::load(ifstream & fp) {
+	SequenceGMR * SequenceGMR::load(istream & fp) {
 		uint rd = loadValue<uint>(fp);
 		if(rd!=GMR_HDR) return NULL;
 		SequenceGMR * ret = new SequenceGMR();

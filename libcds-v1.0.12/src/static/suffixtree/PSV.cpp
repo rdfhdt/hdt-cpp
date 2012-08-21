@@ -322,7 +322,7 @@ namespace cds_static
 		return 0;
 	}
 
-	void PSV::save(ofstream & fp) const
+	void PSV::save(ostream & fp) const
 	{
 		saveValue(fp, r);
 		saveValue(fp, b);
@@ -337,7 +337,7 @@ namespace cds_static
 		saveValue(fp, A, (num_elements*b_A + W -1)/W);
 	}
 
-	PSV* PSV::load(ifstream & fp) {
+	PSV* PSV::load(istream & fp) {
 		PSV *psv = new PSV();
 		psv->r = loadValue<size_t>(fp);
 		psv->b = loadValue<size_t>(fp);

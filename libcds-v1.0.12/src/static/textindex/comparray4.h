@@ -80,8 +80,8 @@ namespace cds_static
 	int csa_bsearch(unsigned char *key,int keylen,CSA *SA,int *li,int *ri);
 	void csa_decode1line(unsigned char *p,CSA *SA,int suf,int maxlen);
 	void csa_decodeall(unsigned char *p,CSA *SA);
-	void csa_save(CSA *csa, ofstream & fp);
-	CSA *csa_load(ifstream & fp);
+	void csa_save(CSA *csa, ostream & fp);
+	CSA *csa_load(istream & fp);
 	void csa_free(CSA *csa);
 	void csa_init(CSA *csa);
 };

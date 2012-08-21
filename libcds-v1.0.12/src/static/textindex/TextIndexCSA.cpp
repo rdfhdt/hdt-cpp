@@ -90,7 +90,7 @@ namespace cds_static
 		return (size_t)size;
 	}
 
-	void TextIndexCSA::save(ofstream & fp) const
+	void TextIndexCSA::save(ostream & fp) const
 	{
 		uint wr = CSA_HDR;
 		saveValue(fp,wr);
@@ -98,7 +98,7 @@ namespace cds_static
 			csa_save(csa,fp);
 	}
 
-	TextIndexCSA * TextIndexCSA::load(ifstream & fp) {
+	TextIndexCSA * TextIndexCSA::load(istream & fp) {
 		uint type = loadValue<uint>(fp);
 		if(type!=CSA_HDR) {
 			abort();

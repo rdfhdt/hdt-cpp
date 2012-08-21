@@ -31,13 +31,13 @@ namespace cds_static
 
 	size_t MapperNone::getSize() const { return sizeof(MapperNone); }
 
-	void MapperNone::save(ofstream & out) const
+	void MapperNone::save(ostream & out) const
 	{
 		uint wr = MAPPER_NONE_HDR;
 		out.write((char*)&wr,sizeof(uint));
 	}
 
-	MapperNone * MapperNone::load(ifstream & input) {
+	MapperNone * MapperNone::load(istream & input) {
 		uint rd;
 		input.read((char*)&rd,sizeof(uint));
 		if(rd!=MAPPER_NONE_HDR) return NULL;

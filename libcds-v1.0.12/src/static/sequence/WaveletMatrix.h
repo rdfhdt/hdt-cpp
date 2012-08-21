@@ -57,8 +57,8 @@ namespace cds_static
 			virtual uint access(size_t pos) const;
 			virtual size_t getSize() const;
 
-			virtual void save(ofstream & fp) const;
-			static WaveletMatrix * load(ifstream & fp);
+			virtual void save(ostream & fp) const;
+			static WaveletMatrix * load(istream & fp);
 
 		protected:
 			WaveletMatrix();

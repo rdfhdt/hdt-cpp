@@ -50,14 +50,14 @@ namespace cds_static
 		return inversePerm(permutation,i);
 	}
 
-	void PermutationMRRR::save(ofstream & fp) const
+	void PermutationMRRR::save(ostream & fp) const
 	{
 		uint wr = MRRRPERM;
 		saveValue(fp,wr);
 		savePerm(permutation,fp);
 	}
 
-	PermutationMRRR * PermutationMRRR::load(ifstream & fp) {
+	PermutationMRRR * PermutationMRRR::load(istream & fp) {
 		uint rd = loadValue<uint>(fp);
 		if(rd!=MRRRPERM) return NULL;
 		PermutationMRRR * ret = new PermutationMRRR();

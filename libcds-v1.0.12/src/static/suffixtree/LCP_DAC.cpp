@@ -64,14 +64,14 @@ namespace cds_static
 		return mem;
 	}
 
-	void LCP_DAC::save(ofstream & fp) const
+	void LCP_DAC::save(ostream & fp) const
 	{
 		saveValue(fp, lcp_type);
 		saveValue(fp, n);
 		rep->save(fp);
 	}
 
-	LCP_DAC* LCP_DAC::load(ifstream & fp) {
+	LCP_DAC* LCP_DAC::load(istream & fp) {
 		LCP_DAC *lcp = new LCP_DAC();
 		size_t type = loadValue<size_t>(fp);
 		if(type!=DAC) {

@@ -397,7 +397,7 @@ namespace cds_static
 		return mem;
 	}
 
-	void RMQ_succinct::save(ofstream & fp) {
+	void RMQ_succinct::save(ostream & fp) {
 		saveValue(fp,n);
 		saveValue(fp, a, n);
 		saveValue(fp, type, nmb);
@@ -409,7 +409,7 @@ namespace cds_static
 			saveValue(fp, Prec[i], s);
 	}
 
-	RMQ_succinct * RMQ_succinct::load(ifstream & fp) {
+	RMQ_succinct * RMQ_succinct::load(istream & fp) {
 		RMQ_succinct *rmq = new RMQ_succinct();
 		rmq->s = 1<<3;
 		rmq->sprime = 1<<4;
