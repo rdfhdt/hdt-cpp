@@ -29,7 +29,6 @@
 #define _CSDCACHE2_H
 
 #include <iostream>
-#include <fstream>
 #include <cassert>
 #include <string>
 #include <string.h>
@@ -38,9 +37,6 @@
 using namespace std;
 
 #include <HDTListener.hpp>
-
-#include <libcdsBasics.h>
-using namespace cds_utils;
 
 #include "CSD.h"
 
@@ -79,7 +75,7 @@ private:
 	@dict: the plain uncompressed dictionary.
 	@return: number of total symbols in the dictionary.
     */
-    uint decompress(unsigned char **dict);
+    unsigned int decompress(unsigned char **dict);
 
     hdt::IteratorUCharString *listAll() { return child->listAll(); }
 
@@ -89,18 +85,18 @@ private:
     /** Stores a CSD_PFC structure given a file pointer.
 	@fp: pointer to the file saving a CSD_PFC structure.
     */
-    void save(ofstream & fp);
+    void save(ostream & fp);
+
+    size_t load(unsigned char *ptr, unsigned char *ptrMax) {
+        return child->load(ptr, ptrMax);
+    }
 
     /** Loads a CSD_PFC structure from a file pointer.
 	@fp: pointer to the file storing a CSD_PFC structure. */
-    static CSD * load(ifstream & fp);
+    static CSD * load(istream & fp);
 
     void fillSuggestions(const char *base, vector<string> &out, int maxResults) {
     	child->fillSuggestions(base, out, maxResults);
-    }
-
-    void dumpAll() {
-    	child->dumpAll();
     }
 
     CSD *getChild() {

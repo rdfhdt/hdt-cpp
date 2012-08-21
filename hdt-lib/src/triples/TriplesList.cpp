@@ -113,7 +113,12 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 		numRead++;
 		numValidTriples++;
 		NOTIFYCOND(listener, "TriplesList loading", numRead, totalTriples)
-	}
+    }
+}
+
+size_t TriplesList::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void TriplesList::load(ModifiableTriples &input, ProgressListener *listener)
@@ -139,6 +144,10 @@ void TriplesList::saveIndex(std::ostream &output, ControlInformation &controlInf
 
 void TriplesList::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
 
+}
+
+size_t TriplesList::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
 }
 
 

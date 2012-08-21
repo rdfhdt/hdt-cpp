@@ -9,7 +9,7 @@ QT       -= core gui
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
 
-macx:QMAKE_CXXFLAGS_RELEASE += -msse4.2
+macx:QMAKE_CXXFLAGS += -msse4.2
 
 CONFIG += debug_and_release
 macx:CONFIG += x86_64
@@ -91,7 +91,8 @@ SOURCES += \
     ../src/bitsequence/BitSequence375.cpp \
     ../src/util/crc32.cpp \
     ../src/util/crc16.cpp \
-    ../src/util/crc8.cpp
+    ../src/util/crc8.cpp \
+    ../src/util/bitutil.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
@@ -169,7 +170,8 @@ HEADERS += \
     ../src/bitsequence/BitSeq.h \
     ../src/util/crc32.h \
     ../src/util/crc16.h \
-    ../src/util/crc8.h
+    ../src/util/crc8.h \
+    ../src/util/bitutil.h
 
 #For hdt-lib
 INCLUDEPATH += ../include

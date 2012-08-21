@@ -52,6 +52,8 @@ public:
 	virtual void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 	virtual void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
+    virtual size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
+
 	/**
 	 * Returns the number of triples
 	 *

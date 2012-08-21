@@ -200,11 +200,11 @@ void BitmapTriples::generateWavelet(ProgressListener *listener) {
 		waveletY = reinterpret_cast<WaveletSequence *>(arrayY);
 	} else {
 		waveletY = new WaveletSequence(arrayY);
-
-        if(true) { // FIXME: Substitute existing or leave both?
-			delete arrayY;
-			arrayY = waveletY;
-		}
+#if 0
+        // FIXME: Substitute existing or leave both?
+        delete arrayY;
+        arrayY = waveletY;
+#endif
 	}
 }
 
@@ -369,8 +369,7 @@ void BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 {
 	CHECK_BITMAPTRIPLES_INITIALIZED
 
-	controlInformation.clear();
-	controlInformation.setUint("numTriples", getNumberOfElements());
+    controlInformation.setUint("numTriples", getNumberOfElements());
 	controlInformation.set("codification", getType());
 	controlInformation.setUint("componentOrder", order);
 	controlInformation.set("array.y", arrayY->getType());
@@ -380,26 +379,21 @@ void BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 	// Fixme: Bitmap directly on istream/ostream??
 	IntermediateListener iListener(listener);
 	ofstream *out = dynamic_cast<ofstream *>(&output);
-	//cout << "Save BitmapY " << out->tellp() << endl;
 	iListener.setRange(0,5);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Y");
 	bitmapY->save(*out);
 
 	iListener.setRange(5,15);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Z");
-	//cout << "Save BitmapZ " << out->tellp() << endl;
 	bitmapZ->save(*out);
 
 	iListener.setRange(15,30);
 	iListener.notifyProgress(0, "BitmapTriples saving Stream Y");
-	//cout << "Save StreamY " << out->tellp() << endl;
 	arrayY->save(output);
 
 	iListener.setRange(30,100);
 	iListener.notifyProgress(0, "BitmapTriples saving Stream Z");
-	//cout << "Save StreamZ " << out->tellp() << endl;
 	arrayZ->save(output);
-	//cout << "OK " << out->tellp() << endl;
 }
 
 void BitmapTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
@@ -422,7 +416,6 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 
 	iListener.setRange(0,5);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Y");
-	//cout << "Load BitmapY " << in->tellg() << endl;
 	bitmapY = BitSequence375::load(*in);
 	if(bitmapY==NULL){
 		throw "Could not read bitmapY.";
@@ -430,7 +423,6 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 
 	iListener.setRange(5,10);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Z");
-	//cout << "Load BitmapZ " << in->tellg() << endl;
 	bitmapZ = BitSequence375::load(*in);
 	if(bitmapZ==NULL){
 		throw "Could not read bitmapZ.";
@@ -438,24 +430,70 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 
 	iListener.setRange(10,20);
 	iListener.notifyProgress(0, "BitmapTriples loading Stream Y");
-	//cout << "Load StreamY " << in->tellg() << endl;
 	arrayY->load(input);
 
 	iListener.setRange(20,50);
 	iListener.notifyProgress(0, "BitmapTriples loading Stream Z");
-	//cout << "Load StreamZ " << in->tellg() << endl;
-	arrayZ->load(input);
-	//cout << "OK " << in->tellg() << endl;
+    arrayZ->load(input);
 
 	if(arrayZ->getType()==HDTVocabulary::SEQ_TYPE_WAVELET) {
 		waveletY = reinterpret_cast<WaveletSequence *>(arrayZ);
-	}
+    }
+}
+
+size_t BitmapTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    size_t count=0;
+
+    controlInformation.clear();
+    count += controlInformation.load(&ptr[count], ptrMax);
+
+    order = (TripleComponentOrder) controlInformation.getUint("componentOrder");
+
+    BitSequence375 *bitY = new BitSequence375();
+    BitSequence375 *bitZ = new BitSequence375();
+
+    std::string typeY = controlInformation.get("array.y");
+    std::string typeZ = controlInformation.get("array.z");
+
+    IntSequence *aY = IntSequence::getArray(typeY);
+    IntSequence *aZ = IntSequence::getArray(typeZ);
+
+    IntermediateListener iListener(listener);
+
+    iListener.setRange(0,5);
+    iListener.notifyProgress(0, "BitmapTriples loading Bitmap Y");
+    count += bitY->load(&ptr[count], ptrMax, listener);
+
+    iListener.setRange(5,10);
+    iListener.notifyProgress(0, "BitmapTriples loading Bitmap Z");
+    count += bitZ->load(&ptr[count], ptrMax, listener);
+
+    iListener.setRange(10,20);
+    iListener.notifyProgress(0, "BitmapTriples loading Stream Y");
+    count += aY->load(&ptr[count], ptrMax, listener);
+
+    iListener.setRange(20,50);
+    iListener.notifyProgress(0, "BitmapTriples loading Stream Z");
+    count += aZ->load(&ptr[count], ptrMax, listener);
+
+    delete bitmapY;
+    delete bitmapZ;
+    delete arrayY;
+    delete arrayZ;
+
+    bitmapY = bitY;
+    bitmapZ = bitZ;
+    arrayY = aY;
+    arrayZ = aZ;
+
+    return count;
 }
 
 void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener) {
 	IntermediateListener iListener(listener);
-	iListener.setRange(0,70);
 
+    iListener.setRange(10,50);
 	if(arrayIndex==NULL || bitmapIndex==NULL) {
 		generateIndex(&iListener);
 	}
@@ -468,17 +506,19 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 
 	ofstream *out = dynamic_cast<ofstream *>(&output);
 
-	iListener.setRange(70,80);
+    iListener.setRange(50,60);
 	iListener.notifyProgress(0, "BitmapTriples saving Predicate count");
 	predicateCount->save(*out);
 
-	iListener.setRange(80,90);
+    iListener.setRange(60,70);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Index");
 	bitmapIndex->save(*out);
 
-	iListener.setRange(90,100);
+    iListener.setRange(70,100);
 	iListener.notifyProgress(0, "BitmapTriples saving Stream Index");
 	arrayIndex->save(*out);
+
+    waveletY->save(*out);
 }
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
@@ -520,7 +560,76 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 
 	// Make sure wavelet is generated
 	iListener.setRange(50,100);
-	generateWavelet(&iListener);
+    if(! in->eof() ) {
+        waveletY = new WaveletSequence();
+        waveletY->load(input);
+    } else {
+        generateWavelet(&iListener);
+    }
+}
+
+size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    IntermediateListener iListener(listener);
+
+    size_t count=0;
+    controlInformation.clear();
+    count += controlInformation.load(&ptr[count], ptrMax);
+
+    unsigned int numTriples = controlInformation.getUint("numTriples");
+    std::string typeIndex = controlInformation.get("stream.index");
+
+    if(this->getNumberOfElements()!=numTriples) {
+        throw "The supplied index does not have the same number of triples as the dataset";
+    }
+
+    // LOAD PREDICATES
+    iListener.setRange(0,10);
+    iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
+    LogSequence2 *pCount = new LogSequence2();
+    count += pCount->load(&ptr[count], ptrMax, &iListener);
+
+    if(predicateCount) {
+        delete predicateCount;
+    }
+    predicateCount = pCount;
+
+    // LOAD BITMAP
+    iListener.setRange(10,20);
+    iListener.notifyProgress(0, "BitmapTriples loading Bitmap Index");
+    if(bitmapIndex!=NULL) {
+        delete bitmapIndex;
+    }
+    BitSequence375 *bitIndex = new BitSequence375();
+    count += bitIndex->load(&ptr[count], ptrMax, &iListener);
+    bitmapIndex = bitIndex;
+
+    // LOAD STREAM
+    iListener.setRange(10,50);
+    iListener.notifyProgress(0, "BitmapTriples loading Stream Index");
+    if(arrayIndex!=NULL) {
+        delete arrayIndex;
+    }
+    LogSequence2 *arrIndex = new LogSequence2();
+    count += arrIndex->load(&ptr[count], ptrMax, &iListener);
+    arrayIndex = arrIndex;
+
+    iListener.setRange(50,100);
+    if(arrayY->getType()==HDTVocabulary::SEQ_TYPE_WAVELET) {
+        waveletY = reinterpret_cast<WaveletSequence *>(arrayY);
+    } else if(&ptr[count]<ptrMax) {
+        iListener.notifyProgress(0, "BitmapTriples loading Wavelet");
+
+        std::stringstream localStream;
+        localStream.rdbuf()->pubsetbuf((char*)&ptr[count], ptrMax-&ptr[count]);
+
+        waveletY = new WaveletSequence();
+        waveletY->load(localStream);
+    } else {
+        iListener.notifyProgress(0, "BitmapTriples generating Wavelet");
+        waveletY = new WaveletSequence(arrayY);
+    }
+    return count;
 }
 
 unsigned int BitmapTriples::getNumberOfElements()

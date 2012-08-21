@@ -35,6 +35,7 @@
 #include "../libdcs/CSD_PFC.h"
 #include "../libdcs/CSD_HTFC.h"
 #include "../libdcs/CSD_Cache.h"
+#include "../libdcs/CSD_Cache2.h"
 
 namespace hdt {
 
@@ -148,7 +149,6 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 
 	iListener.setRange(0,25);
 	iListener.notifyProgress(0, "Dictionary read shared area.");
-	//cout << "Load shared " << in->tellg() << endl;
 	delete shared;
 	shared = csd::CSD::load(*in);
 	if(shared==NULL){
@@ -159,7 +159,6 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
-	//cout << "Load subjects " << in->tellg() << endl;
 	delete subjects;
 	subjects = csd::CSD::load(*in);
 	if(subjects==NULL){
@@ -170,18 +169,16 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
-	//cout << "Load predicates " << in->tellg() << endl;
 	delete predicates;
 	predicates = csd::CSD::load(*in);
 	if(predicates==NULL){
 		predicates = new csd::CSD_PFC();
 		throw "Could not read predicates.";
 	}
-	subjects = new csd::CSD_Cache(subjects);
+	predicates = new csd::CSD_Cache2(predicates);
 
 	iListener.setRange(75,100);
 	iListener.notifyProgress(0, "Dictionary read objects.");
-	//cout << "Load objects " << in->tellg() << endl;
 	delete objects;
 	objects = csd::CSD::load(*in);
 	if(objects==NULL){
@@ -189,7 +186,64 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 		throw "Could not read objects.";
 	}
 	objects = new csd::CSD_Cache(objects);
-	//cout << "Dictionary loaded " << in->tellg() << endl;
+}
+
+size_t PFCDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    size_t count=0;
+
+    IntermediateListener iListener(listener);
+    ControlInformation ci;
+    count += ci.load(&ptr[count], ptrMax);
+
+    this->mapping = ci.getUint("$mapping");
+    this->sizeStrings = ci.getUint("$sizeStrings");
+
+    iListener.setRange(0,25);
+    iListener.notifyProgress(0, "Dictionary read shared area.");
+    delete shared;
+    shared = csd::CSD::create(ptr[count]);
+    if(shared==NULL){
+        shared = new csd::CSD_PFC();
+        throw "Could not read shared.";
+    }
+    count += shared->load(&ptr[count], ptrMax);
+    shared = new csd::CSD_Cache(shared);
+
+    iListener.setRange(25,50);
+    iListener.notifyProgress(0, "Dictionary read subjects.");
+    delete subjects;
+    subjects = csd::CSD::create(ptr[count]);
+    if(subjects==NULL){
+        subjects = new csd::CSD_PFC();
+        throw "Could not read subjects.";
+    }
+    count += subjects->load(&ptr[count], ptrMax);
+    subjects = new csd::CSD_Cache(subjects);
+
+    iListener.setRange(50,75);
+    iListener.notifyProgress(0, "Dictionary read predicates.");
+    delete predicates;
+    predicates = csd::CSD::create(ptr[count]);
+    if(predicates==NULL){
+        predicates = new csd::CSD_PFC();
+        throw "Could not read predicates.";
+    }
+    count += predicates->load(&ptr[count], ptrMax);
+    predicates = new csd::CSD_Cache(predicates);
+
+    iListener.setRange(75,100);
+    iListener.notifyProgress(0, "Dictionary read objects.");
+    delete objects;
+    objects = csd::CSD::create(ptr[count]);
+    if(objects==NULL){
+        objects = new csd::CSD_PFC();
+        throw "Could not read objects.";
+    }
+    count += objects->load(&ptr[count], ptrMax);
+    objects = new csd::CSD_Cache(objects);
+
+    return count;
 }
 
 
@@ -198,28 +252,27 @@ void PFCDictionary::import(Dictionary *other, ProgressListener *listener) {
 	try {
 		IntermediateListener iListener(listener);
 
-		//NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
+		NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
 		iListener.setRange(0, 20);
 		IteratorUCharString *itSubj = other->getSubjects();
 		delete subjects;
 		subjects = loadSection(itSubj, blocksize, &iListener);
 		delete itSubj;
 
-		//NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
+		NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
 		iListener.setRange(20, 21);
 		IteratorUCharString *itPred = other->getPredicates();
 		delete predicates;
-
 		predicates = loadSection(itPred, blocksize, &iListener);
 
-		//NOTIFY(listener, "DictionaryPFC loading objects", 30, 90);
+		NOTIFY(listener, "DictionaryPFC loading objects", 30, 90);
 		iListener.setRange(21, 90);
 		IteratorUCharString *itObj = other->getObjects();
 		delete objects;
 		objects = loadSection(itObj, blocksize, &iListener);
 		delete itObj;
 
-		//NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
+		NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
 		iListener.setRange(90, 100);
 		IteratorUCharString *itShared = other->getShared();
 		delete shared;
@@ -239,33 +292,6 @@ void PFCDictionary::import(Dictionary *other, ProgressListener *listener) {
 		shared = new csd::CSD_PFC();
 		throw e;
 	}
-
-	#if 0
-		cout << "Shared: " << shared->getLength() << endl;
-		cout << "Subjects: " << subjects->getLength() << endl;
-		cout << "Predicates: " << predicates->getLength() << endl;
-		cout << "Objects: " << objects->getLength() << endl;
-
-		cout << "Ensure same: " << endl;
-		for(unsigned int i=1;i<getMaxObjectID();i++){
-			string str1 = other->idToString(i, OBJECT);
-			string str2 = this->idToString(i, OBJECT);
-			unsigned int id1 = other->stringToId(str1, OBJECT);
-			unsigned int id2 = this->stringToId(str1, OBJECT);
-
-			if( (str1!=str2) || (id1!=id2)) {
-				cout << i << " Objects difer: " << endl;
-				cout << "\tPlain: " << id1 << " => " << str1 << endl;
-				cout << "\tPFC__: " << id2 << " => " << str2 << endl;
-			}
-		}
-		for(unsigned int i=1;i<getMaxObjectID();i++){
-			string str2 = this->idToString(i, OBJECT);
-			unsigned int id2 = this->stringToId(str2, OBJECT);
-
-			//cout << "ID: "<< i << " Back id: "<< id2 << " => " << str2 << endl;
-		}
-	#endif
 }
 
 IteratorUCharString *PFCDictionary::getSubjects() {
@@ -299,25 +325,19 @@ void PFCDictionary::save(std::ostream & output, ControlInformation & controlInfo
 
 	iListener.setRange(0,10);
 	iListener.notifyProgress(0, "Dictionary save shared area.");
-	//cout << "Save shared " << out->tellp() << endl;
 	shared->save(*out);
 
 	iListener.setRange(10,45);
 	iListener.notifyProgress(0, "Dictionary save subjects.");
-	//cout << "Save subjects " << out->tellp() << endl;
 	subjects->save(*out);
 
 	iListener.setRange(45,60);
 	iListener.notifyProgress(0, "Dictionary save predicates.");
-	//cout << "Save predicates " << out->tellp() << endl;
 	predicates->save(*out);
 
 	iListener.setRange(60,100);
 	iListener.notifyProgress(0, "Dictionary save objects.");
-	//cout << "Save objects " << out->tellp() << endl;
 	objects->save(*out);
-
-	//cout << "Dictionary saved " << out->tellp() << endl;
 }
 
 

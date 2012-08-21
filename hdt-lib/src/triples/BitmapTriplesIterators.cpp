@@ -530,6 +530,10 @@ ObjectIndexIterator::ObjectIndexIterator(BitmapTriples *trip, TripleID &pat) :
     patY = pattern.getPredicate();
     patZ = pattern.getObject();
 
+    if(patZ==0) {
+    	throw "This iterator is not suitable for this pattern";
+    }
+
 #if 0
     cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
     cout << "AdjY: " << endl;

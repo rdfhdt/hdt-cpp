@@ -55,7 +55,7 @@ namespace csd
 	/**
 	 * Decode value from the buffer using VByte.
 	 */
-	size_t VByte::decode(unsigned char *buffer, uint64_t *value )
+    size_t VByte::decode(const unsigned char *buffer, uint64_t *value )
 	{
 		*value = 0;
 		int i = 0;
@@ -81,7 +81,7 @@ namespace csd
 	/**
 	 * Decode value from the buffer using VByte.
 	 */
-	size_t VByte::decode(unsigned char *buffer, uint32_t *value )
+    size_t VByte::decode(const unsigned char *buffer, uint32_t *value )
 	{
 		*value = 0;
 		int i = 0;

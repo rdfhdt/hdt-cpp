@@ -89,6 +89,12 @@ public:
 	 */
 	virtual void loadFromHDT(const char *fileName, ProgressListener *listener = NULL) = 0;
 
+    /**
+     * Load an HDT from a file, using memory mapping
+     * @param input
+     */
+    virtual void mapHDT(const char *fileName, ProgressListener *listener = NULL) = 0;
+
 	/**
 	 * Export the current HDT to RDF in the specified notation.
 	 * @param output
@@ -108,9 +114,7 @@ public:
 	 */
 	virtual void saveToHDT(std::ostream &out, ProgressListener *listener = NULL) = 0;
 
-	virtual void convert(HDTSpecification &spec)=0;
-
-	virtual void generateIndex(ProgressListener *listener = NULL)=0;
+	virtual void loadOrCreateIndex(ProgressListener *listener = NULL)=0;
 
 	virtual void saveIndex(ProgressListener *listener = NULL)=0;
 

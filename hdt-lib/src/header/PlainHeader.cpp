@@ -66,18 +66,43 @@ void PlainHeader::load(std::istream & input, ControlInformation &controlInformat
 
 	// Convert into a stringstream
 	stringstream strstream(str, stringstream::in);
+    triples.clear();
 
 	// Parse header
 	RDFParserNtriples parser(strstream, N3);
 	while(parser.hasNext()) {
 		TripleString *ts = parser.next();
 		triples.push_back(*ts);
-	}
+    }
+}
+
+size_t PlainHeader::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    size_t count = 0;
+
+    uint64_t headerSize;
+    count += csd::VByte::decode(&ptr[count], &headerSize);
+
+    string str(&ptr[count], &ptr[count+headerSize]);
+
+    // Convert into a stringstream
+    stringstream strstream(str, stringstream::in);
+    triples.clear();
+
+    // Parse header
+    RDFParserNtriples parser(strstream, N3);
+    while(parser.hasNext()) {
+        TripleString *ts = parser.next();
+        triples.push_back(*ts);
+    }
+
+    count+=headerSize;
+
+    return count;
 }
 
 void PlainHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
-	controlInformation.clear();
 	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);
 	controlInformation.save(output);
 

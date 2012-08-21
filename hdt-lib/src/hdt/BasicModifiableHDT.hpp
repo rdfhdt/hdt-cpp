@@ -29,40 +29,6 @@
 #endif
 
 
-
-/*
-#include <list>
-#include <iomanip>
-#include <algorithm>
-#include <string>
-#include <time.h>
-
-#include <HDTVocabulary.hpp>
-#include <HDTFactory.hpp>
-#include <RDFParser.hpp>
-
-#include "util/StopWatch.hpp"
-#include "util/fileUtil.hpp"
-
-#include "ControlInformation.hpp"
-#include "BasicHDT.hpp"
-
-#include "dictionary/PFCDictionary.hpp"
-#include "dictionary/LiteralDictionary.hpp"
-
-#include "triples/TriplesList.hpp"
-
-#include "triples/PlainTriples.hpp"
-#include "triples/CompactTriples.hpp"
-#include "triples/BitmapTriples.hpp"
-#include "triples/TripleOrderConvert.hpp"
-*/
-
-
-
-
-
-
 namespace hdt {
 
 class BasicModifiableHDT : public ModifiableHDT {
@@ -82,54 +48,29 @@ public:
 
 	virtual ~BasicModifiableHDT();
 
-	/**
-	 *
-	 */
 	Header *getHeader();
 
-	/**
-	 *
-	 */
 	Dictionary *getDictionary();
 
-	/**
-	 *
-	 */
 	Triples *getTriples();
 
 	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
 
-	/**
-	 * @param input
-	 */
 	void loadFromHDT(std::istream &input, ProgressListener *listener = NULL);
 
-	/**
-	 * @param input
-	 */
 	void loadFromHDT(const char *fileName, ProgressListener *listener = NULL);
 
-	/**
-	 * @param output
-	 * @param notation
-	 */
+    void mapHDT(const char *fileName, ProgressListener *listener = NULL);
+
 	void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL);
 
-	/**
-	 * @param output
-	 */
 	void saveToHDT(std::ostream &output, ProgressListener *listener = NULL);
 
-	/**
-	 * @param output
-	 */
 	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
 
-	void generateIndex(ProgressListener *listener = NULL);
+	void loadOrCreateIndex(ProgressListener *listener = NULL);
 
 	void saveIndex(ProgressListener *listener = NULL);
-
-	void convert(HDTSpecification &spec);
 
 	/*
 	 * FROM RDFAccess
@@ -142,6 +83,7 @@ public:
 	 * @return
 	 */
 	IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+
 	VarBindingString *searchJoin(vector<TripleString> &patterns, set<string> &vars);
 
 	/**

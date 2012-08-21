@@ -162,6 +162,8 @@ public:
     */
     virtual void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
+    virtual size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
+
     virtual string getType()=0;
 	virtual unsigned int getMapping()=0;
 

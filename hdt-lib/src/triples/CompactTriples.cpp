@@ -217,7 +217,12 @@ void CompactTriples::load(std::istream &input, ControlInformation &controlInform
 
 	iListener.setRange(30,100);
 	iListener.notifyProgress(0, "CompactTriples saving Stream Y");
-	streamZ->load(input);
+    streamZ->load(input);
+}
+
+size_t CompactTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void CompactTriples::generateIndex(ProgressListener *listener) {
@@ -230,6 +235,10 @@ void CompactTriples::saveIndex(std::ostream &output, ControlInformation &control
 
 void CompactTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
 
+}
+
+size_t CompactTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
 }
 
 unsigned int CompactTriples::getNumberOfElements()

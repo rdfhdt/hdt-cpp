@@ -100,14 +100,17 @@ void WaveletSequence::add(IteratorUInt &elements)
 
 void WaveletSequence::load(std::istream & input)
 {
-	std::ifstream *in = dynamic_cast<std::ifstream *>(&input);
-
 	if(sequence!=NULL){
 		delete sequence;
 		sequence=NULL;
 	}
 
-	sequence = cds_static::Sequence::load(*in);
+    sequence = cds_static::Sequence::load(input);
+}
+
+size_t WaveletSequence::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void WaveletSequence::save(std::ostream & output)
@@ -115,9 +118,7 @@ void WaveletSequence::save(std::ostream & output)
 	if(sequence==NULL)
 		return;
 
-	std::ofstream *out = dynamic_cast<std::ofstream *>(&output);
-
-	sequence->save(*out);
+    sequence->save(output);
 }
 
 size_t WaveletSequence::getNumberOfElements()

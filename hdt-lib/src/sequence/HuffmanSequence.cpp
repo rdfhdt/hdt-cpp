@@ -87,7 +87,12 @@ void HuffmanSequence::load(std::istream & input)
 	for(unsigned int i=0;i<numElements;i++) {
 		pos = huffman->decode(&vectorPlain[i], encV, pos);
 	}
-	delete encV;
+    delete encV;
+}
+
+size_t HuffmanSequence::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void HuffmanSequence::save(std::ostream & output)

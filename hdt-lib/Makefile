@@ -15,6 +15,10 @@ CPP=clang++
 FLAGS:=$(FLAGS) -arch x86_64 -msse4.2 
 endif
 
+ifeq ($(CPP), g++)
+FLAGS:=$(FLAGS) -fopenmp
+endif
+
 SRCS=$(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard src/**/**/*.cpp)
 OBJECTS=$(patsubst %.cpp,%.o, $(SRCS) )
 HEADERS=$(wildcard include/*.hpp) $(wildcard include/*.h) $(wildcard src/*.hpp) $(wildcard src/*.h) $(wildcard src/**/*.hpp)
@@ -23,7 +27,7 @@ TESTS=$(patsubst %.cpp,%, $(wildcard tests/*.cpp))
 
 all:
 	@$(MAKE) showflags 
-	@$(MAKE) tools
+	@$(MAKE) tools tests
 
 re:
 	@$(MAKE) clean

@@ -43,10 +43,14 @@ namespace hdt {
 class LogSequence2 : public IntSequence {
 
 private:
-	std::vector<size_t> array;
+	std::vector<size_t> data;
+	size_t *array;
+	size_t arraysize;
 	unsigned char numbits;
 	size_t numentries;
 	size_t maxval;
+
+	bool IsMapped;
 
 	static const unsigned int W = sizeof(size_t)*8;
 
@@ -182,6 +186,11 @@ public:
 	 *            The InputStream to load from
 	 */
 	void load(std::istream &input);
+	
+	/**
+	 * Load a stream from a pointer. To be used with MMAP.
+	 */
+    size_t load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener=NULL);
 
 	/**
 	 * Get type of the data structure.

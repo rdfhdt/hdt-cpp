@@ -23,6 +23,7 @@
 #include <cassert>
 #include <cmath>
 #include <string.h>
+#include <sys/mman.h> // For fadvise
 
 #include "BitSequence375.h"
 
@@ -36,23 +37,26 @@ namespace hdt
 {
 
 
-BitSequence375::BitSequence375(): numbits(0), numones(0), numwords(0), indexReady(false)
+BitSequence375::BitSequence375(): numbits(0), numones(0), numwords(0), indexReady(false), isMapped(false)
 {
-
+    data.resize(1); //Ensure valid pointer.
+    array = &data[0];
 }
 
-BitSequence375::BitSequence375(uint64_t capacity): numbits(0), numones(0), indexReady(false)
+BitSequence375::BitSequence375(uint64_t capacity): numbits(0), numones(0), indexReady(false), isMapped(false)
 {
-	this->numwords = numWords(numbits);
-	this->data.reserve(numwords);
+    numwords = numWords(numbits);
+    data.resize(numwords>0?numwords:1);
+    array = &data[0];
 }
 
-BitSequence375::BitSequence375(uint32_t *bitarray, uint64_t n) : numbits(n), indexReady(false)
+BitSequence375::BitSequence375(uint32_t *bitarray, uint64_t n) : numbits(n), indexReady(false), isMapped(false)
 {
-	this->numwords = numWords(numbits);
-	this->data.reserve(numwords);
+    numwords = numWords(numbits);
+    data.resize(numwords>0?numwords:1);
+    array = &data[0];
 
-	memcpy(&data[0], bitarray, numwords*sizeof(uint32_t));
+    memcpy(&data[0], bitarray, numwords*sizeof(uint32_t));
 
 	buildIndex();
 }
@@ -64,11 +68,15 @@ BitSequence375::~BitSequence375()
 
 void BitSequence375::trimToSize()
 {
-	size_t required = numWords(numbits);
-	if(data.size()!=required) {
-		data.resize(required);
-		numwords = required;
-	}
+    if(isMapped) {
+        return;
+    }
+    size_t required = numWords(numbits);
+    if(numwords!=required) {
+        data.resize(required);
+        numwords = required;
+        array = &data[0];
+    }
 }
 
 void BitSequence375::buildIndex()
@@ -80,11 +88,11 @@ void BitSequence375::buildIndex()
 	uint32_t blockPop=0, superBlockPop=0, blockIndex=0, superblockIndex=0;
 
 	// Reserve the buffers for blocks / superblocks
-	blocks.resize(data.size());
-	superblocks.resize(1+(data.size()-1)/BLOCKS_PER_SUPER);
+	blocks.resize(numwords);
+	superblocks.resize(1+(numwords-1)/BLOCKS_PER_SUPER);
 
 	// Fill them
-	while(blockIndex < data.size())
+	while(blockIndex < numwords)
 	{
 		if(!(blockIndex%BLOCKS_PER_SUPER))
 		{
@@ -96,7 +104,7 @@ void BitSequence375::buildIndex()
 		}
 
 		blocks[blockIndex] = blockPop;
-		blockPop += popcount32(data[blockIndex]);
+		blockPop += popcount32(array[blockIndex]);
 		blockIndex++;
 	}
 
@@ -127,23 +135,28 @@ size_t BitSequence375::rank1(const size_t pos) const
     uint32_t blockRank = blocks[blockIndex];
 
     uint32_t chunkIndex = WORDSIZE-1-pos%WORDSIZE;
-    uint32_t block = data[blockIndex] << chunkIndex;
+    uint32_t block = array[blockIndex] << chunkIndex;
     uint32_t chunkRank = popcount32(block);
 
     return superBlockRank + blockRank + chunkRank;
 }
 
 void BitSequence375::set(const size_t i, bool val) {
+	if(isMapped) {
+		throw "This data structure is readonly when mapped.";
+	}
+
 	size_t requiredCapacity = 1+(i >> LOGWORDSIZE);
 
 	if(data.size()<requiredCapacity) {
 		data.resize(requiredCapacity*2);
 		numwords = requiredCapacity*2;
+        array = &data[0];
 	}
 	if(val) {
-		bitset(&data[0], i);
+		bitset(&array[0], i);
 	} else {
-		bitclean(&data[0], i);
+		bitclean(&array[0], i);
 	}
 
 	numbits = numbits > i ? numbits : i;
@@ -157,17 +170,7 @@ void BitSequence375::append(bool bit) {
 
 bool BitSequence375::access(const size_t i) const
 {
-
-#if defined(__i386__) || defined(__x86_64__)
-	bool ret=0;
-	__asm__("bt  %2, (%1); setc %0"
-			:"=r"(ret)
-			 :"r"(&data[0]), "r"(i)
-	);
-	return ret;
-#else
-	return data[i>>LOGW] & (1u << (i & 0x1F));
-#endif
+	return array[i/WORDSIZE] & (1u << (i & 0x1F));
 }
 
 void BitSequence375::save(ofstream & out) const
@@ -189,9 +192,48 @@ void BitSequence375::save(ofstream & out) const
 
 	// Write data
 	len = numBytes(numbits);
-	crcd.writeData(out, (unsigned char*)&data[0], len);
+	crcd.writeData(out, (unsigned char*)&array[0], len);
 
 	crcd.writeCRC(out);
+}
+
+size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPtr, ProgressListener *listener){
+	size_t count=0;
+
+    // Check type
+    if(ptr[count++]!=1) {
+        throw "Trying to read a BitSequence375 but the type does not match";
+    }
+
+    // Read numbits
+	count += csd::VByte::decode(&ptr[count], &numbits);
+
+    // CRC
+    CRC8 crch;
+    crch.update(&ptr[0], count);
+    if(ptr[count++]!=crch.getValue()) {
+        throw "Wrong checksum in BitSequence375 Header.";
+    }
+
+    // Read buffer
+    this->numwords = numWords(numbits);
+    size_t sizeBytes = numBytes(numbits);
+    if(&ptr[count+sizeBytes]>=maxPtr) {
+        throw "BitSequence375 tries to read beyond the end of the file";
+    }
+
+    madvise((void*)&ptr[count], sizeBytes, MADV_WILLNEED); // Make sure that bitmaps are kept in memory
+	array = (uint32_t *) &ptr[count];
+	isMapped = true;
+	count += sizeBytes;
+
+    count += 4; // CRC of data
+
+    // Force index rebuild.
+    indexReady = false;
+	buildIndex();
+
+	return count;
 }
 
 BitSequence375 * BitSequence375::load(ifstream & in)
@@ -204,7 +246,7 @@ BitSequence375 * BitSequence375::load(ifstream & in)
 	unsigned char type;
 	in.read((char*)&type, sizeof(type));
 	if(type!=1) {    // throw exception
-		abort();
+        throw "Trying to read a BitSequence375 but the type does not match";
 	}
 	crch.update(&type, sizeof(type));
 
@@ -223,6 +265,7 @@ BitSequence375 * BitSequence375::load(ifstream & in)
 	// Calculate numWords and create array
 	ret->numwords = ret->numWords(ret->numbits);
 	ret->data.resize(ret->numwords);
+    ret->array = &ret->data[0];
 
 	// Read array from file, byte-aligned.
 	size_t bytes = ret->numBytes(ret->numbits);
@@ -264,14 +307,14 @@ size_t BitSequence375::selectNext1(const size_t fromIndex) const
 	if (wordIndex >= numwords)
 		return -1;
 
-	uint32_t word = data[wordIndex] & (~((size_t)0) << fromIndex);
+	uint32_t word = array[wordIndex] & (~((size_t)0) << fromIndex);
 
 	while (true) {
 		if (word != 0)
 			return (wordIndex * WORDSIZE) + first_bit_set(word);
 		if (++wordIndex == numwords)
 			return -1;
-		word = data[wordIndex];
+		word = array[wordIndex];
 	}
 }
 
@@ -316,7 +359,7 @@ size_t BitSequence375::select1(const size_t x) const
 	countdown -= blocks[blockIdx];
 
 	// Search bit inside block
-	uint32_t bitpos = wordSelect1(data[blockIdx], countdown);
+	uint32_t bitpos = wordSelect1(array[blockIdx], countdown);
 
 	return blockIdx * WORDSIZE + bitpos - 1;
 }
@@ -341,7 +384,7 @@ size_t BitSequence375::select0(const size_t x1) const
 	while ( ((spos*8+bpos) < ((numbits-1)/WORDSIZE)) && (bpos < (1<<3)-1) && (((32*(bpos+1))-blk[bpos+1]) < j)) bpos++;
 
 	pos += bpos<<5;	
-	word = data[pos>>5];
+	word = array[pos>>5];
 	j -= (32*bpos)-blk[bpos];
 
 	while (1) 
@@ -376,4 +419,4 @@ size_t BitSequence375::countOnes() const {
 }
 
 
-};
+}

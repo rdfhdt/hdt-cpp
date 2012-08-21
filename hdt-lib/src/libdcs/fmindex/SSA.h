@@ -69,8 +69,8 @@ namespace csd{
 			uint locate(uchar * pattern, uint m, uint32_t **occs);
 
 			uchar * extract_id(uint id, uint max_len);
-			static SSA * load(ifstream & fp);
-			void save(ofstream & fp);
+            static SSA * load(istream &fp);
+            void save(ostream & fp);
 
 		protected:
 			uint n;

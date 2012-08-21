@@ -75,11 +75,11 @@ public:
 
 	}
 
-	inline void update(unsigned char *buf, size_t len) {
+    inline void update(const unsigned char *buf, size_t len) {
 		crc = crc8_update(crc, buf, len);
 	}
 
-	inline void writeData(std::ostream &out, unsigned char *buf, size_t len) {
+    inline void writeData(std::ostream &out, const unsigned char *buf, size_t len) {
 		crc = crc8_update(crc, buf, len);
 		out.write((char*)buf, len);
 	}

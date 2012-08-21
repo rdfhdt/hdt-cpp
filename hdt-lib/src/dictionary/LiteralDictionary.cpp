@@ -203,7 +203,12 @@ void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	Prog
 		objectsNotLiterals = new csd::CSD_PFC();
 		throw "Could not read objects not Literals.";
 	}
-	objectsNotLiterals = new csd::CSD_Cache(objectsNotLiterals);
+    objectsNotLiterals = new csd::CSD_Cache(objectsNotLiterals);
+}
+
+size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 class LiteralIterator : public IteratorUCharString {
@@ -491,20 +496,7 @@ void LiteralDictionary::startProcessing(ProgressListener *listener) {
 }
 
 void LiteralDictionary::stopProcessing(ProgressListener *listener) {
-	cout << "************ SHARED ***********" << endl;
-	shared->dumpAll();
 
-	cout << "************ SUBJECTS ***********" << endl;
-	subjects->dumpAll();
-
-	cout << "************ PREDS ***********" << endl;
-	predicates->dumpAll();
-
-	cout << "************ OBJS Literals ***********" << endl;
-	objectsLiterals->dumpAll();
-
-	cout << "************ OBJS NOT Literals ***********" << endl;
-		objectsNotLiterals->dumpAll();
 }
 
 unsigned int LiteralDictionary::insert(std::string & str,

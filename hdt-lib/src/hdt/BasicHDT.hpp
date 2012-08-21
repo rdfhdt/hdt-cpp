@@ -42,6 +42,10 @@ private:
 	HDTSpecification spec;
 	string fileName;
 
+	size_t mappedSize, mappedSizeIndex;
+	unsigned char *ptr, *ptrIndex;
+	int fd, fdindex;
+
 	void createComponents();
 	void deleteComponents();
 
@@ -51,6 +55,9 @@ private:
 	void loadDictionary(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
 	void loadTriples(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
 	void fillHeader(string &baseUri);
+
+    size_t loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+    size_t loadMMapIndex(ProgressListener *listener=NULL);
 
 public:
 	BasicHDT();
@@ -86,6 +93,12 @@ public:
 	 */
 	void loadFromHDT(const char *fileName, ProgressListener *listener = NULL);
 
+    /**
+     * Load an HDT from a file, using memory mapping
+     * @param input
+     */
+    void mapHDT(const char *fileName, ProgressListener *listener = NULL);
+
 	/**
 	 * @param output
 	 * @param notation
@@ -102,11 +115,9 @@ public:
 	 */
 	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
 
-	void generateIndex(ProgressListener *listener = NULL);
+	void loadOrCreateIndex(ProgressListener *listener = NULL);
 
 	void saveIndex(ProgressListener *listener = NULL);
-
-	void convert(HDTSpecification &spec);
 
 	/**
 	 * @param subject

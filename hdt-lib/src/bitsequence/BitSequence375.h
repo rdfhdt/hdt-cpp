@@ -42,6 +42,9 @@ private:
 	uint64_t numones;
 
 	vector<uint32_t> data;
+    uint32_t *array;
+	
+	bool isMapped;
 
 	vector<uint32_t> superblocks;	// superblock counters
 	vector<unsigned char> blocks;	// block counters
@@ -85,11 +88,11 @@ private:
 		return i;
 	}
 
-	inline uint32_t numBytes(uint64_t bits) const {
+	inline size_t numBytes(uint64_t bits) const {
 		return ((bits-1)>>3) + 1;
 	}
 
-	inline uint32_t numWords(uint64_t bits) const {
+	inline size_t numWords(uint64_t bits) const {
 		return ((bits-1)>>LOGWORDSIZE) + 1;
 	}
 
@@ -122,6 +125,8 @@ public:
 
 	/*load-save functions*/
 	void save(ofstream & f) const;
+    size_t load(const unsigned char *ptr, const unsigned char*maxPtr, ProgressListener *listener=NULL);
+
 	static BitSequence375 * load(ifstream & f);
 };
 

@@ -77,6 +77,8 @@ void ControlInformation::save(std::ostream &out) {
 void ControlInformation::load(std::istream &in) {
 	CRC16 crc;
 
+    this->clear();
+
 	std::string line;
 	std::string all;
 
@@ -84,7 +86,7 @@ void ControlInformation::load(std::istream &in) {
 	unsigned char hdt[5];
 	crc.readData(in, hdt, 4);
 	hdt[4]=0;
-	if(strcmp((char*)hdt,"$HDT")!=0) {
+    if(strncmp((char*)hdt,"$HDT",4)!=0) {
 		throw "Non-HDT Section";
 	}
 
@@ -125,9 +127,67 @@ void ControlInformation::load(std::istream &in) {
 	}
 }
 
+size_t ControlInformation::load(const unsigned char *ptr, const unsigned char *maxPtr) {
+    this->clear();
+
+	size_t count=0;
+
+    // $HDT
+    if(strncmp((char *)&ptr[count],"$HDT", 4)!=0) {
+        throw "Non-HDT Section";
+    }
+    count+=4;
+
+    // Version
+    memcpy((char*)&version, &ptr[count], sizeof(uint16_t));
+	count+=2;
+
+    // Components
+    memcpy((char*)&components, &ptr[count], sizeof(uint16_t));
+	count+=2;
+
+	string all;
+    for(size_t i=0; &ptr[count+i]<maxPtr ;i++) {
+        if(ptr[count+i]=='\n') {
+            all.append(&ptr[count], &ptr[count+i]);
+            count+=i;
+            count++;
+            break;
+        }
+	}
+
+	// Process options
+	std::istringstream strm(all);
+	string token;
+	while(getline(strm, token, ';') ){
+		if(token!="$END") {
+			size_t pos = token.find(':');
+
+			if(pos!=std::string::npos) {
+				std::string property = token.substr(0, pos);
+				std::string value = token.substr(pos+1);
+				//std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
+				map[property] = value;
+			}
+		}
+	}
+
+    // CRC16
+    CRC16 crc;
+    crc.update(&ptr[0], count);
+    crc16_t filecrc = *((crc16_t *)&ptr[count]);
+    if(filecrc!=crc.getValue()) {
+        throw "CRC of control information does not match.";
+    }
+    count+=2;
+
+	return count;
+}
+
 void ControlInformation::clear() {
 	map.clear();
-
+    components=0;
+    version=0;
 }
 
 std::string ControlInformation::get(std::string key) {
@@ -189,9 +249,9 @@ bool ControlInformation::getDictionary()
 	return this->components & DICTIONARY_BIT;
 }
 
-void ControlInformation::setHeader(bool dict)
+void ControlInformation::setHeader(bool head)
 {
-	if(dict) {
+    if(head) {
 		this->components |= HEADER_BIT;
 	} else {
 		this->components &= ~HEADER_BIT;

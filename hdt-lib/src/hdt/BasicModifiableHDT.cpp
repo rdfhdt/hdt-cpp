@@ -92,7 +92,12 @@ void BasicModifiableHDT::loadFromHDT(const char *fileName, ProgressListener *lis
 		throw "Error opening file to save HDT.";
 	}
 	this->loadFromHDT(input, listener);
-	input.close();
+    input.close();
+}
+
+void BasicModifiableHDT::mapHDT(const char *fileName, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void BasicModifiableHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
@@ -107,7 +112,7 @@ void BasicModifiableHDT::loadFromHDT(std::istream & input, ProgressListener *lis
 	triples->load(input, controlInformation);
 }
 
-void BasicModifiableHDT::generateIndex(ProgressListener *listener) {
+void BasicModifiableHDT::loadOrCreateIndex(ProgressListener *listener) {
 
 }
 
@@ -144,11 +149,6 @@ void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *list
 	cout << "Triples saved in " << st << endl;
 
 	this->fileName = fileName;
-}
-
-void BasicModifiableHDT::convert(HDTSpecification &spec)
-{
-
 }
 
 void BasicModifiableHDT::insert(TripleString & triple)

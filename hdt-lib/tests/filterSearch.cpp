@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
 	try {
 		hdt->loadFromHDT(inputFile.c_str());
 
-		hdt->generateIndex();
+		hdt->loadOrCreateIndex();
 
 		if (filter1 != "" || filter2 != "") {
 			ostream *out;

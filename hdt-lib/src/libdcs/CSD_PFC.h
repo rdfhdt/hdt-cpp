@@ -30,16 +30,11 @@
 #define _CSDPFC_H
 
 #include <iostream>
-#include <fstream>
 #include <cassert>
 #include <string.h>
 #include <set>
 
 using namespace std;
-
-#include <Array.h>
-#include <libcdsBasics.h>
-using namespace cds_utils;
 
 #include <HDTListener.hpp>
 #include <Iterator.hpp>
@@ -83,10 +78,7 @@ class CSD_PFC : public CSD
 	@dict: the plain uncompressed dictionary.
 	@return: number of total symbols in the dictionary.
     */
-    uint decompress(unsigned char **dict);
-
-    void dumpAll();
-    void dumpBlock(uint block);
+    unsigned int decompress(unsigned char **dict);
 
     /** Returns the size of the structure in bytes. */
     uint64_t getSize();
@@ -94,11 +86,13 @@ class CSD_PFC : public CSD
     /** Stores a CSD_PFC structure given a file pointer.
 	@fp: pointer to the file saving a CSD_PFC structure.
     */
-    void save(ofstream & fp);
+    void save(ostream & fp);
+
+    size_t load(unsigned char *ptr, unsigned char *ptrMax);
 
     /** Loads a CSD_PFC structure from a file pointer.
 	@fp: pointer to the file storing a CSD_PFC structure. */
-    static CSD * load(ifstream & fp);
+    static CSD * load(istream & fp);
 
     void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 		
@@ -106,6 +100,8 @@ class CSD_PFC : public CSD
   protected:
     uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
     unsigned char *text;	//! Front-Coding encoded sequence.
+
+    bool isMapped;
 
     uint32_t blocksize;	//! Number of strings stored in each block.
     hdt::LogSequence2 *blocks;	//! Start positions of each block in the encoded sequence.
@@ -119,7 +115,7 @@ class CSD_PFC : public CSD
 	@return: a boolean value pointing if the string is located (this only
 	 occurs when 's' is the first string in 'block').
     */
-    bool locateBlock(const unsigned char *s, uint *block);
+    bool locateBlock(const unsigned char *s, unsigned int *block);
 
     /** Locates the offset for 's' in 'block' (returning its global ID) or 
 	return 0 if it is  not exist 
@@ -128,14 +124,14 @@ class CSD_PFC : public CSD
 	@len: the length (in characters) of the string s.
 	@return: the ID for 's' or 0 if it is not exist.
     */
-    uint locateInBlock(uint block, const unsigned char *s, uint len);
+    unsigned int locateInBlock(unsigned int block, const unsigned char *s, unsigned int len);
 
     /** Extracts the o-th string in the given 'block'.
 	@block: block to be accesed.
 	@o: internal offset for the required string in the block.
 	@return: the extracted string.
     */
-    unsigned char *extractInBlock(uint block, uint o);
+    unsigned char *extractInBlock(unsigned int block, unsigned int o);
 
 
     /** Obtains the length of the long common prefix (lcp) of str1 and str2.
@@ -144,7 +140,7 @@ class CSD_PFC : public CSD
 	@lstr1: length of the first string.
 	@lstr2: length of the second string.
     */
-    inline uint longest_common_prefix(const unsigned char* str1, const unsigned char* str2, uint lstr1, uint lstr2);
+    inline unsigned int longest_common_prefix(const unsigned char* str1, const unsigned char* str2, unsigned int lstr1, unsigned int lstr2);
 
     friend class PFCIterator;
   };

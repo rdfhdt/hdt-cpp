@@ -47,20 +47,28 @@ CSD::CSD() : numstrings(0) {
 
 }
 
-CSD * CSD::load(ifstream & fp)
+CSD * CSD::load(istream & fp)
 {
-	uchar r = loadValue<uchar>(fp);
-	//uint32_t pos = fp.tellg();
-	//fp.seekg(pos-sizeof(uint32_t));
-	//fp.seekg(-sizeof(uint32_t), ios_base::cur);
-	switch(r)
-	{
-	case HTFC: return CSD_HTFC::load(fp);
-	case PFC: return CSD_PFC::load(fp);
-	case FMINDEX: return CSD_FMIndex::load(fp);
-	}
+    uchar type = loadValue<uchar>(fp);
+    switch(type)
+    {
+    case HTFC: return CSD_HTFC::load(fp);
+    case PFC: return CSD_PFC::load(fp);
+    case FMINDEX: return CSD_FMIndex::load(fp);
+    }
+    return NULL;
+}
 
-	return NULL;
+CSD *CSD::create(uchar type)
+{
+    switch(type)
+    {
+    case HTFC: return new CSD_HTFC();
+    case PFC: return new CSD_PFC();
+    case FMINDEX: return new CSD_FMIndex();
+    }
+
+    return NULL;
 }
 
 uint32_t CSD::getLength()
@@ -68,6 +76,6 @@ uint32_t CSD::getLength()
 	return numstrings;
 }
 
-};
+}
 
 

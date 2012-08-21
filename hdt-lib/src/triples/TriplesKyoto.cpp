@@ -151,6 +151,11 @@ void TriplesKyoto::load(std::istream &input, ControlInformation &controlInformat
 
 }
 
+size_t TriplesKyoto::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
+}
+
 void TriplesKyoto::load(ModifiableTriples &input, ProgressListener *listener)
 {
 	IteratorTripleID *it = input.searchAll();
@@ -174,6 +179,10 @@ void TriplesKyoto::saveIndex(std::ostream &output, ControlInformation &controlIn
 
 void TriplesKyoto::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
 
+}
+
+size_t TriplesKyoto::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
 }
 
 

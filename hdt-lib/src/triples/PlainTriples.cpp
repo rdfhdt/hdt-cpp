@@ -168,7 +168,12 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 
 	iListener.setRange(66, 100);
 	iListener.notifyProgress(0, "PlainTriples loading objects");
-	streamZ->load(input);
+    streamZ->load(input);
+}
+
+size_t PlainTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void PlainTriples::generateIndex(ProgressListener *listener) {
@@ -181,6 +186,10 @@ void PlainTriples::saveIndex(std::ostream &output, ControlInformation &controlIn
 
 void PlainTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
 
+}
+
+size_t PlainTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
 }
 
 

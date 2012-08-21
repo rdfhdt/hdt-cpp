@@ -193,9 +193,13 @@ void TripleListDisk::load(std::istream & input, ControlInformation &controlInfor
 		input.read((char *)&arrayTriples[numRead], sizeof(TripleID));
 		numRead++;
 	}
-	cout << "Succesfully read triples: " << numRead << endl;
+    cout << "Succesfully read triples: " << numRead << endl;
 }
 
+size_t TripleListDisk::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
+}
 
 
 void TripleListDisk::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
@@ -272,6 +276,10 @@ void TripleListDisk::saveIndex(std::ostream &output, ControlInformation &control
 
 void TripleListDisk::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
 
+}
+
+size_t TripleListDisk::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
 }
 
 

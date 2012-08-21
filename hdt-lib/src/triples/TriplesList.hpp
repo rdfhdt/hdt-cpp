@@ -100,12 +100,17 @@ public:
 	 */
 	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
+	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+
 	void load(ModifiableTriples &input, ProgressListener *listener = NULL);
 
 	void generateIndex(ProgressListener *listener);
 
 	void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
-	void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
+
+    void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
+
+    size_t loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener);
 
 	/**
 	 * Populates the header

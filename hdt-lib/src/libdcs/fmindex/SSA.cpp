@@ -90,7 +90,7 @@ namespace csd{
 	}
 
 
-	void SSA::save(ofstream & fp) {
+    void SSA::save(ostream &fp) {
 		saveValue(fp, n);
 		saveValue(fp, maxV);
 		saveValue(fp, occ, maxV+1);
@@ -104,7 +104,7 @@ namespace csd{
 		saveValue(fp, alphabet, 256);
 	}
 
-	SSA * SSA::load(ifstream & fp){
+    SSA * SSA::load(istream & fp){
 		SSA *fm = new SSA();
 		fm->n = loadValue<uint>(fp);
 		fm->maxV = loadValue<uint>(fp);

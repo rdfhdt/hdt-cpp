@@ -81,18 +81,18 @@ public:
 
 	}
 
-	inline void update(unsigned char *buf, size_t len) {
+    inline void update(const unsigned char *buf, size_t len) {
 		crc = crc16_update(crc, buf, len);
 	}
 
-	inline void writeData(std::ostream &out, unsigned char *buf, size_t len) {
+    inline void writeData(std::ostream &out, const unsigned char *buf, size_t len) {
 		crc = crc16_update(crc, buf, len);
-		out.write((char *)buf, len);
+        out.write((const char *)buf, len);
 	}
 
 	inline void writeCRC(std::ostream &out) {
 		crc16_t end = crc16_finalize(crc);
-		out.write((char*)&end, sizeof(end));
+        out.write((const char*)&end, sizeof(end));
 	}
 
 	inline void readData(std::istream &in, unsigned char *buf, size_t len) {

@@ -73,6 +73,8 @@ public:
 	 */
 	void load(std::istream &in);
 
+    size_t load(const unsigned char *ptr, const unsigned char *maxPtr);
+
 	/** Get a property of the ControlInformation
 	 * @param key
 	 * @return

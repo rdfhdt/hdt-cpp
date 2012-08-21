@@ -30,7 +30,6 @@
 #define _CSDHTFC_H
 
 #include <iostream>
-#include <fstream>
 #include <cassert>
 #include <string.h>
 #include <set>
@@ -100,11 +99,13 @@ class CSD_HTFC : public CSD
     /** Stores a CSD_HTFC structure given a file pointer.
 	@fp: pointer to the file saving a CSD_HTFC structure.
     */
-    void save(ofstream & fp);
+    void save(ostream & fp);
+
+    size_t load(unsigned char *ptr, unsigned char *ptrMax);
 
     /** Loads a CSD_HTFC structure from a file pointer.
 	@fp: pointer to the file storing a CSD_HTFC structure. */
-    static CSD * load(ifstream & fp);
+    static CSD * load(istream & fp);
 
     void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 		

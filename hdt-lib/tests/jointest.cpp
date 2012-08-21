@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
 	try {
 		HDT *hdt = HDTFactory::createDefaultHDT();
 		hdt->loadFromHDT(inputFile.c_str());
- 		hdt->generateIndex();
+ 		hdt->loadOrCreateIndex();
 
  		QueryProcessor processor(hdt);
 

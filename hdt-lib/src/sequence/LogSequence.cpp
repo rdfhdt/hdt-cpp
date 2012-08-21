@@ -88,7 +88,12 @@ void LogSequence::load(std::istream & input)
 		array=NULL;
 	}
 
-	array = new cds_utils::Array(*in);
+    array = new cds_utils::Array(*in);
+}
+
+size_t LogSequence::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void LogSequence::save(std::ostream & output)

@@ -34,6 +34,7 @@
 
 #include <HDTSpecification.hpp>
 #include <HDT.hpp>
+#include <string>
 
 namespace hdt {
 
@@ -54,6 +55,16 @@ public:
 	 * @return HDT
 	 */
 	static HDT *createHDT(HDTSpecification &specification);
+
+	/**
+	 * Reads an HDT file into main memory.
+	 */
+    static HDT *readHDT(const char *file, ProgressListener *listener=NULL);
+
+	/**
+	 * Map an HDT file. Faster to load, uses less memory, but may result in delays at access time.
+	 */
+    static HDT *mapHDT(const char *file, ProgressListener *listener=NULL);
 
 	/**
 	 * Creates a default HDT

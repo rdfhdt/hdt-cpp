@@ -64,6 +64,18 @@ HDT *HDTFactory::createHDT(HDTSpecification &spec)
 	return h;
 }
 
+HDT *HDTFactory::mapHDT(const char *file, ProgressListener *listener) {
+    BasicHDT *h = new BasicHDT();
+    h->mapHDT(file, listener);
+	return h;
+}
+
+HDT *HDTFactory::readHDT(const char *file, ProgressListener *listener) {
+	BasicHDT *h = new BasicHDT();
+    h->loadFromHDT(file, listener);
+	return h;
+}
+
 ModifiableHDT *HDTFactory::createDefaultModifiableHDT()
 {
 	BasicModifiableHDT *h = new BasicModifiableHDT();
@@ -128,5 +140,6 @@ Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
 
 	throw "Header Implementation not available";
 }
+
 
 }

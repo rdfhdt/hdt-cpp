@@ -113,10 +113,15 @@ public:
 	 */
 	virtual void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL)=0;
 
+	virtual size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
+
 	virtual void generateIndex(ProgressListener *listener)=0;
 
 	virtual void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener=NULL)=0;
+
 	virtual void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener=NULL)=0;
+
+    virtual size_t loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
 
 	/**
 	 * Adds all known information about the triples to the Header.

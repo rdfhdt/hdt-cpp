@@ -70,7 +70,12 @@ void ArraySequence::load(std::istream & input)
 		input.read((char *) &readItem, sizeof(size_t));
 		vector.push_back(readItem);
 		numRead++;
-	}
+    }
+}
+
+size_t ArraySequence::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void ArraySequence::save(std::ostream & output)

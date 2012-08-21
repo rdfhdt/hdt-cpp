@@ -44,9 +44,8 @@ namespace hdt {
 
 
 #define IS_VARIABLE(a) ( (a).size()>0 && (a).at(0)=='?')
-#define IS_URI(a) ( (a).size()>0 && (a).at(0)=='<')
+#define IS_URI(a) ( (a).size()>0 && (a).at(0)!='<' && (a).at(0)!='_')
 #define IS_LITERAL(a) ( (a).size()>0 && (a).at(0)=='"')
-
 
 /**
  * Represents a single triple, where the subject, predicate, and object components are

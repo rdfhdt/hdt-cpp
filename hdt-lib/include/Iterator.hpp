@@ -48,6 +48,9 @@ public:
 		return false;
 	}
 
+    /**
+      WARNING: the previous returned pointer is not valid after the next call to next()
+      */
 	virtual unsigned char *next() {
 		return 0;
 	}

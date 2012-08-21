@@ -80,6 +80,8 @@ public:
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
+	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+
     void import(Dictionary *other, ProgressListener *listener=NULL);
 
     IteratorUCharString *getSubjects();

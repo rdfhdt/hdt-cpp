@@ -397,7 +397,7 @@ uint64_t CSD_HTFC::getSize()
 	return bytes*sizeof(unsigned char)+blocks->getSize()+sizeof(CSD_HTFC);
 }
 
-void CSD_HTFC::save(ofstream & fp)
+void CSD_HTFC::save(ostream & fp)
 {
 	if(!text || !blocks) {
 		return;
@@ -421,10 +421,15 @@ void CSD_HTFC::save(ofstream & fp)
 	{
 		saveValue<uint>(fp, HTcode[i].code);
 		saveValue<uint>(fp, HTcode[i].cbits);
-	}
+    }
 }
 
-CSD* CSD_HTFC::load(ifstream & fp)
+size_t CSD_HTFC::load(unsigned char *ptr, unsigned char *ptrMax)
+{
+    throw "Not implemented";
+}
+
+CSD* CSD_HTFC::load(istream &fp)
 {
 	CSD_HTFC *dicc = new CSD_HTFC();
 

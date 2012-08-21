@@ -41,18 +41,29 @@ using namespace std;
 
 namespace hdt {
 
-LogSequence2::LogSequence2() : numentries(0), numbits(32) {
+LogSequence2::LogSequence2() : numentries(0), numbits(32), IsMapped(false) {
 	maxval = maxVal(numbits);
+
+    data.resize(1);
+    array = &data[0];
+    arraysize = 0;
 }
 
-LogSequence2::LogSequence2(unsigned int numbits) : numentries(0), numbits(numbits) {
+LogSequence2::LogSequence2(unsigned int numbits) : numentries(0), numbits(numbits),  IsMapped(false) {
 	maxval = maxVal(numbits);
+
+    data.resize(1);
+    array = &data[0];
+    arraysize = 0;
 }
 
-LogSequence2::LogSequence2(unsigned int numbits, size_t capacity) : numentries(0), numbits(numbits) {
+LogSequence2::LogSequence2(unsigned int numbits, size_t capacity) : numentries(0), numbits(numbits), IsMapped(false) {
 	maxval = maxVal(numbits);
 	size_t totalSize = numElementsFor(numbits, capacity);
-	array.resize(totalSize);
+    if(totalSize==0) data.reserve(1);
+    data.resize(totalSize);
+	array = &data[0];
+	arraysize = totalSize;
 }
 
 LogSequence2::~LogSequence2() {
@@ -70,6 +81,10 @@ size_t LogSequence2::get(size_t position)
 
 void LogSequence2::add(IteratorUInt &elements)
 {
+	if(IsMapped) {
+		throw "Data structure read-only when mapped.";
+	}
+
 	size_t max = 0;
 	numentries = 0;
 
@@ -82,8 +97,10 @@ void LogSequence2::add(IteratorUInt &elements)
 
 	// Prepare array
 	numbits = bits(max);
-	array.clear();
-	array.resize(numElementsFor(numbits, numentries));
+	data.clear();
+	data.resize(numElementsFor(numbits, numentries));
+    array = &data[0];
+	arraysize = data.size();
 
 	// Save
 	elements.goToStart();
@@ -97,20 +114,27 @@ void LogSequence2::add(IteratorUInt &elements)
 }
 
 void LogSequence2::set(size_t position, size_t value) {
+	if(IsMapped) {
+		throw "Data structure read-only when mapped.";
+	}
 	if(position>numentries) {
 		throw "Trying to modify a position out of the structure capacity. Use push_back() instead";
 	}
 	if(value>maxval) {
 		throw "Trying to insert a value bigger that expected. Please increase numbits when creating the data structure.";
 	}
-	set_field(&array[0], numbits, position, value);
+    set_field(array, numbits, position, value);
 }
 
 void LogSequence2::push_back(size_t value) {
+	if(IsMapped) {
+		throw "Data structure read-only when mapped.";
+	}
 	size_t neededSize = numElementsFor(numbits, numentries+1);
-	if(array.size()<neededSize) {
-		//array.resize(neededSize);
-		array.push_back(0);		// Vector.push_back automatically doubles space when needed.
+	if(data.size()<neededSize) {
+        data.resize(neededSize*2);
+		arraysize=data.size();
+        array = &data[0];
 	}
 	if(value>maxval) {
 		throw "Trying to insert a value bigger that expected. Please increase numbits when creating the data structure.";
@@ -137,7 +161,9 @@ void LogSequence2::reduceBits() {
 		numbits = newbits;
 		maxval = maxVal(numbits);
 		size_t totalSize = numElementsFor(numbits, numentries);
-		array.resize(totalSize);	// Warning: It does not deallocate memory :(
+		data.resize(totalSize);	// Warning: It does not deallocate memory :(
+		arraysize = data.size();
+        array = &data[0];
 	}
 }
 
@@ -145,15 +171,17 @@ void LogSequence2::load(std::istream & input)
 {
 	CRC8 crch;
 	CRC32 crcd;
-	unsigned char data[9];
+	unsigned char buf[9];
 
 	// Read numbits
+    cout << "Read LogSeq2 at" << input.tellg() << endl;
+
 	crch.readData(input, (unsigned char*)&numbits, sizeof(numbits));
 
 	// Read numentries
 	uint64_t numentries64 = csd::VByte::decode(input);
-	unsigned int pos = csd::VByte::encode(data, numentries64);
-	crch.update(data, pos);
+	unsigned int pos = csd::VByte::encode(buf, numentries64);
+	crch.update(buf, pos);
 
 	// Validate Checksum Header
 	crc8_t filecrch = crc8_read(input);
@@ -170,7 +198,9 @@ void LogSequence2::load(std::istream & input)
 
 	// Calculate data size, reserve buffer.
 	size_t numbytes = numBytesFor(numbits, numentries);
-	array.resize(numElementsFor(numbits, numentries));
+	data.resize(numElementsFor(numbits, numentries));
+	arraysize = data.size();
+    array = &data[0];
 
 	// Read data
 	crcd.readData(input, (unsigned char*)&array[0], numbytes);
@@ -180,6 +210,58 @@ void LogSequence2::load(std::istream & input)
 	if(crcd.getValue()!=filecrcd) {
 		throw "Checksum error while reading LogSequence2 Data";
 	}
+
+    cout << "Numbits: " << (int)numbits << endl;
+    cout << "Numentries: " << numentries << endl;
+    cout << "CRC Header: " << hex << (int)filecrch << dec << endl;
+    cout << "CRC Data: " << hex << filecrcd << dec << endl;
+
+	IsMapped = false;
+}
+
+size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener) {
+	size_t count = 0;
+
+    // Read numbits
+	numbits = ptr[count++];
+
+    // Read numentries
+    uint64_t numentries64;
+    count += csd::VByte::decode(&ptr[count], &numentries64);
+
+    // Validate Checksum Header
+    CRC8 crch;
+    crch.update(&ptr[0], count);
+    if(crch.getValue()!=ptr[count++])
+        throw "Checksum error while reading LogSequence2 header.";
+
+    // Update local variables and validate
+    maxval = maxVal(numbits);
+    numentries = (size_t) numentries64;
+    if(numbits>sizeof(size_t)*8 || numentries64>std::numeric_limits<size_t>::max()) {
+        throw "This data structure is too big for this machine";
+    }
+
+    // Setup array of data
+	arraysize = numBytesFor(numbits, numentries);
+	array = (size_t *) &ptr[count];
+	count+=arraysize;
+    IsMapped = true;
+
+    if(&ptr[count]>=ptrMax)
+        throw "LogSequence2 tries to read beyond the end of the file";
+
+#if 1
+    uint32_t crcVal = *((uint32_t*)&ptr[count]);
+    cout << "Numbits: " << (int)numbits << endl;
+    cout << "Numentries: " << numentries << endl;
+    cout << "CRC Header: " << hex << (int)crch.getValue() << dec << endl;
+    cout << "CRC Data: " << hex << crcVal << dec << endl;
+#endif
+
+    count+=4; // CRC of data
+
+	return count;
 }
 
 void LogSequence2::save(std::ostream & out)

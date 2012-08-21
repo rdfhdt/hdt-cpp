@@ -90,6 +90,12 @@ public:
 	 */
 	void load(std::istream &input);
 
+    /**
+     * Load a stream from a pointer. To be used with MMAP.
+     */
+    size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+
+
 	std::string getType();
 
 	friend class WaveletSequence;

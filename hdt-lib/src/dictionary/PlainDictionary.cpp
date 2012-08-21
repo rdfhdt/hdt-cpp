@@ -40,15 +40,9 @@ namespace hdt {
 
 /* DICTIONARY ENTRY */
 
-string DictionaryEntry::toString() {
-	string tmp;
-	tmp.append(*prefix);
-	tmp.append(*str);
-	return tmp;
-}
 
 bool DictionaryEntry::cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2) {
-	return c1->toString().compare(c2->toString())<0;
+    return c1->str->compare(*c2->str)<0;
 }
 
 bool DictionaryEntry::cmpID(DictionaryEntry *c1, DictionaryEntry *c2) {
@@ -72,18 +66,22 @@ PlainDictionary::~PlainDictionary() {
 	unsigned int i;
 
 	for(i=0;i<shared.size();i++) {
+        delete shared[i]->str;
 		delete shared[i];
 	}
 
 	for(i=0;i<subjects.size();i++) {
+        delete subjects[i]->str;
 		delete subjects[i];
 	}
 
 	for(i=0;i<objects.size();i++) {
+        delete objects[i]->str;
 		delete objects[i];
 	}
 
 	for(i=0;i<predicates.size();i++) {
+        delete predicates[i]->str;
 		delete predicates[i];
 	}
 
@@ -97,7 +95,7 @@ std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole pos
 
 	if(localid<vector.size()) {
 		DictionaryEntry *entry = vector[localid];
-		return entry->toString();
+        return *entry->str;
 	}
 
 	return string();
@@ -173,7 +171,6 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	//shared subjects-objects from subjects
 	for (i = 0; i < shared.size(); i++) {
-		output << *shared[i]->prefix;
 		output << *shared[i]->str;
 		output.put(marker); //character to split file
 		counter++;
@@ -184,7 +181,6 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	//not shared subjects
 	for (i = 0; i < subjects.size(); i++) {
-		output << *subjects[i]->prefix;
 		output << *subjects[i]->str;
 		output.put(marker); //character to split file
 		counter++;
@@ -195,7 +191,6 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	//not shared objects
 	for (i = 0; i < objects.size(); i++) {
-		output << *objects[i]->prefix;
 		output << *objects[i]->str;
 		output.put(marker); //character to split file
 		counter++;
@@ -206,7 +201,6 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	//predicates
 	for (i = 0; i < predicates.size(); i++) {
-		output << *predicates[i]->prefix;
 		output << *predicates[i]->str;
 		output.put(marker); //character  to split file
 		counter++;
@@ -256,7 +250,12 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 	}
 
 	// No stopProcessing() Needed. Dictionary already split and sorted in file.
-	updateIDs();
+    updateIDs();
+}
+
+size_t PlainDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+    throw "Not implemented";
 }
 
 void PlainDictionary::import(Dictionary *other, ProgressListener *listener) {
@@ -298,7 +297,7 @@ unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			return it->second->id;
 		} else {
 			DictionaryEntry *entry = new DictionaryEntry;
-			setPrefixAndString(entry, str);
+            entry->str = new string(str);
 			entry->id = predicates.size()+1;
 			sizeStrings += str.length();
 			//cout << " Add new predicate: " << str.c_str() << endl;
@@ -320,7 +319,7 @@ unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 		if( !foundSubject && !foundObject) {
 			// Did not exist, create new.
 			DictionaryEntry *entry = new DictionaryEntry;
-			setPrefixAndString(entry, str);
+            entry->str = new string(str);
 			sizeStrings += str.length();
 
 			//cout << " Add new subject: " << str << endl;
@@ -337,7 +336,7 @@ unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 		if(!foundSubject && !foundObject) {
 			// Did not exist, create new.
 			DictionaryEntry *entry = new DictionaryEntry;
-			setPrefixAndString(entry, str);
+            entry->str = new string(str);
 			sizeStrings += str.length();
 
 			//cout << " Add new object: " << str << endl;
@@ -370,7 +369,7 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
 	if(str=="") return;
 
 	DictionaryEntry *entry = new DictionaryEntry;
-	setPrefixAndString(entry, str);
+	entry->str = new string(str);
 
 	switch(pos) {
 	case SHARED_SUBJECT:
@@ -442,33 +441,50 @@ void PlainDictionary::split(ProgressListener *listener) {
  * @return void
  */
 void PlainDictionary::lexicographicSort(ProgressListener *listener) {
-	NOTIFY(listener, "Sorting shared", 0, 100);
-	sort(shared.begin(), shared.end(), DictionaryEntry::cmpLexicographic);
 
-	NOTIFY(listener, "Sorting subjects", 20, 100);
-	sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpLexicographic);
+#ifdef _OPENMP
+    NOTIFY(listener, "Sorting dictionary", 0, 100);
+    #pragma omp parallel sections if(objects.size()>100000)
+    {
+        { sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic); }
+        { sort(shared.begin(), shared.end(), DictionaryEntry::cmpLexicographic); }
+        { sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpLexicographic); }
+        { sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographic); }
+    }
+#else
+    NOTIFY(listener, "Sorting shared", 0, 100);
+    sort(shared.begin(), shared.end(), DictionaryEntry::cmpLexicographic);
 
-	NOTIFY(listener, "Sorting objects", 50, 100);
-	sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographic);
+    NOTIFY(listener, "Sorting subjects", 20, 100);
+    sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpLexicographic);
 
-	NOTIFY(listener, "Sorting predicates", 90, 100);
-	sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic);
+    NOTIFY(listener, "Sorting objects", 50, 100);
+    sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographic);
 
-	NOTIFY(listener, "Update Dictionary IDs", 99, 100);
+    NOTIFY(listener, "Sorting predicates", 90, 100);
+    sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic);
 
-	updateIDs();
+#endif
+    NOTIFY(listener, "Update Dictionary IDs", 99, 100);
+    updateIDs();
 }
 
 void PlainDictionary::idSort() {
-	//sort shared and not shared subjects
+
+#ifdef _OPENMP
+    #pragma omp parallel sections
+    {
+        { sort(shared.begin(), shared.end(), DictionaryEntry::cmpID); }
+        { sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpID); }
+        { sort(objects.begin(), objects.end(), DictionaryEntry::cmpID); }
+        { sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpID); }
+    }
+#else
 	sort(shared.begin(), shared.end(), DictionaryEntry::cmpID);
 	sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpID);
-
-	//sort not shared objects
 	sort(objects.begin(), objects.end(), DictionaryEntry::cmpID);
-
-	//sort predicates
 	sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpID);
+#endif
 
 	updateIDs();
 }
@@ -512,34 +528,6 @@ void PlainDictionary::convertMapping(unsigned int mapping) {
 	default:
 		break;
 	}
-}
-
-void PlainDictionary::setPrefixAndString(DictionaryEntry *entry, const string str) {
-	static string empty("");
-
-/*	size_t pos = str.find_last_of('/');
-	if(pos!=string::npos) {
-		string prefix = str.substr(0, pos+1);
-
-		PrefixIt prefixIt = prefixes.find(prefix.c_str());
-
-		string *foundPrefix;
-
-		if(prefixIt==prefixes.end()) {
-			foundPrefix = new string(prefix);
-			prefixes[prefix.c_str()] = foundPrefix;
-		} else {
-			foundPrefix = prefixIt->second;
-		}
-
-		entry->prefix = foundPrefix;
-		entry->str = new string(str.substr(pos+1));
-	} else {*/
-		entry->prefix = &empty;
-		entry->str = new string(str);
-	//}
-
-	//cout<<"Converted: "<< str << " to |" << *entry->prefix << "|" << *entry->str << "|" << endl;
 }
 
 vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) {

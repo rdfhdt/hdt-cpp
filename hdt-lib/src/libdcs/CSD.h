@@ -37,7 +37,6 @@
 #include <stdint.h>
 #include <Iterator.hpp>
 #include <iostream>
-#include <fstream>
 #include <cassert>
 #include <vector>
 using namespace std;
@@ -77,8 +76,6 @@ class CSD
     /** Returns the size of the structure in bytes. */
     virtual uint64_t getSize()=0;
 
-    virtual void dumpAll()=0;
-
     virtual hdt::IteratorUCharString *listAll()=0;
 
     /** Returns the number of strings in the dictionary. */
@@ -89,17 +86,22 @@ class CSD
     /** Stores a CSD structure given a file pointer.
 	@fp: pointer to the file saving a CSD structure.
     */
-    virtual void save(ofstream & fp)=0;
+    virtual void save(ostream & fp)=0;
+
+    virtual size_t load(unsigned char *ptr, unsigned char *ptrMax)=0;
 
     /** Loads a CSD structure from a file pointer.
 	@fp: pointer to the file storing a CSD structure. */
-    static CSD * load(ifstream & fp);
+    static CSD * load(istream & fp);
+
+    static CSD * create(unsigned char type);
 		
   protected:
     unsigned char type; 	//! Dictionary type.
     uint32_t tlength;	//! Original Tdict size.
     uint32_t numstrings;	//! Number of elements in the dictionary.
   };
-};
+
+}
 
 #endif  

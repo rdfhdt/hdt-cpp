@@ -44,7 +44,7 @@ CSD_Cache::~CSD_Cache()
 	delete child;
 }
 
-uint32_t CSD_Cache::locate(const uchar *s, uint32_t len)
+uint32_t CSD_Cache::locate(const unsigned char *s, uint32_t len)
 {
 	// FIXME: Not working.
 #if 0
@@ -66,7 +66,7 @@ uint32_t CSD_Cache::locate(const uchar *s, uint32_t len)
 }
 
 
-uchar* CSD_Cache::extract(uint32_t id)
+unsigned char* CSD_Cache::extract(uint32_t id)
 {
 	LRU_Int::const_iterator it = cacheint.find(id);
 
@@ -74,7 +74,7 @@ uchar* CSD_Cache::extract(uint32_t id)
 		// Key found: retrieve its associated value
 		//cout << "2retrieving: " << it.key() << " -> " << it.value() << endl;
 		size_t len = it.value().length();
-		uchar *ptr = (uchar *)malloc((1+len)*sizeof(uchar));
+		unsigned char *ptr = (unsigned char *)malloc((1+len)*sizeof(unsigned char));
 		strncpy((char *)ptr, (const char *)it.value().c_str(), len);
 		ptr[len]='\0';
 		return ptr;
@@ -87,7 +87,7 @@ uchar* CSD_Cache::extract(uint32_t id)
 
 		cacheint[id] = str;
 
-		return (uchar *)value;
+		return (unsigned char *)value;
 	}
 }
 
@@ -100,12 +100,12 @@ uint64_t CSD_Cache::getSize()
 	return child->getSize();
 }
 
-void CSD_Cache::save(ofstream & fp)
+void CSD_Cache::save(ostream &fp)
 {
 	child->save(fp);
 }
 
-CSD* CSD_Cache::load(ifstream & fp)
+CSD* CSD_Cache::load(istream &fp)
 {
 	throw "Not imlemented";
 }

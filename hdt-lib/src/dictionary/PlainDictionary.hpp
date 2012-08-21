@@ -50,7 +50,6 @@ namespace hdt {
 struct DictionaryEntry {
 public:
 	unsigned int id;
-	const std::string *prefix;
 	const std::string *str;
 
 	std::string toString();
@@ -122,6 +121,8 @@ public:
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
+	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+
     void import(Dictionary *other, ProgressListener *listener=NULL);
 
     IteratorUCharString *getSubjects();
@@ -148,8 +149,6 @@ private:
 	void lexicographicSort(ProgressListener *listener = NULL);
 	void idSort();
 	void updateIDs();
-
-	void setPrefixAndString(DictionaryEntry *entry, std::string str);
 
 	std::vector<DictionaryEntry*> &getDictionaryEntryVector(unsigned int id, TripleComponentRole position);
 

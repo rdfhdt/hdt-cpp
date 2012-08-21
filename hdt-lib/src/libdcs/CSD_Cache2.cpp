@@ -84,12 +84,12 @@ uint64_t CSD_Cache2::getSize()
 	return child->getSize();
 }
 
-void CSD_Cache2::save(ofstream & fp)
+void CSD_Cache2::save(ostream &fp)
 {
 	child->save(fp);
 }
 
-CSD* CSD_Cache2::load(ifstream & fp)
+CSD* CSD_Cache2::load(istream &fp)
 {
 	throw "Not imlemented";
 }

@@ -58,22 +58,37 @@
 
 #include "TripleIDStringIterator.hpp"
 
+#include <fcntl.h>	// open
+#include <sys/stat.h>	// stat
+#include <sys/types.h>
+#include <sys/mman.h> // For mmap
+
+
 using namespace std;
 
 namespace hdt {
 
 
-BasicHDT::BasicHDT() {
+BasicHDT::BasicHDT() : ptr(NULL), ptrIndex(NULL) {
 	createComponents();
 }
 
-BasicHDT::BasicHDT(HDTSpecification &spec) {
+BasicHDT::BasicHDT(HDTSpecification &spec) : ptr(NULL), ptrIndex(NULL) {
 	this->spec = spec;
 	createComponents();
 }
 
 BasicHDT::~BasicHDT() {
 	deleteComponents();
+
+    if(ptr) {
+        munmap(ptr, mappedSize);
+        close(fd);
+    }
+    if(ptrIndex) {
+        munmap(ptrIndex, mappedSizeIndex);
+        close(fdindex);
+    }
 }
 
 void BasicHDT::createComponents() {
@@ -216,7 +231,6 @@ void TriplesLoader::processTriple(hdt::TripleString& triple, unsigned long long 
 		triples->insert(ti);
 	} else {
 		cerr << "ERROR: Could not convert triple to IDS! " << endl << triple << endl << ti << endl;
-		//throw "ERROR, Could not convert triple to ids.";
 	}
 	//cout << "TripleID: " << ti << endl;
 	char str[100];
@@ -377,25 +391,20 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	iListener.setRange(0,5);
 	controlInformation.load(input);
 	delete header;
-	header = NULL;
 	header = HDTFactory::readHeader(controlInformation);
 	header->load(input, controlInformation, &iListener);
 
 	//Load Dictionary.
 	iListener.setRange(5, 60);
-	controlInformation.clear();
 	controlInformation.load(input);
 	delete dictionary;
-	dictionary = NULL;
 	dictionary = HDTFactory::readDictionary(controlInformation);
 	dictionary->load(input, controlInformation, &iListener);
 
 	// Load Triples
 	iListener.setRange(60,100);
-	controlInformation.clear();
 	controlInformation.load(input);
 	delete triples;
-	triples = NULL;
 	triples = HDTFactory::readTriples(controlInformation);
 	triples->load(input, controlInformation, &iListener);
     } catch (const char *ex) {
@@ -411,16 +420,123 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
     }
 }
 
+/**
+ * Load an HDT from a file, using memory mapping
+ * @param input
+ */
+void BasicHDT::mapHDT(const char *fileName, ProgressListener *listener) {
+
+    this->fileName.assign(fileName);
+
+    // Clean previous
+    if(ptr!=NULL) {
+        munmap(ptr, mappedSize);
+        close(fd);
+    }
+
+    // Open file
+    fd = open(fileName, O_RDONLY);
+    if(fd<=0) {
+        perror("mmap");
+        throw "Error opening HDT file for mapping.";
+    }
+
+    // Guess size
+    struct stat statbuf;
+    if(stat(fileName,&statbuf)!=0) {
+        perror("Error on stat()");
+        throw "Error trying to guess the file size";
+    }
+    mappedSize = statbuf.st_size;
+
+    // Do mmap
+	ptr = (unsigned char *) mmap(0, mappedSize, PROT_READ, MAP_PRIVATE, fd, 0);
+    if(ptr==NULL) {
+        perror("Error on mmap");
+        throw "Error trying to mmap HDT file";
+    }
+
+    // Load
+    this->loadMMap(ptr, ptr+mappedSize, listener);
+}
+
+size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener) {
+	size_t count=0;
+    ControlInformation controlInformation;
+    IntermediateListener iListener(listener);
+
+    // Load Header
+    iListener.setRange(0,5);
+    count+=controlInformation.load(&ptr[count], ptrMax);
+    delete header;
+    header = HDTFactory::readHeader(controlInformation);
+    count+= header->load(&ptr[count], ptrMax, &iListener);
+
+	// Load dictionary
+    iListener.setRange(5, 60);
+    controlInformation.load(&ptr[count], ptrMax);
+    delete dictionary;
+    dictionary = HDTFactory::readDictionary(controlInformation);
+    count += dictionary->load(&ptr[count], ptrMax, &iListener);
+
+	// Load triples
+    iListener.setRange(60,100);
+    controlInformation.load(&ptr[count], ptrMax);
+    delete triples;
+    triples = HDTFactory::readTriples(controlInformation);
+    count += triples->load(&ptr[count], ptrMax,  &iListener);
+
+	return count;
+}
+
+size_t BasicHDT::loadMMapIndex(ProgressListener *listener) {
+    // Clean previous index
+    if(ptrIndex!=NULL) {
+        munmap(ptrIndex, mappedSizeIndex);
+        close(fd);
+    }
+
+    // Get path
+    string indexFile(fileName);
+    indexFile.append(".index");
+
+    // Open file
+    fdindex = open(indexFile.c_str(), O_RDONLY);
+    if(fdindex<=0) {
+        perror("mmap");
+        throw "Error opening HDT index file for mapping.";
+    }
+
+    // Guess size
+    struct stat statbuf;
+    if(stat(indexFile.c_str(),&statbuf)!=0) {
+        perror("Error on stat()");
+        throw "Error trying to guess the file size";
+    }
+    mappedSizeIndex = statbuf.st_size;
+
+    // Do mmap
+    ptrIndex = (unsigned char *) mmap(0, mappedSizeIndex, PROT_READ, MAP_PRIVATE, fdindex, 0);
+    if(ptrIndex==NULL) {
+        perror("Error on mmap HDT index");
+        throw "Error trying to mmap HDT index";
+    }
+
+    // Load index
+    triples->loadIndex(ptrIndex, ptrIndex+mappedSizeIndex, listener);
+}
+
 void BasicHDT::saveToHDT(const char *fileName, ProgressListener *listener)
 {
     try {
-	ofstream out(fileName, ios::binary | ios::out);
-	if(!out.good()){
-		throw "Error opening file to save HDT.";
-	}
-	this->saveToHDT(out, listener);
-	this->saveIndex(listener);
-	out.close();
+        ofstream out(fileName, ios::binary | ios::out);
+        if(!out.good()){
+            throw "Error opening file to save HDT.";
+        }
+        this->fileName = fileName;
+        this->saveToHDT(out, listener);
+        this->saveIndex(listener);
+        out.close();
     } catch (const char *ex) {
         // Fixme: delete file if exists.
         throw ex;
@@ -450,16 +566,23 @@ void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 	triples->save(output, controlInformation, &iListener);
 }
 
-void BasicHDT::generateIndex(ProgressListener *listener) {
+void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
 
 	string indexname = this->fileName + ".index";
+
 	ifstream in(indexname.c_str(), ios::binary);
 
 	if(in.good()) {
-		ControlInformation ci;
-		ci.load(in);
-		triples->loadIndex(in, ci, listener);
-		in.close();
+        if(ptr) {
+            // Map
+            this->loadMMapIndex(listener);
+        } else {
+            // Read from file
+            ControlInformation ci;
+            ci.load(in);
+            triples->loadIndex(in, ci, listener);
+            in.close();
+        }
 	} else {
 		triples->generateIndex(listener);
 		this->saveIndex(listener);
@@ -478,13 +601,5 @@ void BasicHDT::saveIndex(ProgressListener *listener) {
 	triples->saveIndex(out, ci, listener);
 	out.close();
 }
-
-void BasicHDT::convert(HDTSpecification &spec)
-{
-
-}
-
-
-
 
 }

@@ -104,11 +104,13 @@ namespace csd{
 			/** Stores a CSD_FMIndex structure given a file pointer.
 			 * @fp: pointer to the file saving a CSD_FMIndex structure.
 			 * */
-			void save(ofstream & fp);
+            void save(ostream & fp);
+
+            size_t load(unsigned char *ptr, unsigned char *ptrMax);
 
 			/** Loads a CSD_FMIndex structure from a file pointer.
 			 * @fp: pointer to the file storing a CSD_FMIndex structure. */
-			static CSD * load(ifstream & fp);
+            static CSD * load(istream & fp);
 
 			void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 

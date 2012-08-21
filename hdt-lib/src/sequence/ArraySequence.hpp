@@ -87,6 +87,8 @@ public:
 	 */
 	void load(std::istream &input);
 
+    size_t load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener=NULL);
+
 	std::string getType();
 };
 

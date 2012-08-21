@@ -265,7 +265,7 @@ uint64_t CSD_FMIndex::getSize() {
 	return mem;
 }
 
-void CSD_FMIndex::save(ofstream & fp) {
+void CSD_FMIndex::save(ostream &fp) {
 	saveValue<unsigned char>(fp, type);
 	saveValue<uint32_t>(fp, numstrings);
 	saveValue<uint32_t>(fp, tlength);
@@ -273,11 +273,16 @@ void CSD_FMIndex::save(ofstream & fp) {
 	saveValue<bool>(fp, use_sampling);
 	if (use_sampling)
 		separators->save(fp);
-	fm_index->save(fp);
+    fm_index->save(fp);
 
 }
 
-CSD * CSD_FMIndex::load(ifstream & fp) {
+size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
+{
+    throw "Not implemented";
+}
+
+CSD * CSD_FMIndex::load(istream & fp) {
 	CSD_FMIndex *fm = new CSD_FMIndex();
 
 	fm->type = FMINDEX;
