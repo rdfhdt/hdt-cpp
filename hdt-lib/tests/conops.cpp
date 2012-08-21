@@ -79,26 +79,27 @@ int main(int argc, char **argv) {
 		// CONVERT triples to TripleList
 		TriplesList tlist;
 		Triples *triples = hdt->getTriples();
-		cout << "Triples -> TriplesList" << endl;
+		cout << "Old Triples -> TriplesList" << endl;
 		st.reset();
-
 		IteratorTripleID *it = triples->searchAll();
 		tlist.insert(it);
 		delete it;
+		cout << "         Old Triples -> TriplesList time" << st <<  endl;
 
 		// Convert tlist to OPS
-		cout << "TriplesList to OPS" << endl;
+		cout << "TriplesList sort OPS" << endl;
 		st.reset();
 		tlist.sort(OPS, &progress);
-		cout << "    TriplesList to OPS time: " << st << endl;
+		cout << "    TriplesList sort OPS time: " << st << endl;
 
 		// Generate new OPS BitmapTriples
 		cout << "TriplesList to new BitmapTriples" << endl;
 		HDTSpecification spec;
 		spec.set("triples.component.order", "OPS");
 		BitmapTriples bt(spec);
+		st.reset();
 		bt.load(tlist, &progress);
-
+		cout << "       TriplesList to new BitmapTriples time" << st << endl;
 
 		// Update Header
 #if 0

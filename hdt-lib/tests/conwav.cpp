@@ -61,13 +61,14 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if(argc-optind<1) {
+	if(argc-optind<2) {
 		cout << "ERROR: You must supply an HDT File" << endl << endl;
 		help();
 		return 1;
 	}
 
 	inputFile = argv[optind];
+	outputFile = argv[optind+1];
 
 	HDT *hdt = HDTFactory::createDefaultHDT();
 
@@ -76,7 +77,9 @@ int main(int argc, char **argv) {
 
 		hdt->loadOrCreateIndex();
 
-		hdt->saveToHDT(inputFile.c_str());
+		hdt->saveToHDT(outputFile.c_str());
+
+		cout << "IN: " << inputFile << " Out: " << outputFile << endl;
 
 		delete hdt;
 	} catch (char *e) {
