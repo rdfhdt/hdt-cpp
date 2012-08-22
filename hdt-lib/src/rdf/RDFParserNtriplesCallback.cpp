@@ -10,6 +10,7 @@
 #include "../util/unicode.hpp"
 
 #include "../third/gzstream.h"
+#include "../third/fdstream.hpp"
 
 #include <fstream>
 #include <stdlib.h>
@@ -30,11 +31,40 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 
 	istream *in;
 
+	 FILE *filePipe;
+	 ifstream *fileStream = NULL;
+	 boost::fdistream *pipeStream = NULL;
+
 	std::string fn = fileName;
-	if(fn.substr(fn.find_last_of(".") + 1) == "gz") {
+	std::string suffix = fn.substr(fn.find_last_of(".") + 1);
+	std::string pipeCommand;
+
+	if( suffix == "gz") {
+#if 0
 		in = new igzstream(fileName);
+#else
+		pipeCommand = "gunzip -c ";
+#endif
+	} else if(suffix=="bz2") {
+		pipeCommand = "bunzip2 -c ";
+	}
+
+	if(pipeCommand.length()>0) {
+		pipeCommand.append(fileName);
+		if ((filePipe=popen(pipeCommand.c_str(),"r")) == NULL) {
+			cerr << "Error creating pipe for command " << pipeCommand << endl;
+			throw "popen() failed to create pipe";
+		}
+
+		in = new boost::fdistream(fileno(filePipe));
 	} else {
 		in = new ifstream(fileName);
+	}
+
+	if (!in->good())
+	{
+		cerr << "Error opening file " << fileName << " for parsing using " << pipeCommand << endl;
+		throw "Error opening file for parsing";
 	}
 
 	string line;
@@ -213,6 +243,9 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 		}
 	}
 
+	if(pipeCommand.length()>0) {
+		pclose(filePipe);
+	}
 	delete in;
 }
 
