@@ -226,15 +226,22 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 void KyotoDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 
+	throw "Not implemented";
+}
+
+size_t KyotoDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener) {
+	throw "Not implemented";
 }
 
 void KyotoDictionary::load(std::istream & input, ControlInformation &ci, ProgressListener *listener)
 {
+	throw "Not implemented";
 
 }
 
 void KyotoDictionary::import(Dictionary *other, ProgressListener *listener) {
 
+	throw "Not implemented";
 }
 
 IteratorUCharString *KyotoDictionary::getSubjects() {
