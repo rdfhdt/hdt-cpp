@@ -7,8 +7,8 @@ FLAGS=-O3 -Wno-deprecated
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
 LDFLAGS=
 DOXYGEN=doxygen
-DEFINES=-DUSE_RAPTOR #-DUSE_KYOTO
-LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -lstdc++ -lraptor2 #-lkyotocabinet
+DEFINES=-DUSE_RAPTOR -DUSE_KYOTO
+LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -lstdc++ -lraptor2 -lkyotocabinet -lz
 
 ifeq ($(OS), Darwin)
 CPP=clang++
@@ -20,7 +20,8 @@ FLAGS:=$(FLAGS) -fopenmp
 endif
 
 SRCS=$(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard src/**/**/*.cpp)
-OBJECTS=$(patsubst %.cpp,%.o, $(SRCS) )
+THIRD=$(wildcard third/*.cpp) $(wildcard third/**/*.cpp)
+OBJECTS=$(patsubst %.cpp,%.o, $(SRCS) $(THIRD))
 HEADERS=$(wildcard include/*.hpp) $(wildcard include/*.h) $(wildcard src/*.hpp) $(wildcard src/*.h) $(wildcard src/**/*.hpp)
 TOOLS=$(patsubst %.cpp,%, $(wildcard tools/*.cpp))
 TESTS=$(patsubst %.cpp,%, $(wildcard tests/*.cpp))

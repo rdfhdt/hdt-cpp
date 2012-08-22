@@ -9,6 +9,8 @@
 #include "../util/fileUtil.hpp"
 #include "../util/unicode.hpp"
 
+#include "../third/gzstream.h"
+
 #include <fstream>
 #include <stdlib.h>
 
@@ -25,17 +27,24 @@ RDFParserNtriplesCallback::~RDFParserNtriplesCallback() {
 }
 
 void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback) {
-	ifstream in(fileName);
+
+	istream *in;
+
+	std::string fn = fileName;
+	if(fn.substr(fn.find_last_of(".") + 1) == "gz") {
+		in = new igzstream(fileName);
+	} else {
+		in = new ifstream(fileName);
+	}
 
 	string line;
 	TripleString ts;
 
 	size_t filePos;
 
-
-	while(in.good()){
-		filePos = in.tellg();
-		getline(in, line);
+	while(in->good()){
+		filePos = in->tellg();
+		getline(*in, line);
 
 		int pos = 0;
 		size_t firstIndex = 0;
@@ -203,6 +212,8 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 			callback->processTriple(ts, filePos);
 		}
 	}
+
+	delete in;
 }
 
 }
