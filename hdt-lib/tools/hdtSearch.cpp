@@ -137,10 +137,9 @@ int main(int argc, char **argv) {
 
 	inputFile = argv[optind];
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
 
 	try {
-		hdt->loadFromHDT(inputFile.c_str());
+		HDT *hdt = HDTFactory::mapHDT(inputFile.c_str());
 
 		hdt->loadOrCreateIndex();
 

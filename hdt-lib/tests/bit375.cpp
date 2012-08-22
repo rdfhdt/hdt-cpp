@@ -5,7 +5,7 @@
  *      Author: mck
  */
 
-#include <iostream>
+#include <fstream>
 
 #include "../src/bitsequence/BitSequence375.h"
 
