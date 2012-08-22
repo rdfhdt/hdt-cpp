@@ -79,13 +79,13 @@ public:
 	virtual size_t getSizeBytes() const=0;
 
 	/** Stores the bitmap given a file pointer*/
-	virtual void save(ofstream & fp) const=0;
+	virtual void save(ostream & fp) const=0;
 
 	/** Load the data structure from a memory region */
     virtual size_t load(const unsigned char *ptr, const unsigned char*maxPtr, ProgressListener *listener=NULL)=0;
 
 	/** Reads a bitmap determining the type */
-	static BitSeq * load(ifstream & fp);
+	static BitSeq * load(istream & fp);
 
 };
 

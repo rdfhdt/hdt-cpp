@@ -143,14 +143,12 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 	this->mapping = ci.getUint("$mapping");
 	this->sizeStrings = ci.getUint("$sizeStrings");
 
-	ifstream *in = dynamic_cast<ifstream *>(&input);
-
 	IntermediateListener iListener(listener);
 
 	iListener.setRange(0,25);
 	iListener.notifyProgress(0, "Dictionary read shared area.");
 	delete shared;
-	shared = csd::CSD::load(*in);
+	shared = csd::CSD::load(input);
 	if(shared==NULL){
 		shared = new csd::CSD_PFC();
 		throw "Could not read shared.";
@@ -160,7 +158,7 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
 	delete subjects;
-	subjects = csd::CSD::load(*in);
+	subjects = csd::CSD::load(input);
 	if(subjects==NULL){
 		subjects = new csd::CSD_PFC();
 		throw "Could not read subjects.";
@@ -170,7 +168,7 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
 	delete predicates;
-	predicates = csd::CSD::load(*in);
+	predicates = csd::CSD::load(input);
 	if(predicates==NULL){
 		predicates = new csd::CSD_PFC();
 		throw "Could not read predicates.";
@@ -180,7 +178,7 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 	iListener.setRange(75,100);
 	iListener.notifyProgress(0, "Dictionary read objects.");
 	delete objects;
-	objects = csd::CSD::load(*in);
+	objects = csd::CSD::load(input);
 	if(objects==NULL){
 		objects = new csd::CSD_PFC();
 		throw "Could not read objects.";
@@ -320,24 +318,23 @@ void PFCDictionary::save(std::ostream & output, ControlInformation & controlInfo
 
 	controlInformation.save(output);
 
-	ofstream *out = dynamic_cast<ofstream *>(&output);
 	IntermediateListener iListener(listener);
 
 	iListener.setRange(0,10);
 	iListener.notifyProgress(0, "Dictionary save shared area.");
-	shared->save(*out);
+	shared->save(output);
 
 	iListener.setRange(10,45);
 	iListener.notifyProgress(0, "Dictionary save subjects.");
-	subjects->save(*out);
+	subjects->save(output);
 
 	iListener.setRange(45,60);
 	iListener.notifyProgress(0, "Dictionary save predicates.");
-	predicates->save(*out);
+	predicates->save(output);
 
 	iListener.setRange(60,100);
 	iListener.notifyProgress(0, "Dictionary save objects.");
-	objects->save(*out);
+	objects->save(output);
 }
 
 

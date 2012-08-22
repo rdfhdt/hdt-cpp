@@ -28,29 +28,26 @@
 #ifndef _CSDCACHE_H
 #define _CSDCACHE_H
 
-#ifdef size_t
-#undef size_t
-#endif
 #include "../util/lru.hpp"
 
 #include <iostream>
-#include <fstream>
 #include <cassert>
 #include <string>
 #include <string.h>
-#include <set>
+#include <stdint.h>
 
 using namespace std;
 
 #include <HDTListener.hpp>
 
-typedef plb::LRUCacheH4<uint32_t, string> LRU_Int;
-typedef plb::LRUCacheH4<char *, uint32_t> LRU_Str;
-
 #include "CSD.h"
 
 namespace csd
 {
+
+typedef lru::LRUCacheH4<uint32_t, string> LRU_Int;
+typedef lru::LRUCacheH4<char *, uint32_t> LRU_Str;
+
 
 class CSD_Cache : public CSD
 {

@@ -69,9 +69,7 @@ void HuffmanSequence::add(IteratorUInt &elements)
 
 void HuffmanSequence::load(std::istream & input)
 {
-	std::ifstream *in = dynamic_cast<std::ifstream *>(&input);
-
-	huffman = URICompressed::Huffman::load(*in);
+	huffman = URICompressed::Huffman::load(input);
 	unsigned int numElements;
 	unsigned int encEntries;
 	size_t pos = 0;
@@ -125,8 +123,7 @@ void HuffmanSequence::save(std::ostream & output)
 #endif
 
 	// Write data to output
-	std::ofstream *out = dynamic_cast<std::ofstream *>(&output);
-	huffman->save(*out);
+	huffman->save(output);
 	output.write((char*)&numElements, sizeof(unsigned int));
 	output.write((char*)&encodedEntries, sizeof(unsigned int));
 	output.write((char*)&vectorEncoded[0], encodedEntries * sizeof(unsigned int));

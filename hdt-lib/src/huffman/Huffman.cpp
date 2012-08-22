@@ -83,11 +83,11 @@ namespace URICompressed{
         return decodeHuff(huff_table, symb, stream, pos);
     }
 
-    void Huffman::save(ofstream & fp){
+    void Huffman::save(ostream & fp){
         saveHuff(huff_table,fp);
     }
 
-    Huffman * Huffman::load(ifstream & fp) {
+    Huffman * Huffman::load(istream & fp) {
         Huffman * ret = new Huffman();
         ret->huff_table = loadHuff(fp);
         return ret;

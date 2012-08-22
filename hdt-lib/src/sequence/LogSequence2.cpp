@@ -174,8 +174,6 @@ void LogSequence2::load(std::istream & input)
 	unsigned char buf[9];
 
 	// Read numbits
-    cout << "Read LogSeq2 at" << input.tellg() << endl;
-
 	crch.readData(input, (unsigned char*)&numbits, sizeof(numbits));
 
 	// Read numentries
@@ -211,11 +209,6 @@ void LogSequence2::load(std::istream & input)
 		throw "Checksum error while reading LogSequence2 Data";
 	}
 
-    cout << "Numbits: " << (int)numbits << endl;
-    cout << "Numentries: " << numentries << endl;
-    cout << "CRC Header: " << hex << (int)filecrch << dec << endl;
-    cout << "CRC Data: " << hex << filecrcd << dec << endl;
-
 	IsMapped = false;
 }
 
@@ -250,14 +243,6 @@ size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax,
 
     if(&ptr[count]>=ptrMax)
         throw "LogSequence2 tries to read beyond the end of the file";
-
-#if 1
-    uint32_t crcVal = *((uint32_t*)&ptr[count]);
-    cout << "Numbits: " << (int)numbits << endl;
-    cout << "Numentries: " << numentries << endl;
-    cout << "CRC Header: " << hex << (int)crch.getValue() << dec << endl;
-    cout << "CRC Data: " << hex << crcVal << dec << endl;
-#endif
 
     count+=4; // CRC of data
 

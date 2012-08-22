@@ -173,7 +173,7 @@ bool BitSequence375::access(const size_t i) const
 	return array[i/WORDSIZE] & (1u << (i & 0x1F));
 }
 
-void BitSequence375::save(ofstream & out) const
+void BitSequence375::save(ostream & out) const
 {
 	CRC8 crch;
 	CRC32 crcd;
@@ -236,7 +236,7 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
 	return count;
 }
 
-BitSequence375 * BitSequence375::load(ifstream & in)
+BitSequence375 * BitSequence375::load(istream & in)
 {
 	CRC8 crch;
 	CRC32 crcd;

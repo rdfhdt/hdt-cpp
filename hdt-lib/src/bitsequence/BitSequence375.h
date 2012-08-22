@@ -20,7 +20,7 @@
 #define _STATIC_BITSEQUENCE_375_H
 
 #include <stdint.h>
-#include <fstream>
+#include <iostream>
 #include <vector>
 
 #include "BitSeq.h"
@@ -124,10 +124,10 @@ public:
 	void append(bool bit);
 
 	/*load-save functions*/
-	void save(ofstream & f) const;
+	void save(ostream & f) const;
     size_t load(const unsigned char *ptr, const unsigned char*maxPtr, ProgressListener *listener=NULL);
 
-	static BitSequence375 * load(ifstream & f);
+	static BitSequence375 * load(istream & f);
 };
 
 }

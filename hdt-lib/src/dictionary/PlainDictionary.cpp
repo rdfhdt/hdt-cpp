@@ -42,7 +42,7 @@ namespace hdt {
 
 
 bool DictionaryEntry::cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2) {
-    return c1->str->compare(*c2->str)<0;
+    return strcmp(c1->str,c2->str)<0;
 }
 
 bool DictionaryEntry::cmpID(DictionaryEntry *c1, DictionaryEntry *c2) {
@@ -66,22 +66,22 @@ PlainDictionary::~PlainDictionary() {
 	unsigned int i;
 
 	for(i=0;i<shared.size();i++) {
-        delete shared[i]->str;
+        	delete [] shared[i]->str;
 		delete shared[i];
 	}
 
 	for(i=0;i<subjects.size();i++) {
-        delete subjects[i]->str;
+		delete [] subjects[i]->str;
 		delete subjects[i];
 	}
 
 	for(i=0;i<objects.size();i++) {
-        delete objects[i]->str;
+		delete [] objects[i]->str;
 		delete objects[i];
 	}
 
 	for(i=0;i<predicates.size();i++) {
-        delete predicates[i]->str;
+		delete [] predicates[i]->str;
 		delete predicates[i];
 	}
 
@@ -95,7 +95,8 @@ std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole pos
 
 	if(localid<vector.size()) {
 		DictionaryEntry *entry = vector[localid];
-        return *entry->str;
+		string result(entry->str);
+		return result;
 	}
 
 	return string();
@@ -136,11 +137,6 @@ void PlainDictionary::startProcessing(ProgressListener *listener)
 	shared.clear();
 	objects.clear();
 	predicates.clear();
-
-	hashSubject.clear(); //hashSubject.resize(nsubjects);
-	hashObject.clear(); //hashObject.resize(nobjects);
-	hashPredicate.clear(); //hashPredicate.resize(npredicates);
-	prefixes.clear();
 }
 
 void PlainDictionary::stopProcessing(ProgressListener *listener)
@@ -171,7 +167,7 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	//shared subjects-objects from subjects
 	for (i = 0; i < shared.size(); i++) {
-		output << *shared[i]->str;
+		output << shared[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "PlainDictionary saving shared", counter, getNumberOfElements());
@@ -181,7 +177,7 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	//not shared subjects
 	for (i = 0; i < subjects.size(); i++) {
-		output << *subjects[i]->str;
+		output << subjects[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "PlainDictionary saving subjects", counter, getNumberOfElements());
@@ -191,7 +187,7 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	//not shared objects
 	for (i = 0; i < objects.size(); i++) {
-		output << *objects[i]->str;
+		output << objects[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "PlainDictionary saving objects", counter, getNumberOfElements());
@@ -201,7 +197,7 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	//predicates
 	for (i = 0; i < predicates.size(); i++) {
-		output << *predicates[i]->str;
+		output << predicates[i]->str;
 		output.put(marker); //character  to split file
 		counter++;
 		NOTIFYCOND(listener, "PlainDictionary saving predicates", counter, getNumberOfElements());
@@ -297,12 +293,13 @@ unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 			return it->second->id;
 		} else {
 			DictionaryEntry *entry = new DictionaryEntry;
-            entry->str = new string(str);
+            		entry->str = new char [str.length()+1];
+			strcpy(entry->str, str.c_str());
 			entry->id = predicates.size()+1;
 			sizeStrings += str.length();
 			//cout << " Add new predicate: " << str.c_str() << endl;
 
-			hashPredicate[entry->str->c_str()] = entry;
+			hashPredicate[entry->str] = entry;
 			predicates.push_back(entry);
 			return entry->id;
 		}
@@ -319,35 +316,37 @@ unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
 		if( !foundSubject && !foundObject) {
 			// Did not exist, create new.
 			DictionaryEntry *entry = new DictionaryEntry;
-            entry->str = new string(str);
+            		entry->str = new char [str.length()+1];
+			strcpy(entry->str, str.c_str());
 			sizeStrings += str.length();
 
 			//cout << " Add new subject: " << str << endl;
-			hashSubject[entry->str->c_str()] = entry;
+			hashSubject[entry->str] = entry;
 		} else if(foundSubject) {
 			// Already exists in subjects.
 			//cout << "   existing subject: " << str << endl;
 		} else if(foundObject) {
 			// Already exists in objects.
 			//cout << "   existing subject as object: " << str << endl;
-			hashSubject[objectIt->second->str->c_str()] = objectIt->second;
+			hashSubject[objectIt->second->str] = objectIt->second;
 		}
 	} else if(pos==OBJECT) {
 		if(!foundSubject && !foundObject) {
 			// Did not exist, create new.
 			DictionaryEntry *entry = new DictionaryEntry;
-            entry->str = new string(str);
+            		entry->str = new char [str.length()+1];
+			strcpy(entry->str, str.c_str());
 			sizeStrings += str.length();
 
 			//cout << " Add new object: " << str << endl;
-			hashObject[entry->str->c_str()] = entry;
+			hashObject[entry->str] = entry;
 		} else if(foundObject) {
 			// Already exists in objects.
 			//cout << "     existing object: " << str << endl;
 		} else if(foundSubject) {
 			// Already exists in subjects.
 			//cout << "     existing object as subject: " << str << endl;
-			hashObject[subjectIt->second->str->c_str()] = subjectIt->second;
+			hashObject[subjectIt->second->str] = subjectIt->second;
 		}
 	}
 
@@ -369,30 +368,31 @@ void PlainDictionary::insert(string str, DictionarySection pos) {
 	if(str=="") return;
 
 	DictionaryEntry *entry = new DictionaryEntry;
-	entry->str = new string(str);
+	entry->str = new char [str.length()+1];
+	strcpy(entry->str, str.c_str());
 
 	switch(pos) {
 	case SHARED_SUBJECT:
 	case SHARED_OBJECT:
 		shared.push_back(entry);
 		//entry->id = subjects_shared.size();
-		hashSubject[entry->str->c_str()] = entry;
-		hashObject[entry->str->c_str()] = entry;
+		hashSubject[entry->str] = entry;
+		hashObject[entry->str] = entry;
 		break;
 	case NOT_SHARED_SUBJECT:
 		subjects.push_back(entry);
 		//entry->id = subjects_shared.size()+subjects_not_shared.size();
-		hashSubject[entry->str->c_str()] = entry;
+		hashSubject[entry->str] = entry;
 		break;
 	case NOT_SHARED_OBJECT:
 		objects.push_back(entry);
 		//entry->id = subjects_shared.size()+objects_not_shared.size();
-		hashObject[entry->str->c_str()] = entry;
+		hashObject[entry->str] = entry;
 		break;
 	case NOT_SHARED_PREDICATE:
 		predicates.push_back(entry);
 		//entry->id = predicates.size();
-		hashPredicate[entry->str->c_str()] = entry;
+		hashPredicate[entry->str] = entry;
 		break;
 	}
 }

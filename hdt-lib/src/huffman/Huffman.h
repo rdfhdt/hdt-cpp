@@ -59,10 +59,10 @@ namespace URICompressed{
             virtual uint64_t getSize();
 
             /** Saves the coder to a file */
-            virtual void save(ofstream & fp);
+            virtual void save(ostream & fp);
 
             /** Loads a coder from a file*/
-            static Huffman * load(ifstream & fp);
+            static Huffman * load(istream & fp);
 
         protected:
             Huffman();

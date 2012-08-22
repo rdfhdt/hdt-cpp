@@ -66,7 +66,7 @@ namespace URICompressed{
      *
      *  @author Gonzalo Navarro
      */
-    void saveHuff (const THuff H, ofstream & f);
+    void saveHuff (const THuff H, ostream & f);
 
     /** Size of H written on file
      *
@@ -83,7 +83,7 @@ namespace URICompressed{
     /** Loads H from file f, prepared for encoding and decoding 
 		 * *  @author Gonzalo Navarro
      */
-    THuff loadHuff (ifstream &f);
+    THuff loadHuff (istream &f);
 
 };
 #endif

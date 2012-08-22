@@ -81,14 +81,12 @@ void LogSequence::add(IteratorUInt &elements)
 
 void LogSequence::load(std::istream & input)
 {
-	std::ifstream *in = dynamic_cast<std::ifstream *>(&input);
-
 	if(array!=NULL){
 		delete array;
 		array=NULL;
 	}
 
-    array = new cds_utils::Array(*in);
+    array = new cds_utils::Array(input);
 }
 
 size_t LogSequence::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
@@ -101,9 +99,7 @@ void LogSequence::save(std::ostream & output)
 	if(array==NULL)
 		return;
 
-	std::ofstream *out = dynamic_cast<std::ofstream *>(&output);
-
-	array->save(*out);
+	array->save(output);
 }
 
 size_t LogSequence::getNumberOfElements()

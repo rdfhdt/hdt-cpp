@@ -378,14 +378,13 @@ void BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 
 	// Fixme: Bitmap directly on istream/ostream??
 	IntermediateListener iListener(listener);
-	ofstream *out = dynamic_cast<ofstream *>(&output);
 	iListener.setRange(0,5);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Y");
-	bitmapY->save(*out);
+	bitmapY->save(output);
 
 	iListener.setRange(5,15);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Z");
-	bitmapZ->save(*out);
+	bitmapZ->save(output);
 
 	iListener.setRange(15,30);
 	iListener.notifyProgress(0, "BitmapTriples saving Stream Y");
@@ -411,19 +410,16 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 
 	IntermediateListener iListener(listener);
 
-	// Fixme: Bitmap directly on istream/ostream??
-	ifstream *in = dynamic_cast<ifstream *>(&input);
-
 	iListener.setRange(0,5);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Y");
-	bitmapY = BitSequence375::load(*in);
+	bitmapY = BitSequence375::load(input);
 	if(bitmapY==NULL){
 		throw "Could not read bitmapY.";
 	}
 
 	iListener.setRange(5,10);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Z");
-	bitmapZ = BitSequence375::load(*in);
+	bitmapZ = BitSequence375::load(input);
 	if(bitmapZ==NULL){
 		throw "Could not read bitmapZ.";
 	}
@@ -504,21 +500,19 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	controlInformation.set("stream.index", arrayIndex->getType());
 	controlInformation.save(output);
 
-	ofstream *out = dynamic_cast<ofstream *>(&output);
-
     iListener.setRange(50,60);
 	iListener.notifyProgress(0, "BitmapTriples saving Predicate count");
-	predicateCount->save(*out);
+	predicateCount->save(output);
 
     iListener.setRange(60,70);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Index");
-	bitmapIndex->save(*out);
+	bitmapIndex->save(output);
 
     iListener.setRange(70,100);
 	iListener.notifyProgress(0, "BitmapTriples saving Stream Index");
-	arrayIndex->save(*out);
+	arrayIndex->save(output);
 
-    waveletY->save(*out);
+    waveletY->save(output);
 }
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
@@ -529,7 +523,6 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 		throw "The supplied index does not have the same number of triples as the dataset";
 	}
 
-	ifstream *in = dynamic_cast<ifstream *>(&input);
 	IntermediateListener iListener(listener);
 
 	// Load predicate count
@@ -547,7 +540,7 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 	}
 	iListener.setRange(10,20);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Index");
-	bitmapIndex = BitSequence375::load(*in);
+	bitmapIndex = BitSequence375::load(input);
 
 	// LOAD STREAM
 	if(arrayIndex!=NULL) {
@@ -560,7 +553,7 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 
 	// Make sure wavelet is generated
 	iListener.setRange(50,100);
-    if(! in->eof() ) {
+    if(! input.eof() ) {
         waveletY = new WaveletSequence();
         waveletY->load(input);
     } else {

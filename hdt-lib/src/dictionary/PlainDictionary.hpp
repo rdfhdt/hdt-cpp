@@ -42,43 +42,54 @@
 #include <fstream>
 #include <iostream>
 
+#include <hash_map>
+
+
+//#define GOOGLE_HASH 
+
+#ifdef GOOGLE_HASH 
+#include <sparsehash/sparse_hash_map>
+
+using google::sparse_hash_map;      // namespace where class lives by default
+using __gnu_cxx::hash;  // or __gnu_cxx::hash, or maybe tr1::hash, depending on your OS
+
+#else
+
 #include <ext/hash_map>
-   namespace std { using namespace __gnu_cxx; }
+namespace std { using namespace __gnu_cxx; }
+
+#endif
+
 
 namespace hdt {
 
 struct DictionaryEntry {
 public:
 	unsigned int id;
-	const std::string *str;
+	char *str;
 
-	std::string toString();
 	bool static cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2);
 	bool static cmpID(DictionaryEntry *c1, DictionaryEntry *c2);
 };
 
 struct str_cmp {
-	bool operator()(const char* s1, const char* s2) {
-	    return strcmp(s1,s2)==0;
+	bool operator()(const char* s1, const char* s2) const {
+		return strcmp(s1, s2) == 0;
 	}
 };
 
 typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 
-#if 0
-#include <google/sparse_hash_map>
-typedef google::sparse_hash_map<const char *, DictionaryEntry *, std::hash<const char *>, str_cmp> DictEntryHash;
+#ifdef GOOGLE_HASH 
+typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
-typedef std::hash_map<const char *, DictionaryEntry *, std::hash<const char *>, str_cmp> DictEntryHash;
+typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #endif
 
 typedef DictEntryHash::const_iterator DictEntryIt;
-typedef std::hash_map<const char *, std::string *, std::hash<const char*>, str_cmp> PrefixHash;
-typedef PrefixHash::iterator PrefixIt;
 
 
 class PlainDictionary : public ModifiableDictionary {
-// Private attributes
 private:
 	std::vector<DictionaryEntry*> predicates;
 	std::vector<DictionaryEntry*> shared;
@@ -87,7 +98,6 @@ private:
 	DictEntryHash hashSubject;
 	DictEntryHash hashPredicate;
 	DictEntryHash hashObject;
-	PrefixHash prefixes;
 	unsigned int mapping;
 	uint64_t sizeStrings;
 
@@ -178,7 +188,7 @@ public:
 	}
 
 	virtual unsigned char *next() {
-		return (unsigned char*)vector[pos++]->str->c_str();
+		return (unsigned char*)vector[pos++]->str;
 	}
 
 	virtual unsigned int getNumberOfElements() {

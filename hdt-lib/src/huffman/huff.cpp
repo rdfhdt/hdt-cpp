@@ -211,7 +211,7 @@ namespace URICompressed{
         return ptr;
     }
 
-    void saveHuff (const THuff H, ofstream & f) {
+    void saveHuff (const THuff H, ostream & f) {
         saveValue<uint>(f,H.max);
         saveValue<uint>(f,H.lim);
         saveValue<uint>(f,H.depth);
@@ -235,7 +235,7 @@ namespace URICompressed{
 				delete [] H.num_dec;
     }
 
-    THuff loadHuff (ifstream & f) {
+    THuff loadHuff (istream & f) {
     	uint i,dold,dact;
     	THuff H;
     	H.max = loadValue<uint>(f);

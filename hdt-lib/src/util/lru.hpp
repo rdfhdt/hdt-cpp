@@ -14,7 +14,7 @@
 #include <sstream>
 #include <cassert>
 
-namespace {
+namespace lru {
 
 //-------------------------------------------------------------
 // Bucket
@@ -129,11 +129,6 @@ const V & LRUCacheH4ConstIterator<K, V>::value() const
 }
 	
 	
-} // file scope
-
-
-namespace plb {
-
 //-------------------------------------------------------------
 // LRU Cache
 //-------------------------------------------------------------
@@ -368,4 +363,4 @@ typename LRUCacheH4<K, V>::Val * LRUCacheH4<K, V>::_insert(const K & key)
 }
 
 
-}  // namespace plb
+}  // namespace lru
