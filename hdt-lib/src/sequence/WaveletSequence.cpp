@@ -110,7 +110,12 @@ void WaveletSequence::load(std::istream & input)
 
 size_t WaveletSequence::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+	 std::stringstream localStream;
+	 localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
+
+	 load(localStream);
+
+	 return localStream.tellg();
 }
 
 void WaveletSequence::save(std::ostream & output)

@@ -90,7 +90,12 @@ void HuffmanSequence::load(std::istream & input)
 
 size_t HuffmanSequence::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+	 std::stringstream localStream;
+	 localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
+
+	 load(localStream);
+
+	 return localStream.tellg();
 }
 
 void HuffmanSequence::save(std::ostream & output)

@@ -206,7 +206,7 @@ inline unsigned int bits(size_t n) {
 }
 
 inline size_t maxVal(unsigned int numbits) {
-	return ~(~0L<<numbits);
+	return ~(((size_t)-1)<<numbits);
 }
 
 }

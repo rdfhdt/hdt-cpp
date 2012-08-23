@@ -91,7 +91,12 @@ void LogSequence::load(std::istream & input)
 
 size_t LogSequence::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+	 std::stringstream localStream;
+	 localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
+
+	 load(localStream);
+
+	 return localStream.tellg();
 }
 
 void LogSequence::save(std::ostream & output)

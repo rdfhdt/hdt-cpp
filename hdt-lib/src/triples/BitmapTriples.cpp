@@ -613,11 +613,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     } else if(&ptr[count]<ptrMax) {
         iListener.notifyProgress(0, "BitmapTriples loading Wavelet");
 
-        std::stringstream localStream;
-        localStream.rdbuf()->pubsetbuf((char*)&ptr[count], ptrMax-&ptr[count]);
-
-        waveletY = new WaveletSequence();
-        waveletY->load(localStream);
+        count += waveletY->load(&ptr[count], ptrMax, &iListener);
     } else {
         iListener.notifyProgress(0, "BitmapTriples generating Wavelet");
         waveletY = new WaveletSequence(arrayY);

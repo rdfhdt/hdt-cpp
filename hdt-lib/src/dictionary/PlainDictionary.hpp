@@ -42,10 +42,9 @@
 #include <fstream>
 #include <iostream>
 
-#include <hash_map>
+#include <ext/hash_map>
 
-
-//#define GOOGLE_HASH 
+#define GOOGLE_HASH
 
 #ifdef GOOGLE_HASH 
 #include <sparsehash/sparse_hash_map>
@@ -55,7 +54,6 @@ using __gnu_cxx::hash;  // or __gnu_cxx::hash, or maybe tr1::hash, depending on 
 
 #else
 
-#include <ext/hash_map>
 namespace std { using namespace __gnu_cxx; }
 
 #endif
