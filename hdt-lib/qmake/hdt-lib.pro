@@ -92,7 +92,9 @@ SOURCES += \
     ../src/util/crc32.cpp \
     ../src/util/crc16.cpp \
     ../src/util/crc8.cpp \
-    ../src/util/bitutil.cpp
+    ../src/util/bitutil.cpp \
+    ../third/gzstream.cpp \
+    ../src/rdf/RDFParserNtriplesCallback.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
@@ -171,7 +173,10 @@ HEADERS += \
     ../src/util/crc32.h \
     ../src/util/crc16.h \
     ../src/util/crc8.h \
-    ../src/util/bitutil.h
+    ../src/util/bitutil.h \
+    ../third/fdstream.hpp \
+    ../third/gzstream.h \
+    ../src/rdf/RDFParserNtriplesCallback.hpp
 
 #For hdt-lib
 INCLUDEPATH += ../include
