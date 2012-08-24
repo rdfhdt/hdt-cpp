@@ -613,6 +613,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     } else if(&ptr[count]<ptrMax) {
         iListener.notifyProgress(0, "BitmapTriples loading Wavelet");
 
+        waveletY = new WaveletSequence();
         count += waveletY->load(&ptr[count], ptrMax, &iListener);
     } else {
         iListener.notifyProgress(0, "BitmapTriples generating Wavelet");
