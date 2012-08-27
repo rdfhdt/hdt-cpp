@@ -206,7 +206,71 @@ void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	Prog
 
 size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+    size_t count=0;
+
+    IntermediateListener iListener(listener);
+    ControlInformation ci;
+    count += ci.load(&ptr[count], ptrMax);
+
+    this->mapping = ci.getUint("$mapping");
+    this->sizeStrings = ci.getUint("$sizeStrings");
+
+    iListener.setRange(0,25);
+    iListener.notifyProgress(0, "Dictionary read shared area.");
+    delete shared;
+    shared = csd::CSD::create(ptr[count]);
+    if(shared==NULL){
+        shared = new csd::CSD_PFC();
+        throw "Could not read shared.";
+    }
+    count += shared->load(&ptr[count], ptrMax);
+    shared = new csd::CSD_Cache(shared);
+
+    iListener.setRange(25,50);
+    iListener.notifyProgress(0, "Dictionary read subjects.");
+    delete subjects;
+    subjects = csd::CSD::create(ptr[count]);
+    if(subjects==NULL){
+        subjects = new csd::CSD_PFC();
+        throw "Could not read subjects.";
+    }
+    count += subjects->load(&ptr[count], ptrMax);
+    subjects = new csd::CSD_Cache(subjects);
+
+    iListener.setRange(50,75);
+    iListener.notifyProgress(0, "Dictionary read predicates.");
+    delete predicates;
+    predicates = csd::CSD::create(ptr[count]);
+    if(predicates==NULL){
+        predicates = new csd::CSD_PFC();
+        throw "Could not read predicates.";
+    }
+    count += predicates->load(&ptr[count], ptrMax);
+    predicates = new csd::CSD_Cache(predicates);
+
+    iListener.setRange(75,85);
+    iListener.notifyProgress(0, "Dictionary read objects literals.");
+    delete objectsLiterals;
+    objectsLiterals = csd::CSD::create(ptr[count]);
+    if(objectsLiterals==NULL){
+        objectsLiterals = new csd::CSD_PFC();
+        throw "Could not read object Literals.";
+    }
+    count += objectsLiterals->load(&ptr[count], ptrMax);
+    objectsLiterals = new csd::CSD_Cache(objectsLiterals);
+
+    iListener.setRange(75,100);
+    iListener.notifyProgress(0, "Dictionary read objects Rest.");
+    delete objectsNotLiterals;
+    objectsNotLiterals = csd::CSD::create(ptr[count]);
+    if(objectsNotLiterals==NULL){
+        objectsNotLiterals = new csd::CSD_PFC();
+        throw "Could not read objects Not Literals.";
+    }
+    count += objectsNotLiterals->load(&ptr[count], ptrMax);
+    objectsNotLiterals = new csd::CSD_Cache(objectsNotLiterals);
+
+    return count;
 }
 
 class LiteralIterator : public IteratorUCharString {
@@ -260,6 +324,14 @@ void LiteralDictionary::import(	Dictionary *other, ProgressListener *listener) {
 	try {
 		IntermediateListener iListener(listener);
 
+        //NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
+        IteratorUCharString *itShared = other->getShared();
+        delete shared;
+        iListener.setRange(90, 100);
+        shared = loadSectionPFC(itShared, blocksize, &iListener);
+        shared = new csd::CSD_Cache(shared);
+        delete itShared;
+
 		//NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
 		IteratorUCharString *itSubj = other->getSubjects();
 		delete subjects;
@@ -291,14 +363,6 @@ void LiteralDictionary::import(	Dictionary *other, ProgressListener *listener) {
 		objectsNotLiterals = loadSectionPFC(&litIt, blocksize, &iListener);
 		objectsNotLiterals = new csd::CSD_Cache(objectsNotLiterals);
 		delete itObj;
-
-		//NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
-		IteratorUCharString *itShared = other->getShared();
-		delete shared;
-		iListener.setRange(90, 100);
-		shared = loadSectionPFC(itShared, blocksize, &iListener);
-		shared = new csd::CSD_Cache(shared);
-		delete itShared;
 
 		this->sizeStrings = other->size();
 		this->mapping = other->getMapping();
@@ -404,9 +468,9 @@ void LiteralDictionary::save(std::ostream & output,	ControlInformation & control
 	objectsLiterals->save(output);
 
 	iListener.setRange(80, 100);
-		iListener.notifyProgress(0, "Dictionary save non literal objects.");
-		//cout << "Save objects " << out->tellp() << endl;
-		objectsNotLiterals->save(output);
+    iListener.notifyProgress(0, "Dictionary save non literal objects.");
+    //cout << "Save objects " << out->tellp() << endl;
+    objectsNotLiterals->save(output);
 
 	//cout << "Dictionary saved " << out->tellp() << endl;
 }

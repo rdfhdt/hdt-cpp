@@ -258,6 +258,7 @@ uint CSD_FMIndex::decompress(unsigned char **dict) {
 }
 
 uint64_t CSD_FMIndex::getSize() {
+    cout << "This.getSize: " << (void*)this << endl;
 	uint64_t mem = sizeof(CSD_FMIndex);
 	mem += fm_index->size();
 	if (use_sampling)
@@ -278,8 +279,22 @@ void CSD_FMIndex::save(ostream &fp) {
 }
 
 size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
-{
-    throw "Not implemented";
+{   
+    std::stringstream localStream;
+    localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
+
+    unsigned char type = localStream.get(); // Load expects the type already read.
+
+    this->type = FMINDEX;
+    this->numstrings = loadValue<uint32_t>(localStream);
+    this->tlength = loadValue<uint32_t>(localStream);
+    this->maxlength = loadValue<uint32_t>(localStream);
+    this->use_sampling = loadValue<bool>(localStream);
+    if (this->use_sampling)
+        this->separators = BitSequence::load(localStream);
+    this->fm_index = SSA::load(localStream);
+
+    return localStream.tellg();
 }
 
 CSD * CSD_FMIndex::load(istream & fp) {
