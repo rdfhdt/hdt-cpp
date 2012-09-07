@@ -689,7 +689,12 @@ void LiteralDictionary::getSuggestions(const char *base, hdt::TripleComponentRol
 	if (role == SUBJECT) {
 		subjects->fillSuggestions(base, v2, maxResults);
 	} else if (role == OBJECT) {
-	//FIXME	objects->fillSuggestions(base, v2, maxResults);
+        if (base[0]=='"'){
+            objectsLiterals->fillSuggestions(base, v2, maxResults);
+        }
+        else{
+            objectsNotLiterals->fillSuggestions(base, v2, maxResults);
+        }
 	}
 
 	// Merge results from shared and subjects/objects keeping order

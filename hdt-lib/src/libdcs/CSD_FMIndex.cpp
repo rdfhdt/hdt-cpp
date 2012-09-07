@@ -353,9 +353,22 @@ void CSD_FMIndex::dumpAll() {
 }
 
 void csd::CSD_FMIndex::fillSuggestions(const char *base,
-		vector<std::string> &out, int maxResults) {
-	//FIXME: To be completed
+        vector<std::string> &out, int maxResults) {
+    size_t len = strlen(base);
+    unsigned char *n_s = new unsigned char[len + 1];
+    uint o;
+    n_s[0] = '\1';
+    for (uint32_t i = 1; i <= len; i++)
+        n_s[i] = base[i - 1];
+
+    uint32_t *results = NULL;
+    size_t numresults = this->locate_substring(n_s, len + 1, &results);
+    int maxIter = maxResults;
+    if (numresults < maxIter)
+        maxIter = numresults;
+    for (int i = 0; i < numresults; i++) {
+        out.push_back((char*) (this->extract(results[i])));
+    }
 }
 
 }
-;
