@@ -35,10 +35,12 @@
 #include <Triples.hpp>
 #include <HDTSpecification.hpp>
 #include "TripleIterators.hpp"
-#include <kcpolydb.h>
 
 #include "TriplesComparator.hpp"
 #include "../libdcs/CSD.h"
+
+#ifdef USE_KYOTO
+#include <kcpolydb.h>
 
 using namespace kyotocabinet;
 
@@ -195,6 +197,8 @@ public:
 };
 
 }
+
+#endif /* USE_KYOTO */
 
 #endif /* TRIPLESKYOTO_H_ */
 

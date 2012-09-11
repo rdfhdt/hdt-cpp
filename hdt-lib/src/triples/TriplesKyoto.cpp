@@ -39,6 +39,8 @@
 
 #include "../util/Histogram.h"
 
+#ifdef USE_KYOTO
+
 namespace hdt {
 
 TriplesKyoto::TriplesKyoto() : order(Unknown)
@@ -291,13 +293,4 @@ TripleID *TriplesKyotoIterator::next() {
 
 }
 
-
-
-
-
-
-
-
-
-
-
+#endif /* USE_KYOTO */
