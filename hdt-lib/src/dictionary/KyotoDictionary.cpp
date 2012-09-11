@@ -36,6 +36,8 @@
 #include <HDTVocabulary.hpp>
 #include <HDTEnums.hpp>
 
+#ifdef USE_KYOTO
+
 namespace hdt {
 
 /* DICTIONARY ENTRY */
@@ -438,4 +440,6 @@ void KyotoDictionary::getSuggestions(const char *base, hdt::TripleComponentRole 
 
 
 }
+
+#endif
 

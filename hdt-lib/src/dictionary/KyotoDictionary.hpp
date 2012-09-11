@@ -42,6 +42,9 @@
 #include <fstream>
 #include <iostream>
 
+
+#ifdef USE_KYOTO
+
 #include <kcpolydb.h>
 
 using namespace kyotocabinet;
@@ -153,5 +156,7 @@ public:
 };
 
 }
+
+#endif  /* USE_KYOTO */
 
 #endif /* KYOTODICTIONARY_H_ */
