@@ -147,6 +147,17 @@ void HDTit::hdtChanged(QString &file)
     ui->predicatePatternEdit->setEnabled(hasDataset);
     ui->objectPatternEdit->setEnabled(hasDataset);
 
+    // Enable/Disable substring search tab.
+    bool hdtHasSubstring = hdtManager->getHDT()->getDictionary()->getType()==hdt::HDTVocabulary::DICTIONARY_TYPE_LITERAL;
+    ui->tabRegex->setEnabled(hdtHasSubstring);
+    if(hdtHasSubstring) {
+        if(ui->resultTabs->count()<4) {
+            ui->resultTabs->insertTab(3, ui->tabRegex, "Substring Search");
+        }
+    } else {
+        ui->resultTabs->removeTab(3);
+    }
+
     refreshSearchPattern();
 }
 

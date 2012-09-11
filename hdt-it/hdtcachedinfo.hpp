@@ -1,6 +1,7 @@
 #ifndef HDTCACHEDINFO_HPP
 #define HDTCACHEDINFO_HPP
 
+#include <QString>
 #include <HDT.hpp>
 #include <HDTListener.hpp>
 #include "StopWatch.hpp"
@@ -27,7 +28,11 @@ public:
     unsigned int getMaxPredicateCount();
     vector<hdt::TripleID> &getTriples();
 
-    void generateInfo(hdt::ProgressListener *listener=NULL);
+    void generateGeneralInfo(hdt::ProgressListener *listener=NULL);
+    void generateMatrix(hdt::ProgressListener *listener=NULL);
+
+    void save(QString &fileName, hdt::ProgressListener *listener=NULL);
+    void load(QString &fileName, hdt::ProgressListener *listener=NULL);
 };
 
 #endif // HDTCACHEDINFO_HPP

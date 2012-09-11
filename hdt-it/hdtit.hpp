@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <HDTSpecification.hpp>
 #include <HDTEnums.hpp>
+#include <HDTVocabulary.hpp>
 #include <QAbstractItemModel>
 #include <QDir>
 

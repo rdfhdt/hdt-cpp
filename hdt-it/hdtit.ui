@@ -400,6 +400,9 @@ p, li { white-space: pre-wrap; }
         </attribute>
        </widget>
        <widget class="QWidget" name="tabRegex">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <attribute name="title">
          <string>Substring Search</string>
         </attribute>

@@ -46,9 +46,10 @@ void HDTOperation::execute() {
             iListener.setRange(70, 90);
             hdt->loadOrCreateIndex( &iListener );
 
-        iListener.setRange(90, 100);
-        hdtInfo = new HDTCachedInfo(hdt);
-	    hdtInfo->generateInfo(&iListener);
+            iListener.setRange(90, 100);
+            hdtInfo = new HDTCachedInfo(hdt);
+            QString infoFile = fileName + ".hdtcache";
+            hdtInfo->load(infoFile, &iListener);
 
             break;
         }
@@ -58,11 +59,12 @@ void HDTOperation::execute() {
             iListener.setRange(0,80);
             hdt->loadFromRDF(fileName.toAscii(), baseUri, notation, &iListener);
 
-	    iListener.setRange(80, 90);
-	    hdt->loadOrCreateIndex( &iListener );
+            iListener.setRange(80, 90);
+            hdt->loadOrCreateIndex( &iListener );
 
-	    iListener.setRange(90, 100);
-	    hdtInfo->generateInfo(&iListener);
+            iListener.setRange(90, 100);
+            hdtInfo->generateGeneralInfo(&iListener);
+            hdtInfo->generateMatrix(&iListener);
 
             break;
             }
