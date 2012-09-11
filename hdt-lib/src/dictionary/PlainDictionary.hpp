@@ -44,7 +44,7 @@
 
 #include <ext/hash_map>
 
-#define GOOGLE_HASH
+//#define GOOGLE_HASH
 
 #ifdef GOOGLE_HASH 
 #include <sparsehash/sparse_hash_map>
