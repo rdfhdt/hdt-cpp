@@ -45,9 +45,6 @@ using namespace std;
 void help() {
 	cout << "$ rdf2hdt [options] <rdf input file> <hdt output file> " << endl;
 	cout << "\t-h\t\t\tThis help" << endl;
-	cout << "\t-H\t<header>\tSave Header in separate file" << endl;
-	cout << "\t-D\t<dictionary>\tSave Dictionary in separate file" << endl;
-	cout << "\t-T\t<triples>\tSave Triples in separate file" << endl;
 	cout << "\t-i\t\tAlso generate index to solve all triple patterns." << endl;
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
 	cout << "\t-o\t<options>\tHDT Additional options (option1:value1;option2:value2;...)" << endl;
@@ -72,9 +69,6 @@ public:
 int main(int argc, char **argv) {
 	string inputFile;
 	string outputFile;
-	string headerFile;
-	string dictionaryFile;
-	string triplesFile;
 	bool verbose=false;
 	bool generateIndex=false;
 	string configFile;
@@ -85,20 +79,8 @@ int main(int argc, char **argv) {
 	RDFNotation notation = NTRIPLES;
 
 	int c;
-	while( (c = getopt(argc,argv,"H:D:T:c:o:vf:B:i"))!=-1) {
+	while( (c = getopt(argc,argv,"c:o:vf:B:i"))!=-1) {
 		switch(c) {
-		case 'H':
-			headerFile = optarg;
-			cout << "Header: " << headerFile << endl;
-			break;
-		case 'D':
-			dictionaryFile = optarg;
-			cout << "Dictionary: " << dictionaryFile << endl;
-			break;
-		case 'T':
-			triplesFile = optarg;
-			cout << "Triples: " << triplesFile << endl;
-			break;
 		case 'c':
 			configFile = optarg;
 			cout << "Configfile: " << configFile << endl;
@@ -178,14 +160,6 @@ int main(int argc, char **argv) {
 	HDT *hdt = HDTFactory::createHDT(spec);
 
 	try {
-		// Load Dictionary if exists
-		ifstream dictIn(dictionaryFile.c_str(), ios::binary);
-		if(dictIn.good()) {
-			ControlInformation ci;
-			ci.load(dictIn);
-            hdt->getDictionary()->load(dictIn, ci);
-		}
-
 		// Read RDF
 		StopWatch globalTimer;
 		hdt->loadFromRDF(inputFile.c_str(), baseUri, notation, &progress);
@@ -193,7 +167,7 @@ int main(int argc, char **argv) {
 		ofstream out;
 
 		// Save HDT
-		out.open(outputFile.c_str(), ios::out | ios::binary);
+		out.open(outputFile.c_str(), ios::out | ios::binary | ios::trunc);
 		if(!out.good()){
 			throw "Could not open output file.";
 		}
@@ -209,41 +183,6 @@ int main(int argc, char **argv) {
 
 		if(generateIndex) {
 			hdt->loadOrCreateIndex(&progress);
-		}
-
-		ControlInformation controlInformation;
-
-		// Save header
-		if(headerFile!="") {
-            Header *header = hdt->getHeader();
-			out.open(headerFile.c_str());
-			if(!out.good()){
-				throw "Could not open Header file.";
-			}
-            header->save(out, controlInformation);
-			out.close();
-		}
-
-		// Save dictionary
-		if(dictionaryFile!="") {
-            Dictionary *dictionary = hdt->getDictionary();
-			out.open(dictionaryFile.c_str());
-			if(!out.good()){
-				throw "Could not open Dictionary file.";
-			}
-            dictionary->save(out, controlInformation);
-			out.close();
-		}
-
-		// Save triples
-		if(triplesFile!=""){
-            Triples *triples = hdt->getTriples();
-			out.open(triplesFile.c_str());
-			if(!out.good()){
-				throw "Could not open Triples file.";
-			}
-            triples->save(out, controlInformation);
-			out.close();
 		}
 
 	} catch (char *exception) {
