@@ -206,7 +206,15 @@ inline unsigned int bits(size_t n) {
 }
 
 inline size_t maxVal(unsigned int numbits) {
-	return ~(((size_t)-1)<<numbits);
+    // The << operator is undefined for the number of bits of the word,
+    // Therefore we need to check for corner cases.
+    if(numbits==32) {
+        return 0xFFFFFFFFU;
+    } else if(numbits==64) {
+        return (size_t)0xFFFFFFFFFFFFFFFFULL;
+    } else {
+        return ~((size_t)-1<<numbits);
+    }
 }
 
 }
