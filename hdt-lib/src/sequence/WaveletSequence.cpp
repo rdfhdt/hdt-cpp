@@ -74,7 +74,6 @@ size_t WaveletSequence::get(size_t position)
 void WaveletSequence::add(IteratorUInt &elements)
 {
 	std::vector<unsigned int> vector;
-	unsigned int max = 0;
 
 	while(elements.hasNext()) {
 		size_t element = elements.next();
@@ -84,7 +83,6 @@ void WaveletSequence::add(IteratorUInt &elements)
 		}
 
 		vector.push_back(element);
-		max = element > max ? max : element;
 	}
 
 	if(sequence!=NULL) {
