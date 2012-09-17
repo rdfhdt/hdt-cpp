@@ -230,7 +230,8 @@ namespace cds_static
 	{
 		uint wr = WVTREE_NOPTRS_HDR;
 		saveValue(fp, wr);
-		saveValue<size_t>(fp,n);
+        saveValue<uint64_t>(fp,n);
+        saveValue<uint64_t>(fp,length);
 		saveValue(fp, max_v);
 		saveValue(fp, height);
 		am->save(fp);
@@ -243,8 +244,8 @@ namespace cds_static
 		uint rd = loadValue<uint>(fp);
 		if (rd != WVTREE_NOPTRS_HDR) return NULL;
 		WaveletTreeNoptrs * ret = new WaveletTreeNoptrs();
-		ret->n = loadValue<size_t>(fp);
-		ret->length = ret->n;
+        ret->n = loadValue<uint64_t>(fp);
+        ret->length = loadValue<uint64_t>(fp);
 		ret->max_v = loadValue<uint>(fp);
 		ret->height = loadValue<uint>(fp);
 		ret->am = Mapper::load(fp);
