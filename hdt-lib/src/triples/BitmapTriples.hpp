@@ -170,6 +170,7 @@ private:
 	unsigned int posY, posZ;
 	unsigned int predicateOcurrence, numOcurrences;
 	unsigned int prevZ, nextZ;
+	unsigned int maxZ;
 	unsigned int x, y, z;
 
 	void updateOutput();

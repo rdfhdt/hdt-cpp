@@ -329,6 +329,10 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     patY = pattern.getPredicate();
     patZ = pattern.getObject();
 
+    if(patY==0) {
+        throw "This iterator is not suitable for this pattern";
+    }
+
 #if 0
     cout << "AdjY: " << endl;
     adjY.dump();
@@ -336,6 +340,9 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     adjZ.dump();
     cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
 #endif
+
+    // Find largest position of Z
+    maxZ = trip->arrayZ->getNumberOfElements();
 
     // Find position of the first matching pattern.
     numOcurrences = wavelet->rank(patY, wavelet->getNumberOfElements());
@@ -352,7 +359,7 @@ void MiddleWaveletIterator::updateOutput() {
 
 bool MiddleWaveletIterator::hasNext()
 {
-    return predicateOcurrence<numOcurrences || posZ <= nextZ;
+    return posZ<maxZ && (predicateOcurrence<numOcurrences || posZ <= nextZ);
 }
 
 TripleID *MiddleWaveletIterator::next()
@@ -363,8 +370,8 @@ TripleID *MiddleWaveletIterator::next()
         posY = wavelet->select(patY, predicateOcurrence);
         prevZ = adjZ.find(posY);
 
-	//nextZ = adjZ.last(posY);
-	nextZ = adjZ.findNext(prevZ)-1;
+        //nextZ = adjZ.last(posY);
+        nextZ = adjZ.findNext(prevZ)-1;
 
         posZ = prevZ;
 
@@ -393,8 +400,8 @@ TripleID *MiddleWaveletIterator::previous()
         posY = wavelet->select(patY, predicateOcurrence);
 
         prevZ = adjZ.find(posY);
-	//nextZ = adjZ.last(posY);
-	nextZ = adjZ.findNext(prevZ)-1;
+        //nextZ = adjZ.last(posY);
+        nextZ = adjZ.findNext(prevZ)-1;
 
         posZ = nextZ;
 
