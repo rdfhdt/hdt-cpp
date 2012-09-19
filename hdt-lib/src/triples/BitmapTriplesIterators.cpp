@@ -370,8 +370,8 @@ TripleID *MiddleWaveletIterator::next()
         posY = wavelet->select(patY, predicateOcurrence);
         prevZ = adjZ.find(posY);
 
-        //nextZ = adjZ.last(posY);
-        nextZ = adjZ.findNext(prevZ)-1;
+        nextZ = adjZ.last(posY);
+        //nextZ = adjZ.findNext(prevZ)-1;
 
         posZ = prevZ;
 
@@ -400,8 +400,8 @@ TripleID *MiddleWaveletIterator::previous()
         posY = wavelet->select(patY, predicateOcurrence);
 
         prevZ = adjZ.find(posY);
-        //nextZ = adjZ.last(posY);
-        nextZ = adjZ.findNext(prevZ)-1;
+        nextZ = adjZ.last(posY);
+        //nextZ = adjZ.findNext(prevZ)-1;
 
         posZ = nextZ;
 
@@ -422,8 +422,8 @@ void MiddleWaveletIterator::goToStart()
     predicateOcurrence = 1;
     posY = wavelet->select(patY, predicateOcurrence);
     prevZ = adjZ.find(posY);
-    //nextZ = adjZ.last(posY);
-    nextZ = adjZ.findNext(prevZ)-1;
+    nextZ = adjZ.last(posY);
+    //nextZ = adjZ.findNext(prevZ)-1;
 
     posZ = prevZ;
 
