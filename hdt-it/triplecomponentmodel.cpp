@@ -42,7 +42,7 @@ int TripleComponentModel::columnCount(const QModelIndex &parent) const
 
 QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
 {
-    if(hdtManager->getHDT() == NULL) {
+    if(!hdtManager->hasHDT()) {
         return QVariant();
     }
 
