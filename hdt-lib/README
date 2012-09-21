@@ -1,52 +1,69 @@
- HDT IT! prototype v.0.8 2011. All rights reserved.***
-    University of Valladolid (Spain)
+========================
+ HDT Library and Tools.
+========================
 
-    This is an experimental prototype. Contacting the authors:
-    Javier D. Fernandez & Miguel A. Martinez-Prieto & Mario Arias
-    ETIyT. Departamento de Informatica.
-    Camino del Cementerio s/n
-    47011 Valladolid (Spain)
+Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+All rights reserved.
 
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+Visit our Web Page: www.rdfhdt.org
+
+Contacting the authors:
+ Mario Arias:               mario.arias@deri.org
+ Javier D. Fernandez:       jfergar@infor.uva.es
+ Miguel A. Martinez-Prieto: migumar2@infor.uva.es
 
 
 Overview
 =================
 
-HDT-It! 0.8 is a C++ tool that implements the W3C Submission (http://www.w3.org/Submission/2011/03/) of the RDF HDT (Header-Dictionary-Triples) binary format for publishing and exchanging RDF data at large scale. Its compact representation allows storing RDF in fewer space, providing at the same time direct access to the stored information. This is achieved by depicting the RDF graph in terms of three main components: Header, Dictionary and Triples. The Header includes extensible metadata required to describe the RDF data set and details of its internals. The Dictionary organizes the vocabulary of strings present in the RDF graph by assigning numerical IDs to each different string. The Triples component comprises the pure structure of the underlying graph in a compressed form.
+HDT-lib is a C++ library that implements the W3C Submission (http://www.w3.org/Submission/2011/03/) of the RDF HDT (Header-Dictionary-Triples) binary format for publishing and exchanging RDF data at large scale. Its compact representation allows storing RDF in fewer space, while providing direct access to the stored information. This is achieved by depicting the RDF graph in terms of three main components: Header, Dictionary and Triples. The Header includes extensible metadata required to describe the RDF data set and details of its internals. The Dictionary organizes the vocabulary of strings present in the RDF graph by assigning numerical IDs to each different string. The Triples component depicts the structure of the underlying graph in a compressed form.
 
-It provides two components:
-- C++ Library: Provides an API to use HDT files programmatically. It allows creating HDT files from RDF and converting HDT files back to RDF. It also provides a Search interface to find triples that match a specific triple pattern.
-- Command line tools. Allow to convert between RDF and HDT, and also perform searches against HDT files.
+The distribution provides two components:
+- C++ library itself: Provides an API to use HDT files programmatically. It allows creating HDT files from RDF and converting HDT files back to RDF. It also provides a Search interface to find triples that match a specific triple pattern.
+- Command line tools: Allow to convert between RDF and HDT, and also perform searches against HDT files.
 
 Compiling
 =================
-Dependencies: *Libcds (http://libcds.recoded.cl/)
-	      *(Optional) Raptor RDF Parser Library v.2  (for more information see: http://http://librdf.org/raptor/)
-		Note: Without Raptor the library is only capable of importing and exporting RDF in N3 format.
-			
-Configuration: Edit the Makefile to set the LIBCDSPATH variable pointing to the directory where you extracted and compiled Libcds.
+Dependencies: 
+	*Libcds (http://libcds.recoded.cl/) We use a modified fork of libcds that is included with the distribution.
+	*(Optional) Raptor RDF Parser Library Version 2+  (for more information see: http://http://librdf.org/raptor/)
+		Note: Without Raptor the library is only capable of importing and exporting RDF in NTriples format.
+	*(Optional) Kyoto Cabinet. Allows to convert very big RDF files on machines with limited amount of main memory.
+	*(Optional) Libz. Allows to load files in ntriples compressed with GZIP (i.e. file.nt.gz)
 
 Compile: Run `make` to launch the compile process.
-
 
 Command line tools
 =================
 
 The tool provides three main command line tools:
 
-** The tool rdf2hdt converts an RDF file to HDT format. The format of the input file will be N3 by default, altough it can be set by using the "-f" flag. It is also possible to fine tune the internal format of the HDT file using a configfile. Several configfile examples are provided under the directory "presets" of the distributions. Also, the header, dictionary and triples components can be saved separately using the "-H -D -T" flags respectively.
+** The tool rdf2hdt converts an RDF file to HDT format. The format of the input file will be NTriples by default, although it can be set by using the "-f" (format) flag. It is also possible to fine tune the internal format of the HDT file using a configfile. Several configfile examples are provided under the directory "presets" of the distributions. Also, the header, dictionary and triples components can be saved separately using the "-H -D -T" flags respectively.
 
-$ rdf2hdt [options] <rdf input file> <hdt output file> 
+$ rdf2hdt [options] <RDF input file> <HDT output file> 
 	-h			This help
-	-H	<header>	Save Header in separate file
-	-D	<dictionary>	Save Dictionary in separate file
-	-T	<triples>	Save Triples in separate file
+	-i		Also generate index to solve all triple patterns.
 	-c	<configfile>	HDT Config options file
 	-o	<options>	HDT Additional options (option1:value1;option2:value2;...)
-	-f	<format>	Format of the RDF input (N3, Turtle, RDF-XML)
+	-f	<format>	Format of the RDF input (ntriples, nquad, n3, turtle, rdfxml)
+	-B	"<base URI>"	Base URI of the dataset.
 
 
-** The tool hdt2rdf converts an HDT file back to RDF in the specified format. If not format specified, N3 will be used.
+** The tool hdt2rdf converts an HDT file back to RDF in the specified format. If not format specified, NTriples will be used.
 
 $ hdt2rdf [options] <HDT input file> <RDF output file> 
 	-h			This help
@@ -60,19 +77,22 @@ $ hdtSearch [options] <hdtfile>
 	-q	<query>	Launch query and exit.
 	-o	<output>	Save query output to file.
 
+>> ? ? ?
+............. // List of all triples
 
 
-Tool Usage example
+Usage example
 =================
 
 After installation, run:
 
-$ tools/rdf2hdt -c presets/bitmaplog data/test.n3 data/test.hdt
 # This creates the HDT representation
+$ tools/rdf2hdt data/test.nt data/test.hdt
 
-$ tools/hdt2rdf data/test.hdt data/test.hdtexport.n3
 # This converts back the HDT to RDF.
+$ tools/hdt2rdf data/test.hdt data/test.hdtexport.nt
 
+# This allows browsing a dataset interactively.
 $ tools/hdtSearch data/test.hdt
 
 >> ? ? ?
@@ -94,14 +114,39 @@ $ tools/hdtSearch data/test.hdt
 
 >> exit
 
+# You can also dump the results of a query to a file
+$ tools/hdtSearch -q "? <http://example.org/predicate1> ?" data/test.hdt > output.txt
 
 
 USING THE LIBRARY
 =================
 
-* Creating an HDT file.
+This section shows how to use the HDT Library programmatically from C++ in your own application. 
 
-#include <fstream>
+// Creating an HDT file.
+
+#include <HDT.hpp>
+#include <HDTFactory.hpp>
+
+using namespace hdt;
+
+int main() {
+	HDT *hdt = HDTFactory::createDefaultHDT();
+
+	// Read RDF
+	ifstream in("data/test.nt");
+	hdt->loadFromRDF(in, NTRIPLES);
+
+	// Save HDT
+	hdt->saveToHDT("data/test.hdt");
+
+	delete hdt;
+}
+
+
+// Load an HDT file and query.
+
+#include <iostream>
 #include <HDT.hpp>
 #include <HDTFactory.hpp>
 
@@ -109,25 +154,16 @@ using namespace std;
 using namespace hdt;
 
 int main() {
-	HDTSpecification spec(configFile);
-	spec.setOptions(options);
 
-	HDT *hdt = HDTFactory::createHDT(spec);
+	HDT *hdt = HDTFactory::createHDT();
 
 	// Read RDF
-	ifstream in(inputFile);
-	hdt->loadFromRDF(in, N3);
-
-	// Save HDT
-	hdt->saveToHDT(outHDT);
-
-	// Export back RDF
-	hdt->saveToRDF(outRDF, N3);
+	hdt->loadFromHDT("data/test.hdt");
 
 	// Search pattern ("" means any)
 	IteratorTripleString *iterator = hdt->search("<http://example.org/uri3>","","");
 
-	while(it->hasNext()) {
+	while(it->hasNext()){
 		TripleString triple = it->next();
 		cout << "Result: " << triple.getSubject() << ", " << triple.getPredicate() << ", " << triple.getObject() << endl;
 	}
