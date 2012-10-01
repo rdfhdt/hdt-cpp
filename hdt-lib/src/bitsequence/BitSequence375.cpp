@@ -23,7 +23,10 @@
 #include <cassert>
 #include <cmath>
 #include <string.h>
+
+#ifndef WIN32
 #include <sys/mman.h> // For fadvise
+#endif
 
 #include "BitSequence375.h"
 
@@ -222,8 +225,10 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
         throw "BitSequence375 tries to read beyond the end of the file";
     }
 
+#ifndef WIN32
     madvise((void*)&ptr[count], sizeBytes, MADV_WILLNEED); // Make sure that bitmaps are kept in memory
-	array = (uint32_t *) &ptr[count];
+#endif
+    array = (uint32_t *) &ptr[count];
 	isMapped = true;
 	count += sizeBytes;
 
@@ -295,7 +300,7 @@ size_t BitSequence375::selectPrev1(const size_t start) const
 	return 0;
 }
 
-#ifdef __SSE4_2__
+#ifdef __GNUC__
 #define first_bit_set(a) __builtin_ffs(a)
 #else
 #define first_bit_set(a) ffs(a)

@@ -522,6 +522,7 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 	std::string typeIndex = controlInformation.get("stream.index");
 
 	if(this->getNumberOfElements()!=numTriples) {
+		// FIXME: Force index regeneration instead of error.
 		throw "The supplied index does not have the same number of triples as the dataset";
 	}
 
@@ -555,7 +556,11 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 
 	// Make sure wavelet is generated
 	iListener.setRange(50,100);
+#ifndef WIN32
     if(! input.eof() ) {
+#else
+    if(false){
+#endif
         waveletY = new WaveletSequence();
         waveletY->load(input);
     } else {
@@ -571,10 +576,15 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     controlInformation.clear();
     count += controlInformation.load(&ptr[count], ptrMax);
 
+    if(!controlInformation.getIndex()) {
+        throw "Trying to load an HDT Index, but the ControlInformation states that it's not an index.";
+    }
+
     unsigned int numTriples = controlInformation.getUint("numTriples");
     std::string typeIndex = controlInformation.get("stream.index");
 
     if(this->getNumberOfElements()!=numTriples) {
+    	// FIXME: Force index regeneration instead of error.
         throw "The supplied index does not have the same number of triples as the dataset";
     }
 
@@ -612,11 +622,13 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     iListener.setRange(50,100);
     if(arrayY->getType()==HDTVocabulary::SEQ_TYPE_WAVELET) {
         waveletY = reinterpret_cast<WaveletSequence *>(arrayY);
+#ifndef WIN32
     } else if(&ptr[count]<ptrMax) {
         iListener.notifyProgress(0, "BitmapTriples loading Wavelet");
 
         waveletY = new WaveletSequence();
         count += waveletY->load(&ptr[count], ptrMax, &iListener);
+#endif
     } else {
         iListener.notifyProgress(0, "BitmapTriples generating Wavelet");
         waveletY = new WaveletSequence(arrayY);

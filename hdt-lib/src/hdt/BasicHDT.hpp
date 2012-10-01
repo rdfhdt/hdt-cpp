@@ -31,6 +31,8 @@
 #include <HDTSpecification.hpp>
 #include <HDT.hpp>
 
+#include "../util/filemap.h"
+
 namespace hdt {
 
 
@@ -42,9 +44,7 @@ private:
 	HDTSpecification spec;
 	string fileName;
 
-	size_t mappedSize, mappedSizeIndex;
-	unsigned char *ptr, *ptrIndex;
-	int fd, fdindex;
+	FileMap *mappedHDT, *mappedIndex;
 
 	void createComponents();
 	void deleteComponents();
@@ -151,9 +151,6 @@ public:
 	TriplesLoader(Dictionary *dictionary, ModifiableTriples *triples, ProgressListener *listener) : dictionary(dictionary), triples(triples), listener(listener), count(0) { }
 	void processTriple(TripleString &triple, unsigned long long pos);
 };
-
-
-
 
 }
 

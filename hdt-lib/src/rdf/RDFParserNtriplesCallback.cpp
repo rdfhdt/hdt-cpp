@@ -39,15 +39,21 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 	std::string suffix = fn.substr(fn.find_last_of(".") + 1);
 	std::string pipeCommand;
 
-	if( suffix == "gz") {
-#if 0
-		in = new igzstream(fileName);
+#ifdef WIN32
+	if( suffix == ".gz") {
+		#ifdef USE_LIBZ
+			in = new igzstream(fileName);
+		#else
+			throw "Support for GZIP was not compiled in this version. Please Decompress the file before importing it.";
+		#endif
+	}
 #else
+	if( suffix == ".gz") {
 		pipeCommand = "gunzip -c ";
-#endif
 	} else if(suffix=="bz2") {
 		pipeCommand = "bunzip2 -c ";
 	}
+#endif
 
 	if(pipeCommand.length()>0) {
 		pipeCommand.append(fileName);

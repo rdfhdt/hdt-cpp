@@ -1,10 +1,10 @@
 /*
- * File: StopWatch.hpp
- * Last modified: $Date: 2011-08-21 05:35:30 +0100 (dom, 21 ago 2011) $
- * Revision: $Revision: 180 $
+ * File: filemap.h
+ * Last modified: $Date: 2012-09-19 12:02:39 +0100 (mié, 19 sep 2012) $
+ * Revision: $Revision: 278 $
  * Last modified by: $Author: mario.arias $
  *
- * Copyright (C) 2012, Mario Arias
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -22,37 +22,50 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  *
- * Contacting the author:
+ * Contacting the authors:
  *   Mario Arias:               mario.arias@gmail.com
+ *   Javier D. Fernandez:       jfergar@infor.uva.es
+ *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
  *
  */
 
-#include <sys/stat.h>
-#include "fileUtil.hpp"
+#ifndef FILE_MAP_H
+#define FILE_MAP_H_
 
-using namespace std;
+#include <stdlib.h>
 
-uint64_t fileUtil::getSize(std::istream &in) {
-	long long begin = in.tellg();
-	in.seekg(0, std::ios::end);
-	long long end = in.tellg();
-	in.seekg(begin, std::ios::beg);
-
-	return end-begin;
-}
-
-uint64_t fileUtil::getSize(const char *file) {
 #ifdef WIN32
-    ifstream in(file);
-    in.seekg(0, std::ios::end);
-    uint64_t size = in.tellg();
-    in.close();
-    return size;
-#else
-	struct stat fileStat;
-	if(stat(file, &fileStat)==0) {
-		return fileStat.st_size;
-	}
-	return 0;
+#include <windows.h>
+#include <winbase.h>
 #endif
+
+namespace hdt {
+
+class FileMap {
+private:
+
+#ifdef WIN32
+    HANDLE fd,h;
+#else
+	int fd;
+#endif
+	size_t mappedSize;
+	unsigned char *ptr;
+
+public:
+	FileMap(const char *fileName);
+	virtual ~FileMap();
+
+	unsigned char *getPtr() {
+		return ptr;
+	}
+
+	size_t getMappedSize() {
+		return mappedSize;
+	}
+
+};
+
 }
+
+#endif

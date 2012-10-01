@@ -51,6 +51,7 @@
 #ifndef WIN32
 #include "../triples/TripleListDisk.hpp"
 #endif
+
 #include "../triples/PlainTriples.hpp"
 #include "../triples/CompactTriples.hpp"
 #include "../triples/BitmapTriples.hpp"
@@ -58,22 +59,16 @@
 
 #include "TripleIDStringIterator.hpp"
 
-#include <fcntl.h>	// open
-#include <sys/stat.h>	// stat
-#include <sys/types.h>
-#include <sys/mman.h> // For mmap
-
-
 using namespace std;
 
 namespace hdt {
 
 
-BasicHDT::BasicHDT() : ptr(NULL), ptrIndex(NULL) {
+BasicHDT::BasicHDT() : mappedHDT(NULL), mappedIndex(NULL) {
 	createComponents();
 }
 
-BasicHDT::BasicHDT(HDTSpecification &spec) : ptr(NULL), ptrIndex(NULL) {
+BasicHDT::BasicHDT(HDTSpecification &spec) : mappedHDT(NULL), mappedIndex(NULL) {
 	this->spec = spec;
 	createComponents();
 }
@@ -81,13 +76,11 @@ BasicHDT::BasicHDT(HDTSpecification &spec) : ptr(NULL), ptrIndex(NULL) {
 BasicHDT::~BasicHDT() {
 	deleteComponents();
 
-    if(ptr) {
-        munmap(ptr, mappedSize);
-        close(fd);
+    if(mappedHDT) {
+    	delete mappedHDT;
     }
-    if(ptrIndex) {
-        munmap(ptrIndex, mappedSizeIndex);
-        close(fdindex);
+    if(mappedIndex) {
+       delete mappedIndex;
     }
 }
 
@@ -117,8 +110,10 @@ void BasicHDT::createComponents() {
 		triples = new PlainTriples(spec);
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
                 triples = new TriplesList(spec);
-	} else if (triplesType == HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
+#ifndef WIN32
+    } else if (triplesType == HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		triples = new TripleListDisk();
+#endif
 	} else {
 		triples = new BitmapTriples(spec);
 	}
@@ -429,32 +424,14 @@ void BasicHDT::mapHDT(const char *fileName, ProgressListener *listener) {
     this->fileName.assign(fileName);
 
     // Clean previous
-    if(ptr!=NULL) {
-        munmap(ptr, mappedSize);
-        close(fd);
+    if(mappedHDT!=NULL) {
+        delete mappedHDT;
     }
 
-    // Open file
-    fd = open(fileName, O_RDONLY);
-    if(fd<=0) {
-        perror("mmap");
-        throw "Error opening HDT file for mapping.";
-    }
+    mappedHDT = new FileMap(fileName);
 
-    // Guess size
-    struct stat statbuf;
-    if(stat(fileName,&statbuf)!=0) {
-        perror("Error on stat()");
-        throw "Error trying to guess the file size";
-    }
-    mappedSize = statbuf.st_size;
-
-    // Do mmap
-	ptr = (unsigned char *) mmap(0, mappedSize, PROT_READ, MAP_PRIVATE, fd, 0);
-    if(ptr==NULL) {
-        perror("Error on mmap");
-        throw "Error trying to mmap HDT file";
-    }
+    unsigned char *ptr = mappedHDT->getPtr();
+    size_t mappedSize = mappedHDT->getMappedSize();
 
     // Load
     this->loadMMap(ptr, ptr+mappedSize, listener);
@@ -491,39 +468,21 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
 
 size_t BasicHDT::loadMMapIndex(ProgressListener *listener) {
     // Clean previous index
-    if(ptrIndex!=NULL) {
-        munmap(ptrIndex, mappedSizeIndex);
-        close(fd);
+    if(mappedIndex!=NULL) {
+        delete mappedIndex;
     }
 
     // Get path
     string indexFile(fileName);
     indexFile.append(".index");
 
-    // Open file
-    fdindex = open(indexFile.c_str(), O_RDONLY);
-    if(fdindex<=0) {
-        perror("mmap");
-        throw "Error opening HDT index file for mapping.";
-    }
+    mappedIndex = new FileMap(indexFile.c_str());
 
-    // Guess size
-    struct stat statbuf;
-    if(stat(indexFile.c_str(),&statbuf)!=0) {
-        perror("Error on stat()");
-        throw "Error trying to guess the file size";
-    }
-    mappedSizeIndex = statbuf.st_size;
-
-    // Do mmap
-    ptrIndex = (unsigned char *) mmap(0, mappedSizeIndex, PROT_READ, MAP_PRIVATE, fdindex, 0);
-    if(ptrIndex==NULL) {
-        perror("Error on mmap HDT index");
-        throw "Error trying to mmap HDT index";
-    }
+    unsigned char *ptr = mappedIndex->getPtr();
+    size_t mappedSize = mappedIndex->getMappedSize();
 
     // Load index
-    triples->loadIndex(ptrIndex, ptrIndex+mappedSizeIndex, listener);
+    triples->loadIndex(ptr, ptr+mappedSize, listener);
 }
 
 void BasicHDT::saveToHDT(const char *fileName, ProgressListener *listener)
@@ -573,7 +532,7 @@ void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
 	ifstream in(indexname.c_str(), ios::binary);
 
 	if(in.good()) {
-        if(ptr) {
+        if(mappedHDT) {
             // Map
             this->loadMMapIndex(listener);
         } else {
@@ -583,10 +542,11 @@ void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
             triples->loadIndex(in, ci, listener);
             in.close();
         }
+        in.close();
 	} else {
 		triples->generateIndex(listener);
 		this->saveIndex(listener);
-	}
+    }
 }
 
 void BasicHDT::saveIndex(ProgressListener *listener) {
