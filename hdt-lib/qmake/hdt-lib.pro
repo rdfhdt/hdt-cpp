@@ -11,6 +11,10 @@ QMAKE_CXXFLAGS_RELEASE += -O3
 
 macx:QMAKE_CXXFLAGS += -msse4.2
 
+win32-g++:contains(QMAKE_HOST.arch, x86_64):{
+        CONFIG += exceptions rtti
+}
+
 CONFIG += debug_and_release
 macx:CONFIG += x86_64
 
@@ -18,7 +22,7 @@ TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += USE_RAPTOR RAPTOR_STATIC
+DEFINES += USE_LIBZ USE_RAPTOR RAPTOR_STATIC
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'
@@ -93,6 +97,7 @@ SOURCES += \
     ../src/util/crc16.cpp \
     ../src/util/crc8.cpp \
     ../src/util/bitutil.cpp \
+    ../src/util/filemap.cpp \
     ../third/gzstream.cpp \
     ../src/rdf/RDFParserNtriplesCallback.cpp
 
@@ -174,6 +179,7 @@ HEADERS += \
     ../src/util/crc16.h \
     ../src/util/crc8.h \
     ../src/util/bitutil.h \
+    ../src/util/filemap.h \
     ../third/fdstream.hpp \
     ../third/gzstream.h \
     ../src/rdf/RDFParserNtriplesCallback.hpp
@@ -196,4 +202,4 @@ INCLUDEPATH += $${LIBCDSBASE}/utils \
 
 #For raptor
 macx:INCLUDEPATH += /usr/local/include
-win32:INCLUDEPATH += C:/mingw/include
+win32:INCLUDEPATH += C:/mingw/include C:/MinGW/msys/1.0/include C:/libraries/include C:/msys/local/include

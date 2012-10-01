@@ -32,6 +32,9 @@
 // standard C++ with new header file names and std:: namespace
 #include <iostream>
 #include <fstream>
+
+#ifdef USE_LIBZ
+
 #include <zlib.h>
 
 #ifdef GZSTREAM_NAMESPACE
@@ -113,6 +116,9 @@ public:
 
 #ifdef GZSTREAM_NAMESPACE
 } // namespace GZSTREAM_NAMESPACE
+#endif
+
+
 #endif
 
 #endif // GZSTREAM_H
