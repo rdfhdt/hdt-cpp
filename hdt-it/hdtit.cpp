@@ -71,10 +71,8 @@ HDTit::~HDTit()
 void HDTit::updateNumResults()
 {
     ui->numResultsLabel->setText(
-                //QString(tr("%1 results found in %2."))
                 QString(tr("%1 results found."))
                 .arg(QLocale::system().toString(hdtManager->getNumResults()))
-                //.arg(hdtManager->getTime())
                 );
 }
 
@@ -101,15 +99,15 @@ void HDTit::searchPatternEdited()
 
 void HDTit::refreshSearchPattern()
 {
-    if(hdtManager->getHDT()==NULL) {
+    if(hdtManager->hasHDT()) {
+        hdt::TripleString &ts = hdtManager->getSearchPatternString();
+        ui->subjectPatternEdit->setText(QString::fromUtf8(ts.getSubject().c_str()));
+        ui->predicatePatternEdit->setText(QString::fromUtf8(ts.getPredicate().c_str()));
+        ui->objectPatternEdit->setText(QString::fromUtf8(ts.getObject().c_str()));
+    } else {
         ui->subjectPatternEdit->clear();
         ui->predicatePatternEdit->clear();
         ui->objectPatternEdit->clear();
-    } else {
-        hdt::TripleString &ts = hdtManager->getSearchPatternString();
-	ui->subjectPatternEdit->setText(QString::fromUtf8(ts.getSubject().c_str()));
-	ui->predicatePatternEdit->setText(QString::fromUtf8(ts.getPredicate().c_str()));
-	ui->objectPatternEdit->setText(QString::fromUtf8(ts.getObject().c_str()));
     }
 }
 
@@ -148,7 +146,10 @@ void HDTit::hdtChanged(QString &file)
     ui->objectPatternEdit->setEnabled(hasDataset);
 
     // Enable/Disable substring search tab.
-    bool hdtHasSubstring = hdtManager->getHDT()->getDictionary()->getType()==hdt::HDTVocabulary::DICTIONARY_TYPE_LITERAL;
+    bool hdtHasSubstring = false;
+    if(hdtManager->hasHDT()) {
+        hdtHasSubstring = hdtManager->getHDT()->getDictionary()->getType()==hdt::HDTVocabulary::DICTIONARY_TYPE_LITERAL;
+    }
     ui->tabRegex->setEnabled(hdtHasSubstring);
     if(hdtHasSubstring) {
         if(ui->resultTabs->count()<4) {

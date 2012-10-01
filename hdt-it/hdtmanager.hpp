@@ -46,7 +46,6 @@ private:
     hdt::TripleString searchPatternString;
     hdt::IteratorTripleID *iteratorResults;
     unsigned int numResults;
-    StopWatch resultsTime;
 
 public:
     hdt::HDT *getHDT();

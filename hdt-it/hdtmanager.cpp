@@ -256,8 +256,6 @@ void HDTManager::setSearchPattern(hdt::TripleString &pattern)
                 iteratorResults = hdt->getTriples()->search(searchPatternID);
 
                 numResults=0;
-                resultsTime.reset();
-                resultsTime.stop();
                 updateNumResults();
             } else {
                 numResults = hdt->getTriples()->getNumberOfElements();
@@ -348,7 +346,6 @@ unsigned int HDTManager::getNumResults()
 
 void HDTManager::numResultsValueChanged(int numResults)
 {
-    resultsTime.stop();
     this->numResults = numResults;
     searchResultsModel->updateNumResultsChanged();
     emit numResultsChanged(numResults);
@@ -366,48 +363,18 @@ void HDTManager::updateNumResults()
     }
 
     if(iteratorResults->numResultEstimation()==hdt::EXACT) {
+        // Provided, use.
         numResults = iteratorResults->estimatedNumResults();
-        resultsTime.stop();
-
-        searchResultsModel->updateNumResultsChanged();
-        emit numResultsChanged(numResults);
-        return;
-    }
-
-#if 0
-    ResultCounter *counter = new ResultCounter(this, this);
-
-    connect(counter, SIGNAL(numResultsChanged(int)), this, SLOT(numResultsValueChanged(int)));
-    connect(counter, SIGNAL(finished()), this, SLOT(numResultCountFinished()));
-
-    QTimer::singleShot(0, counter, SLOT(startCounting()));
-
-    resultsTime.stop();
-
-    if(iteratorResults->hasNext()) {
-        QTimer::singleShot(0, this, SLOT(updateNumResults()));
     } else {
-        delete iteratorResults;
-        iteratorResults = NULL;
-    }
-#else
-    StopWatch cl;
-    while(iteratorResults->hasNext()) {
-        iteratorResults->next();
-        numResults++;
-
-#if 0
-        cl.stop();
-        if(cl.getReal()>100000) {
-            break;
+        // Not provided, count.
+        while(iteratorResults->hasNext()) {
+            iteratorResults->next();
+            numResults++;
         }
-#endif
     }
-    resultsTime.stop();
 
     searchResultsModel->updateNumResultsChanged();
     emit numResultsChanged(numResults);
-#endif
 }
 
 QString HDTManager::getFileName()
