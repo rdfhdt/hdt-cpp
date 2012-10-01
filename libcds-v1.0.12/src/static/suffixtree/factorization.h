@@ -31,16 +31,15 @@
 
 namespace cds_static
 {
-
 	class factorization
 	{
 		private:
 			factorization();
 		public:
 			uint listLength;	 //longitud de la lista
-			byte nLevels;		 //numero de niveles de arrays
+            unsigned char nLevels;		 //numero de niveles de arrays
 			uint * levelsIndex;	 //inicio de cada array
-			byte * levels;		 //array con los bytes
+            unsigned char * levels;		 //array con los bytes
 			BitSequence * bS;	 //bitmap para indicar fin de codigo
 			uint * rankLevels;	 //rank de 1s hasta el principio de cada array
 

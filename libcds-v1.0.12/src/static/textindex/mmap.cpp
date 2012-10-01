@@ -21,6 +21,7 @@
 
 #include <mmap.h>
 #include <unistd.h>
+#include <stdio.h>
 
 namespace cds_static
 {
@@ -31,10 +32,9 @@ namespace cds_static
 		HANDLE fd,h;
 		int len;
 		MMAP *m;
-		m = malloc(sizeof(*m));
+        m = (MMAP*) malloc(sizeof(*m));
 		if (m==NULL) {perror("mymmap malloc");  exit(1);}
-		fd = CreateFile(fname,GENERIC_READ,0,NULL,OPEN_EXISTING,
-			FILE_ATTRIBUTE_NORMAL,NULL);
+        fd = CreateFile( (WCHAR*) fname,GENERIC_READ,0,NULL,OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,NULL);
 		if (fd==INVALID_HANDLE_VALUE) {
 			printf("createfile\n");
 			exit(1);
@@ -97,5 +97,6 @@ namespace cds_static
 		return 0;
 	}
 
-};
 #endif
+
+}

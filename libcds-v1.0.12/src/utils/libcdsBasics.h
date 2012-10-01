@@ -23,8 +23,10 @@
 #define _BASICS_H
 
 #include <sys/types.h>
+#ifndef WIN32
 #include <sys/resource.h>
 #include <sys/times.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -37,6 +39,12 @@
 #include <sstream>
 #include <cassert>
 #include <stdint.h>
+
+#ifdef WIN32
+typedef unsigned int uint;
+typedef unsigned short ushort;
+#endif
+
 
 namespace cds_utils
 {

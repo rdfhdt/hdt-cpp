@@ -150,8 +150,8 @@ namespace cds_static
 	{
 		uchar wr = BRW32_HDR;
 		saveValue(f,wr);
-		saveValue(f,n);
-		saveValue(f,factor);
+        saveValue<uint64_t>(f,n);
+        saveValue<uint64_t>(f,factor);
 		saveValue(f,data,integers);
 		saveValue(f,Rs,n/s+1);
 	}
@@ -163,9 +163,9 @@ namespace cds_static
 			abort();
 		}
 		BitSequenceRG * ret = new BitSequenceRG();
-		ret->n = loadValue<size_t>(f);
+        ret->n = loadValue<uint64_t>(f);
 		ret->b = 32;
-		ret->factor = loadValue<size_t>(f);
+        ret->factor = loadValue<uint64_t>(f);
 		ret->s = ret->b*ret->factor;
 		ret->integers = (ret->n+1)/W+((ret->n+1)%W!=0?1:0);
 		ret->data = loadValue<uint>(f,ret->integers);

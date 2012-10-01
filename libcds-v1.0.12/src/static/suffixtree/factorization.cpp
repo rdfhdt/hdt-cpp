@@ -87,7 +87,7 @@ namespace cds_static
 			levelsIndex[j+1] = levelsIndex[j] + levelSizeAux[j];
 			cont[j] = levelsIndex[j];
 		}
-		levels = new byte[levelsIndex[nLevels]/2];
+        levels = new unsigned char[levelsIndex[nLevels]/2];
 		bits_BS_len = levelsIndex[nLevels-1]+1;
 		//The last one is 0. with this we avoid some comparation when decompress
 		uint * bits_BS = new uint[((bits_BS_len+W-1)/W)];
@@ -104,16 +104,16 @@ namespace cds_static
 					newvalue = value - TABLEBASE[j];
 					for(k=0; k<j; k++) {
 						if(cont[k]%2)
-							levels[cont[k]/2]=levels[cont[k]/2]+(((byte)newvalue%BASE)<<BASE_BITS);
+                            levels[cont[k]/2]=levels[cont[k]/2]+(((unsigned char)newvalue%BASE)<<BASE_BITS);
 						else
-							levels[cont[k]/2]=(byte)newvalue%BASE;
+                            levels[cont[k]/2]=(unsigned char)newvalue%BASE;
 						cont[k]++;
 						newvalue = newvalue/BASE;
 					}
 					if(cont[j]%2)
-						levels[cont[j]/2] = levels[cont[j]/2]+(((byte)newvalue%BASE)<<BASE_BITS);
+                        levels[cont[j]/2] = levels[cont[j]/2]+(((unsigned char)newvalue%BASE)<<BASE_BITS);
 					else
-						levels[cont[j]/2] = (byte)newvalue%BASE;
+                        levels[cont[j]/2] = (unsigned char)newvalue%BASE;
 					cont[k]++;
 					if(j<nLevels-1)
 						bitset(bits_BS,cont[j]-1);
@@ -143,8 +143,8 @@ namespace cds_static
 		uint partialSum=0;
 		uint ini=param-1;
 		uint * bsData = ((BitSequenceRG *)bS)->data;
-		byte * level;
-		byte readByte;
+        unsigned char * level;
+        unsigned char readByte;
 		uint pos, rankini, cont;
 
 		j=0;
@@ -177,8 +177,8 @@ namespace cds_static
 		uint partialSum=0;
 		uint ini=param-1;
 		uint * bsData = ((BitSequenceRG *)bS)->data;
-		byte * level;
-		byte readByte;
+        unsigned char * level;
+        unsigned char readByte;
 		uint pos, rankini, cont;
 
 		j=0;
@@ -232,10 +232,10 @@ namespace cds_static
 	factorization* factorization::load(istream & fp) {
 		factorization *rep = new factorization();
 		rep->listLength = loadValue<uint>(fp);
-		rep->nLevels = loadValue<byte>(fp);
+        rep->nLevels = loadValue<unsigned char>(fp);
 		rep->levelsIndex = loadValue<uint>(fp, rep->nLevels+1);
 		rep->rankLevels = loadValue<uint>(fp, rep->nLevels);
-		rep->levels = loadValue<byte>(fp, (rep->levelsIndex[rep->nLevels]/2));
+        rep->levels = loadValue<unsigned char>(fp, (rep->levelsIndex[rep->nLevels]/2));
 		rep->bS = BitSequence::load(fp);
 		return rep;
 	}
@@ -245,7 +245,7 @@ namespace cds_static
 		mem += sizeof(factorization);
 		mem += (nLevels+1)*sizeof(uint);
 		mem += sizeof(uint)*nLevels;
-		mem += sizeof(byte)*(levelsIndex[nLevels]/2);
+        mem += sizeof(unsigned char)*(levelsIndex[nLevels]/2);
 		mem += bS->getSize();
 		return mem;
 	}

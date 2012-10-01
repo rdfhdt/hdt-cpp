@@ -136,13 +136,13 @@ namespace cds_static
 				if(value >= tablebase[j]) {
 					newvalue = value- tablebase[j];
 					for(k=0;k<j;k++) {
-						bitwrite(levels,cont[k],base_bits[k],(byte)newvalue%base[k]);
+                        bitwrite(levels,cont[k],base_bits[k],(unsigned char)newvalue%base[k]);
 						cont[k]+=base_bits[k];
 						contB[k]++;
 						newvalue = newvalue/base[k];
 					}
 					k=j;
-					bitwrite(levels,cont[j],base_bits[j],(byte)newvalue%base[j]);
+                    bitwrite(levels,cont[j],base_bits[j],(unsigned char)newvalue%base[j]);
 					cont[j]+=base_bits[j];
 					contB[j]++;
 					if(j<nLevels-1)
@@ -174,7 +174,7 @@ namespace cds_static
 		register uint j;
 		uint partialSum=0;
 		uint ini = param-1;
-		byte readByte;
+        unsigned char readByte;
 		uint cont,pos, rankini;
 		partialSum=0;
 		j=0;
@@ -203,7 +203,7 @@ namespace cds_static
 		register uint j;
 		uint partialSum=0;
 		uint ini = param-1;
-		byte readByte;
+        unsigned char readByte;
 		uint cont,pos, rankini;
 		partialSum=0;
 		j=0;
@@ -281,7 +281,7 @@ namespace cds_static
 		rep->tamCode = loadValue<uint>(fp);
 		rep->tamtablebase = loadValue<uint>(fp);
 		rep->listLength = loadValue<uint>(fp);
-		rep->nLevels = loadValue<byte>(fp);
+        rep->nLevels = loadValue<unsigned char>(fp);
 		rep->iniLevel = loadValue<uint>(fp, rep->nLevels);
 		rep->base = loadValue<ushort>(fp,rep->nLevels);
 		rep->base_bits = loadValue<ushort>(fp, rep->nLevels);

@@ -8,8 +8,6 @@ using namespace std;
 
 namespace cds_utils
 {
-	typedef unsigned char byte;
-
 	static const unsigned int  MAXINT=0x7fffffff;
 	static const unsigned int  FACT_RANK = 20;
 

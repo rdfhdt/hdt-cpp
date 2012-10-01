@@ -44,7 +44,7 @@ namespace cds_static
 			uint * tablebase;
 			uint tamtablebase;
 			uint listLength;	 //list length
-			byte nLevels;		 //number of levels
+            unsigned char nLevels;		 //number of levels
 			uint * levelsIndex;	 //start point of each array
 			uint * levels;		 //array with the bytes
 			BitSequence * bS;	 //bitmap para indicar fin de codigo

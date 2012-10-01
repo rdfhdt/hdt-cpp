@@ -155,7 +155,7 @@ namespace cds_static
     {
         uint wr = WVTREE_HDR;
         saveValue(fp, wr);
-        saveValue(fp, n);
+        saveValue<uint64_t>(fp, n);
         c->save(fp);
         am->save(fp);
         root->save(fp);
@@ -165,7 +165,7 @@ namespace cds_static
         uint rd = loadValue<uint>(fp);
         if(rd!=WVTREE_HDR) return NULL;
         WaveletTree * ret = new WaveletTree();
-        ret->n = loadValue<size_t>(fp);
+        ret->n = loadValue<uint64_t>(fp);
 	ret->length = ret->n;
         ret->c = wt_coder::load(fp);
         ret->c->use();

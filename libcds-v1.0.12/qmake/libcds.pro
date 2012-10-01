@@ -11,6 +11,10 @@ QMAKE_CXXFLAGS_RELEASE += -O3
 
 macx:QMAKE_CXXFLAGS_RELEASE += -msse4.2
 
+win32-g++:contains(QMAKE_HOST.arch, x86_64):{
+	CONFIG += exceptions
+}
+
 CONFIG += debug_and_release
 macx:CONFIG += x86_64
 
