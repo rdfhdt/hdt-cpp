@@ -267,7 +267,7 @@ CSD* CSD_PFC::load(istream & fp)
 	if(dicc->bytes && dicc->numstrings) {
 		dicc->text = (unsigned char *)malloc(dicc->bytes);
 		const unsigned int blocksize = 8192;
-		unsigned int counter=0;
+		uint64_t counter=0;
 		unsigned char *ptr = (unsigned char *)dicc->text;
 		while(counter<dicc->bytes && fp.good()) {
 			crcd.readData(fp, ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);
