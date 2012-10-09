@@ -158,6 +158,7 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 	controlInformation.set("format", "text/plain");
 	controlInformation.setUint("$mapping", this->mapping);
 	controlInformation.setUint("$sizeStrings", this->sizeStrings);
+	controlInformation.setUint("$elements", this->getNumberOfElements());
 
 	controlInformation.save(output);
 
@@ -220,7 +221,6 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,25);
-	iListener.notifyProgress(0, "Dictionary save shared area.");
 	while(region<5 && getline(input, line)) {
 		//std::cout << line << std::endl;
 
