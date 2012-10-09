@@ -14,6 +14,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <getopt.h>
 
 #include "../src/dictionary/LiteralDictionary.hpp"
 

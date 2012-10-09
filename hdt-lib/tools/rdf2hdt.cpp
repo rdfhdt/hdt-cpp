@@ -35,6 +35,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <getopt.h>
 
 #include "../src/triples/PlainTriples.hpp"
 #include "../src/util/StopWatch.hpp"

@@ -33,6 +33,7 @@
 #include <HDTFactory.hpp>
 #include <signal.h>
 
+#include <getopt.h>
 #include <string.h>
 #include <string>
 #include <iostream>

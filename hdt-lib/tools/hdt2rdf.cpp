@@ -33,6 +33,7 @@
 #include <HDTFactory.hpp>
 
 #include <string>
+#include <getopt.h>
 #include <iostream>
 #include <fstream>
 

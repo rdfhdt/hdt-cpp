@@ -11,6 +11,7 @@
 #include <Dictionary.hpp>
 #include <Triples.hpp>
 
+#include <getopt.h>
 #include <string>
 #include <iostream>
 #include <fstream>

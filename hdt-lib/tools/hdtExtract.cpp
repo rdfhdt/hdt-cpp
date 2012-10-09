@@ -32,6 +32,7 @@
 #include <HDT.hpp>
 #include <HDTFactory.hpp>
 
+#include <getopt.h>
 #include <string>
 #include <iostream>
 #include <fstream>

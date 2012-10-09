@@ -39,6 +39,7 @@ using namespace std;
 #include <sys/stat.h>	// stat()
 #include <fcntl.h>
 
+#include <unistd.h>
 #include <stdlib.h> // for qsort
 #ifndef WIN32
 #include <sys/mman.h> // For mmap

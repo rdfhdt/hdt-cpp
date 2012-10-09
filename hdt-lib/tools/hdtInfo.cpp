@@ -35,6 +35,7 @@
 
 #include "../src/rdf/RDFSerializerN3.hpp"
 
+#include <getopt.h>
 #include <string>
 #include <iostream>
 #include <fstream>

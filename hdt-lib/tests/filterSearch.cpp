@@ -11,6 +11,7 @@
 #include <HDTFactory.hpp>
 #include <signal.h>
 
+#include <getopt.h>
 #include <string>
 #include <iostream>
 #include <fstream>
