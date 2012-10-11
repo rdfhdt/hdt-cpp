@@ -57,7 +57,7 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progress
     text = (unsigned char*)malloc(reservedSize*sizeof(unsigned char));
 
     // Pointers to the first string of each block.
-    blocks = new hdt::LogSequence2(32);
+    blocks = new hdt::LogSequence2(34);
 
     unsigned char *currentStr = NULL;
     size_t currentLength = 0;
@@ -393,7 +393,7 @@ unsigned int CSD_PFC::locateInBlock(unsigned int block, const unsigned char *str
 	unsigned int idInBlock = 0;
 	unsigned int commonPrefix = 0;
 
-	unsigned int pos = blocks->get(block);
+	size_t pos = blocks->get(block);
 
 	// Read the first string
 	std::string tmpStr((char*)text+pos);
@@ -441,7 +441,7 @@ unsigned int CSD_PFC::locateInBlock(unsigned int block, const unsigned char *str
 
 unsigned char *CSD_PFC::extractInBlock(unsigned int block, unsigned int o)
 {
-	unsigned int pos = blocks->get(block);
+	size_t pos = blocks->get(block);
 	unsigned int delta = 0;
 
 	// Read the first string

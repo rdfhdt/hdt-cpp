@@ -262,6 +262,7 @@ void PFCDictionary::import(Dictionary *other, ProgressListener *listener) {
 		IteratorUCharString *itPred = other->getPredicates();
 		delete predicates;
 		predicates = loadSection(itPred, blocksize, &iListener);
+		delete itPred;
 
 		NOTIFY(listener, "DictionaryPFC loading objects", 30, 90);
 		iListener.setRange(21, 90);
