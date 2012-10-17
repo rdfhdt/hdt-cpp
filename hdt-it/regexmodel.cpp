@@ -27,8 +27,12 @@ void RegexModel::setQuery(QString query)
             QMessageBox::warning(NULL, tr("ERROR"), tr("This HDT does not support substring search"));
             return;
         }
-        QByteArray arr = query.toUtf8();
-        numResults = dict->substringToId((uchar *)arr.data(), arr.size(), &results);
+        if(query.length()==0) {
+            numResults = 0;
+        } else {
+            QByteArray arr = query.toUtf8();
+            numResults = dict->substringToId((uchar *)arr.data(), arr.size(), &results);
+        }
         emit layoutChanged();
     }
 }
