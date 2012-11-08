@@ -111,7 +111,7 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
 
 	// Do mmap
 	ptr = (unsigned char *) mmap(0, mappedSize, PROT_READ, MAP_PRIVATE, fd, 0);
-	if(ptr==NULL) {
+	if(ptr==MAP_FAILED) {
 		perror("Error on mmap");
 		throw "Error trying to mmap HDT file";
 	}
