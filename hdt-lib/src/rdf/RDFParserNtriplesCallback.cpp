@@ -13,6 +13,7 @@
 #include "../third/fdstream.hpp"
 
 #include <fstream>
+#include <stdexcept>
 #include <stdlib.h>
 
 using namespace std;
@@ -74,6 +75,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 	}
 
 	string line;
+	unsigned int numline=0;
 	TripleString ts;
 
 	size_t filePos;
@@ -81,6 +83,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 	while(in->good()){
 		filePos = in->tellg();
 		getline(*in, line);
+		numline++;
 
 		int pos = 0;
 		size_t firstIndex = 0;
@@ -158,6 +161,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 
 				int previous=0, current=0;
 
+						try {
 				// If the string is bigger than 6 chars (otherwise it wont have any \uXXXX code)
 				if(lastIndex>5) {
 
@@ -196,6 +200,13 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 				node[pos] = replaced;
 
 				pos++;
+				} catch (std::out_of_range& oor) {
+					errorParsing=true;
+				    cerr << "Out of Range error: " << oor.what() << endl;
+				    cerr << "Line: " << line << endl;
+				    cerr << "Num Line: " << numline << endl;
+					break;
+				  }
 			}
 			//blank, a variable, a relative predicate
 			else if (line.at(0) == '_' || (line.find(":") != string::npos)) {
