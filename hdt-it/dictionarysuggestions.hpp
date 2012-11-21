@@ -4,7 +4,7 @@
 #include <QtGui>
 #include <QObject>
 
-#include <hdtmanager.hpp>
+#include <hdtcontroller.hpp>
 
 QT_BEGIN_NAMESPACE
 class QLineEdit;
@@ -20,7 +20,7 @@ public:
     ~DictionarySuggestions();
     bool eventFilter(QObject *obj, QEvent *ev);
     void showCompletion(const vector<string> &choices);
-    void setManager(HDTManager *manager);
+    void setController(HDTController *controller);
     void setRole(hdt::TripleComponentRole role);
 
 public slots:
@@ -32,7 +32,7 @@ private:
     QLineEdit *editor;
     QTreeWidget *popup;
     QTimer *timer;
-    HDTManager *manager;
+    HDTController *controller;
     hdt::TripleComponentRole role;
 };
 

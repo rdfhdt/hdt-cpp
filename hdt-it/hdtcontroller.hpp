@@ -17,13 +17,13 @@ class PredicateStatus;
 class HeaderModel;
 class RegexModel;
 
-class HDTManager : public QObject
+class HDTController : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit HDTManager(QObject *parent = 0);
-    ~HDTManager();
+    explicit HDTController(QObject *parent = 0);
+    ~HDTController();
 
 private:
     // HDT

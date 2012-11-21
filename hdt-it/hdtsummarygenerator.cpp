@@ -1,6 +1,6 @@
 #include "hdtsummarygenerator.hpp"
 
-#include <hdtmanager.hpp>
+#include <hdtcontroller.hpp>
 
 #include <HDTVocabulary.hpp>
 #include <HDTEnums.hpp>
@@ -9,9 +9,9 @@
 
 #include "stringutils.hpp"
 
-QString HDTSummaryGenerator::getSummary(HDTManager *hdtManager)
+QString HDTSummaryGenerator::getSummary(HDTController *hdtController)
 {
-    hdt::HDT *hdt = hdtManager->getHDT();
+    hdt::HDT *hdt = hdtController->getHDT();
     if(!hdt) {
         return tr("No open file.");
     }
@@ -23,7 +23,7 @@ QString HDTSummaryGenerator::getSummary(HDTManager *hdtManager)
     QLocale loc = QLocale::system();
 
     output.append(tr("<h3>Dataset:</h3>"));
-    QString fileName = hdtManager->getFileName();
+    QString fileName = hdtController->getFileName();
     output.append(tr("<b>File name</b>: <small>"));
     output.append(fileName);
     output.append("</small><br/>");

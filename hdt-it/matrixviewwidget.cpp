@@ -28,9 +28,9 @@ MatrixViewWidget::~MatrixViewWidget() {
 
 }
 
-void MatrixViewWidget::setManager(HDTManager *hdtManager)
+void MatrixViewWidget::setManager(HDTController *hdtManager)
 {
-    this->hdtmanager = hdtManager;
+    this->hdtController = hdtManager;
 }
 
 Camera & MatrixViewWidget::getCamera()
@@ -53,7 +53,7 @@ void MatrixViewWidget::initializeGL()
 
 void MatrixViewWidget::paintShared()
 {
-    unsigned int nshared = hdtmanager->getHDT()->getDictionary()->getNshared();
+    unsigned int nshared = hdtController->getHDT()->getDictionary()->getNshared();
 
     glColor4f(SHARED_AREA_COLOR);
     glBegin(GL_QUADS);
@@ -73,7 +73,7 @@ void MatrixViewWidget::paintShared()
 
 void MatrixViewWidget::paintScales()
 {
-    hdt::Dictionary *dict = hdtmanager->getHDT()->getDictionary();
+    hdt::Dictionary *dict = hdtController->getHDT()->getDictionary();
     unsigned int nsubjects = dict->getMaxSubjectID();
     unsigned int nobjects = dict->getMaxObjectID();
     unsigned int npredicates = dict->getMaxPredicateID();
@@ -172,20 +172,20 @@ void MatrixViewWidget::paintScales()
 
 void MatrixViewWidget::paintPoints()
 {
-    if(hdtmanager->getNumResults()==0) {
+    if(hdtController->getNumResults()==0) {
         // Do not render anything
-    } else if(hdtmanager->getNumResults()<5000) {
+    } else if(hdtController->getNumResults()<5000) {
 	// Render directly from iterator.
-        hdt::IteratorTripleID *it = hdtmanager->getHDT()->getTriples()->search(hdtmanager->getSearchPatternID());
+        hdt::IteratorTripleID *it = hdtController->getHDT()->getTriples()->search(hdtController->getSearchPatternID());
 
         glPointSize(3);
         glBegin(GL_POINTS);
         while(it->hasNext()) {
             hdt::TripleID *tid = it->next();
 
-            Color *c = hdtmanager->getHDTCachedInfo()->getPredicateColor(tid->getPredicate()-1);
+            Color *c = hdtController->getHDTCachedInfo()->getPredicateColor(tid->getPredicate()-1);
 
-            if(hdtmanager->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
+            if(hdtController->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
                 glColor4f(c->r, c->g, c->b, 1.0);
             } else {
                 glColor4f(c->r/4, c->g/4, c->b/4, 0.3);
@@ -200,14 +200,14 @@ void MatrixViewWidget::paintPoints()
 	// Render from cached points.
         glPointSize(RDF_POINT_SIZE);
         glBegin(GL_POINTS);
-        vector<hdt::TripleID> triples = hdtmanager->getTriples();
+        vector<hdt::TripleID> triples = hdtController->getTriples();
         for(unsigned int i=0;i<triples.size();i++) {
             hdt::TripleID *tid = &triples[i];
 
-            if(tid->match(hdtmanager->getSearchPatternID())) {
-                Color *c = hdtmanager->getHDTCachedInfo()->getPredicateColor(tid->getPredicate()-1);
+            if(tid->match(hdtController->getSearchPatternID())) {
+                Color *c = hdtController->getHDTCachedInfo()->getPredicateColor(tid->getPredicate()-1);
 
-                if(hdtmanager->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
+                if(hdtController->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
                     glColor4f(c->r, c->g, c->b, 1.0);
                 } else {
                     glColor4f(c->r/4, c->g/4, c->b/4, 0.3);
@@ -225,13 +225,13 @@ void MatrixViewWidget::paintPoints()
 
 void MatrixViewWidget::paintSelected()
 {
-    hdt::TripleID selectedTriple = hdtmanager->getSelectedTriple();
+    hdt::TripleID selectedTriple = hdtController->getSelectedTriple();
 
     // Draw selected triple
     if (selectedTriple.isValid()) {
-        unsigned int nsubjects = hdtmanager->getHDT()->getDictionary()->getMaxSubjectID();
-        unsigned int npredicates = hdtmanager->getHDT()->getDictionary()->getMaxPredicateID();
-        unsigned int nobjects = hdtmanager->getHDT()->getDictionary()->getMaxObjectID();
+        unsigned int nsubjects = hdtController->getHDT()->getDictionary()->getMaxSubjectID();
+        unsigned int npredicates = hdtController->getHDT()->getDictionary()->getMaxPredicateID();
+        unsigned int nobjects = hdtController->getHDT()->getDictionary()->getMaxObjectID();
 
         float x = selectedTriple.getObject();
         float y = selectedTriple.getSubject();
@@ -264,7 +264,7 @@ void MatrixViewWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if(!hdtmanager->hasHDT()) {
+    if(!hdtController->hasHDT()) {
         return;
     }
 
@@ -272,9 +272,9 @@ void MatrixViewWidget::paintGL()
 
     camera.applyTransform();
 
-    unsigned int nsubjects = hdtmanager->getHDT()->getDictionary()->getMaxSubjectID();
-    unsigned int nobjects = hdtmanager->getHDT()->getDictionary()->getMaxObjectID();
-    unsigned int npredicates = hdtmanager->getHDT()->getDictionary()->getMaxPredicateID();
+    unsigned int nsubjects = hdtController->getHDT()->getDictionary()->getMaxSubjectID();
+    unsigned int nobjects = hdtController->getHDT()->getDictionary()->getMaxObjectID();
+    unsigned int npredicates = hdtController->getHDT()->getDictionary()->getMaxPredicateID();
 
     glScalef(1.0f / (float) nobjects, 1.0f / (float) nsubjects, 1.0f / (float) npredicates);
 
@@ -315,12 +315,12 @@ void MatrixViewWidget::mouseReleaseEvent(QMouseEvent *event)
         //std::cout << "Mouse CLICK" << std::endl;
         if(buttonClick & Qt::LeftButton) {
             //std::cout << "Left Mouse CLICK" << std::endl;
-            if(hdtmanager->getSelectedTriple().isValid()) {
-                hdtmanager->getPredicateStatus()->selectPredicate(hdtmanager->getSelectedTriple().getPredicate());
+            if(hdtController->getSelectedTriple().isValid()) {
+                hdtController->getPredicateStatus()->selectPredicate(hdtController->getSelectedTriple().getPredicate());
             }
         } else if (buttonClick & Qt::RightButton) {
             //std::cout << "Right Mouse CLICK" << std::endl;
-            hdtmanager->getPredicateStatus()->selectAllPredicates();
+            hdtController->getPredicateStatus()->selectAllPredicates();
         }
     }
 }
@@ -333,7 +333,7 @@ void MatrixViewWidget::unProject(int x, int y, double *outx, double *outy, doubl
 
     camera.applyTransform();
 
-    hdt::Dictionary *dict = hdtmanager->getHDT()->getDictionary();
+    hdt::Dictionary *dict = hdtController->getHDT()->getDictionary();
 
     glScalef(1.0f / (float) dict->getMaxObjectID(),
              1.0f / (float) dict->getMaxSubjectID(),
@@ -378,33 +378,33 @@ void MatrixViewWidget::mouseMoveEvent(QMouseEvent *event)
         emit cameraChanged();
     }
 
-    if(hdtmanager->getHDT()==NULL)
+    if(hdtController->getHDT()==NULL)
         return;
 
     if(!camera.isFrontView()) {
-        hdtmanager->clearSelectedTriple();
+        hdtController->clearSelectedTriple();
         return;
     }
 
     GLdouble subject, predicate, object;
     this->unProject(event->x(), event->y(), &object, &subject, &predicate);
 
-    hdt::Dictionary *dictionary = hdtmanager->getHDT()->getDictionary();
+    hdt::Dictionary *dictionary = hdtController->getHDT()->getDictionary();
     if ( (subject > 0 && subject < dictionary->getMaxSubjectID()) &&
          (object > 0 && object <= dictionary->getMaxObjectID())
        ) {
-        hdtmanager->selectNearestTriple(subject,predicate, object);
+        hdtController->selectNearestTriple(subject,predicate, object);
 
-    QString subjStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtmanager->getSelectedTriple().getSubject(), hdt::SUBJECT).c_str()));
-    QString predStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtmanager->getSelectedTriple().getPredicate(), hdt::PREDICATE).c_str()));
-    QString objStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtmanager->getSelectedTriple().getObject(), hdt::OBJECT).c_str()));
+    QString subjStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtController->getSelectedTriple().getSubject(), hdt::SUBJECT).c_str()));
+    QString predStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtController->getSelectedTriple().getPredicate(), hdt::PREDICATE).c_str()));
+    QString objStr = stringutils::escapeHTML(stringutils::toQString(dictionary->idToString(hdtController->getSelectedTriple().getObject(), hdt::OBJECT).c_str()));
         stringutils::cut(objStr, 1000);
         QString tooltip = QString("<p style='white-space:pre'><b>S</b>: %1</p><p style='white-space:pre'><b>P</b>: %2</p><p><b>O</b>:&nbsp;%3</p>").arg(subjStr).arg(predStr).arg(objStr);
         QPoint point = this->mapToGlobal(event->pos());
         QRect rect = QRect(point.x()-10, point.y()+10, 20, 20);
         QToolTip::showText(point, tooltip, this, rect);
     } else {
-        hdtmanager->clearSelectedTriple();
+        hdtController->clearSelectedTriple();
         QToolTip::hideText();
     }
 
@@ -426,7 +426,7 @@ void MatrixViewWidget::wheelEvent( QWheelEvent* e )
       camera.increaseZoom(delta);
 #endif
   }
-  hdtmanager->clearSelectedTriple();
+  hdtController->clearSelectedTriple();
   e->accept();
 }
 
@@ -484,7 +484,7 @@ QSize MatrixViewWidget::sizeHint() const
 
 void MatrixViewWidget::reloadHDTInfo()
 {
-    if(hdtmanager->getHDT()==NULL) {
+    if(hdtController->getHDT()==NULL) {
         return;
     }
 

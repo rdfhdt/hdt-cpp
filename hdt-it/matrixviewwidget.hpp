@@ -12,20 +12,19 @@
 #endif
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
 #include <HDTSpecification.hpp>
 
 #include "colors.hpp"
 #include "Camera.h"
 #include "StopWatch.hpp"
 
-#include "hdtmanager.hpp"
+#include "hdtcontroller.hpp"
 #include "searchresultsmodel.hpp"
 #include "triplecomponentmodel.hpp"
 
 class SearchResultsModel;
 class TripleComponentModel;
-class HDTManager;
+class HDTController;
 
 #ifdef __APPLE__
 #define GESTURES
@@ -39,7 +38,7 @@ private:
     QTimer timer;
     Camera camera;
     int lastX, lastY, lastClickX, lastClickY, buttonClick;
-    HDTManager *hdtmanager;
+    HDTController *hdtController;
 
     void unProject(int x, int y, double *outx, double *outy, double *outz);
 
@@ -52,7 +51,7 @@ public:
     explicit MatrixViewWidget(QWidget *parent = 0);
     ~MatrixViewWidget();
 
-    void setManager(HDTManager *hdtManager);
+    void setManager(HDTController *hdtManager);
 
     QSize minimumSizeHint() const;
     QSize sizeHint() const;

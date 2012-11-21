@@ -2,7 +2,7 @@
 #include "searchresultsmodel.hpp"
 #include <QFont>
 
-SearchResultsModel::SearchResultsModel(HDTManager *view) : hdtManager(view), triples(NULL)
+SearchResultsModel::SearchResultsModel(HDTController *view) : hdtController(view), triples(NULL)
 {
     this->updateResultListChanged();
 }
@@ -43,7 +43,7 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
         SearchResultsModel *noConstThis = const_cast<SearchResultsModel *>(this);
         noConstThis->findTriple(index.row());
 
-        hdt::Dictionary *d = hdtManager->getHDT()->getDictionary();
+        hdt::Dictionary *d = hdtController->getHDT()->getDictionary();
 
         try {
             switch(index.column()) {
@@ -106,8 +106,8 @@ void SearchResultsModel::updateResultListChanged() {
         triples = NULL;
     }
 
-    if(hdtManager->hasHDT()) {
-        triples = hdtManager->getHDT()->getTriples()->search(hdtManager->getSearchPatternID());
+    if(hdtController->hasHDT()) {
+        triples = hdtController->getHDT()->getTriples()->search(hdtController->getSearchPatternID());
         if(triples->hasNext()) {
             currentTriple = triples->next();
         }
@@ -118,7 +118,7 @@ void SearchResultsModel::updateResultListChanged() {
     }
     currentIndex = 0;
     goingUp = true;
-    numResults = hdtManager->getNumResults();
+    numResults = hdtController->getNumResults();
 
     emit layoutChanged();
 }
@@ -126,7 +126,7 @@ void SearchResultsModel::updateResultListChanged() {
 void SearchResultsModel::updateNumResultsChanged()
 {
     unsigned int old = numResults;
-    numResults = hdtManager->getNumResults();
+    numResults = hdtController->getNumResults();
 
     if(old!=numResults) {
 #if 0

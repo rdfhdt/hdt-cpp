@@ -8,7 +8,7 @@ class QFont;
 
 #include "../hdt-lib/src/dictionary/LiteralDictionary.hpp"
 
-RegexModel::RegexModel(HDTManager *manager) : hdtManager(manager), numResults(0), results(NULL)
+RegexModel::RegexModel(HDTController *manager) : hdtController(manager), numResults(0), results(NULL)
 {
 }
 
@@ -21,8 +21,8 @@ RegexModel::~RegexModel()
 
 void RegexModel::setQuery(QString query)
 {
-    if(hdtManager->hasHDT()) {
-        hdt::LiteralDictionary *dict = dynamic_cast<hdt::LiteralDictionary *>(hdtManager->getHDT()->getDictionary());
+    if(hdtController->hasHDT()) {
+        hdt::LiteralDictionary *dict = dynamic_cast<hdt::LiteralDictionary *>(hdtController->getHDT()->getDictionary());
         if(dict==NULL) {
             QMessageBox::warning(NULL, tr("ERROR"), tr("This HDT does not support substring search"));
             return;
@@ -57,13 +57,13 @@ QVariant RegexModel::data(const QModelIndex &index, int role) const
     case Qt::ToolTipRole:
     case Qt::DisplayRole:
     {
-        hdt::Dictionary *d = hdtManager->getHDT()->getDictionary();
+        hdt::Dictionary *d = hdtController->getHDT()->getDictionary();
 
         try {
             switch(index.column()) {
             case 0:
             {
-                hdt::Triples *t = hdtManager->getHDT()->getTriples();
+                hdt::Triples *t = hdtController->getHDT()->getTriples();
 
                 hdt::TripleID tripleObject(0, 0, results[index.row()]);
                 hdt::IteratorTripleID *it = t->search(tripleObject);

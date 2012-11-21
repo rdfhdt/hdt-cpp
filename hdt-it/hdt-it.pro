@@ -41,7 +41,6 @@ SOURCES += main.cpp\
     qclearlineedit.cpp \
     searchresultsmodel.cpp \
     triplecomponentmodel.cpp \
-    hdtmanager.cpp \
     hdtoperation.cpp \
     abouthdt.cpp \
     hdtcachedinfo.cpp \
@@ -54,7 +53,8 @@ SOURCES += main.cpp\
     myapplication.cpp \
     sparqlmodel.cpp \
     sparqlform.cpp \
-    regexmodel.cpp
+    regexmodel.cpp \
+    hdtcontroller.cpp
 
 HEADERS  += hdtit.hpp \
     matrixviewwidget.hpp \
@@ -67,7 +67,6 @@ HEADERS  += hdtit.hpp \
     qclearlineedit.hpp \
     searchresultsmodel.hpp \
     triplecomponentmodel.hpp \
-    hdtmanager.hpp \
     hdtoperation.hpp \
     abouthdt.hpp \
     hdtcachedinfo.hpp \
@@ -80,7 +79,8 @@ HEADERS  += hdtit.hpp \
     myapplication.hpp \
     sparqlmodel.hpp \
     sparqlform.hpp \
-    regexmodel.hpp
+    regexmodel.hpp \
+    hdtcontroller.hpp
 
 FORMS    += hdtit.ui \
     hdtspecform.ui \

@@ -2,19 +2,19 @@
 #include <QtConcurrentRun>
 
 
-ResultCounter::ResultCounter(QObject *parent, HDTManager *manager) :
+ResultCounter::ResultCounter(QObject *parent, HDTController *controller) :
     QObject(parent),
-    manager(manager),
+    hdtController(controller),
     iterator(NULL)
 {
 }
 
 void ResultCounter::startCounting()
 {
-    if(!manager->hasHDT()){
+    if(!hdtController->hasHDT()){
         return;
     }
-    iterator = manager->getHDT()->getTriples()->search(manager->getSearchPatternID());
+    iterator = hdtController->getHDT()->getTriples()->search(hdtController->getSearchPatternID());
     shouldCancel = false;
     QtConcurrent::run(this, &ResultCounter::run);
 }

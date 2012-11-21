@@ -1,7 +1,7 @@
 #include <QMessageBox>
 #include <QtGui>
 
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 #include "hdtoperation.hpp"
 
@@ -18,6 +18,10 @@ void HDTOperationDialog::closeEvent(QCloseEvent *event)
 #else
     event->ignore();
 #endif
+}
+
+HDTOperation::HDTOperation() : hdt(NULL), hdtInfo(NULL), errorMessage(NULL)
+{
 }
 
 HDTOperation::HDTOperation(QString fileName) : fileName(fileName), hdt(NULL), hdtInfo(NULL), errorMessage(NULL)
@@ -39,12 +43,11 @@ void HDTOperation::execute() {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
             iListener.setRange(0,70);
 #if 1
-            hdt = hdt::HDTFactory::mapHDT(fileName.toAscii(), &iListener);
+            hdt = hdt::HDTManager::mapIndexedHDT(fileName.toAscii(), &iListener);
 #else            
-            hdt = hdt::HDTFactory::readHDT(fileName.toAscii(), &iListener);
+            hdt = hdt::HDTManager::loadIndexedHDT(fileName.toAscii(), &iListener);
 #endif
             iListener.setRange(70, 90);
-            hdt->loadOrCreateIndex( &iListener );
 
             iListener.setRange(90, 100);
             hdtInfo = new HDTCachedInfo(hdt);
@@ -57,12 +60,13 @@ void HDTOperation::execute() {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
 
             iListener.setRange(0,80);
-            hdt->loadFromRDF(fileName.toAscii(), baseUri, notation, &iListener);
+            hdt = hdt::HDTManager::generateHDT(fileName.toAscii(), baseUri.c_str(), notation, spec, &iListener);
 
             iListener.setRange(80, 90);
-            hdt->loadOrCreateIndex( &iListener );
+            hdt = hdt::HDTManager::indexedHDT(hdt);
 
             iListener.setRange(90, 100);
+            hdtInfo = new HDTCachedInfo(hdt);
             hdtInfo->generateGeneralInfo(&iListener);
             hdtInfo->generateMatrix(&iListener);
 
@@ -70,7 +74,6 @@ void HDTOperation::execute() {
             }
         case HDT_WRITE:
             hdt->saveToHDT(fileName.toAscii(), dynamic_cast<ProgressListener *>(this));
-            hdt->saveIndex(dynamic_cast<ProgressListener *>(this));
             break;
         case RDF_WRITE:{
             hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toAscii(), notation);
@@ -123,9 +126,10 @@ void HDTOperation::saveToHDT(QString &fileName)
     this->fileName = fileName;
 }
 
-void HDTOperation::loadFromRDF(QString &fileName, hdt::RDFNotation notation, string &baseUri)
+void HDTOperation::loadFromRDF(hdt::HDTSpecification &spec, QString &fileName, hdt::RDFNotation notation, string &baseUri)
 {
     this->op = RDF_READ;
+    this->spec = spec;
     this->fileName = fileName;
     this->notation = notation;
     this->baseUri = baseUri;

@@ -5,8 +5,8 @@
 
 #include "stringutils.hpp"
 
-TripleComponentModel::TripleComponentModel(HDTManager *view, hdt::TripleComponentRole compRole) :
-    hdtManager(view), tripleComponentRole(compRole)
+TripleComponentModel::TripleComponentModel(HDTController *view, hdt::TripleComponentRole compRole) :
+    hdtController(view), tripleComponentRole(compRole)
 {
 
 }
@@ -16,8 +16,8 @@ int TripleComponentModel::rowCount(const QModelIndex &parent) const
     int numResults = 0;
 
     Q_UNUSED(parent);
-    if(hdtManager->getHDT() != NULL) {
-        hdt::Dictionary *dict = hdtManager->getHDT()->getDictionary();
+    if(hdtController->getHDT() != NULL) {
+        hdt::Dictionary *dict = hdtController->getHDT()->getDictionary();
         switch(tripleComponentRole) {
         case hdt::SUBJECT:
             numResults = dict->getNsubjects();
@@ -42,7 +42,7 @@ int TripleComponentModel::columnCount(const QModelIndex &parent) const
 
 QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
 {
-    if(!hdtManager->hasHDT()) {
+    if(!hdtController->hasHDT()) {
         return QVariant();
     }
 
@@ -51,7 +51,7 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
     {
         //cout << "Data: " << index.row() << " role: " << role << " type: " << tripleComponentRole << endl;
-        hdt::Dictionary *d = hdtManager->getHDT()->getDictionary();
+        hdt::Dictionary *d = hdtController->getHDT()->getDictionary();
         try {
         return stringutils::toQString(d->idToString(index.row()+1, tripleComponentRole).c_str());
         } catch (char *e) {
@@ -69,7 +69,7 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     }
     case Qt::CheckStateRole:
         if(tripleComponentRole==hdt::PREDICATE) {
-            return hdtManager->getPredicateStatus()->isPredicateActive(index.row()) ? Qt::Checked : Qt::Unchecked;
+            return hdtController->getPredicateStatus()->isPredicateActive(index.row()) ? Qt::Checked : Qt::Unchecked;
         }
     }
     return QVariant();
@@ -77,14 +77,14 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
 
 bool TripleComponentModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if(hdtManager->getHDT() == NULL) {
+    if(hdtController->getHDT() == NULL) {
         return false;
     }
 
     switch(role) {
         case Qt::CheckStateRole:
         if(tripleComponentRole==hdt::PREDICATE) {
-            hdtManager->getPredicateStatus()->setPredicateActive(index.row(), value.toBool());
+            hdtController->getPredicateStatus()->setPredicateActive(index.row(), value.toBool());
         }
     }
     return true;

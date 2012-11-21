@@ -9,7 +9,7 @@
 DictionarySuggestions::DictionarySuggestions(QLineEdit *parent) :
     QObject(parent),
     editor(parent),
-    manager(NULL)
+    controller(NULL)
 {
     popup = new QTreeWidget;
     popup->setWindowFlags(Qt::Popup);
@@ -132,7 +132,7 @@ void DictionarySuggestions::doneCompletion()
 
 void DictionarySuggestions::autoSuggest()
 {
-    if(!manager ||!manager->hasHDT() ) {
+    if(!controller ||!controller->hasHDT() ) {
         return;
     }
 
@@ -150,7 +150,7 @@ void DictionarySuggestions::autoSuggest()
         vector<string> choices;
 
         // FETCH RESULTS FROM DICTIONARY
-        manager->getHDT()->getDictionary()->getSuggestions(str.toUtf8(), role, choices, NUM_SUGGESTIONS);
+        controller->getHDT()->getDictionary()->getSuggestions(str.toUtf8(), role, choices, NUM_SUGGESTIONS);
 
         if(choices.size()==1 && choices[0]==string(str.toUtf8())) {
             return;
@@ -173,7 +173,7 @@ void DictionarySuggestions::setRole(hdt::TripleComponentRole role)
     this->role = role;
 }
 
-void DictionarySuggestions::setManager(HDTManager *manager)
+void DictionarySuggestions::setController(HDTController *controller)
 {
-    this->manager = manager;
+    this->controller = controller;
 }

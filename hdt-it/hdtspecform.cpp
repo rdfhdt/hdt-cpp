@@ -82,7 +82,7 @@ std::string HDTSpecForm::getStreamType(int index) {
         return hdt::HDTVocabulary::SEQ_TYPE_LOG;
     case 1:
         // IntegerStream
-        return hdt::HDTVocabulary::SEQ_TYPE_INTEGER;
+        return hdt::HDTVocabulary::SEQ_TYPE_INT32;
     case 2:
         // HuffmanStream
         return hdt::HDTVocabulary::SEQ_TYPE_HUFFMAN;
@@ -101,8 +101,8 @@ void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
 
     switch(ui->dictionaryTypeCombo->currentIndex()) {
     case 0:
-        // PFCDictionary
-        hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PFC);
+        // FourSectionDictionary
+        hdt.set("dictionary.type", hdt::HDTVocabulary::DICTIONARY_TYPE_FOUR);
         break;
     case 1:
         // PlainDictionary
@@ -130,10 +130,6 @@ void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
     case 3:
         // CompactTriples
         hdt.set("triples.type", hdt::HDTVocabulary::TRIPLES_TYPE_COMPACT);
-        break;
-    case 4:
-        // FoQTriples
-        hdt.set("triples.type", hdt::HDTVocabulary::TRIPLES_TYPE_FOQ);
         break;
     }
 

@@ -1,7 +1,7 @@
 #include "headermodel.hpp"
 #include <QFont>
 
-HeaderModel::HeaderModel(HDTManager *view) : hdtManager(view), triples(NULL)
+HeaderModel::HeaderModel(HDTController *view) : hdtController(view), triples(NULL)
 {
     this->updateDatasetChanged();
 }
@@ -16,8 +16,8 @@ HeaderModel::~HeaderModel()
 
 int HeaderModel::rowCount(const QModelIndex &parent) const
 {
-    if(hdtManager->hasHDT()) {
-        return hdtManager->getHDT()->getHeader()->getNumberOfElements();
+    if(hdtController->hasHDT()) {
+        return hdtController->getHDT()->getHeader()->getNumberOfElements();
     }
     return 0;
 }
@@ -99,8 +99,8 @@ void HeaderModel::updateDatasetChanged() {
         triples = NULL;
     }
 
-    if(hdtManager->hasHDT()) {
-        triples = hdtManager->getHDT()->getHeader()->search("","","");
+    if(hdtController->hasHDT()) {
+        triples = hdtController->getHDT()->getHeader()->search("","","");
         if(triples->hasNext()) {
             currentTriple = triples->next();
         }

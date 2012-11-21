@@ -5,17 +5,17 @@
 
 #include <HDTEnums.hpp>
 
-#include "hdtmanager.hpp"
+#include "hdtcontroller.hpp"
 
-class HDTManager;
+class HDTController;
 
 class TripleComponentModel : public QAbstractTableModel {
     Q_OBJECT
 private:
-    HDTManager *hdtManager;
+    HDTController *hdtController;
     hdt::TripleComponentRole tripleComponentRole;
 public:
-    TripleComponentModel(HDTManager *view, hdt::TripleComponentRole compRole);
+    TripleComponentModel(HDTController *view, hdt::TripleComponentRole compRole);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;

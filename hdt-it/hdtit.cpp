@@ -15,23 +15,23 @@
 HDTit::HDTit(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::HDTit),
-    hdtManager(new HDTManager()),
+    hdtController(new HDTController()),
     lastDir(QDir::currentPath())
 {
     ui->setupUi(this);
     //this->setUnifiedTitleAndToolBarOnMac(true);
 
-    ui->matrixView->setManager(hdtManager);
-    ui->subjectView->setModel(hdtManager->getSubjectModel());
-    ui->predicateView->setModel(hdtManager->getPredicateModel());
-    ui->objectView->setModel(hdtManager->getObjectModel());
-    ui->resultsTable->setModel(hdtManager->getSearchResultsModel());
-    ui->headerView->setModel(hdtManager->getHeaderModel());
-    ui->regexResultsView->setModel(hdtManager->getRegexModel());
+    ui->matrixView->setManager(hdtController);
+    ui->subjectView->setModel(hdtController->getSubjectModel());
+    ui->predicateView->setModel(hdtController->getPredicateModel());
+    ui->objectView->setModel(hdtController->getObjectModel());
+    ui->resultsTable->setModel(hdtController->getSearchResultsModel());
+    ui->headerView->setModel(hdtController->getHeaderModel());
+    ui->regexResultsView->setModel(hdtController->getRegexModel());
 
-    ui->subjectPatternEdit->getSuggestions()->setManager(hdtManager);
-    ui->predicatePatternEdit->getSuggestions()->setManager(hdtManager);
-    ui->objectPatternEdit->getSuggestions()->setManager(hdtManager);
+    ui->subjectPatternEdit->getSuggestions()->setController(hdtController);
+    ui->predicatePatternEdit->getSuggestions()->setController(hdtController);
+    ui->objectPatternEdit->getSuggestions()->setController(hdtController);
     ui->subjectPatternEdit->getSuggestions()->setRole(hdt::SUBJECT);
     ui->predicatePatternEdit->getSuggestions()->setRole(hdt::PREDICATE);
     ui->objectPatternEdit->getSuggestions()->setRole(hdt::OBJECT);
@@ -46,33 +46,33 @@ HDTit::HDTit(QWidget *parent) :
     connect(ui->matrixView, SIGNAL(rotationChanged()), this, SLOT(updateViewButtons()));
 
     // Dataset
-    connect(hdtManager, SIGNAL(datasetChanged()), ui->matrixView, SLOT(reloadHDTInfo()));
+    connect(hdtController, SIGNAL(datasetChanged()), ui->matrixView, SLOT(reloadHDTInfo()));
 
     // Predicate Status
-    connect(ui->predicateCountSlider, SIGNAL(valueChanged(int)), hdtManager->getPredicateStatus(), SLOT(setMinimumPredicateCount(int)));
-    connect(hdtManager->getPredicateStatus(), SIGNAL(minimumPredicateCountChanged(int)), ui->predicateCountSlider, SLOT(setValue(int)));
-    connect(hdtManager->getPredicateStatus(), SIGNAL(predicatesChanged(unsigned int, unsigned int)), ui->matrixView, SLOT(updateGL()));
-    connect(ui->selectAllPredicatesButton, SIGNAL(clicked()), hdtManager->getPredicateStatus(), SLOT(selectAllPredicates()));
-    connect(ui->selectNoneButton, SIGNAL(clicked()), hdtManager->getPredicateStatus(), SLOT(selectNonePredicates()));
-    connect(hdtManager->getPredicateStatus(), SIGNAL(predicatesChanged(unsigned int,unsigned int)), hdtManager->getPredicateModel(), SLOT(itemsChanged(uint,uint)));
-    connect(hdtManager->getPredicateStatus(), SIGNAL(predicateSelected(int)), ui->predicateView, SLOT(selectRow(int)));
+    connect(ui->predicateCountSlider, SIGNAL(valueChanged(int)), hdtController->getPredicateStatus(), SLOT(setMinimumPredicateCount(int)));
+    connect(hdtController->getPredicateStatus(), SIGNAL(minimumPredicateCountChanged(int)), ui->predicateCountSlider, SLOT(setValue(int)));
+    connect(hdtController->getPredicateStatus(), SIGNAL(predicatesChanged(unsigned int, unsigned int)), ui->matrixView, SLOT(updateGL()));
+    connect(ui->selectAllPredicatesButton, SIGNAL(clicked()), hdtController->getPredicateStatus(), SLOT(selectAllPredicates()));
+    connect(ui->selectNoneButton, SIGNAL(clicked()), hdtController->getPredicateStatus(), SLOT(selectNonePredicates()));
+    connect(hdtController->getPredicateStatus(), SIGNAL(predicatesChanged(unsigned int,unsigned int)), hdtController->getPredicateModel(), SLOT(itemsChanged(uint,uint)));
+    connect(hdtController->getPredicateStatus(), SIGNAL(predicateSelected(int)), ui->predicateView, SLOT(selectRow(int)));
 
     // Search pattern
-    connect(hdtManager, SIGNAL(searchPatternChanged()), this, SLOT(refreshSearchPattern()));
-    connect(hdtManager, SIGNAL(numResultsChanged(int)), this, SLOT(updateNumResults()));
+    connect(hdtController, SIGNAL(searchPatternChanged()), this, SLOT(refreshSearchPattern()));
+    connect(hdtController, SIGNAL(numResultsChanged(int)), this, SLOT(updateNumResults()));
 }
 
 HDTit::~HDTit()
 {
     delete ui;
-    delete hdtManager;
+    delete hdtController;
 }
 
 void HDTit::updateNumResults()
 {
     ui->numResultsLabel->setText(
                 QString(tr("%1 results found."))
-                .arg(QLocale::system().toString(hdtManager->getNumResults()))
+                .arg(QLocale::system().toString(hdtController->getNumResults()))
                 );
 }
 
@@ -83,7 +83,7 @@ void HDTit::searchPatternEdited()
     std::string object = ui->objectPatternEdit->text().toUtf8().constData();
 
     hdt::TripleString ts(subject, predicate, object);
-    hdtManager->setSearchPattern(ts);
+    hdtController->setSearchPattern(ts);
 
     this->updateNumResults();
 
@@ -91,16 +91,16 @@ void HDTit::searchPatternEdited()
 
     ui->matrixView->updateGL();
 
-    ui->subjectView->selectRow(hdtManager->getSearchPatternID().getSubject()-1);
-    ui->predicateView->selectRow(hdtManager->getSearchPatternID().getPredicate()-1);
-    ui->objectView->selectRow(hdtManager->getSearchPatternID().getObject()-1);
+    ui->subjectView->selectRow(hdtController->getSearchPatternID().getSubject()-1);
+    ui->predicateView->selectRow(hdtController->getSearchPatternID().getPredicate()-1);
+    ui->objectView->selectRow(hdtController->getSearchPatternID().getObject()-1);
 
 }
 
 void HDTit::refreshSearchPattern()
 {
-    if(hdtManager->hasHDT()) {
-        hdt::TripleString &ts = hdtManager->getSearchPatternString();
+    if(hdtController->hasHDT()) {
+        hdt::TripleString &ts = hdtController->getSearchPatternString();
         ui->subjectPatternEdit->setText(QString::fromUtf8(ts.getSubject().c_str()));
         ui->predicatePatternEdit->setText(QString::fromUtf8(ts.getPredicate().c_str()));
         ui->objectPatternEdit->setText(QString::fromUtf8(ts.getObject().c_str()));
@@ -114,14 +114,14 @@ void HDTit::refreshSearchPattern()
 
 void HDTit::openHDTFile(QString &file)
 {
-    hdtManager->openHDTFile(file);
+    hdtController->openHDTFile(file);
 
     hdtChanged(file);
 }
 
 void HDTit::importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
 {
-    hdtManager->importRDFFile(file, baseUri, notation, spec);
+    hdtController->importRDFFile(file, baseUri, notation, spec);
 
     hdtChanged(file);
 }
@@ -132,13 +132,13 @@ void HDTit::hdtChanged(QString &file)
     ui->predicatePatternEdit->clear();
     ui->objectPatternEdit->clear();
 
-    ui->predicateCountSlider->setMaximum(hdtManager->getPredicateStatus()->getMaximumPredicateCount()+1);
+    ui->predicateCountSlider->setMaximum(hdtController->getPredicateStatus()->getMaximumPredicateCount()+1);
     ui->predicateCountSlider->setValue(0);
     ui->statusBar->showMessage(file);
-    ui->statsLabel->setText(HDTSummaryGenerator::getSummary(hdtManager));
+    ui->statsLabel->setText(HDTSummaryGenerator::getSummary(hdtController));
     updateNumResults();
 
-    bool hasDataset = hdtManager->hasHDT();
+    bool hasDataset = hdtController->hasHDT();
     ui->actionSaveHDT->setEnabled(hasDataset);
     ui->actionExportRDF->setEnabled(hasDataset);
     ui->subjectPatternEdit->setEnabled(hasDataset);
@@ -147,8 +147,8 @@ void HDTit::hdtChanged(QString &file)
 
     // Enable/Disable substring search tab.
     bool hdtHasSubstring = false;
-    if(hdtManager->hasHDT()) {
-        hdtHasSubstring = hdtManager->getHDT()->getDictionary()->getType()==hdt::HDTVocabulary::DICTIONARY_TYPE_LITERAL;
+    if(hdtController->hasHDT()) {
+        hdtHasSubstring = hdtController->getHDT()->getDictionary()->getType()==hdt::HDTVocabulary::DICTIONARY_TYPE_LITERAL;
     }
     ui->tabRegex->setEnabled(hdtHasSubstring);
     if(hdtHasSubstring) {
@@ -193,13 +193,13 @@ void HDTit::on_actionSaveHDT_triggered()
     QString file = QFileDialog::getSaveFileName(this,tr("Select Output HDT File"), lastDir, tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
     if(!file.isEmpty()) {
         lastDir = file;
-        hdtManager->saveHDTFile(file);
+        hdtController->saveHDTFile(file);
     }
 }
 
 void HDTit::on_actionExportRDF_triggered()
 {
-    if(!hdtManager->getSearchPatternID().isEmpty()) {
+    if(!hdtController->getSearchPatternID().isEmpty()) {
         QMessageBox::warning(0, tr("Export Search Results"), tr("Warning: Only those triples matching the selected search pattern will be exported."));
     }
 
@@ -207,7 +207,7 @@ void HDTit::on_actionExportRDF_triggered()
     if(!file.isEmpty()) {
         // FIXME: Select notation.
         lastDir = file;
-        hdtManager->exportResultsRDFFile(file, hdt::N3);
+        hdtController->exportResultsRDFFile(file, hdt::N3);
     }
 }
 
@@ -263,17 +263,17 @@ void HDTit::on_actionReset_triggered()
 
 void HDTit::setPatternSubject(QModelIndex index)
 {
-    ui->subjectPatternEdit->setText(hdtManager->getSubjectModel()->data(index).toString());
+    ui->subjectPatternEdit->setText(hdtController->getSubjectModel()->data(index).toString());
 }
 
 void HDTit::setPatternPredicate(QModelIndex index)
 {
-    ui->predicatePatternEdit->setText(hdtManager->getPredicateModel()->data(index).toString());
+    ui->predicatePatternEdit->setText(hdtController->getPredicateModel()->data(index).toString());
 }
 
 void HDTit::setPatternObject(QModelIndex index)
 {
-    ui->objectPatternEdit->setText(hdtManager->getObjectModel()->data(index).toString());
+    ui->objectPatternEdit->setText(hdtController->getObjectModel()->data(index).toString());
 }
 
 void HDTit::setPatternGlobal(QModelIndex index)
@@ -282,13 +282,13 @@ void HDTit::setPatternGlobal(QModelIndex index)
 
     switch(index.column()) {
     case 0:
-        ui->subjectPatternEdit->setText(hdtManager->getSearchResultsModel()->data(index).toString());
+        ui->subjectPatternEdit->setText(hdtController->getSearchResultsModel()->data(index).toString());
         break;
     case 1:
-        ui->predicatePatternEdit->setText(hdtManager->getSearchResultsModel()->data(index).toString());
+        ui->predicatePatternEdit->setText(hdtController->getSearchResultsModel()->data(index).toString());
         break;
     case 2:
-        ui->objectPatternEdit->setText(hdtManager->getSearchResultsModel()->data(index).toString());
+        ui->objectPatternEdit->setText(hdtController->getSearchResultsModel()->data(index).toString());
         break;
     }
 }
@@ -310,7 +310,7 @@ void HDTit::setPatternContextObject()
 
 void HDTit::copyResultTableSelection()
 {
-    QApplication::clipboard()->setText(hdtManager->getSearchResultsModel()->data(lastContextMenuCell).toString());
+    QApplication::clipboard()->setText(hdtController->getSearchResultsModel()->data(lastContextMenuCell).toString());
 }
 
 void HDTit::on_actionAbout_triggered()
@@ -359,14 +359,14 @@ void HDTit::showContextMenu(QPoint pos)
 
 void HDTit::on_actionClose_triggered()
 {
-    hdtManager->closeHDT();
+    hdtController->closeHDT();
     QString str;
     hdtChanged(str);
 }
 
-HDTManager * HDTit::getManager()
+HDTController * HDTit::getManager()
 {
-    return hdtManager;
+    return hdtController;
 }
 
 void HDTit::on_actionSparql_triggered()
@@ -383,14 +383,14 @@ void HDTit::on_regexSearchButton_clicked()
 
 void HDTit::on_regexEdit_editingFinished()
 {
-    hdtManager->getRegexModel()->setQuery(ui->regexEdit->text());
+    hdtController->getRegexModel()->setQuery(ui->regexEdit->text());
     ui->regexResultsView->scrollToTop();
 }
 
 void HDTit::on_regexResultsView_doubleClicked(const QModelIndex &index)
 {
     if(index.column()==1) {
-        ui->objectPatternEdit->setText(hdtManager->getRegexModel()->data(index).toString());
+        ui->objectPatternEdit->setText(hdtController->getRegexModel()->data(index).toString());
         ui->resultTabs->setCurrentIndex(1);
     }
 }

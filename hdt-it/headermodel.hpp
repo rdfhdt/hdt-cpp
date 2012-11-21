@@ -5,14 +5,14 @@
 
 #include <SingleTriple.hpp>
 
-#include "hdtmanager.hpp"
+#include "hdtcontroller.hpp"
 
-class HDTManager;
+class HDTController;
 
 class HeaderModel : public QAbstractTableModel {
     Q_OBJECT
 private:
-    HDTManager *hdtManager;
+    HDTController *hdtController;
     hdt::IteratorTripleString *triples;
     hdt::TripleString *currentTriple;
     unsigned int currentIndex;
@@ -20,7 +20,7 @@ private:
     void findTriple(unsigned int index);
 
 public:
-    HeaderModel(HDTManager *view);
+    HeaderModel(HDTController *view);
     ~HeaderModel();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;

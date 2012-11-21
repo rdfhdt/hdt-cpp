@@ -8,7 +8,7 @@
 #include <QAbstractItemModel>
 #include <QDir>
 
-#include "hdtmanager.hpp"
+#include "hdtcontroller.hpp"
 
 namespace Ui {
     class HDTit;
@@ -20,7 +20,7 @@ class HDTit : public QMainWindow
 
 private:
     Ui::HDTit *ui;
-    HDTManager *hdtManager;
+    HDTController *hdtController;
     QString lastDir;
     QModelIndex lastContextMenuCell;
     QTableView *lastContextMenuTable;
@@ -34,7 +34,7 @@ public:
     void openHDTFile(QString &file);
     void importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
 
-    HDTManager *getManager();
+    HDTController *getManager();
 private slots:
     void on_actionOpenHDT_triggered();
     void on_actionImportRDF_triggered();

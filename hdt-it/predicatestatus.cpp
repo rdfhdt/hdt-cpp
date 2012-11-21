@@ -1,7 +1,7 @@
 #include "predicatestatus.hpp"
 
-PredicateStatus::PredicateStatus(HDTManager *manager) :
-    manager(manager), minPredicateCount(0), maxPredicateCount(0)
+PredicateStatus::PredicateStatus(HDTController *manager) :
+    controller(manager), minPredicateCount(0), maxPredicateCount(0)
 {
 }
 
@@ -32,9 +32,9 @@ void PredicateStatus::setPredicateActive(int i, bool b)
 void PredicateStatus::refreshAll()
 {
     activePredicate.clear();
-    if(manager->hasHDT()) {
-        activePredicate.resize(manager->getHDT()->getDictionary()->getNpredicates(), true);
-	this->maxPredicateCount = manager->getHDTCachedInfo()->getMaxPredicateCount();
+    if(controller->hasHDT()) {
+        activePredicate.resize(controller->getHDT()->getDictionary()->getNpredicates(), true);
+	this->maxPredicateCount = controller->getHDTCachedInfo()->getMaxPredicateCount();
         setMinimumPredicateCountInternal(0);
     }
 }
@@ -89,7 +89,7 @@ void PredicateStatus::setMinimumPredicateCount(int count)
     if(count!=minPredicateCount) {
         minPredicateCount = count;
         for(unsigned int i=0;i<activePredicate.size();i++) {
-	    activePredicate[i] = manager->getHDTCachedInfo()->getPredicateUsages(i)>=(unsigned int)count;
+	    activePredicate[i] = controller->getHDTCachedInfo()->getPredicateUsages(i)>=(unsigned int)count;
         }
         emit predicatesChanged(0, activePredicate.size());
         emit minimumPredicateCountChanged(count);

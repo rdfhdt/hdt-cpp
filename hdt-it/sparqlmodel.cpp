@@ -5,8 +5,8 @@
 
 #include <QFont>
 
-SparqlModel::SparqlModel(HDTManager *manager) :
-    hdtManager(manager),
+SparqlModel::SparqlModel(HDTController *controller) :
+    hdtController(controller),
     binding(NULL),
     currentIndex(0),
     numresults(0)

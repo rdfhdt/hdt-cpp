@@ -5,19 +5,19 @@
 
 #include <SingleTriple.hpp>
 
-#include "hdtmanager.hpp"
+#include "hdtcontroller.hpp"
 
 class SparqlModel : public QAbstractTableModel {
    Q_OBJECT
 private:
-   HDTManager *hdtManager;
+   HDTController *hdtController;
 
    hdt::VarBindingString *binding;
    unsigned int currentIndex;
    unsigned int numresults;
    void find(unsigned int index);
 public:
-   SparqlModel(HDTManager *manager);
+   SparqlModel(HDTController *controller);
    virtual ~SparqlModel();
 
    void setQuery(QString query);

@@ -3,21 +3,21 @@
 
 #include <QAbstractTableModel>
 
-#include "hdtmanager.hpp"
+#include "hdtcontroller.hpp"
 
-class HDTManager;
+class HDTController;
 
 class RegexModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 private:
-    HDTManager *hdtManager;
+    HDTController *hdtController;
     uint32_t numResults;
     uint32_t *results;
 
 public:
-    explicit RegexModel(HDTManager *manager);
+    explicit RegexModel(HDTController *manager);
     ~RegexModel();
 
     void setQuery(QString query);

@@ -2,7 +2,7 @@
 #define PREDICATESTATUS_HPP
 
 #include <QObject>
-#include "hdtmanager.hpp"
+#include "hdtcontroller.hpp"
 
 class PredicateStatus : public QObject
 {
@@ -11,11 +11,11 @@ private:
     vector<bool> activePredicate;
     int minPredicateCount;
     int maxPredicateCount;
-    HDTManager *manager;
+    HDTController *controller;
 
     void setMinimumPredicateCountInternal(int count);
 public:
-    explicit PredicateStatus(HDTManager *manager);
+    explicit PredicateStatus(HDTController *controller);
 
     unsigned int getMinimumPredicateCount();
     unsigned int getMaximumPredicateCount();

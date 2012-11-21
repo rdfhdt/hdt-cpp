@@ -3,17 +3,17 @@
 
 #include <QObject>
 
-#include <hdtmanager.hpp>
+#include <hdtcontroller.hpp>
 
 class ResultCounter : public QObject
 {
     Q_OBJECT
 private:
-    HDTManager *manager;
+    HDTController *hdtController;
     hdt::IteratorTripleID *iterator;
     bool shouldCancel;
 public:
-    explicit ResultCounter(QObject *parent, HDTManager *manager);
+    explicit ResultCounter(QObject *parent, HDTController *hdtController);
 
     void run();
 signals:
