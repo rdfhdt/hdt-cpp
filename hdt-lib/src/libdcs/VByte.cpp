@@ -64,7 +64,7 @@ namespace csd
 		while ( !(buffer[i] & 0x80) )
 		{
 		   	if(shift>50) {
-		   		throw "VByte Read too many bytes and still did not find a terminating byte";
+		   		cerr << "VByte.decode(uint64_t) Read too many bytes and still did not find a terminating byte" << endl;
 		   	}
 
 			*value |= (size_t)(buffer[i] & 127) << shift;
@@ -89,8 +89,8 @@ namespace csd
 
 		while ( !(buffer[i] & 0x80) )
 		{
-            if(shift>50) {
-		   		throw "VByte Read too many bytes and still did not find a terminating byte";
+			if(shift>50) {
+		   		cerr << "VByte.decode(uint32_t) Read too many bytes and still did not find a terminating byte" << endl;
 		   	}
 
 			*value |= (buffer[i] & 127) << shift;
@@ -121,7 +121,7 @@ namespace csd
 
 	    while( (readbyte & 0x80)==0) {
 	    	if(shift>50) {
-	    		throw "VByte Read too many bytes and still did not find a terminating byte";
+	    		throw "VByte.istream() Read too many bytes and still did not find a terminating byte";
 	    	}
 		    out |= (readbyte & 127) << shift;
 		    readbyte = in.get(); if(!in.good()) throw "Error reading input";
