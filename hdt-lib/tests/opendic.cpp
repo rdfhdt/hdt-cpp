@@ -6,7 +6,6 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
@@ -16,7 +15,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "../src/dictionary/PFCDictionary.hpp"
+#include "../src/dictionary/FourSectionDictionary.hpp"
 
 #include "../src/util/StopWatch.hpp"
 
@@ -72,7 +71,7 @@ int main(int argc, char **argv) {
 		// CONVERT
 		ConvertProgress progress;
 		ControlInformation ci;
-		PFCDictionary dict;
+		FourSectionDictionary dict;
 
 		ifstream in(inputFile.c_str(), ios::binary);
 

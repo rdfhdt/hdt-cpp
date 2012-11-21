@@ -149,8 +149,12 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 }
 
 void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	ProgressListener *listener) {
-	this->mapping = ci.getUint("$mapping");
-	this->sizeStrings = ci.getUint("$sizeStrings");
+	std::string format = ci.getFormat();
+	if(format!=getType()) {
+		throw "Trying to read a LiteralDictionary but the data is not LiteralDictionary";
+	}
+	this->mapping = ci.getUint("mapping");
+	this->sizeStrings = ci.getUint("sizeStrings");
 
 	IntermediateListener iListener(listener);
 
@@ -425,23 +429,10 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32
 }
 
 void LiteralDictionary::save(std::ostream & output,	ControlInformation & controlInformation, ProgressListener *listener) {
-	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_LITERAL);
-	controlInformation.set("format", "text/plain");
-	controlInformation.setUint("$elements", getNumberOfElements());
+	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_LITERAL);
 
-	controlInformation.setUint("$subjects", getNsubjects());
-	controlInformation.setUint("$objects", getNobjects());
-	controlInformation.setUint("$predicates", getNpredicates());
-	controlInformation.setUint("$sharedso", getNshared());
-
-	controlInformation.setUint("$maxid", getMaxID());
-	controlInformation.setUint("$maxsubjectid", getMaxSubjectID());
-	controlInformation.setUint("$maxpredicateid", getMaxPredicateID());
-	controlInformation.setUint("$maxobjectid", getMaxObjectID());
-
-	controlInformation.setUint("$mapping", this->mapping);
-	controlInformation.setUint("$sizeStrings", this->sizeStrings);
-	controlInformation.setUint("$blockSize", this->blocksize);
+	controlInformation.setUint("mapping", this->mapping);
+	controlInformation.setUint("sizeStrings", this->sizeStrings);
 
 	controlInformation.save(output);
 
@@ -449,30 +440,23 @@ void LiteralDictionary::save(std::ostream & output,	ControlInformation & control
 
 	iListener.setRange(0, 10);
 	iListener.notifyProgress(0, "Dictionary save shared area.");
-	//cout << "Save shared " << out->tellp() << endl;
 	shared->save(output);
 
 	iListener.setRange(10, 45);
 	iListener.notifyProgress(0, "Dictionary save subjects.");
-	//cout << "Save subjects " << out->tellp() << endl;
 	subjects->save(output);
 
 	iListener.setRange(45, 60);
 	iListener.notifyProgress(0, "Dictionary save predicates.");
-	//cout << "Save predicates " << out->tellp() << endl;
 	predicates->save(output);
 
 	iListener.setRange(60, 80);
 	iListener.notifyProgress(0, "Dictionary save literal objects.");
-	//cout << "Save objects " << out->tellp() << endl;
 	objectsLiterals->save(output);
 
 	iListener.setRange(80, 100);
     iListener.notifyProgress(0, "Dictionary save non literal objects.");
-    //cout << "Save objects " << out->tellp() << endl;
     objectsNotLiterals->save(output);
-
-	//cout << "Dictionary saved " << out->tellp() << endl;
 }
 
 void LiteralDictionary::populateHeader(Header & header, string rootNode) {

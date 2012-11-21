@@ -12,8 +12,9 @@
 #include <HDT.hpp>
 
 #include <HDTVocabulary.hpp>
-#include <HDTFactory.hpp>
 #include <RDFParser.hpp>
+
+#include "HDTFactory.hpp"
 
 #include "../util/StopWatch.hpp"
 

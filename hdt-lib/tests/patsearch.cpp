@@ -1,6 +1,6 @@
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 #include <signal.h>
 
 #include <getopt.h>
@@ -66,10 +66,9 @@ int main(int argc, char **argv) {
 
 	inputFile = argv[optind];
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
 
 	try {
-		hdt->loadFromHDT(inputFile.c_str());
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
 
 		char line[1024*10];
 

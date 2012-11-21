@@ -124,7 +124,7 @@ size_t LogSequence::size()
 
 std::string LogSequence::getType()
 {
-	return HDTVocabulary::SEQ_TYPE_LOG;
+	return HDTVocabulary::SEQ_TYPE_LOG2;
 }
 
 }

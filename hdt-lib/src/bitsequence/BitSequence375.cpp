@@ -24,10 +24,6 @@
 #include <cmath>
 #include <string.h>
 
-#ifndef WIN32
-#include <sys/mman.h> // For fadvise
-#endif
-
 #include "BitSequence375.h"
 
 #include "../util/bitutil.h"
@@ -162,13 +158,13 @@ void BitSequence375::set(const size_t i, bool val) {
 		bitclean(&array[0], i);
 	}
 
-	numbits = numbits > i ? numbits : i;
+	numbits = i>=numbits ? i+1 : numbits;
 	indexReady = false;
 }
 
 void BitSequence375::append(bool bit) {
+	// numbits automatically increased when doing the set out of range.
 	this->set(numbits, bit);
-	numbits++;
 }
 
 bool BitSequence375::access(const size_t i) const
@@ -183,7 +179,7 @@ void BitSequence375::save(ostream & out) const
 	unsigned char arr[9];
 
 	// Write type
-	unsigned char type=1;
+	unsigned char type=TYPE_BITMAP_PLAIN;
 	crch.writeData(out, &type, sizeof(type));
 
 	// Write NumBits
@@ -204,7 +200,7 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
 	size_t count=0;
 
     // Check type
-    if(ptr[count++]!=1) {
+    if(ptr[count++]!=TYPE_BITMAP_PLAIN) {
         throw "Trying to read a BitSequence375 but the type does not match";
     }
 
@@ -225,9 +221,6 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
         throw "BitSequence375 tries to read beyond the end of the file";
     }
 
-#ifndef WIN32
-    madvise((void*)&ptr[count], sizeBytes, MADV_WILLNEED); // Make sure that bitmaps are kept in memory
-#endif
     array = (uint32_t *) &ptr[count];
 	isMapped = true;
 	count += sizeBytes;
@@ -250,8 +243,8 @@ BitSequence375 * BitSequence375::load(istream & in)
 	// Read Type
 	unsigned char type;
 	in.read((char*)&type, sizeof(type));
-	if(type!=1) {    // throw exception
-        throw "Trying to read a BitSequence375 but the type does not match";
+	if(type!=TYPE_BITMAP_PLAIN) {    // throw exception
+        throw "Trying to read a BitmapPlain but the type does not match";
 	}
 	crch.update(&type, sizeof(type));
 

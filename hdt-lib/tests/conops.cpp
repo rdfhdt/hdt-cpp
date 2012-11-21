@@ -6,7 +6,8 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
+#include <HDTVocabulary.hpp>
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
@@ -69,13 +70,12 @@ int main(int argc, char **argv) {
 	inputFile = argv[optind];
 	outputFile = argv[optind+1];
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
 	ConvertProgress progress;
 	StopWatch st;
 
 	try {
 		// LOAD
-		hdt->loadFromHDT(inputFile.c_str());
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
 
 		// CONVERT triples to TripleList
 		TriplesList tlist;
@@ -116,19 +116,24 @@ int main(int argc, char **argv) {
 		ofstream out(outputFile.c_str(), ios::binary | ios::out);
 		ControlInformation ci;
 
+		ci.clear();
+		ci.setType(GLOBAL);
+		ci.setFormat(HDTVocabulary::HDT_CONTAINER);
+		ci.save(out);
+
 		// HEADER
 		ci.clear();
-		ci.setHeader(true);
+		ci.setType(HEADER);
 		hdt->getHeader()->save(out, ci, NULL);
 
 		// DICTIONARY
 		ci.clear();
-		ci.setDictionary(true);
+		ci.setType(DICTIONARY);
 		hdt->getDictionary()->save(out, ci, NULL);
 
 		// NEW TRIPLES
 		ci.clear();
-		ci.setTriples(true);
+		ci.setType(TRIPLES);
 		bt.save(out, ci, NULL);
 
 		out.close();

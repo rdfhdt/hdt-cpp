@@ -27,7 +27,8 @@
 
 #include <HDT.hpp>
 #include <HDTVocabulary.hpp>
-#include <HDTFactory.hpp>
+
+#include "HDTFactory.hpp"
 
 #include "BasicHDT.hpp"
 #include "BasicModifiableHDT.hpp"
@@ -35,7 +36,7 @@
 #include "../header/PlainHeader.hpp"
 
 #include "../dictionary/PlainDictionary.hpp"
-#include "../dictionary/PFCDictionary.hpp"
+#include "../dictionary/FourSectionDictionary.hpp"
 #include "../dictionary/LiteralDictionary.hpp"
 
 #include "../triples/TriplesList.hpp"
@@ -64,18 +65,6 @@ HDT *HDTFactory::createHDT(HDTSpecification &spec)
 	return h;
 }
 
-HDT *HDTFactory::mapHDT(const char *file, ProgressListener *listener) {
-    BasicHDT *h = new BasicHDT();
-    h->mapHDT(file, listener);
-	return h;
-}
-
-HDT *HDTFactory::readHDT(const char *file, ProgressListener *listener) {
-	BasicHDT *h = new BasicHDT();
-    h->loadFromHDT(file, listener);
-	return h;
-}
-
 ModifiableHDT *HDTFactory::createDefaultModifiableHDT()
 {
 	BasicModifiableHDT *h = new BasicModifiableHDT();
@@ -89,10 +78,7 @@ ModifiableHDT *HDTFactory::createModifiableHDT(HDTSpecification &spec)
 }
 
 Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
-	if(!controlInformation.getTriples())
-		throw "Trying to get Triples from Non-Triples section";
-
-	std::string triplesType = controlInformation.get("codification");
+	std::string triplesType = controlInformation.getFormat();
 
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		return new BitmapTriples();
@@ -112,15 +98,12 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 }
 
 Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
-	if(!controlInformation.getDictionary())
-		throw "Trying to get Dictionary from Non-Dictionary section";
-
-	string type = controlInformation.get("codification");
+	std::string type = controlInformation.getFormat();
 
 	if(type==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		return new PlainDictionary();
-	} else if(type==HDTVocabulary::DICTIONARY_TYPE_PFC) {
-		return new PFCDictionary();
+	} else if(type==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
+		return new FourSectionDictionary();
 	} else if(type==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
 		return new LiteralDictionary();
 	}
@@ -129,16 +112,10 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 }
 
 Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
-	if(!controlInformation.getHeader())
+    if(controlInformation.getType()!=HEADER)
 		throw "Trying to get Header from Non-Header section";
 
-	string type = controlInformation.get("codification");
-
-	if(type==HDTVocabulary::HEADER_PLAIN) {
-		return new PlainHeader();
-	}
-
-	throw "Header Implementation not available";
+	return new PlainHeader();
 }
 
 

@@ -186,7 +186,10 @@ void TripleListDisk::load(ModifiableTriples & input, ProgressListener *listener)
 void TripleListDisk::load(std::istream & input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	// FIXME: Read controlInformation
-
+	std::string format = controlInformation.getFormat();
+	if(format!=getType()) {
+		throw "Trying to read a FourSectionDictionary but the data is not FourSectionDictionary";
+	}
 	this->ensureSize(numTotalTriples);
 
 	unsigned int numRead=0;
@@ -205,9 +208,8 @@ size_t TripleListDisk::load(unsigned char *ptr, unsigned char *ptrMax, ProgressL
 
 void TripleListDisk::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
-	cout << "Saving triples: " << numValidTriples << endl;
-
-	//FIXME: Fill controlInformation
+	controlInformation.setFormat(getType());
+	controlInformation.save(output);
 
 	for(unsigned int i=0; i<numTotalTriples; i++) {
 		TripleID *tid = getTripleID(i);

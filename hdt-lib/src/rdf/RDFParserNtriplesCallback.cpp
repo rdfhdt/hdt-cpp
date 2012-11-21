@@ -41,7 +41,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 	std::string pipeCommand;
 
 #ifdef WIN32
-	if( suffix == ".gz") {
+	if( suffix == "gz") {
 		#ifdef USE_LIBZ
 			in = new igzstream(fileName);
 		#else
@@ -49,7 +49,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 		#endif
 	}
 #else
-	if( suffix == ".gz") {
+	if( suffix == "gz") {
 		pipeCommand = "gunzip -c ";
 	} else if(suffix=="bz2") {
 		pipeCommand = "bunzip2 -c ";

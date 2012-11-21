@@ -153,8 +153,8 @@ void CompactTriples::populateHeader(Header &header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_COMPACT);
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQY_TYPE, streamY->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQZ_TYPE, streamZ->getType() );
 }
 
 IteratorTripleID *CompactTriples::search(TripleID & pattern)
@@ -174,10 +174,8 @@ void CompactTriples::save(std::ostream & output, ControlInformation &controlInfo
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("codification", HDTVocabulary::TRIPLES_TYPE_COMPACT);
-	controlInformation.setUint("triples.component.order", order);
-	controlInformation.set("stream.y", streamY->getType());
-	controlInformation.set("stream.z", streamZ->getType());
+	controlInformation.setFormat(HDTVocabulary::TRIPLES_TYPE_COMPACT);
+	controlInformation.setUint("order", order);
 	controlInformation.save(output);
 
 	IntermediateListener iListener(listener);
@@ -193,30 +191,26 @@ void CompactTriples::save(std::ostream & output, ControlInformation &controlInfo
 
 void CompactTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
 {
-	std::string codification = controlInformation.get("codification");
-	if(codification != HDTVocabulary::TRIPLES_TYPE_COMPACT) {
-		throw "Unexpected CompactTriples format";
+	std::string format = controlInformation.getFormat();
+	if(format != HDTVocabulary::TRIPLES_TYPE_COMPACT) {
+		throw "Trying to read CompactTriples but data is not CompactTriples";
 	}
 
 	numTriples = controlInformation.getUint("numTriples");
-	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
-
-	std::string typeY = controlInformation.get("stream.y");
-	std::string typeZ = controlInformation.get("stream.z");
-
-	delete streamY;
-	delete streamZ;
-	streamY = IntSequence::getArray(typeY);
-	streamZ = IntSequence::getArray(typeZ);
+	order = (TripleComponentOrder) controlInformation.getUint("order");
 
 	IntermediateListener iListener(listener);
 
 	iListener.setRange(0,30);
 	iListener.notifyProgress(0, "CompactTriples loading Stream Y");
+	delete streamY;
+	streamY = IntSequence::getArray(input);
 	streamY->load(input);
 
 	iListener.setRange(30,100);
 	iListener.notifyProgress(0, "CompactTriples saving Stream Y");
+	delete streamZ;
+	streamZ = IntSequence::getArray(input);
     streamZ->load(input);
 }
 

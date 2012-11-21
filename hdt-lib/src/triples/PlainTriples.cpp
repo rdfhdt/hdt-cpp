@@ -95,9 +95,9 @@ void PlainTriples::populateHeader(Header &header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_PLAIN);
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMX_TYPE, streamX->getType() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, streamY->getType() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, streamZ->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQX_TYPE, streamX->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQY_TYPE, streamY->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQZ_TYPE, streamZ->getType() );
 }
 
 IteratorTripleID *PlainTriples::search(TripleID & pattern)
@@ -117,11 +117,8 @@ void PlainTriples::save(std::ostream & output, ControlInformation &controlInform
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("codification", HDTVocabulary::TRIPLES_TYPE_PLAIN);
-	controlInformation.setUint("triples.component.order", order);
-	controlInformation.set("stream.x", streamX->getType());
-	controlInformation.set("stream.y", streamY->getType());
-	controlInformation.set("stream.z", streamZ->getType());
+	controlInformation.setFormat(HDTVocabulary::TRIPLES_TYPE_PLAIN);
+	controlInformation.setUint("order", order);
 	controlInformation.save(output);
 
 	IntermediateListener iListener(listener);
@@ -141,33 +138,32 @@ void PlainTriples::save(std::ostream & output, ControlInformation &controlInform
 
 void PlainTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
 {
+	std::string format = controlInformation.getFormat();
+	if(format!=getType()) {
+		throw "Trying to read PlainTriples but the data is not PlainTriples";
+	}
+
 	unsigned int numTriples = controlInformation.getUint("numTriples");
-	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
-
-	std::string typeSubjects = controlInformation.get("stream.x");
-	std::string typePredicates = controlInformation.get("stream.y");
-	std::string typeObjects = controlInformation.get("stream.z");
-
-	delete streamX;
-	delete streamY;
-	delete streamZ;
-
-	streamX = IntSequence::getArray(typeSubjects);
-	streamY = IntSequence::getArray(typePredicates);
-	streamZ = IntSequence::getArray(typeObjects);
+	order = (TripleComponentOrder) controlInformation.getUint("order");
 
 	IntermediateListener iListener(listener);
 
 	iListener.setRange(0,33);
 	iListener.notifyProgress(0, "PlainTriples loading subjects");
+	delete streamX;
+	streamX = IntSequence::getArray(input);
 	streamX->load(input);
 
 	iListener.setRange(33, 66);
 	iListener.notifyProgress(0, "PlainTriples loading predicates");
+	delete streamY;
+	streamY = IntSequence::getArray(input);
 	streamY->load(input);
 
 	iListener.setRange(66, 100);
 	iListener.notifyProgress(0, "PlainTriples loading objects");
+	delete streamZ;
+	streamZ = IntSequence::getArray(input);
     streamZ->load(input);
 }
 

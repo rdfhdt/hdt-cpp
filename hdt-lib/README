@@ -36,6 +36,7 @@ The distribution provides two components:
 - C++ library itself: Provides an API to use HDT files programmatically. It allows creating HDT files from RDF and converting HDT files back to RDF. It also provides a Search interface to find triples that match a specific triple pattern.
 - Command line tools: Allow to convert between RDF and HDT, and also perform searches against HDT files.
 
+
 Compiling
 =================
 Dependencies: 
@@ -45,7 +46,14 @@ Dependencies:
 	*(Optional) Kyoto Cabinet. Allows to convert very big RDF files on machines with limited amount of main memory.
 	*(Optional) Libz. Allows to load files in ntriples compressed with GZIP (i.e. file.nt.gz)
 
-Compile: Run `make` to launch the compile process.
+Edit Makefile uncommenting these lines to include compile support for the optional libraries:
+#RAPTOR_SUPPORT=true
+#KYOTO_SUPPORT=true
+#LIBZ_SUPPORT=true
+
+Compile:
+	Run `make` under hdt-lib to compile the library and tools.
+
 
 Command line tools
 =================
@@ -58,7 +66,7 @@ $ rdf2hdt [options] <RDF input file> <HDT output file>
 	-h			This help
 	-i		Also generate index to solve all triple patterns.
 	-c	<configfile>	HDT Config options file
-	-o	<options>	HDT Additional options (option1:value1;option2:value2;...)
+	-o	<options>	HDT Additional options (option1=value1;option2=value2;...)
 	-f	<format>	Format of the RDF input (ntriples, nquad, n3, turtle, rdfxml)
 	-B	"<base URI>"	Base URI of the dataset.
 
@@ -79,6 +87,11 @@ $ hdtSearch [options] <hdtfile>
 
 >> ? ? ?
 ............. // List of all triples
+
+
+** The tool hdtInfo extracts the header from an HDT file.
+
+$ hdtInfo <hdtFile>
 
 
 Usage example
@@ -117,6 +130,8 @@ $ tools/hdtSearch data/test.hdt
 # You can also dump the results of a query to a file
 $ tools/hdtSearch -q "? <http://example.org/predicate1> ?" data/test.hdt > output.txt
 
+# To browse the header of an HDT file:
+$ tools/hdtInfo data/test.hdt
 
 USING THE LIBRARY
 =================
@@ -125,19 +140,18 @@ This section shows how to use the HDT Library programmatically from C++ in your 
 
 // Creating an HDT file.
 
-#include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 using namespace hdt;
 
 int main() {
-	HDT *hdt = HDTFactory::createDefaultHDT();
 
-	// Read RDF
-	ifstream in("data/test.nt");
-	hdt->loadFromRDF(in, NTRIPLES);
+	HDTSpecification spec;
+	
+	// Read RDF into an HDT file.
+ 	HDT *hdt = HDTManager::generateHDT("data/test.nt", "http://example.org/test", NTRIPLES, spec);
 
-	// Save HDT
+	// Save HDT to a file
 	hdt->saveToHDT("data/test.hdt");
 
 	delete hdt;
@@ -147,27 +161,33 @@ int main() {
 // Load an HDT file and query.
 
 #include <iostream>
-#include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 using namespace std;
 using namespace hdt;
 
 int main() {
 
-	HDT *hdt = HDTFactory::createHDT();
+	// Load HDT file
+	HDT *hdt = HDTManager::mapHDT("data/test.hdt");
 
-	// Read RDF
-	hdt->loadFromHDT("data/test.hdt");
-
-	// Search pattern ("" means any)
+	// Enumerate all triples matching a pattern ("" means any)
 	IteratorTripleString *iterator = hdt->search("<http://example.org/uri3>","","");
-
 	while(it->hasNext()){
 		TripleString triple = it->next();
 		cout << "Result: " << triple.getSubject() << ", " << triple.getPredicate() << ", " << triple.getObject() << endl;
 	}
-
 	delete iterator;
+	
+	// Enumerate all different predicates
+	cout << "Dataset contains " << hdt->getDictionary()->getNpredicates() << " predicates.";
+	IteratorUCharString *itPred = hdt->getDictionary()->getPredicates();
+	while(itPred->hasNext()) {
+		uchar *str = itPred->next(); // Warning this pointer is only valid until next call to next();
+		cout << str << endl;
+		itPred->freeStr(str);
+	}
+	delete itPred;
+	
 	delete hdt;
 }

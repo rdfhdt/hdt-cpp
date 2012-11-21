@@ -6,7 +6,7 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 #include <getopt.h>
 #include <string>
@@ -66,15 +66,9 @@ int main(int argc, char **argv) {
 
 	inputFile = argv[optind];
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
 
 	try {
-		ifstream in(inputFile.c_str(), ios::in | ios::binary);
-		if(!in.good()){
-			throw "Could not open input file.";
-		}
-		hdt->loadFromHDT(in);
-		in.close();
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
 
 		TripleID pat(0,1,0);
 #if 0

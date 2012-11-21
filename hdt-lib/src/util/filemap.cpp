@@ -115,6 +115,10 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
 		perror("Error on mmap");
 		throw "Error trying to mmap HDT file";
 	}
+
+	// Mark as needed so the OS keeps as much as possible in memory
+    madvise((void*)ptr, mappedSize, MADV_WILLNEED);
+
 #endif
 }
 

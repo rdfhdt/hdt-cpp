@@ -31,7 +31,8 @@
 
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+
+#include "../src/hdt/HDTFactory.hpp"
 
 #include "../src/rdf/RDFSerializerN3.hpp"
 
@@ -84,8 +85,12 @@ int main(int argc, char **argv) {
 			throw "Could not open input file.";
 		}
 
-		// Load header
 		ControlInformation controlInformation;
+
+		// Load Global Control Information
+		controlInformation.load(in);
+
+		// Load header
 		controlInformation.load(in);
 		Header *header = HDTFactory::readHeader(controlInformation);
 		header->load(in, controlInformation);

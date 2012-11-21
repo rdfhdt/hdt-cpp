@@ -41,7 +41,7 @@ namespace hdt {
 
 IntSequence *IntSequence::getArray(std::string type)
 {
-	if(type==HDTVocabulary::SEQ_TYPE_INTEGER) {
+	if(type==HDTVocabulary::SEQ_TYPE_INT32) {
 		return new ArraySequence();
 	} else if(type==HDTVocabulary::SEQ_TYPE_LOG2) {
 		return new LogSequence2();
@@ -52,5 +52,26 @@ IntSequence *IntSequence::getArray(std::string type)
 	}
 	return new LogSequence2();
 }
+
+IntSequence *IntSequence::getArray(unsigned char type)
+{
+	if(type==SEQ_TYPE_INT32) {
+		return new ArraySequence();
+	} else if(type==SEQ_TYPE_LOG) {
+		return new LogSequence2();
+	} else if(type==SEQ_TYPE_HUFFMAN) {
+		return new HuffmanSequence();
+	} else if(type==SEQ_TYPE_WAVELET) {
+		return new WaveletSequence();
+	}
+	return new LogSequence2();
+}
+
+
+IntSequence *IntSequence::getArray(std::istream &input)
+{
+	return getArray((unsigned char)input.peek());
+}
+
 
 }

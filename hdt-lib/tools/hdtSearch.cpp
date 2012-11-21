@@ -30,7 +30,7 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 #include <signal.h>
 
 #include <getopt.h>
@@ -140,9 +140,7 @@ int main(int argc, char **argv) {
 
 
 	try {
-		HDT *hdt = HDTFactory::mapHDT(inputFile.c_str());
-
-		hdt->loadOrCreateIndex();
+		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str());
 
 		ostream *out;
 		ofstream outF;

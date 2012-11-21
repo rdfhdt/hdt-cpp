@@ -6,7 +6,7 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 #include <getopt.h>
 #include <string>
@@ -71,13 +71,8 @@ int main(int argc, char **argv) {
 	inputFile = argv[optind];
 	outputFile = argv[optind+1];
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
-
 	try {
-		hdt->loadFromHDT(inputFile.c_str());
-
-		hdt->loadOrCreateIndex();
-
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
 		hdt->saveToHDT(outputFile.c_str());
 
 		cout << "IN: " << inputFile << " Out: " << outputFile << endl;

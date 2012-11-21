@@ -30,7 +30,7 @@
  */
 
 #include <HDTVocabulary.hpp>
-#include <HDTFactory.hpp>
+
 #include "../rdf/RDFParserNtriples.hpp"
 #include "../libdcs/VByte.h"
 
@@ -49,14 +49,14 @@ PlainHeader::~PlainHeader() {
 
 void PlainHeader::load(std::istream & input, ControlInformation &controlInformation, ProgressListener *listener)
 {
-	std::string codification = controlInformation.get("codification");
-	if(codification != HDTVocabulary::HEADER_PLAIN) {
-		throw "Unexpected PlainHeader format";
+	std::string format = controlInformation.getFormat();
+	uint32_t headerSize = controlInformation.getUint("length");
+
+	// FIXME: Use format to create custom parser.
+	if(format!=HDTVocabulary::HEADER_NTRIPLES) {
+		throw "This Header format is not supported";
 	}
-
-	// Read Size
-	uint64_t headerSize = csd::VByte::decode(input);
-
+	
 	// Read all header into a string
 	string str(headerSize,'\0');
 	input.read(&str[0], headerSize);
@@ -69,7 +69,7 @@ void PlainHeader::load(std::istream & input, ControlInformation &controlInformat
     triples.clear();
 
 	// Parse header
-	RDFParserNtriples parser(strstream, N3);
+	RDFParserNtriples parser(strstream, NTRIPLES);
 	while(parser.hasNext()) {
 		TripleString *ts = parser.next();
 		triples.push_back(*ts);
@@ -80,8 +80,17 @@ size_t PlainHeader::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 {
     size_t count = 0;
 
-    uint64_t headerSize;
-    count += csd::VByte::decode(&ptr[count], &headerSize);
+    // Read ControlInformation
+    ControlInformation controlInformation;
+    count += controlInformation.load(&ptr[count], ptrMax);
+
+	std::string format = controlInformation.getFormat();
+	uint32_t headerSize = controlInformation.getUint("length");
+
+	// FIXME: Use format to create custom parser.
+	if(format!=HDTVocabulary::HEADER_NTRIPLES) {
+		throw "This Header format is not supported";
+	}
 
     string str(&ptr[count], &ptr[count+headerSize]);
 
@@ -90,7 +99,7 @@ size_t PlainHeader::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
     triples.clear();
 
     // Parse header
-    RDFParserNtriples parser(strstream, N3);
+    RDFParserNtriples parser(strstream, NTRIPLES);
     while(parser.hasNext()) {
         TripleString *ts = parser.next();
         triples.push_back(*ts);
@@ -103,9 +112,6 @@ size_t PlainHeader::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 
 void PlainHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
-	controlInformation.set("codification", HDTVocabulary::HEADER_PLAIN);
-	controlInformation.save(output);
-
 	// Dump header into a stringbuffer to know size.
 	stringstream strbuf(stringstream::out);
 	for(vector<TripleString>::iterator it = triples.begin(); it!=triples.end(); it++){
@@ -113,8 +119,12 @@ void PlainHeader::save(std::ostream & output, ControlInformation &controlInforma
 	}
 	string str = strbuf.str();
 
-	// Dump length	 & buffer
-	csd::VByte::encode(output, str.length());
+	// Dump header
+	controlInformation.setFormat(HDTVocabulary::HEADER_NTRIPLES);
+	controlInformation.setUint("length", str.length());
+	controlInformation.save(output);
+
+	// Dump data
 	output << str;
 }
 

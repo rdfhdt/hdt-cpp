@@ -39,6 +39,15 @@
 
 namespace hdt {
 
+enum SequenceType {
+	SEQ_TYPE_LOG=1,
+	SEQ_TYPE_INT32,
+	SEQ_TYPE_INT64,
+	SEQ_TYPE_HUFFMAN,
+	SEQ_TYPE_WAVELET,
+	SEQ_TYPE_LOG2,
+};
+
 class IteratorUInt {
 public:
 	virtual ~IteratorUInt() { }
@@ -114,6 +123,10 @@ public:
 	virtual std::string getType()=0;
 
 	static IntSequence *getArray(std::string type);
+
+	static IntSequence *getArray(unsigned char type);
+
+	static IntSequence *getArray(std::istream &input);
 };
 
 // Iterator of a Stream

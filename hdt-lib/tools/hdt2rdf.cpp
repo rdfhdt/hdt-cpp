@@ -30,7 +30,7 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 #include <string>
 #include <getopt.h>
@@ -103,15 +103,8 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
-
 	try {
-		ifstream in(inputFile.c_str(), ios::in | ios::binary);
-		if(!in.good()){
-			throw "Could not open input file.";
-		}
-		hdt->loadFromHDT(in);
-		in.close();
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
 
 		if(outputFile!="-") {
 			RDFSerializer *serializer = RDFSerializer::getSerializer(outputFile.c_str(), notation);
@@ -122,13 +115,13 @@ int main(int argc, char **argv) {
 			hdt->saveToRDF(*serializer);
 			delete serializer;
 		}
+		delete hdt;
 	} catch (char *exception) {
 		cerr << "ERROR: " << exception << endl;
 	} catch (const char *e) {
 		cout << "ERROR: " << e << endl;
 	}
 
-	delete hdt;
 }
 
 

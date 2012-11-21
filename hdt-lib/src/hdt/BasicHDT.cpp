@@ -31,18 +31,18 @@
 #include <time.h>
 
 #include <HDTVocabulary.hpp>
-#include <HDTFactory.hpp>
 #include <RDFParser.hpp>
 
 #include "../util/StopWatch.hpp"
 #include "../util/fileUtil.hpp"
 
 #include "ControlInformation.hpp"
+#include "HDTFactory.hpp"
 #include "BasicHDT.hpp"
 #include "../header/PlainHeader.hpp"
 #include "../dictionary/PlainDictionary.hpp"
 #include "../dictionary/KyotoDictionary.hpp"
-#include "../dictionary/PFCDictionary.hpp"
+#include "../dictionary/FourSectionDictionary.hpp"
 #include "../dictionary/LiteralDictionary.hpp"
 
 #include "../triples/TriplesList.hpp"
@@ -90,14 +90,14 @@ void BasicHDT::createComponents() {
 
 	// DICTIONARY
 	std::string dictType = spec.get("dictionary.type");
-	if(dictType==HDTVocabulary::DICTIONARY_TYPE_PFC) {
-		dictionary = new PFCDictionary(spec);
+	if(dictType==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
+		dictionary = new FourSectionDictionary(spec);
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		dictionary = new PlainDictionary(spec);
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
 			dictionary = new LiteralDictionary(spec);
 	} else {
-		dictionary = new PFCDictionary(spec);
+		dictionary = new FourSectionDictionary(spec);
 	}
 
 	// TRIPLES
@@ -297,24 +297,37 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 }
 
 void BasicHDT::fillHeader(string& baseUri) {
-	header->insert(baseUri, HDTVocabulary::RDF_TYPE,
-			HDTVocabulary::HDT_DATASET);
+	// BASE
+	header->insert(baseUri, HDTVocabulary::RDF_TYPE, HDTVocabulary::HDT_DATASET);
+
+	// VOID
+	header->insert(baseUri, HDTVocabulary::RDF_TYPE, HDTVocabulary::VOID_DATASET);
+	header->insert(baseUri, HDTVocabulary::VOID_TRIPLES, triples->getNumberOfElements());
+	header->insert(baseUri, HDTVocabulary::VOID_PROPERTIES, dictionary->getNpredicates());
+	header->insert(baseUri, HDTVocabulary::VOID_DISTINCT_SUBJECTS, dictionary->getNsubjects());
+	header->insert(baseUri, HDTVocabulary::VOID_DISTINCT_OBJECTS, dictionary->getNobjects());
+
+	// TODO: Add more VOID Properties. E.g. void:classes
+
+	// Structure
 	string formatNode = "_:format";
-	header->insert(baseUri, HDTVocabulary::HDT_FORMAT_INFORMATION, formatNode);
 	string dictNode = "_:dictionary";
-	header->insert(formatNode, HDTVocabulary::HDT_DICTIONARY, dictNode);
 	string triplesNode = "_:triples";
-	header->insert(formatNode, HDTVocabulary::HDT_TRIPLES, triplesNode);
 	string statisticsNode = "_:statistics";
-	header->insert(baseUri, HDTVocabulary::HDT_STATISTICAL_INFORMATION,
-			statisticsNode);
 	string publicationInfoNode = "_:publicationInformation";
-	header->insert(baseUri, HDTVocabulary::HDT_PUBLICATION_INFORMATION,
-			publicationInfoNode);
+	header->insert(baseUri, HDTVocabulary::HDT_STATISTICAL_INFORMATION,	statisticsNode);
+	header->insert(baseUri, HDTVocabulary::HDT_PUBLICATION_INFORMATION,	publicationInfoNode);
+	header->insert(baseUri, HDTVocabulary::HDT_FORMAT_INFORMATION, formatNode);
+	header->insert(formatNode, HDTVocabulary::HDT_DICTIONARY, dictNode);
+	header->insert(formatNode, HDTVocabulary::HDT_TRIPLES, triplesNode);
+
+	// Dictionary
 	dictionary->populateHeader(*header, dictNode);
+
+	// Triples
 	triples->populateHeader(*header, triplesNode);
-	header->insert(statisticsNode, HDTVocabulary::HDT_SIZE,
-            getDictionary()->size() + getTriples()->size());
+
+	header->insert(statisticsNode, HDTVocabulary::HDT_SIZE, getDictionary()->size() + getTriples()->size());
 	// Current time
 	time_t now;
 	char date[40];
@@ -382,6 +395,13 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	ControlInformation controlInformation;
 	IntermediateListener iListener(listener);
 
+	// Load Global ControlInformation.
+	controlInformation.load(input);
+	std::string hdtFormat = controlInformation.getFormat();
+	if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
+		throw "This software cannot open this version of HDT File.";
+	}
+
 	// Load header
 	iListener.setRange(0,5);
 	controlInformation.load(input);
@@ -442,9 +462,16 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     ControlInformation controlInformation;
     IntermediateListener iListener(listener);
 
+    // Load Global ControlInformation
+    count+=controlInformation.load(&ptr[count], ptrMax);
+    std::string hdtFormat = controlInformation.getFormat();
+    if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
+    	throw "This software cannot open this version of HDT File.";
+    }
+
     // Load Header
     iListener.setRange(0,5);
-    count+=controlInformation.load(&ptr[count], ptrMax);
+    controlInformation.load(&ptr[count], ptrMax);
     delete header;
     header = HDTFactory::readHeader(controlInformation);
     count+= header->load(&ptr[count], ptrMax, &iListener);
@@ -482,7 +509,7 @@ size_t BasicHDT::loadMMapIndex(ProgressListener *listener) {
     size_t mappedSize = mappedIndex->getMappedSize();
 
     // Load index
-    triples->loadIndex(ptr, ptr+mappedSize, listener);
+    return triples->loadIndex(ptr, ptr+mappedSize, listener);
 }
 
 void BasicHDT::saveToHDT(const char *fileName, ProgressListener *listener)
@@ -510,17 +537,22 @@ void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 	IntermediateListener iListener(listener);
 
 	controlInformation.clear();
-	controlInformation.setHeader(true);
+	controlInformation.setType(GLOBAL);
+	controlInformation.setFormat(HDTVocabulary::HDT_CONTAINER);
+	controlInformation.save(output);
+
+	controlInformation.clear();
+    controlInformation.setType(HEADER);
 	iListener.setRange(0,5);
 	header->save(output, controlInformation, &iListener);
 
 	controlInformation.clear();
-	controlInformation.setDictionary(true);
+    controlInformation.setType(DICTIONARY);
 	iListener.setRange(5,70);
 	dictionary->save(output, controlInformation, &iListener);
 
 	controlInformation.clear();
-	controlInformation.setTriples(true);
+    controlInformation.setType(TRIPLES);
 	iListener.setRange(70,100);
 	triples->save(output, controlInformation, &iListener);
 }
@@ -540,7 +572,6 @@ void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
             ControlInformation ci;
             ci.load(in);
             triples->loadIndex(in, ci, listener);
-            in.close();
         }
         in.close();
 	} else {

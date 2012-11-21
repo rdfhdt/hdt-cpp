@@ -69,8 +69,8 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progress
         currentLength = strlen( (char*) currentStr);
 
         // Realloc size of the buffer if necessary.
-        // +1 for string terminator +9 for VByte encoding (worst case)
-        if ((bytes+currentLength+10) > reservedSize)
+        // +1 for string terminator +10 for VByte encoding (worst case)
+        if ((bytes+currentLength+11) > reservedSize)
         {
             reservedSize = (bytes+currentLength+10)*2;
 

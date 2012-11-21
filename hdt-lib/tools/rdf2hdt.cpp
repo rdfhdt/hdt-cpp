@@ -30,7 +30,7 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 #include <string>
 #include <iostream>
@@ -158,12 +158,12 @@ int main(int argc, char **argv) {
 	HDTSpecification spec(configFile);
 
 	spec.setOptions(options);
-	HDT *hdt = HDTFactory::createHDT(spec);
 
 	try {
 		// Read RDF
 		StopWatch globalTimer;
-		hdt->loadFromRDF(inputFile.c_str(), baseUri, notation, &progress);
+
+		HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, &progress);
 
 		ofstream out;
 
@@ -183,14 +183,14 @@ int main(int argc, char **argv) {
 		cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
 
 		if(generateIndex) {
-			hdt->loadOrCreateIndex(&progress);
+			hdt = HDTManager::indexedHDT(hdt, &progress);
 		}
 
+		delete hdt;
 	} catch (char *exception) {
 		cerr << "ERROR: " << exception << endl;
 	} catch (const char *exception) {
 		cerr << "ERROR: " << exception << endl;
 	}
 
-	delete hdt;
 }

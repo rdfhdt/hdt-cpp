@@ -143,6 +143,19 @@ void LogSequence2::push_back(size_t value) {
 	numentries++;
 }
 
+void LogSequence2::resize(size_t newNumEntries) {
+	if(IsMapped) {
+		throw "Data structure read-only when mapped.";
+	}
+	size_t neededSize = numElementsFor(numbits, newNumEntries);
+	if(data.size()<neededSize) {
+        data.resize(neededSize*2);
+		arraysize=data.size();
+        array = &data[0];
+	}
+	numentries=newNumEntries;
+}
+
 void LogSequence2::reduceBits() {
 	size_t max = 0;
 	for(size_t i=0;i<numentries;i++) {
@@ -172,6 +185,13 @@ void LogSequence2::load(std::istream & input)
 	CRC8 crch;
 	CRC32 crcd;
 	unsigned char buf[9];
+
+	// Read type
+	uint8_t type;
+	crch.readData(input, (unsigned char*)&type, sizeof(type));
+	if(type!=TYPE_SEQLOG) {
+		//throw "Trying to read a LOGArray but data is not LogArray";
+	}
 
 	// Read numbits
 	crch.readData(input, (unsigned char*)&numbits, sizeof(numbits));
@@ -215,6 +235,12 @@ void LogSequence2::load(std::istream & input)
 size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener) {
 	size_t count = 0;
 
+	// Read type
+	if(ptr[count]!=TYPE_SEQLOG) {
+		//throw "Trying to read a LOGArray but data is not LogArray";
+	}
+	count++;
+
     // Read numbits
 	numbits = ptr[count++];
 
@@ -255,6 +281,10 @@ void LogSequence2::save(std::ostream & out)
 	CRC32 crcd;
 	unsigned char data[9];
 	unsigned int len;
+
+	// Write type
+	uint8_t type = TYPE_SEQLOG;
+	crch.writeData(out, &type, sizeof(uint8_t));
 
 	// Write numbits
 	crch.writeData(out, &numbits, sizeof(numbits));

@@ -6,7 +6,8 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+
+
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
@@ -16,6 +17,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "../src/hdt/HDTFactory.hpp"
 #include "../src/libdcs/CSD_PFC.h"
 
 #include "../src/util/StopWatch.hpp"

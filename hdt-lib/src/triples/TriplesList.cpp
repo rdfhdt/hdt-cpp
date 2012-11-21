@@ -87,8 +87,8 @@ void TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 {
 	controlInformation.clear();
 	controlInformation.setUint("numTriples", numValidTriples);
-	controlInformation.set("codification", HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST);
-	controlInformation.setUint("triples.component.order", order);
+	controlInformation.setFormat(HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST);
+	controlInformation.setUint("order", order);
 	controlInformation.save(output);
 
 	for( unsigned int i = 0; i < arrayOfTriples.size(); i++ ) {
@@ -101,7 +101,12 @@ void TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 
 void TriplesList::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
 {
-	order = (TripleComponentOrder) controlInformation.getUint("triples.component.order");
+	std::string format = controlInformation.getFormat();
+	if(format!=getType()) {
+		throw "Trying to read a TriplesList but the data is not TriplesList";
+	}
+
+	order = (TripleComponentOrder) controlInformation.getUint("order");
 	unsigned int totalTriples = controlInformation.getUint("numTriples");
 
 	unsigned int numRead=0;

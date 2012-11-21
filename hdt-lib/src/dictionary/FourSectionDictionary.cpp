@@ -1,5 +1,5 @@
 /*
- * File: PFCDictionary.cpp
+ * File: FourSectionDictionary.cpp
  * Last modified: $Date$
  * Revision: $Revision$
  * Last modified by: $Author$
@@ -29,7 +29,7 @@
  *
  */
 
-#include "PFCDictionary.hpp"
+#include "FourSectionDictionary.hpp"
 #include <HDTVocabulary.hpp>
 
 #include "../libdcs/CSD_PFC.h"
@@ -39,7 +39,7 @@
 
 namespace hdt {
 
-PFCDictionary::PFCDictionary() : blocksize(8)
+FourSectionDictionary::FourSectionDictionary() : blocksize(8)
 {
 	subjects = new csd::CSD_PFC();
 	predicates = new csd::CSD_PFC();
@@ -47,7 +47,7 @@ PFCDictionary::PFCDictionary() : blocksize(8)
 	shared = new csd::CSD_PFC();
 }
 
-PFCDictionary::PFCDictionary(HDTSpecification & spec) : blocksize(8)
+FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksize(8)
 {
 	subjects = new csd::CSD_PFC();
 	predicates = new csd::CSD_PFC();
@@ -60,7 +60,7 @@ PFCDictionary::PFCDictionary(HDTSpecification & spec) : blocksize(8)
 	}
 }
 
-PFCDictionary::~PFCDictionary()
+FourSectionDictionary::~FourSectionDictionary()
 {
 	delete subjects;
 	delete predicates;
@@ -74,7 +74,7 @@ csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, Progres
 }
 
 
-std::string PFCDictionary::idToString(unsigned int id, TripleComponentRole position)
+std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRole position)
 {
 	csd::CSD *section = getDictionarySection(id, position);
 
@@ -94,7 +94,7 @@ std::string PFCDictionary::idToString(unsigned int id, TripleComponentRole posit
 	return string();
 }
 
-unsigned int PFCDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int FourSectionDictionary::stringToId(std::string &key, TripleComponentRole position)
 {
 	unsigned int ret;
 
@@ -138,10 +138,14 @@ unsigned int PFCDictionary::stringToId(std::string &key, TripleComponentRole pos
 }
 
 
-void PFCDictionary::load(std::istream & input, ControlInformation & ci, ProgressListener *listener)
+void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, ProgressListener *listener)
 {
-	this->mapping = ci.getUint("$mapping");
-	this->sizeStrings = ci.getUint("$sizeStrings");
+	std::string format = ci.getFormat();
+	if(format!=getType()) {
+		throw "Trying to read a FourSectionDictionary but the data is not FourSectionDictionary";
+	}
+	this->mapping = ci.getUint("mapping");
+	this->sizeStrings = ci.getUint("sizeStrings");
 
 	IntermediateListener iListener(listener);
 
@@ -186,7 +190,7 @@ void PFCDictionary::load(std::istream & input, ControlInformation & ci, Progress
 	objects = new csd::CSD_Cache(objects);
 }
 
-size_t PFCDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
     size_t count=0;
 
@@ -245,7 +249,7 @@ size_t PFCDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressLi
 }
 
 
-void PFCDictionary::import(Dictionary *other, ProgressListener *listener) {
+void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener) {
 
 	try {
 		IntermediateListener iListener(listener);
@@ -293,29 +297,28 @@ void PFCDictionary::import(Dictionary *other, ProgressListener *listener) {
 	}
 }
 
-IteratorUCharString *PFCDictionary::getSubjects() {
+IteratorUCharString *FourSectionDictionary::getSubjects() {
 	return subjects->listAll();
 }
 
-IteratorUCharString *PFCDictionary::getPredicates() {
+IteratorUCharString *FourSectionDictionary::getPredicates() {
 	return predicates->listAll();
 }
 
-IteratorUCharString *PFCDictionary::getObjects() {
+IteratorUCharString *FourSectionDictionary::getObjects() {
 	return objects->listAll();
 }
 
-IteratorUCharString *PFCDictionary::getShared() {
+IteratorUCharString *FourSectionDictionary::getShared() {
 	return shared->listAll();
 }
 
-void PFCDictionary::save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener)
+void FourSectionDictionary::save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener)
 {
-	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PFC);
-	controlInformation.set("format", "text/plain");
+	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_FOUR);
 
-	controlInformation.setUint("$mapping", this->mapping);
-	controlInformation.setUint("$sizeStrings", this->sizeStrings);
+	controlInformation.setUint("mapping", this->mapping);
+	controlInformation.setUint("sizeStrings", this->sizeStrings);
 
 	controlInformation.save(output);
 
@@ -339,36 +342,38 @@ void PFCDictionary::save(std::ostream & output, ControlInformation & controlInfo
 }
 
 
-void PFCDictionary::populateHeader(Header & header, string rootNode)
+void FourSectionDictionary::populateHeader(Header & header, string rootNode)
 {
-	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, HDTVocabulary::DICTIONARY_TYPE_PFC);
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, getType());
+#if 0
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSUBJECTS, getNsubjects());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMPREDICATES, getNpredicates());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMOBJECTS, getNobjects());
-	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSHARED, getNshared());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXSUBJECTID, getMaxSubjectID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXPREDICATEID, getMaxPredicateID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXOBJECTTID, getMaxObjectID());
+#endif
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSHARED, getNshared());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAPPING, this->mapping);
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_SIZE_STRINGS, size());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_BLOCK_SIZE, this->blocksize);
 }
 
-unsigned int PFCDictionary::getNsubjects(){
+unsigned int FourSectionDictionary::getNsubjects(){
 	return shared->getLength()+subjects->getLength();
 }
-unsigned int PFCDictionary::getNpredicates(){
+unsigned int FourSectionDictionary::getNpredicates(){
 	return predicates->getLength();
 }
-unsigned int PFCDictionary::getNobjects(){
+unsigned int FourSectionDictionary::getNobjects(){
 	return shared->getLength()+objects->getLength();
 }
-unsigned int PFCDictionary::getNshared(){
+unsigned int FourSectionDictionary::getNshared(){
 	return shared->getLength();
 }
 
 
-unsigned int PFCDictionary::getMaxID()
+unsigned int FourSectionDictionary::getMaxID()
 {
 	unsigned int s = subjects->getLength();
 	unsigned int o = objects->getLength();
@@ -382,17 +387,17 @@ unsigned int PFCDictionary::getMaxID()
 	}
 }
 
-unsigned int PFCDictionary::getMaxSubjectID()
+unsigned int FourSectionDictionary::getMaxSubjectID()
 {
 	return getNsubjects();
 }
 
-unsigned int PFCDictionary::getMaxPredicateID()
+unsigned int FourSectionDictionary::getMaxPredicateID()
 {
 	return predicates->getLength();
 }
 
-unsigned int PFCDictionary::getMaxObjectID()
+unsigned int FourSectionDictionary::getMaxObjectID()
 {
 	unsigned int s = subjects->getLength();
 	unsigned int o = objects->getLength();
@@ -405,34 +410,32 @@ unsigned int PFCDictionary::getMaxObjectID()
 	}
 }
 
-unsigned int PFCDictionary::getNumberOfElements()
+unsigned int FourSectionDictionary::getNumberOfElements()
 {
 	return shared->getLength()+subjects->getLength()+predicates->getLength()+objects->getLength();
 }
 
-unsigned int PFCDictionary::size()
+unsigned int FourSectionDictionary::size()
 {
 	return shared->getSize()+subjects->getSize()+predicates->getSize()+objects->getSize();
 }
 
-string PFCDictionary::getType()
+string FourSectionDictionary::getType()
 {
-	return HDTVocabulary::DICTIONARY_TYPE_PFC;
+	return HDTVocabulary::DICTIONARY_TYPE_FOUR;
 }
 
-unsigned int PFCDictionary::getMapping() {
+unsigned int FourSectionDictionary::getMapping() {
 	return mapping;
 }
 
 
-csd::CSD *PFCDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) {
+csd::CSD *FourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
 		if(id<=shared->getLength()) {
-			//cout << "Section SHARED" << endl;
 			return shared;
 		} else {
-			//cout << "Section SUBJECTS" << endl;
 			return subjects;
 		}
 
@@ -441,10 +444,8 @@ csd::CSD *PFCDictionary::getDictionarySection(unsigned int id, TripleComponentRo
 
 	case OBJECT:
 		if(id<=shared->getLength()) {
-			//cout << "Section SHARED" << endl;
 			return shared;
 		} else {
-			//cout << "Section OBJECTS" << endl;
 			return objects;
 		}
 	}
@@ -452,7 +453,7 @@ csd::CSD *PFCDictionary::getDictionarySection(unsigned int id, TripleComponentRo
 	throw "Item not found";
 }
 
-unsigned int PFCDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+unsigned int FourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
 	switch (position) {
 	case NOT_SHARED_SUBJECT:
 		return shared->getLength()+id;
@@ -476,11 +477,11 @@ unsigned int PFCDictionary::getGlobalId(unsigned int mapping, unsigned int id, D
 }
 
 
-unsigned int PFCDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+unsigned int FourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position) {
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int PFCDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+unsigned int FourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
 		if(id<=shared->getLength()) {
@@ -507,11 +508,11 @@ unsigned int PFCDictionary::getLocalId(unsigned int mapping, unsigned int id, Tr
 	throw "Item not found";
 }
 
-unsigned int PFCDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+unsigned int FourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
 	return getLocalId(mapping,id,position);
 }
 
-void PFCDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+void FourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
 	if(role==PREDICATE) {
 		predicates->fillSuggestions(base, out, maxResults);

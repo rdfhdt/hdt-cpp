@@ -106,7 +106,7 @@ size_t ArraySequence::size()
 
 std::string ArraySequence::getType()
 {
-	return HDTVocabulary::SEQ_TYPE_INTEGER;
+	return HDTVocabulary::SEQ_TYPE_INT32;
 }
 
 }

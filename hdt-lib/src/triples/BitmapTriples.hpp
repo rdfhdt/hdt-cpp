@@ -110,6 +110,8 @@ public:
 	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
 
 	void generateIndex(ProgressListener *listener);
+	void generateIndexFast(ProgressListener *listener);
+	void generateIndexMemory(ProgressListener *listener);
 	void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
 	void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
 

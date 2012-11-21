@@ -38,6 +38,7 @@ SOURCES += \
     ../src/rdf/RDFSerializerN3.cpp \
     ../src/hdt/HDTSpecification.cpp \
     ../src/hdt/HDTFactory.cpp \
+    ../src/hdt/HDTManager.cpp \
     ../src/hdt/ControlInformation.cpp \
     ../src/hdt/BasicHDT.cpp \
     ../src/hdt/BasicModifiableHDT.hpp \
@@ -66,7 +67,7 @@ SOURCES += \
     ../src/libdcs/fmindex/SuffixArray.cpp \
     ../src/libdcs/fmindex/SSA.cpp \
     ../src/dictionary/PlainDictionary.cpp \
-    ../src/dictionary/PFCDictionary.cpp \
+    ../src/dictionary/FourSectionDictionary.cpp \
     ../src/dictionary/KyotoDictionary.cpp \
     ../src/dictionary/LiteralDictionary.cpp \
     ../src/rdf/RDFParserNtriples.cpp \
@@ -109,7 +110,7 @@ HEADERS += \
     ../include/HDTVocabulary.hpp \
     ../include/HDTSpecification.hpp \
     ../include/HDTListener.hpp \
-    ../include/HDTFactory.hpp \
+    ../include/HDTManager.hpp \
     ../include/HDTEnums.hpp \
     ../include/HDT.hpp \
     ../include/Iterator.hpp \
@@ -120,9 +121,10 @@ HEADERS += \
     ../src/rdf/RDFSerializerN3.hpp \
     ../src/hdt/BasicHDT.hpp \
     ../src/hdt/BasicModifiableHDT.hpp \
+    ../src/hdt/HDTFactory.hpp \
     ../src/dictionary/PlainDictionary.hpp \
     ../src/dictionary/KyotoDictionary.hpp \
-    ../src/dictionary/PFCDictionary.hpp \
+    ../src/dictionary/FourSectionDictionary.hpp \
     ../src/dictionary/LiteralDictionary.hpp \
     ../src/triples/TriplesList.hpp \
     ../src/triples/TriplesComparator.hpp \
@@ -145,7 +147,6 @@ HEADERS += \
     ../src/libdcs/CSD_Cache.h \
     ../src/libdcs/fmindex/SuffixArray.h \
     ../src/libdcs/fmindex/SSA.h \
-    ../src/dictionary/PFCDictionary.hpp \
     ../src/rdf/RDFParserNtriples.hpp \
     ../src/rdf/RDFSerializerRaptor.hpp \
     ../src/rdf/RDFParserRaptorCallback.hpp \

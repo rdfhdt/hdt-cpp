@@ -6,7 +6,7 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 #include <getopt.h>
 #include <string>
@@ -146,9 +146,7 @@ int main(int argc, char **argv) {
 
 
 	try {
-		HDT *hdt = HDTFactory::createDefaultHDT();
-		hdt->loadFromHDT(inputFile.c_str());
- 		hdt->loadOrCreateIndex();
+		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str());
 
  		QueryProcessor processor(hdt);
 

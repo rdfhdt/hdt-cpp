@@ -1,12 +1,6 @@
-/*
- * Tutorial01.cpp
- *
- *  Created on: 02/03/2011
- *      Author: mck
- */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 #include <getopt.h>
 #include <string>
@@ -70,10 +64,8 @@ int main(int argc, char **argv) {
 
 	inputFile = argv[optind];
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
-
 	try {
-		hdt->loadFromHDT(inputFile.c_str());
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
 
 		cout << hdt->getDictionary()->idToString(65449489, OBJECT) << endl;
 

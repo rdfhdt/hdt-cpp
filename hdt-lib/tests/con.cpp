@@ -7,18 +7,17 @@
 
 #include <HDT.hpp>
 #include <HDTManager.hpp>
-#include <HDTVocabulary.hpp>
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
 
+#include <getopt.h>
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <getopt.h>
 
-#include "../src/dictionary/LiteralDictionary.hpp"
-#include "../src/dictionary/FourSectionDictionary.hpp"
+#include "../src/triples/TriplesList.hpp"
+#include "../src/triples/BitmapTriples.hpp"
 
 #include "../src/util/StopWatch.hpp"
 
@@ -62,51 +61,23 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if(argc-optind<1) {
+	if(argc-optind<2) {
 		cout << "ERROR: You must supply an input and HDT File" << endl << endl;
 		return 1;
 	}
 
 	inputFile = argv[optind];
+	outputFile = argv[optind+1];
+
+	ConvertProgress progress;
+	StopWatch st;
 
 	try {
 		// LOAD
 		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
 
-		// CONVERT
-		Dictionary *dict = hdt->getDictionary();
-		LiteralDictionary litDict;
-		//FourSectionDictionary litDict;
-		ConvertProgress progress;
-		litDict.import(dict, &progress);
-
-		// SAVE
-		ofstream out(outputFile.c_str(), ios::binary | ios::out);
-		ControlInformation ci;
-
-		// GLOBAL
-		ci.clear();
-		ci.setType(GLOBAL);
-		ci.setFormat(HDTVocabulary::HDT_CONTAINER);
-		ci.save(out);
-
-
-		// HEADER
-		ci.clear();
-		ci.setType(HEADER);
-		hdt->getHeader()->save(out, ci, NULL);
-
-		// NEW DICTIONARY
-		ci.clear();
-		ci.setType(DICTIONARY);
-		litDict.save(out, ci, NULL);
-
-		// TRIPLES
-		ci.clear();
-		ci.setType(TRIPLES);
-		hdt->getTriples()->save(out, ci, NULL);
-
-		out.close();
+		// Save
+		hdt->saveToHDT(outputFile.c_str());
 
 		delete hdt;
 	} catch (char *e) {

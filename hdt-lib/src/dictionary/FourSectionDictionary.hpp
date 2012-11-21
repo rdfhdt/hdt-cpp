@@ -40,7 +40,7 @@
 
 namespace hdt {
 
-class PFCDictionary : public Dictionary {
+class FourSectionDictionary : public Dictionary {
 private:
 	csd::CSD *subjects;
 	csd::CSD *predicates;
@@ -55,9 +55,9 @@ private:
 	HDTSpecification spec;
 
 public:
-	PFCDictionary();
-	PFCDictionary(HDTSpecification &spec);
-	~PFCDictionary();
+	FourSectionDictionary();
+	FourSectionDictionary(HDTSpecification &spec);
+	~FourSectionDictionary();
 
 	std::string idToString(unsigned int id, TripleComponentRole position);
 	unsigned int stringToId(std::string &str, TripleComponentRole position);

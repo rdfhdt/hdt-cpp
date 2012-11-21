@@ -258,7 +258,6 @@ uint CSD_FMIndex::decompress(unsigned char **dict) {
 }
 
 uint64_t CSD_FMIndex::getSize() {
-    cout << "This.getSize: " << (void*)this << endl;
 	uint64_t mem = sizeof(CSD_FMIndex);
 	mem += fm_index->size();
 	if (use_sampling)

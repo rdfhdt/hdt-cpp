@@ -52,6 +52,7 @@ private:
 
 	bool IsMapped;
 
+	static const uint8_t TYPE_SEQLOG = 1;
 	static const unsigned int W = sizeof(size_t)*8;
 
 	/** size_t's required to represent n integers of e bits each */
@@ -83,7 +84,7 @@ private:
 		return result;
 	}
 
-	/** Store a given value in index into array A where every value uses len bits
+	/** Store a given value in index into array A where every value uses bitsField bits
 	 * @param data Array
 	 * @param bitsField Length in bits of each field
 	 * @param index Position to store in
@@ -150,6 +151,13 @@ public:
 	 * Append an element to the back of the array.
 	 */
 	void push_back(size_t element);
+
+	/**
+	 * Resize the data structure so it fits numEntries.
+	 * If it had more entries than requested, the data structure is shrinked and the remaining elements are discarded.
+	 * If it had fewer elements than requested, it grows the data structure with empty values.
+	 */
+	void resize(size_t numEntries);
 
 	/**
 	 * Try to reduce the number of bits needed to store all the sequence. Useful when we don't know beforehand how many elements

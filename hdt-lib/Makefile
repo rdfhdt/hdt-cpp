@@ -2,13 +2,33 @@ OS := $(shell uname)
 
 LIBCDSPATH = ../libcds-v1.0.12
 
+# Uncomment here to enable optional dependencies
+#RAPTOR_SUPPORT=true
+#KYOTO_SUPPORT=true
+#LIBZ_SUPPORT=true
+
 CPP=g++
 FLAGS=-O3 -Wno-deprecated
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
 LDFLAGS=
 DOXYGEN=doxygen
-DEFINES=-DUSE_RAPTOR -DUSE_KYOTO
-LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -lstdc++ -lraptor2 -lkyotocabinet -lz
+DEFINES=
+LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -lstdc++
+
+ifeq ($(RAPTOR_SUPPORT), true)
+DEFINES:=$(DEFINES) -DUSE_RAPTOR
+LIB:=$(LIB) -lraptor2
+endif
+
+ifeq ($(KYOTO_SUPPORT), true)
+DEFINES:=$(DEFINES) -DUSE_KYOTO
+LIB:=$(LIB) -lkyotocabinet
+endif
+
+ifeq ($(LIBZ_SUPPORT), true)
+DEFINES:=$(DEFINES) -DUSE_LIBZ
+LIB:=$(LIB) -lz
+endif
 
 ifeq ($(OS), Darwin)
 CPP=clang++
@@ -28,7 +48,8 @@ TESTS=$(patsubst %.cpp,%, $(wildcard tests/*.cpp))
 
 all:
 	@$(MAKE) showflags 
-	@$(MAKE) tools tests
+	@$(MAKE) -C $(LIBCDSPATH)
+	@$(MAKE) tools
 
 re:
 	@$(MAKE) clean

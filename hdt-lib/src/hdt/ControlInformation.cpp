@@ -38,12 +38,7 @@ using namespace std;
 
 namespace hdt {
 
-#define TRIPLES_BIT 1
-#define DICTIONARY_BIT 2
-#define HEADER_BIT 4
-#define INDEX_BIT 8
-
-ControlInformation::ControlInformation() : version(0), components(0) {
+ControlInformation::ControlInformation() : type(UNKNOWN_CI) {
 
 }
 
@@ -53,22 +48,30 @@ ControlInformation::~ControlInformation() {
 
 void ControlInformation::save(std::ostream &out) {
 	CRC16 crc;
+	unsigned char null='\0';
 
+    // Write cookie
 	crc.writeData(out, (unsigned char*)"$HDT", 4);
 
-	crc.writeData(out, (unsigned char *)&this->version, sizeof(uint16_t));
-	crc.writeData(out, (unsigned char *)&this->components, sizeof(uint16_t));
+    // Write type
+    uint8_t typeValue = (uint8_t) type;
+    crc.writeData(out, (unsigned char *)&typeValue, sizeof(uint8_t));
 
+    // Write format
+    crc.writeData(out, (unsigned char*)format.c_str(), format.length());
+    crc.writeData(out, &null, 1);
+
+    // Write options
 	string all;
 	for(PropertyMapIt it = map.begin(); it!=map.end(); it++) {
 		all.append(it->first);
-		all.append(":");
+		all.append("=");
 		all.append(it->second);
 		all.append(";");
 		//out << it->first << ':' << it->second << ';' << std::endl;
 	}
-	all.append("$END\n");
 	crc.writeData(out, (unsigned char *)all.c_str(), all.length());
+	crc.writeData(out, &null, 1);
 
     // CRC16
 	crc.writeCRC(out);
@@ -76,13 +79,11 @@ void ControlInformation::save(std::ostream &out) {
 
 void ControlInformation::load(std::istream &in) {
 	CRC16 crc;
+    unsigned char null='\0';
 
     this->clear();
 
-	std::string line;
-	std::string all;
-
-	// Read input
+	// Read magic cookie
 	unsigned char hdt[5];
 	crc.readData(in, hdt, 4);
 	hdt[4]=0;
@@ -90,39 +91,38 @@ void ControlInformation::load(std::istream &in) {
 		throw "Non-HDT Section";
 	}
 
-	crc.readData(in, (unsigned char *)&this->version, sizeof(uint16_t));
-	crc.readData(in, (unsigned char *)&this->components, sizeof(uint16_t));
+    // Read type
+    unsigned char typeValue;
+    crc.readData(in, (unsigned char *)&typeValue, sizeof(typeValue));
+    type = (ControlInformationType) typeValue;
 
-	while(getline(in,line)) {
-		all.append(line);
-		if(line.length()>=4 && line.compare(line.length()-4, 4, "$END")==0) {
-			break;
-		}
-	}
+    // Read Format
+    getline(in, format, '\0');
+    crc.update((unsigned char *)format.c_str(), format.length());
+    crc.update(&null, 1);
 
-	// Process options
-	std::istringstream strm(all);
-	string token;
-	while(getline(strm, token, ';') ){
-		if(token!="$END") {
-			size_t pos = token.find(':');
+    // Read line with options
+	std::string line;
+    getline(in,line, '\0');
+    std::istringstream strm(line);
+    string token;
+    while(getline(strm, token, ';') ){
+    	size_t pos = token.find('=');
 
-			if(pos!=std::string::npos) {
-				std::string property = token.substr(0, pos);
-				std::string value = token.substr(pos+1);
-				//std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
-				map[property] = value;
-			}
-		}
-	}
+    	if(pos!=std::string::npos) {
+    		std::string property = token.substr(0, pos);
+    		std::string value = token.substr(pos+1);
+    		//std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
+    		map[property] = value;
+    	}
+    }
+    crc.update((unsigned char *)line.c_str(), line.length());
+    crc.update(&null, 1);
 
-	all.append("\n");
-	crc.update((unsigned char *)all.c_str(), all.length());
-
-	crc16_t filecrc = crc16_read(in);
+    crc16_t filecrc = crc16_read(in);
 
     // CRC16
-	if(filecrc!=crc.getValue()) {
+    if(filecrc!=crc.getValue()) {
 		throw "CRC of control information does not match.";
 	}
 }
@@ -132,62 +132,64 @@ size_t ControlInformation::load(const unsigned char *ptr, const unsigned char *m
 
 	size_t count=0;
 
-    // $HDT
-    if(strncmp((char *)&ptr[count],"$HDT", 4)!=0) {
-        throw "Non-HDT Section";
-    }
-    count+=4;
-
-    // Version
-    memcpy((char*)&version, &ptr[count], sizeof(uint16_t));
-	count+=2;
-
-    // Components
-    memcpy((char*)&components, &ptr[count], sizeof(uint16_t));
-	count+=2;
-
-	string all;
-    for(size_t i=0; &ptr[count+i]<maxPtr ;i++) {
-        if(ptr[count+i]=='\n') {
-            all.append(&ptr[count], &ptr[count+i]);
-            count+=i;
-            count++;
-            break;
-        }
+	// $HDT
+	if(strncmp((char *)&ptr[count],"$HDT", 4)!=0) {
+		throw "Non-HDT Section";
 	}
+	count+=4;
+
+	// Type
+	type = (ControlInformationType) ptr[count];
+	count++;
+
+	// Format
+	format.assign((char *)&ptr[count]);
+	count += format.length()+1;
+
+	// Read Options
+	string all;
+	all.assign((char *)&ptr[count]);
+	count += all.length()+1;
 
 	// Process options
 	std::istringstream strm(all);
 	string token;
 	while(getline(strm, token, ';') ){
-		if(token!="$END") {
-			size_t pos = token.find(':');
+		size_t pos = token.find('=');
 
-			if(pos!=std::string::npos) {
-				std::string property = token.substr(0, pos);
-				std::string value = token.substr(pos+1);
-				//std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
-				map[property] = value;
-			}
+		if(pos!=std::string::npos) {
+			std::string property = token.substr(0, pos);
+			std::string value = token.substr(pos+1);
+			//std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
+			map[property] = value;
 		}
 	}
 
-    // CRC16
-    CRC16 crc;
-    crc.update(&ptr[0], count);
-    crc16_t filecrc = *((crc16_t *)&ptr[count]);
-    if(filecrc!=crc.getValue()) {
-        throw "CRC of control information does not match.";
-    }
-    count+=2;
+	// CRC16
+	CRC16 crc;
+	crc.update(&ptr[0], count);
+	crc16_t filecrc = *((crc16_t *)&ptr[count]);
+	if(filecrc!=crc.getValue()) {
+		throw "CRC of control information does not match.";
+	}
+	count+=2;
 
 	return count;
 }
 
 void ControlInformation::clear() {
+    this->type = UNKNOWN_CI;
+    this->format.clear();
 	map.clear();
-    components=0;
-    version=0;
+}
+
+
+std::string ControlInformation::getFormat() {
+	return format;
+}
+
+void ControlInformation::setFormat(std::string format) {
+	this->format = format;
 }
 
 std::string ControlInformation::get(std::string key) {
@@ -209,72 +211,12 @@ void ControlInformation::setUint(std::string key, uint32_t value) {
 	map[key] = out.str();
 }
 
-
-
-void ControlInformation::setVersion(uint16_t  version)
-{
-	this->version = version;
+void ControlInformation::setType(ControlInformationType type) {
+    this->type = type;
 }
 
-uint16_t ControlInformation::getVersion()
-{
-	return this->version;
-}
-
-bool ControlInformation::getTriples()
-{
-	return this->components & TRIPLES_BIT;
-}
-
-void ControlInformation::setTriples(bool trip)
-{
-	if(trip) {
-		this->components |= TRIPLES_BIT;
-	} else {
-		this->components &= ~TRIPLES_BIT;
-	}
-}
-
-void ControlInformation::setDictionary(bool dict)
-{
-	if(dict) {
-		this->components |= DICTIONARY_BIT;
-	} else {
-		this->components &= ~DICTIONARY_BIT;
-	}
-}
-
-bool ControlInformation::getDictionary()
-{
-	return this->components & DICTIONARY_BIT;
-}
-
-void ControlInformation::setHeader(bool head)
-{
-    if(head) {
-		this->components |= HEADER_BIT;
-	} else {
-		this->components &= ~HEADER_BIT;
-	}
-}
-
-bool ControlInformation::getHeader()
-{
-	return this->components & HEADER_BIT;
-}
-
-void ControlInformation::setIndex(bool val)
-{
-	if(val) {
-		this->components |= INDEX_BIT;
-	} else {
-		this->components &= ~INDEX_BIT;
-	}
-}
-
-bool ControlInformation::getIndex()
-{
-	return this->components & INDEX_BIT;
+ControlInformationType ControlInformation::getType() {
+    return this->type;
 }
 
 }

@@ -31,6 +31,7 @@ namespace hdt
 class BitSequence375 : public BitSeq
 {
 private:
+	const static uint8_t TYPE_BITMAP_PLAIN = 1;
 	const static unsigned char WORDSIZE = 32;
 	const static unsigned char LOGWORDSIZE = 5;
 

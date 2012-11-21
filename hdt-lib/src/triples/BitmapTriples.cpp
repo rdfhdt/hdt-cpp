@@ -190,8 +190,37 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 // Sort by predicate
 struct sort_pred {
     bool operator()(const std::pair<unsigned int,unsigned int> &left, const std::pair<unsigned int, unsigned int> &right) {
+    	if(left.second==right.second) {
+    		return left.first < right.first;
+    	}
         return left.second < right.second;
     }
+};
+
+// function object
+class PredicateComparator : public std::binary_function<unsigned int,unsigned int,bool>
+{
+private:
+	IntSequence *array;
+
+public:
+	PredicateComparator(IntSequence *array) : array(array) {
+
+	}
+	~PredicateComparator() {
+
+	}
+
+	inline bool operator()(const unsigned int a, const unsigned int b)
+	{
+		size_t x =  array->get(a);
+		size_t y =  array->get(b);
+
+		if(x==y) {
+			return a<b;
+		}
+		return x<y;
+	}
 };
 
 void BitmapTriples::generateWavelet(ProgressListener *listener) {
@@ -209,6 +238,231 @@ void BitmapTriples::generateWavelet(ProgressListener *listener) {
 }
 
 void BitmapTriples::generateIndex(ProgressListener *listener) {
+	generateIndexMemory(listener);
+	//generateIndexMemoryFast(listener);
+}
+
+void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
+	StopWatch global, st;
+
+	IntermediateListener iListener(listener);
+	iListener.setRange(0,40);
+
+	// Count the number of appearances of each object
+	LogSequence2 *objectCount = new LogSequence2(bits(arrayZ->getNumberOfElements()));
+	unsigned int maxCount = 0;
+	for(unsigned int i=0;i<arrayZ->getNumberOfElements(); i++) {
+		unsigned int val = arrayZ->get(i);
+		if(val==0) {
+			cerr << "ERROR: There is a zero value in the Z level." << endl;
+			continue;
+		}
+		if(objectCount->getNumberOfElements()<val) {
+			objectCount->resize(val);
+		}
+		unsigned int count = objectCount->get(val-1)+1;
+		maxCount = count>maxCount ? count : maxCount;
+		objectCount->set(val-1, count);
+
+		NOTIFYCOND(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements());
+	}
+	cout << "Count Objects in " << st << " Max was: " << maxCount << endl;
+	st.reset();
+
+#if 0
+	for(int i=0;i<objectCount->getNumberOfElements();i++) {
+		cout << "Object " << (i+1) << " appears " << objectCount->get(i) << " times." << endl;
+	}
+#endif
+
+	// Calculate bitmap that separates each object sublist.
+	bitmapIndex = new BitSequence375(arrayZ->getNumberOfElements());
+	unsigned int tmpCount=0;
+	for(unsigned int i=0;i<objectCount->getNumberOfElements();i++) {
+		tmpCount += objectCount->get(i);
+		bitmapIndex->set(tmpCount-1, true);
+		NOTIFYCOND(&iListener, "Creating bitmap", i, objectCount->getNumberOfElements());
+	}
+	bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
+	delete objectCount;
+	objectCount=NULL;
+	cout << "Bitmap in " << st << endl;
+	st.reset();
+
+#if 0
+	cout << "Bitmap bits: " << bitmapIndex->getNumBits() << endl;
+	for(int i=0;i<bitmapIndex->getNumBits();i++) {
+		if(bitmapIndex->access(i)){
+			cout << "1";
+		} else {
+			cout << "0";
+		}
+	}
+	cout << endl;
+
+	for(int i=0;i<bitmapIndex->getNumBits();i++) {
+		unsigned int pos = 0;
+		if(i>0) {
+			pos = bitmapIndex->select1(i)+1;
+		}
+		cout << "Object " << (i+1) << " is stored at " << pos << endl;
+	}
+#endif
+
+	// Copy each object reference to its position
+	LogSequence2 *objectInsertedCount = new LogSequence2(bits(maxCount), bitmapIndex->countOnes());
+	objectInsertedCount->resize(bitmapIndex->countOnes());
+
+	LogSequence2 *objectArray = new LogSequence2(bits(arrayY->getNumberOfElements()), arrayZ->getNumberOfElements());
+	objectArray->resize(arrayZ->getNumberOfElements());
+
+	for(unsigned int i=0;i<arrayZ->getNumberOfElements(); i++) {
+			unsigned int objectValue = arrayZ->get(i);
+			unsigned int posY = i>0 ?  bitmapZ->rank1(i-1) : 0;
+
+			unsigned int insertBase = objectValue==1 ? 0 : bitmapIndex->select1(objectValue-1)+1;
+			unsigned int insertOffset = objectInsertedCount->get(objectValue-1);
+			objectInsertedCount->set(objectValue-1, insertOffset+1);
+
+			objectArray->set(insertBase+insertOffset, posY);
+			NOTIFYCOND(&iListener, "Generating object references", i, arrayZ->getNumberOfElements());
+	}
+	delete objectInsertedCount;
+	objectInsertedCount=NULL;
+	cout << "Object references in " << st << endl;
+	st.reset();
+
+#if 0
+	for(int i=0;i<objectArray->getNumberOfElements();i++) {
+		cout << "Position " << (i) << " references " << objectArray->get(i) << " ." << endl;
+		if(bitmapIndex->access(i)) {
+			cout << endl;
+		}
+	}
+#endif
+
+	unsigned int object=1;
+	do {
+		size_t first = object==1 ? 0 : bitmapIndex->select1(object-1)+1;
+		size_t last = bitmapIndex->select1(object)+1;
+		size_t listLen = last-first;
+
+		// Sublists of one element do not need to be sorted.
+
+		// Hard-coded size-2 for speed (They are quite common).
+        if(listLen==2) {
+			unsigned int aPos = objectArray->get(first);
+			unsigned int a = arrayY->get(aPos);
+            unsigned int bPos = objectArray->get(last-1);
+			unsigned int b = arrayY->get(bPos);
+			if(a>b) {
+				objectArray->set(first, bPos);
+                objectArray->set(last-1, aPos);
+			}
+        } else if(listLen>2) {
+			// FIXME: Sort directly without copying?
+
+#if 0
+			vector<pair<unsigned int, unsigned int> > tempList;
+			tempList.reserve(listLen);
+
+			// Create temporary list of (position, predicate)
+			for(size_t i=first; i<last;i++) {
+				unsigned int adjZlist = (unsigned int)objectArray->get(i);
+				unsigned int pred = arrayY->get(adjZlist);
+				tempList.push_back(std::make_pair(adjZlist, pred));
+			}
+
+			// Sort
+			std::sort(tempList.begin(), tempList.end(), sort_pred());
+
+			// Copy back
+			for(size_t i=first; i<last;i++) {
+				objectArray->set(i, tempList[i-first].first);
+			}
+#else
+			vector<unsigned int> tempList;
+			tempList.reserve(listLen);
+
+			// Create temporary list of (position, predicate)
+			for(size_t i=first; i<last;i++) {
+				unsigned int adjZlist = (unsigned int)objectArray->get(i);
+				tempList.push_back(adjZlist);
+			}
+
+			// Sort
+			PredicateComparator comparator(arrayY);
+			std::sort(tempList.begin(), tempList.end(), comparator);
+
+			// Copy back
+			for(size_t i=first; i<last;i++) {
+				objectArray->set(i, tempList[i-first]);
+			}
+#endif
+		}
+
+        object++;
+		NOTIFYCOND(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements());
+	} while(object<=bitmapIndex->countOnes());
+
+	cout << "Sort lists in " << st << endl;
+	st.reset();
+
+	// Count predicates
+
+	LogSequence2 *predCount = new LogSequence2(bits(arrayY->getNumberOfElements()));
+	for(unsigned int i=0;i<arrayY->getNumberOfElements(); i++) {
+		// Read value
+		unsigned int val = arrayY->get(i);
+
+		// Grow if necessary
+		if(predCount->getNumberOfElements()<val) {
+			predCount->resize(val);
+		}
+
+		// Increment
+        predCount->set(val-1, predCount->get(val-1)+1);
+
+		NOTIFYCOND(&iListener, "Counting appearances of predicates", i, arrayZ->getNumberOfElements());
+	}
+	predCount->reduceBits();
+
+#if 0
+    for(size_t i=0;i<predCount->getNumberOfElements();i++) {
+        cout << "Predicate " << i << " appears " << predCount->get(i) << " times." << endl;
+    }
+#endif
+
+	cout << "Count predicates in " << st << endl;
+	st.reset();
+
+	// Save Object Index
+	arrayIndex = objectArray;
+	predicateCount = predCount;
+	cout << "Index generated in "<< global << endl;
+
+#if 0
+    for(size_t i=0;i<arrayIndex->getNumberOfElements();i++) {
+		unsigned int indexPtr = (unsigned int)arrayIndex->get(i);
+		unsigned int pred = arrayY->get(indexPtr);
+
+		unsigned int cobject = i==0 ? 1 : bitmapIndex->rank1(i-1)+1;
+		unsigned int subject = indexPtr==0 ? 1 : bitmapY->rank1(indexPtr-1)+1;
+		cout << "\tFinal: " << i << " (" << indexPtr << " > " <<  cobject << "-" << pred << "-"<<subject<<")" << endl;
+
+        if(bitmapIndex->access(i)) {
+            cout << endl;
+        }
+    }
+#endif
+
+	// Generate Wavelet
+	st.reset();
+	generateWavelet();
+	cout << "Wavelet generated in " << st << endl;
+}
+
+void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 	StopWatch st;
 
 	IntermediateListener iListener(listener);
@@ -288,6 +542,21 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
 
 	predicateCount->reduceBits();
 
+#if 1
+    for(size_t i=0;i<arrayIndex->getNumberOfElements();i++) {
+		unsigned int indexPtr = (unsigned int)arrayIndex->get(i);
+		unsigned int pred = arrayY->get(indexPtr);
+
+		unsigned int cobject = i==0 ? 1 : bitmapIndex->rank1(i-1)+1;
+		unsigned int subject = indexPtr==0 ? 1 : bitmapY->rank1(indexPtr-1)+1;
+		cout << "\tFinal: " << i << " (" << indexPtr << " > " <<  cobject << "-" << pred << "-"<<subject<<")" << endl;
+
+        if(bitmapIndex->access(i)) {
+            cout << endl;
+        }
+    }
+#endif
+
 	cout << "Index generated in " << st << endl;
 
 	// Generate Wavelet
@@ -311,16 +580,18 @@ void BitmapTriples::populateHeader(Header &header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, getType());
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_TYPE, arrayY->getType() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_TYPE, arrayZ->getType() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMY_SIZE, arrayY->size() );
-	header.insert(rootNode, HDTVocabulary::TRIPLES_STREAMZ_SIZE, arrayZ->size() );
+#if 0
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQY_TYPE, arrayY->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQZ_TYPE, arrayZ->getType() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQY_SIZE, arrayY->size() );
+	header.insert(rootNode, HDTVocabulary::TRIPLES_SEQZ_SIZE, arrayZ->size() );
 	if(bitmapY!=NULL) {
 		header.insert(rootNode, HDTVocabulary::TRIPLES_BITMAPY_SIZE, bitmapY->getSizeBytes() );
 	}
 	if(bitmapZ!=NULL) {
 		header.insert(rootNode, HDTVocabulary::TRIPLES_BITMAPZ_SIZE, bitmapZ->getSizeBytes() );
 	}
+#endif
 }
 
 string BitmapTriples::getType() {
@@ -349,11 +620,7 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	}
 
 	if((arrayIndex!=NULL) && (patternString=="??O" || patternString=="?PO" )) {
-		//if(patternString=="??O") {
-			return new ObjectIndexIterator(this, pattern);
-		//} else {
-		//	return new SequentialSearchIteratorTripleID(pattern, new ObjectIndexIterator(this, pattern));
-		//}
+		return new ObjectIndexIterator(this, pattern);
 	} else if( waveletY != NULL && patternString=="?P?") {
 		return new MiddleWaveletIterator(this, pattern);
 	} else {
@@ -369,14 +636,10 @@ void BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 {
 	CHECK_BITMAPTRIPLES_INITIALIZED
 
-    controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("codification", getType());
-	controlInformation.setUint("componentOrder", order);
-	controlInformation.set("array.y", arrayY->getType());
-	controlInformation.set("array.z", arrayZ->getType());
+	controlInformation.setFormat(getType());
+	controlInformation.setUint("order", order);
 	controlInformation.save(output);
 
-	// Fixme: Bitmap directly on istream/ostream??
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,5);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Y");
@@ -397,16 +660,12 @@ void BitmapTriples::save(std::ostream & output, ControlInformation &controlInfor
 
 void BitmapTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
 {
-	order = (TripleComponentOrder) controlInformation.getUint("componentOrder");
+	std::string format = controlInformation.getFormat();
+	if(format!=getType()) {
+		throw "Trying to read a BitmapTriples but the data is not BitmapTriples";
+	}
 
-	std::string typeY = controlInformation.get("array.y");
-	std::string typeZ = controlInformation.get("array.z");
-
-	delete arrayY;
-	delete arrayZ;
-
-	arrayY = IntSequence::getArray(typeY);
-	arrayZ = IntSequence::getArray(typeZ);
+	order = (TripleComponentOrder) controlInformation.getUint("order");
 
 	IntermediateListener iListener(listener);
 
@@ -426,10 +685,14 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 
 	iListener.setRange(10,20);
 	iListener.notifyProgress(0, "BitmapTriples loading Stream Y");
+	delete arrayY;
+	arrayY = IntSequence::getArray(input);
 	arrayY->load(input);
 
 	iListener.setRange(20,50);
 	iListener.notifyProgress(0, "BitmapTriples loading Stream Z");
+	delete arrayZ;
+	arrayZ = IntSequence::getArray(input);
     arrayZ->load(input);
 
 	if(arrayZ->getType()==HDTVocabulary::SEQ_TYPE_WAVELET) {
@@ -444,16 +707,15 @@ size_t BitmapTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressLi
     controlInformation.clear();
     count += controlInformation.load(&ptr[count], ptrMax);
 
-    order = (TripleComponentOrder) controlInformation.getUint("componentOrder");
+	std::string format = controlInformation.getFormat();
+	if(format!=getType()) {
+		throw "Trying to read a FourSectionDictionary but the data is not FourSectionDictionary";
+	}
+
+    order = (TripleComponentOrder) controlInformation.getUint("order");
 
     BitSequence375 *bitY = new BitSequence375();
     BitSequence375 *bitZ = new BitSequence375();
-
-    std::string typeY = controlInformation.get("array.y");
-    std::string typeZ = controlInformation.get("array.z");
-
-    IntSequence *aY = IntSequence::getArray(typeY);
-    IntSequence *aZ = IntSequence::getArray(typeZ);
 
     IntermediateListener iListener(listener);
 
@@ -466,11 +728,13 @@ size_t BitmapTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressLi
     count += bitZ->load(&ptr[count], ptrMax, listener);
 
     iListener.setRange(10,20);
-    iListener.notifyProgress(0, "BitmapTriples loading Stream Y");
+    iListener.notifyProgress(0, "BitmapTriples loading Sequence Y");
+    IntSequence *aY = IntSequence::getArray(ptr[count]);
     count += aY->load(&ptr[count], ptrMax, listener);
 
     iListener.setRange(20,50);
-    iListener.notifyProgress(0, "BitmapTriples loading Stream Z");
+    iListener.notifyProgress(0, "BitmapTriples loading Sequence Z");
+    IntSequence *aZ = IntSequence::getArray(ptr[count]);
     count += aZ->load(&ptr[count], ptrMax, listener);
 
     delete bitmapY;
@@ -495,9 +759,9 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	}
 
 	controlInformation.clear();
-	controlInformation.setIndex(true);
+    controlInformation.setType(INDEX);
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.set("stream.index", arrayIndex->getType());
+	controlInformation.setFormat(arrayIndex->getType());
 	controlInformation.save(output);
 
     iListener.setRange(50,60);
@@ -519,7 +783,8 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
 	unsigned int numTriples = controlInformation.getUint("numTriples");
-	std::string typeIndex = controlInformation.get("stream.index");
+
+	// FIXME: Check format
 
 	if(this->getNumberOfElements()!=numTriples) {
 		// FIXME: Force index regeneration instead of error.
@@ -545,11 +810,11 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Index");
 	bitmapIndex = BitSequence375::load(input);
 
-	// LOAD STREAM
+	// LOAD SEQ
 	if(arrayIndex!=NULL) {
 		delete arrayIndex;
 	}
-	arrayIndex = IntSequence::getArray(typeIndex);
+	arrayIndex = IntSequence::getArray(input);
 	iListener.setRange(10,50);
 	iListener.notifyProgress(0, "BitmapTriples loading Stream Index");
 	arrayIndex->load(input);
@@ -576,7 +841,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     controlInformation.clear();
     count += controlInformation.load(&ptr[count], ptrMax);
 
-    if(!controlInformation.getIndex()) {
+    if(controlInformation.getType()!=INDEX) {
         throw "Trying to load an HDT Index, but the ControlInformation states that it's not an index.";
     }
 
@@ -609,7 +874,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     count += bitIndex->load(&ptr[count], ptrMax, &iListener);
     bitmapIndex = bitIndex;
 
-    // LOAD STREAM
+    // LOAD SEQ
     iListener.setRange(10,50);
     iListener.notifyProgress(0, "BitmapTriples loading Stream Index");
     if(arrayIndex!=NULL) {

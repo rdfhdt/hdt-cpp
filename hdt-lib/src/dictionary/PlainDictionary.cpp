@@ -154,11 +154,10 @@ void PlainDictionary::stopProcessing(ProgressListener *listener)
 
 void PlainDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
 {
-	controlInformation.set("codification", HDTVocabulary::DICTIONARY_TYPE_PLAIN);
-	controlInformation.set("format", "text/plain");
-	controlInformation.setUint("$mapping", this->mapping);
-	controlInformation.setUint("$sizeStrings", this->sizeStrings);
-	controlInformation.setUint("$elements", this->getNumberOfElements());
+	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_PLAIN);
+	controlInformation.setUint("mapping", this->mapping);
+	controlInformation.setUint("sizeStrings", this->sizeStrings);
+	controlInformation.setUint("numEntries", this->getNumberOfElements());
 
 	controlInformation.save(output);
 
@@ -214,9 +213,14 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 
 	startProcessing();
 
-	this->mapping = ci.getUint("$mapping");
-	this->sizeStrings = ci.getUint("$sizeStrings");
-	unsigned int numElements = ci.getUint("$elements");
+	std::string format = ci.getFormat();
+	if(format!=getType()) {
+		throw "Trying to read a PlainDictionary but the data is not PlainDictionary";
+	}
+
+	this->mapping = ci.getUint("mapping");
+	this->sizeStrings = ci.getUint("sizeStrings");
+	unsigned int numElements = ci.getUint("numEntries");
 	unsigned int numLine = 0;
 
 	IntermediateListener iListener(listener);

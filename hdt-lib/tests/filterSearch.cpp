@@ -8,7 +8,7 @@
 #include <HDT.hpp>
 #include "../src/hdt/BasicHDT.hpp"
 #include "../src/dictionary/LiteralDictionary.hpp"
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 #include <signal.h>
 
 #include <getopt.h>
@@ -77,12 +77,9 @@ int main(int argc, char **argv) {
 
 	inputFile = argv[optind];
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
 
 	try {
-		hdt->loadFromHDT(inputFile.c_str());
-
-		hdt->loadOrCreateIndex();
+		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str());
 
 		if (filter1 != "" || filter2 != "") {
 			ostream *out;

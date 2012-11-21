@@ -32,7 +32,7 @@ namespace csd
 
 	/**
 	 * Encode value into the buffer using VByte. The caller must make sure that
-	 * at least 9 bytes are available in the buffer for writing.
+	 * at least 10 bytes are available in the buffer for writing.
 	 * Returns the number of read bytes
 	 */
 	size_t VByte::encode(unsigned char *buffer, uint64_t value )

@@ -43,15 +43,23 @@ namespace hdt {
 typedef std::map<std::string, std::string> PropertyMap;
 typedef PropertyMap::iterator PropertyMapIt;
 
+enum ControlInformationType {
+    UNKNOWN_CI,
+    GLOBAL,
+    HEADER,
+    DICTIONARY,
+    TRIPLES,
+    INDEX
+};
+
 /**
  * Represents the header saved at the begining of each HDT block when serialized.
  */
 class ControlInformation {
 
 public:
-	uint16_t version;
-	uint16_t components;
-
+	std::string format;
+    ControlInformationType type;
 	PropertyMap map;
 
 public:
@@ -74,6 +82,10 @@ public:
 	void load(std::istream &in);
 
     size_t load(const unsigned char *ptr, const unsigned char *maxPtr);
+
+    std::string getFormat();
+
+    void setFormat(std::string format);
 
 	/** Get a property of the ControlInformation
 	 * @param key
@@ -105,30 +117,9 @@ public:
 	 */
 	void clear();
 
-	/** Get the HDT version */
-	uint16_t getVersion();
-	/** Set the HDT version */
-	void setVersion(unsigned short version);
+    void setType(ControlInformationType type);
 
-	/** Get whether this ControlInformation represents a Header */
-	bool getHeader();
-	/** Set whether this ControlInformation represents a Header */
-	void setHeader(bool dict);
-
-	/** Get whether this ControlInformation represents a Dictionary */
-	bool getDictionary();
-	/** Set whether this ControlInformation represents a Dictionary */
-	void setDictionary(bool dict);
-
-	/** Get whether this ControlInformation represents Triples */
-	bool getTriples();
-	/** Set whether this ControlInformation represents Triples */
-	void setTriples(bool trip);
-
-	/** Get whether this ControlInformation represents Triples */
-	bool getIndex();
-	/** Set whether this ControlInformation represents Triples */
-	void setIndex(bool trip);
+    ControlInformationType getType();
 };
 
 }
