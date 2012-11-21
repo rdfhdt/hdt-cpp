@@ -35,6 +35,7 @@
 
 #include "CSD_FMIndex.h"
 #include <string.h>
+#include <sstream>
 #include <vector>
 
 namespace csd {
