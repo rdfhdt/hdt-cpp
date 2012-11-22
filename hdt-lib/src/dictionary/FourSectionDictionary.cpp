@@ -198,8 +198,8 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
     ControlInformation ci;
     count += ci.load(&ptr[count], ptrMax);
 
-    this->mapping = ci.getUint("$mapping");
-    this->sizeStrings = ci.getUint("$sizeStrings");
+    this->mapping = ci.getUint("mapping");
+    this->sizeStrings = ci.getUint("sizeStrings");
 
     iListener.setRange(0,25);
     iListener.notifyProgress(0, "Dictionary read shared area.");
