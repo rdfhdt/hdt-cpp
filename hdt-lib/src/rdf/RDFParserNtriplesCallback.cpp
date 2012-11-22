@@ -30,7 +30,7 @@ RDFParserNtriplesCallback::~RDFParserNtriplesCallback() {
 
 void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback) {
 
-	istream *in;
+	istream *in=NULL;
 
 	 FILE *filePipe;
 	 ifstream *fileStream = NULL;
@@ -64,7 +64,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 		}
 
 		in = new boost::fdistream(fileno(filePipe));
-	} else {
+	} else if(in==NULL){
 		in = new ifstream(fileName);
 	}
 
@@ -75,6 +75,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 	}
 
 	string line;
+	string origLine;
 	unsigned int numline=0;
 	TripleString ts;
 
@@ -83,6 +84,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 	while(in->good()){
 		filePos = in->tellg();
 		getline(*in, line);
+		origLine.assign(line);
 		numline++;
 
 		int pos = 0;
@@ -251,6 +253,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 		}
 
 		if (errorParsing == true || (pos != 0 && pos != 3)) {
+			cerr << "Error parsing file at line " << numline << "|" << origLine << "|" << endl;
 			throw "Error parsing ntriples file.";
 		}
 
