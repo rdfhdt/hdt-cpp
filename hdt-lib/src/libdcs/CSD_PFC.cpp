@@ -57,7 +57,7 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progress
     text = (unsigned char*)malloc(reservedSize*sizeof(unsigned char));
 
     // Pointers to the first string of each block.
-    blocks = new hdt::LogSequence2(34);
+    blocks = new hdt::LogSequence2(sizeof(size_t)==8 ? 34 : 32);
 
     unsigned char *currentStr = NULL;
     size_t currentLength = 0;
