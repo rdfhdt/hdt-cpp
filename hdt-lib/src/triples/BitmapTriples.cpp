@@ -776,9 +776,11 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	iListener.notifyProgress(0, "BitmapTriples saving Stream Index");
 	arrayIndex->save(output);
 
+#ifndef WIN32
     if(waveletY!=NULL) {
         waveletY->save(output);
     }
+#endif
 }
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
