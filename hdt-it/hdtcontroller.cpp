@@ -67,8 +67,6 @@ void HDTController::importRDFFile(QString file, string &baseUri, hdt::RDFNotatio
     HDTOperation *hdtop = new HDTOperation();
     hdtop->loadFromRDF(spec, file, notation, baseUri);
     int result = hdtop->exec();
-    delete hdtop;
-
     if(result==0) {
         this->hdt = hdtop->getHDT();
         this->hdtCachedInfo = hdtop->getHDTInfo();
@@ -76,6 +74,7 @@ void HDTController::importRDFFile(QString file, string &baseUri, hdt::RDFNotatio
 
         updateOnHDTChanged();
     }
+    delete hdtop;
 }
 
 void HDTController::openHDTFile(QString file)
