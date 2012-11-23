@@ -98,14 +98,22 @@ LIBCDS = ../libcds-v1.0.12
 
 # Using Qt Projects
 win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a $${LIBCDS}/qmake/win32/libcds.a
-win32:LIBS += /local/lib/libraptor2.a /local/lib/libxml2.a
-#win32:LIBS += C:/libraries/raptor2-2.0.8/src/.libs/libraptor2.a C:/MinGW/msys/1.0/lib/libz.a C:/MinGW/msys/1.0/lib/libexpat.a C:/MinGW/msys/1.0/lib/libxml2.a C:/MinGW/msys/1.0/lib/libiconv.a
 
 unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a $${LIBCDS}/qmake/unix/libcds.a -lGLU
 macx:LIBS += $${LIBCDS}/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
 
 PRE_TARGETDEPS += $$LIBS
 
+#External libs
+
+#Windows
+win32-g++:contains(QMAKE_HOST.arch, x86_64):{
+    win32:LIBS += -L"C:/msys/local/lib/" -lraptor2 -lxml2 -lws2_32
+} else {
+    win32:LIBS += -L"C:/MinGW/msys/1.0/local/lib/" -lraptor2 -lxml2 -lws2_32
+}
+
+#Unix (Linux & Mac)
 unix:LIBS += -lraptor2 -lkyotocabinet
 
 RESOURCES += \
