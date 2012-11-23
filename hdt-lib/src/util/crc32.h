@@ -94,7 +94,23 @@ public:
 
 	inline void writeData(std::ostream &out, unsigned char *buf, size_t len) {
 		crc = crc32_update(crc, buf, len);
+
+#ifdef WIN32
+		// Write by 1Mb blocks
+		const BLOCK_SIZE = 1048576; 
+		size_t counter=0;
+		char *ptr = (char *)buf;
+		while(counter<len && out.good()) {
+		    size_t currByt = len-counter > BLOCK_SIZE ? BLOCK_SIZE : len-counter;
+		    out.write(&ptr[counter], currByt);
+		    counter += currByt;
+		}
+		if(counter!=len) {
+		    throw "Could not write full buffer";
+		}
+#else
 		out.write((char*)buf, len);
+#endif
 	}
 
 	inline void writeCRC(std::ostream &out) {
