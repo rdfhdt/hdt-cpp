@@ -203,4 +203,10 @@ INCLUDEPATH += $${LIBCDSBASE}/utils \
 
 #For raptor
 macx:INCLUDEPATH += /usr/local/include
-win32:INCLUDEPATH += C:/mingw/include C:/MinGW/msys/1.0/include C:/libraries/include C:/msys/local/include
+
+#Windows
+win32-g++:contains(QMAKE_HOST.arch, x86_64):{
+    win32:INCLUDEPATH += C:/mingw64/include C:/msys/local/include
+} else {
+    win32:INCLUDEPATH += C:/mingw/include C:/MinGW/msys/1.0/include C:/MinGW/msys/1.0/local/include
+}
