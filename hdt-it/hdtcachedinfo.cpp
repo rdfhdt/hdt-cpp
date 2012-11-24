@@ -15,7 +15,7 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
 
     maxPredicateCount = 0;
     predicateCount.clear();
-    predicateCount.resize(nPred);
+    predicateCount.resize(nPred+1);
 
     hdt::Triples *t = hdt->getTriples();
     hdt::TripleID triplePredicate;
