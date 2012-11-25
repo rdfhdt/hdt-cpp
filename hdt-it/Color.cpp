@@ -103,6 +103,12 @@ void ColorRamp2::apply(Color *c, double val, double vmin, double vmax) {
 	double h, s, v;
 	double dv = vmax - vmin;
 	double prop = (vmin + val / dv);
+
+    if(vmax==0.0) {
+        c->setRGB(1.0, 0.0, 0.0);
+        return;
+    }
+
 #ifdef SCREEN
 	c->setHSV(fmod(prop * 100, 6), 1.0, 0.5 + 0.5 * prop);
 	c->invert();
