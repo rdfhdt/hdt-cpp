@@ -114,7 +114,7 @@ win32-g++:contains(QMAKE_HOST.arch, x86_64):{
 }
 
 #Unix (Linux & Mac)
-unix:LIBS += -lraptor2 -lkyotocabinet
+unix:LIBS += -lraptor2 -lz
 
 RESOURCES += \
     hdtresources.qrc
