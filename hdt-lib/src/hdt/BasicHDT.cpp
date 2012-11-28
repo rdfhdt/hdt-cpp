@@ -57,6 +57,8 @@
 #include "../triples/BitmapTriples.hpp"
 #include "../triples/TripleOrderConvert.hpp"
 
+#include "../third/gzstream.h"
+
 #include "TripleIDStringIterator.hpp"
 
 using namespace std;
@@ -439,16 +441,48 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
  * Load an HDT from a file, using memory mapping
  * @param input
  */
-void BasicHDT::mapHDT(const char *fileName, ProgressListener *listener) {
+void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
 
-    this->fileName.assign(fileName);
+    std::string fileStr(fileNameChar);
+    size_t pos = fileStr.find_last_of(".");
+
+    std::string suffix = fileStr.substr(pos + 1);
+
+    if( suffix == "gz") {
+        #ifdef USE_LIBZ
+            this->fileName.assign(fileStr.substr(0, pos));
+            ifstream test(fileName.c_str());
+            if(test.good()) {
+               test.close();
+            } else {
+                test.close();
+                cout << "Decompress: " << fileNameChar << " to " << fileName << endl;
+                igzstream in(fileNameChar);
+                ofstream out(fileName.c_str(), ios::binary | ios::out);
+
+                const std::size_t buffer_size = 4096;
+                char buffer[buffer_size];
+                while(in.good() && out.good())
+                {
+                    in.read(buffer, buffer_size);
+                    out.write(buffer, in.gcount());
+                }
+                in.close();
+                out.close();
+            }
+        #else
+            throw "Support for GZIP was not compiled in this version. Please Decompress the file before opening it.";
+        #endif
+    } else {
+        this->fileName.assign(fileNameChar);
+    }
 
     // Clean previous
     if(mappedHDT!=NULL) {
         delete mappedHDT;
     }
 
-    mappedHDT = new FileMap(fileName);
+    mappedHDT = new FileMap(fileName.c_str());
 
     unsigned char *ptr = mappedHDT->getPtr();
     size_t mappedSize = mappedHDT->getMappedSize();
