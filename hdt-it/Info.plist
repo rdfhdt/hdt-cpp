@@ -34,6 +34,25 @@
 		<key>LSIsAppleDefaultForType</key>
 		<true/>
 	    </dict>
+	    <dict>
+		<key>CFBundleTypeExtensions</key>
+		<array>
+		    <string>hdt.gz</string>
+		</array>
+		<key>CFBundleTypeIconFile</key>
+		<string>hdtico.icns</string>
+		<key>CFBundleTypeMIMETypes</key>
+		<array>
+		    <string>binary/rdf-hdt</string>
+		</array>
+		<key>CFBundleTypeName</key>
+		<string>HDT RDF File</string>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>LSIsAppleDefaultForType</key>
+		<true/>
+	    </dict>
+
 	</array>
 </dict>
 </plist>

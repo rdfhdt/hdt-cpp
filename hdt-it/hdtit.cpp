@@ -166,7 +166,7 @@ void HDTit::hdtChanged(QString &file)
 
 void HDTit::on_actionOpenHDT_triggered()
 {
-    QString file = QFileDialog::getOpenFileName(this,tr("Select HDT File"), lastDir , tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
+    QString file = QFileDialog::getOpenFileName(this,tr("Select HDT File"), lastDir , tr("HDT Files(*.hdt *.HDT *.hdt.gz *.HDT.gz)"), 0, 0 );
     if(!file.isEmpty()) {
         lastDir = file;
         openHDTFile(file);

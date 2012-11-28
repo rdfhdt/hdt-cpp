@@ -4,7 +4,7 @@ SRCAPP="macx/HDT-it.app"
 FOLDER="macdmg"
 VOL="HDT-it"
 NAME="HDT-it!"
-VERS="0.91beta"
+VERS="1.0rc1"
 DMG="$VOL-$VERS.dmg"
 
 FRAMEWORK_BASE="$SRCAPP/Contents/Frameworks/"
