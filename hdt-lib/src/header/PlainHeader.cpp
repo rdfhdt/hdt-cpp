@@ -156,6 +156,11 @@ void PlainHeader::remove(IteratorTripleString *triples)
 	throw "Not implemented";
 }
 
+void PlainHeader::clear()
+{
+	triples.clear();
+}
+
 IteratorTripleString *PlainHeader::search(const char *subject, const char *predicate, const char *object)
 {
     TripleString pattern(subject, predicate, object);

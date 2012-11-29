@@ -89,6 +89,11 @@ public:
 	 * @param triples
 	 */
 	virtual void remove(IteratorTripleString *triples) = 0;
+
+	/**
+	 * Remove all triples from the storage.
+	 */
+	virtual void clear()=0;
 };
 
 }

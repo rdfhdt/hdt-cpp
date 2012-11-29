@@ -6,7 +6,7 @@
  */
 
 #include <HDT.hpp>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
@@ -66,11 +66,9 @@ int main(int argc, char **argv) {
 
 	inputFile = argv[optind];
 
-	HDT *hdt = HDTFactory::createDefaultHDT();
-
 	try {
 		// LOAD
-		hdt->loadFromHDT(inputFile.c_str());
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
 
 		// CONVERT
 		Dictionary *dict = hdt->getDictionary();
@@ -84,17 +82,17 @@ int main(int argc, char **argv) {
 
 		// HEADER
 		ci.clear();
-		ci.setHeader(true);
+		ci.setType(HEADER);
 		hdt->getHeader()->save(out, ci, NULL);
 
 		// NEW DICTIONARY
 		ci.clear();
-		ci.setDictionary(true);
+		ci.setType(DICTIONARY);
 		litDict.save(out, ci, NULL);
 
 		// TRIPLES
 		ci.clear();
-		ci.setTriples(true);
+		ci.setType(TRIPLES);
 		hdt->getTriples()->save(out, ci, NULL);
 
 		out.close();

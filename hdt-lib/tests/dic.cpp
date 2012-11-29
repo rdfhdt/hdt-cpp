@@ -1,13 +1,13 @@
 
 #include <iostream>
-#include <HDTFactory.hpp>
+#include <HDTManager.hpp>
 
 using namespace hdt;
 
 int main(int argc, char **argv) {
 
 	try {
-		HDT *hdt = HDTFactory::mapHDT(argv[1]);
+		HDT *hdt = HDTManager::mapHDT(argv[1]);
 		IteratorUCharString *it =hdt->getDictionary()->getObjects();
 
 		ofstream lit("lit.txt");

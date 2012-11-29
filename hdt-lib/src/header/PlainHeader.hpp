@@ -86,6 +86,8 @@ public:
 
 	void remove(IteratorTripleString *triples);
 
+	void clear();
+
 	string getAnon();
 
 	friend class PlainHeaderIteratorTripleString;

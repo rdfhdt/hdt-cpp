@@ -460,7 +460,7 @@ void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
                 igzstream in(fileNameChar);
                 ofstream out(fileName.c_str(), ios::binary | ios::out);
 
-                const std::size_t buffer_size = 4096;
+                const size_t buffer_size = 8192;
                 char buffer[buffer_size];
                 while(in.good() && out.good())
                 {
