@@ -465,7 +465,9 @@ void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
                test.close();
             } else {
                 test.close();
-                cout << "Decompress: " << fileNameChar << " to " << fileName << endl;
+                if(listener!=NULL) {
+                	listener->notifyProgress(0.0, "Inflating GZIP'ed file");
+                }
                 igzstream in(fileNameChar);
                 ofstream out(fileName.c_str(), ios::binary | ios::out);
 

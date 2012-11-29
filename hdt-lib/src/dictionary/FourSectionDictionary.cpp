@@ -39,7 +39,7 @@
 
 namespace hdt {
 
-FourSectionDictionary::FourSectionDictionary() : blocksize(8)
+FourSectionDictionary::FourSectionDictionary() : blocksize(16)
 {
 	subjects = new csd::CSD_PFC();
 	predicates = new csd::CSD_PFC();
@@ -47,7 +47,7 @@ FourSectionDictionary::FourSectionDictionary() : blocksize(8)
 	shared = new csd::CSD_PFC();
 }
 
-FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksize(8)
+FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksize(16)
 {
 	subjects = new csd::CSD_PFC();
 	predicates = new csd::CSD_PFC();
