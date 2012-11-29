@@ -236,6 +236,9 @@ void TriplesLoader::processTriple(hdt::TripleString& triple, unsigned long long 
 		listener->notifyProgress(0, str);
 	}
 	count++;
+	if(pos>sizeBytes) {
+		sizeBytes = pos;
+	}
 }
 
 void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotation notation, ProgressListener* listener) {
@@ -257,6 +260,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 				notation);
 		pars->doParse(fileName, baseUri, notation, &tripLoader);
 		delete pars;
+		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, tripLoader.getSize());
 
 		triplesList->stopProcessing(&iListener);
 
@@ -299,6 +303,16 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 }
 
 void BasicHDT::fillHeader(string& baseUri) {
+	string formatNode = "_:format";
+	string dictNode = "_:dictionary";
+	string triplesNode = "_:triples";
+	string statisticsNode = "_:statistics";
+	string publicationInfoNode = "_:publicationInformation";
+
+	uint64_t origSize = header->getPropertyLong(statisticsNode.c_str(), HDTVocabulary::ORIGINAL_SIZE.c_str());
+
+	header->clear();
+
 	// BASE
 	header->insert(baseUri, HDTVocabulary::RDF_TYPE, HDTVocabulary::HDT_DATASET);
 
@@ -308,15 +322,9 @@ void BasicHDT::fillHeader(string& baseUri) {
 	header->insert(baseUri, HDTVocabulary::VOID_PROPERTIES, dictionary->getNpredicates());
 	header->insert(baseUri, HDTVocabulary::VOID_DISTINCT_SUBJECTS, dictionary->getNsubjects());
 	header->insert(baseUri, HDTVocabulary::VOID_DISTINCT_OBJECTS, dictionary->getNobjects());
-
 	// TODO: Add more VOID Properties. E.g. void:classes
 
 	// Structure
-	string formatNode = "_:format";
-	string dictNode = "_:dictionary";
-	string triplesNode = "_:triples";
-	string statisticsNode = "_:statistics";
-	string publicationInfoNode = "_:publicationInformation";
 	header->insert(baseUri, HDTVocabulary::HDT_STATISTICAL_INFORMATION,	statisticsNode);
 	header->insert(baseUri, HDTVocabulary::HDT_PUBLICATION_INFORMATION,	publicationInfoNode);
 	header->insert(baseUri, HDTVocabulary::HDT_FORMAT_INFORMATION, formatNode);
@@ -329,7 +337,10 @@ void BasicHDT::fillHeader(string& baseUri) {
 	// Triples
 	triples->populateHeader(*header, triplesNode);
 
+	// Sizes
+	header->insert(statisticsNode, HDTVocabulary::ORIGINAL_SIZE, origSize);
 	header->insert(statisticsNode, HDTVocabulary::HDT_SIZE, getDictionary()->size() + getTriples()->size());
+
 	// Current time
 	time_t now;
 	char date[40];
@@ -345,14 +356,12 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 		IntermediateListener iListener(listener);
 
 		iListener.setRange(0,50);
-		if(dictionary->getNumberOfElements()==0) {
-			loadDictionary(fileName, baseUri.c_str(), notation, &iListener);
-		}
+		loadDictionary(fileName, baseUri.c_str(), notation, &iListener);
+
 		iListener.setRange(50,99);
 		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
 
 		fillHeader(baseUri);
-		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, fileUtil::getSize(fileName));
 
 	}catch (const char *e) {
 		cout << "Catch exception load: " << e << endl;

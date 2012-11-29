@@ -147,9 +147,13 @@ private:
 	ModifiableTriples *triples;
 	ProgressListener *listener;
 	unsigned long long count;
+	uint64_t sizeBytes;
 public:
-	TriplesLoader(Dictionary *dictionary, ModifiableTriples *triples, ProgressListener *listener) : dictionary(dictionary), triples(triples), listener(listener), count(0) { }
+	TriplesLoader(Dictionary *dictionary, ModifiableTriples *triples, ProgressListener *listener) : dictionary(dictionary), triples(triples), listener(listener), count(0), sizeBytes(0) { }
 	void processTriple(TripleString &triple, unsigned long long pos);
+	uint64_t getSize() {
+		return sizeBytes;
+	}
 };
 
 }

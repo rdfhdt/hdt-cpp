@@ -76,15 +76,15 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 
 	string line;
 	string origLine;
-	unsigned int numline=0;
+	size_t numline=0;
+	uint64_t numByte=0;
 	TripleString ts;
 
-	size_t filePos;
-
 	while(in->good()){
-		filePos = in->tellg();
 		getline(*in, line);
 		origLine.assign(line);
+
+		numByte+=line.length()+1;
 		numline++;
 
 		int pos = 0;
@@ -259,7 +259,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 
 		if(pos==3) {
 			ts.setAll(node[0], node[1], node[2]);
-			callback->processTriple(ts, filePos);
+			callback->processTriple(ts, numByte);
 		}
 	}
 
