@@ -41,6 +41,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "../third/gzstream.h"
+
 using namespace hdt;
 using namespace std;
 
@@ -54,8 +56,7 @@ void help() {
 
 int main(int argc, char **argv) {
 	int c;
-	string query, inputFile, outputFile;
-	bool measure = false;
+	string outputFile;
 
 	while( (c = getopt(argc,argv,"ho:"))!=-1) {
 		switch(c) {
@@ -78,23 +79,51 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	inputFile = argv[optind];
+
 	try {
-		ifstream in(inputFile.c_str(), ios::in | ios::binary);
-		if(!in.good()){
-			throw "Could not open input file.";
+#ifdef USE_LIBZ
+		igzstream *inGz;
+#endif
+		ifstream *inF;
+		istream *in=NULL;
+
+		string inputFile = argv[optind];
+		std::string suffix = inputFile.substr(inputFile.find_last_of(".") + 1);
+		std::string pipeCommand;
+
+		if( suffix == "gz"){
+			#ifdef USE_LIBZ
+				in = inGz = new igzstream(inputFile.c_str());
+			#else
+				throw "Support for GZIP was not compiled in this version. Please Decompress the file before importing it.";
+			#endif
+		} else {
+			in = inF = new ifstream(inputFile.c_str(), ios::binary);
+		}
+
+		if (!in->good())
+		{
+			cerr << "Error opening file " << inputFile << endl;
+			throw "Error opening file for reading";
 		}
 
 		ControlInformation controlInformation;
 
 		// Load Global Control Information
-		controlInformation.load(in);
+		controlInformation.load(*in);
 
 		// Load header
-		controlInformation.load(in);
+		controlInformation.load(*in);
 		Header *header = HDTFactory::readHeader(controlInformation);
-		header->load(in, controlInformation);
-		in.close();
+		header->load(*in, controlInformation);
+
+		if( suffix == "gz") {
+#ifdef USE_LIBZ
+			inGz->close();
+#endif
+		} else {
+			inF->close();
+		}
 
 		// Save
 		IteratorTripleString *it = header->search("","","");
