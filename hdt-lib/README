@@ -60,7 +60,7 @@ Command line tools
 
 The tool provides three main command line tools:
 
-** The tool rdf2hdt converts an RDF file to HDT format. The format of the input file will be NTriples by default, although it can be set by using the "-f" (format) flag. It is also possible to fine tune the internal format of the HDT file using a configfile. Several configfile examples are provided under the directory "presets" of the distributions. Also, the header, dictionary and triples components can be saved separately using the "-H -D -T" flags respectively.
+** The tool rdf2hdt converts an RDF file to HDT format. The format of the input file will be NTriples by default, although it can be set by using the "-f" (format) flag. It is also possible to fine tune the internal format of the HDT file using a configfile. Several configfile examples are provided under the directory "presets" of the distribution.
 
 $ rdf2hdt [options] <RDF input file> <HDT output file> 
 	-h			This help
@@ -92,6 +92,10 @@ $ hdtSearch [options] <hdtfile>
 ** The tool hdtInfo extracts the header from an HDT file.
 
 $ hdtInfo <hdtFile>
+
+** The tool replaceHeader replaces the header of an HDT with the supplied one. You can use hdtInfo to extract the existing one, edit it, and then use replaceHeader to update to the new one. Note: you need to specify a different input and output HDT file.
+
+$ replaceHeader <originalHDTfile> <newHDTfile> <newHeader>
 
 
 Usage example
