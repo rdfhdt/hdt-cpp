@@ -201,7 +201,7 @@ p, li { white-space: pre-wrap; }
                  <string>Show only triples from most used predicates.</string>
                 </property>
                 <property name="text">
-                 <string>Minimum predicate usage count:</string>
+                 <string>Filter least used predicates:</string>
                 </property>
                </widget>
               </item>

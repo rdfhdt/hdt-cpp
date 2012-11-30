@@ -51,6 +51,9 @@ void HDTOperation::execute() {
 
             iListener.setRange(90, 100);
             hdtInfo = new HDTCachedInfo(hdt);
+            if(fileName.endsWith('.gz')){
+                fileName.left(fileName.length()-3);
+            }
             QString infoFile = fileName + ".hdtcache";
             hdtInfo->load(infoFile, &iListener);
 
