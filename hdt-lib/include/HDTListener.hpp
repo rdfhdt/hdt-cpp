@@ -70,10 +70,13 @@ public:
     if((listener)!=NULL && total!=0) (listener)->notifyProgress( ((number)*100/(total)), (message));
 
 #define NOTIFYCOND(listener, message, number, total) \
-    if((listener)!=NULL && total!=0 && ((number)%50000) == 0) (listener)->notifyProgress( ((number)*100/(total)), (message));
+    if((listener)!=NULL && total!=0 && ((number)%50000) == 0) (listener)->notifyProgress( ((number)*100.0/(total)), (message));
 
 #define NOTIFYCOND2(listener, message, counter, number, total) \
-    if((listener)!=NULL && total!=0 && ((counter)%50000) == 0) (listener)->notifyProgress( ((number)*100/(total)), (message));
+    if((listener)!=NULL && total!=0 && ((counter)%50000) == 0) (listener)->notifyProgress( ((number)*100.0/(total)), (message));
+
+#define NOTIFYCOND3(listener, message, counter, total, step) \
+    if((listener)!=NULL && total!=0 && ((counter)%(step)) == 0) (listener)->notifyProgress( ((counter)*100.0/(total)), (message));
 
 }
 

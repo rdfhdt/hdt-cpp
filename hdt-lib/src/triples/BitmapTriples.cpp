@@ -246,7 +246,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	StopWatch global, st;
 
 	IntermediateListener iListener(listener);
-	iListener.setRange(0,40);
+	iListener.setRange(0,20);
 
 	// Count the number of appearances of each object
 	LogSequence2 *objectCount = new LogSequence2(bits(arrayZ->getNumberOfElements()));
@@ -264,7 +264,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		maxCount = count>maxCount ? count : maxCount;
 		objectCount->set(val-1, count);
 
-		NOTIFYCOND(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements());
+		NOTIFYCOND3(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements(), 10000);
 	}
 	cout << "Count Objects in " << st << " Max was: " << maxCount << endl;
 	st.reset();
@@ -275,13 +275,14 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	}
 #endif
 
+	iListener.setRange(20, 25);
 	// Calculate bitmap that separates each object sublist.
 	bitmapIndex = new BitSequence375(arrayZ->getNumberOfElements());
 	unsigned int tmpCount=0;
 	for(unsigned int i=0;i<objectCount->getNumberOfElements();i++) {
 		tmpCount += objectCount->get(i);
 		bitmapIndex->set(tmpCount-1, true);
-		NOTIFYCOND(&iListener, "Creating bitmap", i, objectCount->getNumberOfElements());
+		NOTIFYCOND3(&iListener, "Creating bitmap", i, objectCount->getNumberOfElements(), 10000);
 	}
 	bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
 	delete objectCount;
@@ -309,6 +310,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	}
 #endif
 
+	iListener.setRange(25,60);
 	// Copy each object reference to its position
 	LogSequence2 *objectInsertedCount = new LogSequence2(bits(maxCount), bitmapIndex->countOnes());
 	objectInsertedCount->resize(bitmapIndex->countOnes());
@@ -325,7 +327,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 			objectInsertedCount->set(objectValue-1, insertOffset+1);
 
 			objectArray->set(insertBase+insertOffset, posY);
-			NOTIFYCOND(&iListener, "Generating object references", i, arrayZ->getNumberOfElements());
+			NOTIFYCOND3(&iListener, "Generating object references", i, arrayZ->getNumberOfElements(), 20000);
 	}
 	delete objectInsertedCount;
 	objectInsertedCount=NULL;
@@ -341,6 +343,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	}
 #endif
 
+	iListener.setRange(60,90);
 	unsigned int object=1;
 	do {
 		size_t first = object==1 ? 0 : bitmapIndex->select1(object-1)+1;
@@ -402,7 +405,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		}
 
         object++;
-		NOTIFYCOND(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements());
+		NOTIFYCOND3(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements(), 1000);
 	} while(object<=bitmapIndex->countOnes());
 
 	cout << "Sort lists in " << st << endl;
@@ -410,6 +413,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 
 	// Count predicates
 
+	iListener.setRange(90,100);
 	LogSequence2 *predCount = new LogSequence2(bits(arrayY->getNumberOfElements()));
 	for(unsigned int i=0;i<arrayY->getNumberOfElements(); i++) {
 		// Read value
@@ -423,7 +427,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		// Increment
         predCount->set(val-1, predCount->get(val-1)+1);
 
-		NOTIFYCOND(&iListener, "Counting appearances of predicates", i, arrayZ->getNumberOfElements());
+		NOTIFYCOND3(&iListener, "Counting appearances of predicates", i, arrayZ->getNumberOfElements(), 20000);
 	}
 	predCount->reduceBits();
 
