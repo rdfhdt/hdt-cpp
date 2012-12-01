@@ -392,6 +392,8 @@ void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 void BasicHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
 	this->fileName = fileName;
 
+	// TODO: Load GZIP
+
 	ifstream input(fileName, ios::binary | ios::in);
 	if(!input.good()){
 		throw "Error opening file to load HDT.";
@@ -452,6 +454,8 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
  */
 void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
 
+	IntermediateListener iListener(listener);
+
     std::string fileStr(fileNameChar);
     size_t pos = fileStr.find_last_of(".");
 
@@ -465,24 +469,13 @@ void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
                test.close();
             } else {
                 test.close();
-                if(listener!=NULL) {
-                	listener->notifyProgress(0.0, "Inflating GZIP'ed file");
-                }
-                igzstream in(fileNameChar);
-                ofstream out(fileName.c_str(), ios::binary | ios::out);
 
-                const size_t buffer_size = 8192;
-                char buffer[buffer_size];
-                while(in.good() && out.good())
-                {
-                    in.read(buffer, buffer_size);
-                    out.write(buffer, in.gcount());
-                }
-                in.close();
-                out.close();
+                iListener.setRange(0,80);
+                fileUtil::decompress(fileNameChar, fileName.c_str(), &iListener);
+                iListener.setRange(80,100);
             }
         #else
-            throw "Support for GZIP was not compiled in this version. Please Decompress the file before opening it.";
+            throw "Support for GZIP was not compiled in this version. Please decompress the file before opening it.";
         #endif
     } else {
         this->fileName.assign(fileNameChar);
@@ -499,7 +492,7 @@ void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
     size_t mappedSize = mappedHDT->getMappedSize();
 
     // Load
-    this->loadMMap(ptr, ptr+mappedSize, listener);
+    this->loadMMap(ptr, ptr+mappedSize, &iListener);
 }
 
 size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener) {
