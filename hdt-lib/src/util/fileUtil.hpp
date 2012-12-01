@@ -33,10 +33,14 @@
 #include <stdint.h>
 #include <fstream>
 
+#include <HDTListener.hpp>
+
 class fileUtil {
 public:
 	static uint64_t getSize(std::istream &in);
 	static uint64_t getSize(const char *file);
+
+	static void decompress(const char *input, const char * output, hdt::ProgressListener *listener=NULL);
 };
 
 #endif /* FILEUTIL_HPP_ */
