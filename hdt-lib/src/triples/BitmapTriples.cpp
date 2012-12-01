@@ -688,13 +688,13 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	}
 
 	iListener.setRange(10,20);
-	iListener.notifyProgress(0, "BitmapTriples loading Stream Y");
+	iListener.notifyProgress(0, "BitmapTriples loading Array Y");
 	delete arrayY;
 	arrayY = IntSequence::getArray(input);
 	arrayY->load(input);
 
 	iListener.setRange(20,50);
-	iListener.notifyProgress(0, "BitmapTriples loading Stream Z");
+	iListener.notifyProgress(0, "BitmapTriples loading Array Z");
 	delete arrayZ;
 	arrayZ = IntSequence::getArray(input);
     arrayZ->load(input);
@@ -777,7 +777,7 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	bitmapIndex->save(output);
 
     iListener.setRange(70,100);
-	iListener.notifyProgress(0, "BitmapTriples saving Stream Index");
+	iListener.notifyProgress(0, "BitmapTriples saving Array Index");
 	arrayIndex->save(output);
 
 #ifndef WIN32
@@ -822,7 +822,7 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 	}
 	arrayIndex = IntSequence::getArray(input);
 	iListener.setRange(10,50);
-	iListener.notifyProgress(0, "BitmapTriples loading Stream Index");
+	iListener.notifyProgress(0, "BitmapTriples loading Array Index");
 	arrayIndex->load(input);
 
 	// Make sure wavelet is generated
@@ -882,7 +882,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
 
     // LOAD SEQ
     iListener.setRange(10,50);
-    iListener.notifyProgress(0, "BitmapTriples loading Stream Index");
+    iListener.notifyProgress(0, "BitmapTriples loading Array Index");
     if(arrayIndex!=NULL) {
         delete arrayIndex;
     }
