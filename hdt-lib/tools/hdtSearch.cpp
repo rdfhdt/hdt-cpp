@@ -104,6 +104,19 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 
 }
 
+class ConvertProgress : public ProgressListener {
+private:
+public:
+	virtual ~ConvertProgress() { }
+
+    void notifyProgress(float level, const char *section) {
+    	cout << section << ": " << level << " %";
+    	cout << "\r " << section << ": " << level << " %                      \r";
+		cout.flush();
+	}
+
+};
+
 int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
@@ -140,7 +153,8 @@ int main(int argc, char **argv) {
 
 
 	try {
-		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str());
+		ConvertProgress prog;
+		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &prog);
 
 		ostream *out;
 		ofstream outF;
