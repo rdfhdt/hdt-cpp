@@ -71,6 +71,14 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
         if(tripleComponentRole==hdt::PREDICATE) {
             return hdtController->getPredicateStatus()->isPredicateActive(index.row()) ? Qt::Checked : Qt::Unchecked;
         }
+        break;
+    case Qt::DecorationRole:
+        if(tripleComponentRole==hdt::PREDICATE) {
+            HDTCachedInfo *info = hdtController->getHDTCachedInfo();
+            Color *color = info->getPredicateColor(index.row());
+            return color->asQColor();
+        }
+        break;
     }
     return QVariant();
 }
