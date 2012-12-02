@@ -392,14 +392,13 @@ void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 void BasicHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
 	this->fileName = fileName;
 
-	// TODO: Load GZIP
-
-	ifstream input(fileName, ios::binary | ios::in);
-	if(!input.good()){
+	DecompressStream stream(fileName);
+	istream *in = stream.getStream();
+	if(!in->good()){
 		throw "Error opening file to load HDT.";
 	}
-	this->loadFromHDT(input, listener);
-	input.close();
+	this->loadFromHDT(*in, listener);
+	stream.close();
 }
 
 void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
@@ -458,7 +457,6 @@ void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
 
     std::string fileStr(fileNameChar);
     size_t pos = fileStr.find_last_of(".");
-
     std::string suffix = fileStr.substr(pos + 1);
 
     if( suffix == "gz") {

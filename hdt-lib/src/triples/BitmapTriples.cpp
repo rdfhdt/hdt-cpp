@@ -117,7 +117,6 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 
 	while(it->hasNext()) {
 		TripleID *triple = it->next();
-		//cout << "111> " << *triple << endl;
 
 		swapComponentOrder(triple, SPO, order);
 

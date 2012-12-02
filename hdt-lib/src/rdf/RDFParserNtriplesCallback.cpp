@@ -9,9 +9,6 @@
 #include "../util/fileUtil.hpp"
 #include "../util/unicode.hpp"
 
-#include "../third/gzstream.h"
-#include "../third/fdstream.hpp"
-
 #include <fstream>
 #include <stdexcept>
 #include <stdlib.h>
@@ -30,49 +27,8 @@ RDFParserNtriplesCallback::~RDFParserNtriplesCallback() {
 
 void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback) {
 
-	istream *in=NULL;
-
-	 FILE *filePipe;
-	 ifstream *fileStream = NULL;
-	 boost::fdistream *pipeStream = NULL;
-
-	std::string fn = fileName;
-	std::string suffix = fn.substr(fn.find_last_of(".") + 1);
-	std::string pipeCommand;
-
-#ifdef WIN32
-	if( suffix == "gz") {
-		#ifdef USE_LIBZ
-			in = new igzstream(fileName);
-		#else
-			throw "Support for GZIP was not compiled in this version. Please Decompress the file before importing it.";
-		#endif
-	}
-#else
-	if( suffix == "gz") {
-		pipeCommand = "gunzip -c ";
-	} else if(suffix=="bz2") {
-		pipeCommand = "bunzip2 -c ";
-	}
-#endif
-
-	if(pipeCommand.length()>0) {
-		pipeCommand.append(fileName);
-		if ((filePipe=popen(pipeCommand.c_str(),"r")) == NULL) {
-			cerr << "Error creating pipe for command " << pipeCommand << endl;
-			throw "popen() failed to create pipe";
-		}
-
-		in = new boost::fdistream(fileno(filePipe));
-	} else if(in==NULL){
-		in = new ifstream(fileName);
-	}
-
-	if (!in->good())
-	{
-		cerr << "Error opening file " << fileName << " for parsing using " << pipeCommand << endl;
-		throw "Error opening file for parsing";
-	}
+	DecompressStream stream(fileName);
+	istream *in=stream.getStream();
 
 	string line;
 	string origLine;
@@ -263,10 +219,7 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 		}
 	}
 
-	if(pipeCommand.length()>0) {
-		pclose(filePipe);
-	}
-	delete in;
+	stream.close();
 }
 
 }

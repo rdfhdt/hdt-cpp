@@ -31,16 +31,37 @@
 #define FILEUTIL_HPP_
 
 #include <stdint.h>
+#include <iostream>
 #include <fstream>
+
+#include "../third/gzstream.h"
+#include "../third/fdstream.hpp"
 
 #include <HDTListener.hpp>
 
+using namespace std;
+
 class fileUtil {
 public:
-	static uint64_t getSize(std::istream &in);
+	static uint64_t getSize(istream &in);
 	static uint64_t getSize(const char *file);
 
 	static void decompress(const char *input, const char * output, hdt::ProgressListener *listener=NULL);
+};
+
+class DecompressStream {
+private:
+	istream *in;
+	FILE *filePipe;
+	ifstream *fileStream;
+	igzstream *gzStream;
+
+public:
+	DecompressStream(const char *fileName);
+	std::istream *getStream() {
+		return in;
+	}
+	void close();
 };
 
 #endif /* FILEUTIL_HPP_ */
