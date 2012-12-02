@@ -5,6 +5,7 @@
  *      Author: mck
  */
 
+#include <iostream>
 #include <math.h>
 
 #include "Color.h"
@@ -89,7 +90,13 @@ void Color::setHSV(double h, double s, double v) {
 	case 5:
 		setRGB(v, m, n);
 		break;
-	}
+    }
+}
+
+QColor Color::asQColor()
+{
+    QColor c(255*r, 255*g, 255*b, 255*a);
+    return c;
 }
 
 /**Get Color 2
@@ -100,20 +107,21 @@ void Color::setHSV(double h, double s, double v) {
  * @return void
  */
 void ColorRamp2::apply(Color *c, double val, double vmin, double vmax) {
-	double h, s, v;
-	double dv = vmax - vmin;
-	double prop = (vmin + val / dv);
+    double total = vmax - vmin;
+    double prop = (vmin + val / total);
 
     if(vmax==0.0) {
         c->setRGB(1.0, 0.0, 0.0);
         return;
     }
 
+    //std::cout << "h: " << fmod(prop*100,6) << std::endl;
+    //std::cout << "\tmin: " << vmin << " val: "<< val << " max: " << vmax << " Prop: " << prop << " dv: " << total << std::endl;
 #ifdef SCREEN
-	c->setHSV(fmod(prop * 100, 6), 1.0, 0.5 + 0.5 * prop);
+    c->setHSV(fmod(prop*100,6), 1.0 , 0.5 + 0.5 * prop);
 	c->invert();
 #else
-	c->setHSV( fmod(prop*100,6), 1.0, 0.3+0.7*prop);
+    c->setHSV(fmod(prop*100,6), 1.0, 0.3+0.7*prop);
 	//c->invert();
 #endif
 	//	printf("(%.1f, %.1f, %.1f) %.1f\n", val, vmin, vmax, prop);

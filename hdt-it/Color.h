@@ -8,6 +8,8 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
+#include <QColor>
+
 class Color {
 public:
 	double r,g,b,a;
@@ -24,6 +26,7 @@ public:
 	void setRGB(double r, double g, double b);
 	void setRGBA(double r, double g, double b, double a);
 	void setHSV(double h, double s, double v);
+    QColor asQColor();
 };
 
 class ColorRamp {
