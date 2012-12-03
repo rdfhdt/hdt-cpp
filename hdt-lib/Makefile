@@ -45,11 +45,13 @@ OBJECTS=$(patsubst %.cpp,%.o, $(SRCS) $(THIRD))
 HEADERS=$(wildcard include/*.hpp) $(wildcard include/*.h) $(wildcard src/*.hpp) $(wildcard src/*.h) $(wildcard src/**/*.hpp)
 TOOLS=$(patsubst %.cpp,%, $(wildcard tools/*.cpp))
 TESTS=$(patsubst %.cpp,%, $(wildcard tests/*.cpp))
+EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
 
 all:
 	@$(MAKE) showflags 
 	@$(MAKE) -C $(LIBCDSPATH)
 	@$(MAKE) tools
+	@$(MAKE) examples 
 
 re:
 	@$(MAKE) clean
@@ -69,6 +71,12 @@ tools/%: tools/%.cpp libhdt.a
 	@$(CPP) $(INCLUDES) $(FLAGS) $(DEFINES) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) libhdt.a ${LIB}
 
 tools: libhdt.a $(TOOLS)
+
+examples/%: examples/%.cpp libhdt.a
+	@echo " [HDT] Compiling example $<"
+	@$(CPP) $(INCLUDES) $(FLAGS) $(DEFINES) $(LDFLAGS) $< -o $(patsubst %.cpp, % ,$<) libhdt.a ${LIB}
+
+examples: libhdt.a $(EXAMPLES)
 
 tests/%: tests/%.cpp libhdt.a
 	@echo " [HDT] Compiling test $<"

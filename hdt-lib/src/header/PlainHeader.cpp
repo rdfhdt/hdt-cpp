@@ -112,6 +112,8 @@ size_t PlainHeader::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 
 void PlainHeader::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
 {
+	// TODO: Choose format from spec (NTRIPLES, RDFXML...) and implement.
+
 	// Dump header into a stringbuffer to know size.
 	stringstream strbuf(stringstream::out);
 	for(vector<TripleString>::iterator it = triples.begin(); it!=triples.end(); it++){
@@ -137,9 +139,17 @@ void PlainHeader::insert(TripleString & triple)
 	triples.push_back(triple);
 }
 
-void PlainHeader::remove(TripleString & triple)
+void PlainHeader::remove(TripleString & pattern)
 {
-	throw "Not implemented";
+	vector<TripleString>::iterator it = triples.begin();
+	while (it != triples.end())
+	{
+		if(it->match(pattern)) {
+			it = triples.erase(it);
+		} else {
+			++it;
+		}
+	}
 }
 
 void PlainHeader::insert(IteratorTripleString *tripit)
@@ -149,11 +159,6 @@ void PlainHeader::insert(IteratorTripleString *tripit)
 		triples.push_back(*next);
 	}
 
-}
-
-void PlainHeader::remove(IteratorTripleString *triples)
-{
-	throw "Not implemented";
 }
 
 void PlainHeader::clear()
@@ -215,6 +220,10 @@ void PlainHeaderIteratorTripleString::goToStart()
 {
 	pos=0;
 	doFetch();
+}
+
+string PlainHeader::getBaseURI() {
+	return this->getSubject(hdt::HDTVocabulary::RDF_TYPE.c_str(), hdt::HDTVocabulary::HDT_DATASET.c_str());
 }
 
 }

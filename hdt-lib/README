@@ -142,18 +142,22 @@ USING THE LIBRARY
 
 This section shows how to use the HDT Library programmatically from C++ in your own application. 
 
-// Creating an HDT file.
+// Creating an HDT file (examples/generate.cpp)
 
 #include <HDTManager.hpp>
 
 using namespace hdt;
 
-int main() {
+int main(int argc, char *argv[]) {
 
 	HDTSpecification spec;
 	
 	// Read RDF into an HDT file.
  	HDT *hdt = HDTManager::generateHDT("data/test.nt", "http://example.org/test", NTRIPLES, spec);
+
+	// Add additional domain-specific properties to the header
+	Header *header = hdt->getHeader();
+	header->insert("myResource1", "property", "value");
 
 	// Save HDT to a file
 	hdt->saveToHDT("data/test.hdt");
@@ -162,7 +166,7 @@ int main() {
 }
 
 
-// Load an HDT file and query.
+// Load an HDT file and query (examples/search.cpp)
 
 #include <iostream>
 #include <HDTManager.hpp>
@@ -170,28 +174,28 @@ int main() {
 using namespace std;
 using namespace hdt;
 
-int main() {
+int main(int argc, char *argv[]) {
 
-	// Load HDT file
-	HDT *hdt = HDTManager::mapHDT("data/test.hdt");
+        // Load HDT file
+        HDT *hdt = HDTManager::mapHDT("data/test.hdt");
 
-	// Enumerate all triples matching a pattern ("" means any)
-	IteratorTripleString *iterator = hdt->search("<http://example.org/uri3>","","");
-	while(it->hasNext()){
-		TripleString triple = it->next();
-		cout << "Result: " << triple.getSubject() << ", " << triple.getPredicate() << ", " << triple.getObject() << endl;
-	}
-	delete iterator;
-	
-	// Enumerate all different predicates
-	cout << "Dataset contains " << hdt->getDictionary()->getNpredicates() << " predicates.";
-	IteratorUCharString *itPred = hdt->getDictionary()->getPredicates();
-	while(itPred->hasNext()) {
-		uchar *str = itPred->next(); // Warning this pointer is only valid until next call to next();
-		cout << str << endl;
-		itPred->freeStr(str);
-	}
-	delete itPred;
-	
-	delete hdt;
+        // Enumerate all triples matching a pattern ("" means any)
+        IteratorTripleString *it = hdt->search("<http://example.org/uri3>","","");
+        while(it->hasNext()){
+                TripleString *triple = it->next();
+                cout << "Result: " << triple->getSubject() << ", " << triple->getPredicate() << ", " << triple->getObject() << endl;
+        }
+        delete it;
+
+        // Enumerate all different predicates
+        cout << "Dataset contains " << hdt->getDictionary()->getNpredicates() << " predicates.";
+        IteratorUCharString *itPred = hdt->getDictionary()->getPredicates();
+        while(itPred->hasNext()) {
+                unsigned char *str = itPred->next(); // Warning this pointer is only valid until next call to next();
+                cout << str << endl;
+                itPred->freeStr(str);
+        }
+        delete itPred;
+
+        delete hdt;
 }

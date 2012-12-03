@@ -85,12 +85,6 @@ public:
 	virtual void remove(TripleString &triple) = 0;
 
 	/**
-	 * Removes the set of triples that match any of the specified patterns.
-	 * @param triples
-	 */
-	virtual void remove(IteratorTripleString *triples) = 0;
-
-	/**
 	 * Remove all triples from the storage.
 	 */
 	virtual void clear()=0;

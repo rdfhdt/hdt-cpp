@@ -84,11 +84,11 @@ public:
 	 */
 	void remove(TripleString &triples);
 
-	void remove(IteratorTripleString *triples);
-
 	void clear();
 
 	string getAnon();
+
+	string getBaseURI();
 
 	friend class PlainHeaderIteratorTripleString;
 };

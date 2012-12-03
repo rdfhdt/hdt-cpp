@@ -353,6 +353,12 @@ void BasicHDT::fillHeader(string& baseUri) {
 void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener)
 {
 	try {
+		// Make sure that URI starts and ends with <>
+		if(baseUri.at(0)!='<')
+			baseUri = '<'+baseUri;
+		if(baseUri.at(baseUri.length()-1)!='>')
+			baseUri.append(">");
+
 		IntermediateListener iListener(listener);
 
 		iListener.setRange(0,50);

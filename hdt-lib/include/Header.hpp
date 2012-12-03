@@ -168,19 +168,13 @@ public:
 	virtual void remove(TripleString &triples) = 0;
 
 	/**
-	 * Remove a set of patterns.
-	 * Removes all triples that match the specified triple patterns.
-	 *
-	 * @param triples Iterator of TripleString indicating the triple patterns to be removed.
-	 */
-	virtual void remove(IteratorTripleString *triples) = 0;
-
-	/**
 	 * Remove all triples from the storage.
 	 */
 	virtual void clear()=0;
 
 	virtual string getAnon() = 0;
+
+	virtual string getBaseURI()=0;
 };
 
 }
