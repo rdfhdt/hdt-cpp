@@ -157,7 +157,11 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 #endif
 }
 
-DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileStream(NULL), gzStream(NULL) {
+DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileStream(NULL) {
+
+#ifdef USE_LIBZ
+	gzStream = NULL;
+#endif
 	string fn = fileName;
 	string suffix = fn.substr(fn.find_last_of(".") + 1);
 	string pipeCommand;
