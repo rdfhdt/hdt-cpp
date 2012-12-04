@@ -200,7 +200,9 @@ DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileS
 void DecompressStream::close() {
 	if(fileStream) fileStream->close();
 	if(filePipe) pclose(filePipe);
+#ifdef USE_LIBZ
 	if(gzStream) gzStream->close();
+#endif
 	delete in;
 	in=NULL;
 }

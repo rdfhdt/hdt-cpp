@@ -54,7 +54,9 @@ private:
 	istream *in;
 	FILE *filePipe;
 	ifstream *fileStream;
+#ifdef USE_LIBZ
 	igzstream *gzStream;
+#endif
 
 public:
 	DecompressStream(const char *fileName);
