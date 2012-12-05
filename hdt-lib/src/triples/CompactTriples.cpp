@@ -233,6 +233,7 @@ void CompactTriples::loadIndex(std::istream &input, ControlInformation &controlI
 
 size_t CompactTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
+	return 0;
 }
 
 unsigned int CompactTriples::getNumberOfElements()

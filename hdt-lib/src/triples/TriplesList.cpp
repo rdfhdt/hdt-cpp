@@ -153,6 +153,7 @@ void TriplesList::loadIndex(std::istream &input, ControlInformation &controlInfo
 
 size_t TriplesList::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
+	return 0;
 }
 
 

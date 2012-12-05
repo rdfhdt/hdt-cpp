@@ -185,6 +185,7 @@ void TriplesKyoto::loadIndex(std::istream &input, ControlInformation &controlInf
 
 size_t TriplesKyoto::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
+	return 0;
 }
 
 

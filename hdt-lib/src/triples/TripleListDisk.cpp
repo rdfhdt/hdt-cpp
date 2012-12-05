@@ -283,6 +283,7 @@ void TripleListDisk::loadIndex(std::istream &input, ControlInformation &controlI
 
 size_t TripleListDisk::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
+	return 0;
 }
 
 

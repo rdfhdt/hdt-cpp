@@ -186,6 +186,7 @@ void PlainTriples::loadIndex(std::istream &input, ControlInformation &controlInf
 
 size_t PlainTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
+	return 0;
 }
 
 
