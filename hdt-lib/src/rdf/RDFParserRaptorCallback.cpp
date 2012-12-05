@@ -49,10 +49,14 @@ void raptor_callback_log_handler(void *user_data, raptor_log_message *message) {
 	RDFParserRaptorCallback *raptorParser = reinterpret_cast<RDFParserRaptorCallback *>(user_data);
 
 	if(message!=NULL) {
-		/*if(message->level>=RAPTOR_LOG_LEVEL_ERROR) {
-			raptorParser->error = (char *)message->text;
+#if 0
+		if(message->level>=RAPTOR_LOG_LEVEL_ERROR) {
+			size_t len = strlen(message->text)+1;
+			raptorParser->error = new char[len];
+			strncpy(raptorParser->error, message->text, len);
 			raptor_parser_parse_abort(raptorParser->rdf_parser);
-		}*/
+		}
+#endif
 
 		cerr << "Parser message: => " << message->text;
 
