@@ -203,8 +203,11 @@ void HDTit::on_actionExportRDF_triggered()
         QMessageBox::warning(0, tr("Export Search Results"), tr("Warning: Only those triples matching the selected search pattern will be exported."));
     }
 
+    QString file = lastDir;
+    file.replace(".hdt",".nt");
+
     // TODO: Rename lastDir
-    QString file = QFileDialog::getSaveFileName(this,tr("Select Output RDF File"), lastDir, tr("RDF Files(*.rdf *.RDF *.n3 *.N3 *.nt *.NT *.ttl *.TTL)"), 0, 0 );
+    file = QFileDialog::getSaveFileName(this,tr("Select Output RDF File"), file, tr("RDF Files(*.rdf *.RDF *.n3 *.N3 *.nt *.NT *.ttl *.TTL)"), 0, 0 );
     if(!file.isEmpty()) {
         // FIXME: Select notation.
         lastDir = file;
