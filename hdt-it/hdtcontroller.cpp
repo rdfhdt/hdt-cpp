@@ -227,18 +227,22 @@ void HDTController::setSearchPattern(hdt::TripleString &pattern)
 
             hdt->getDictionary()->tripleStringtoTripleID(pattern, searchPatternID);
 
-            if(!searchPatternString.isEmpty()) {
-                if(iteratorResults!=NULL) {
-                    delete iteratorResults;
-                }
-                iteratorResults = hdt->getTriples()->search(searchPatternID);
-
-                numResults=0;
-                updateNumResults();
-            } else {
-                numResults = hdt->getTriples()->getNumberOfElements();
-                iteratorResults = NULL;
+            // Reset iterator
+            if(iteratorResults!=NULL) {
+                delete iteratorResults;
+                iteratorResults=NULL;
             }
+            numResults=0;
+
+            // Check not found
+            if( (searchPatternID.getSubject()==0 && !pattern.getSubject().empty()) ||
+                    (searchPatternID.getPredicate()==0 && !pattern.getPredicate().empty()) ||
+                    (searchPatternID.getObject()==0 && !pattern.getObject().empty()) ) {
+
+            } else {
+                iteratorResults = hdt->getTriples()->search(searchPatternID);
+            }
+            updateNumResults();
 
             predicateStatus->selectPredicate(searchPatternID.getPredicate());
         } catch (char *exception){
