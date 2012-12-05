@@ -149,6 +149,14 @@ IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicat
 	try {
 		TripleID tid;
 		dictionary->tripleStringtoTripleID(ts, tid);
+
+		// Make sure that all not-empty components arefound in dictionary.
+		if( (tid.getSubject()==0 && subject!=NULL && *subject!='\0') ||
+				(tid.getPredicate()==0 && predicate!=NULL && *predicate!='\0') ||
+				(tid.getObject()==0 && object!=NULL && *object!='\0') ) {
+			return new IteratorTripleString();
+		}
+
 		IteratorTripleID* iterID = triples->search(tid);
 		TripleIDStringIterator* iterator = new TripleIDStringIterator(dictionary, iterID);
 		return iterator;
