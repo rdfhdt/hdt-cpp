@@ -34,7 +34,7 @@
 
 #include "../src/hdt/HDTFactory.hpp"
 
-#include "../src/rdf/RDFSerializerN3.hpp"
+#include "../src/rdf/RDFSerializerNTriples.hpp"
 
 #include <getopt.h>
 #include <string>
@@ -138,11 +138,11 @@ int main(int argc, char **argv) {
 			if(!out.good()){
 				throw "Could not open output file.";
 			}
-			RDFSerializerN3 serializer(out, N3);
+			RDFSerializerNTriples serializer(out, NTRIPLES);
 			serializer.serialize(it);
 			out.close();
 		} else {
-			RDFSerializerN3 serializer(cout, N3);
+			RDFSerializerNTriples serializer(cout, NTRIPLES);
 			serializer.serialize(it);
 		}
 		delete it;

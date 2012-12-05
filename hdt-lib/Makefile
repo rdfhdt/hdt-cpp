@@ -32,7 +32,7 @@ endif
 
 ifeq ($(OS), Darwin)
 CPP=clang++
-FLAGS:=$(FLAGS) -arch x86_64 -msse4.2 
+FLAGS:=$(FLAGS) -arch x86_64 #-msse4.2 
 endif
 
 ifeq ($(CPP), g++)
@@ -99,6 +99,6 @@ doc:
 	
 clean:
 	@echo " [CLN] Removing object files"
-	@rm -f $(OBJECTS) $(TOOLS) $(TESTS) libhdt.a *~
-	@rm -Rf tools/*dSYM tests/*dSYM
+	@rm -f $(OBJECTS) $(TOOLS) $(TESTS) $(EXAMPLES) libhdt.a *~
+	@rm -Rf tools/*dSYM tests/*dSYM examples/*dSYM
 

@@ -20,9 +20,17 @@ RDFSerializerRaptor::RDFSerializerRaptor(const char *fileName, RDFNotation notat
 
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 
-	raptor_serializer* rdf_serializer = raptor_new_serializer(world, getType(notation)) ;
+	rdf_serializer = raptor_new_serializer(world, getType(notation)) ;
 
 	raptor_serializer_start_to_filename(rdf_serializer, fileName);
+}
+
+int iostream_init(void *context ){
+	return 0;
+}
+
+void iostream_finish(void *context) {
+
 }
 
 int iostream_write_bytes (void *context, const void *ptr, size_t size, size_t nmemb) {
@@ -45,6 +53,10 @@ int iostream_write_byte(void *context, const int byte) {
 	}
 }
 
+int iostream_write_end(void *context ){
+	return 0;
+}
+
 RDFSerializerRaptor::RDFSerializerRaptor(std::ostream &s, RDFNotation notation)
 	: RDFSerializer(notation),
 	  readingFromStream(true)
@@ -54,8 +66,12 @@ RDFSerializerRaptor::RDFSerializerRaptor(std::ostream &s, RDFNotation notation)
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 
 	memset(&handler, 0, sizeof(handler));
+	handler.version = 1;
+	handler.init = iostream_init;
+	handler.finish = iostream_finish;
 	handler.write_byte = iostream_write_byte;
 	handler.write_bytes = iostream_write_bytes;
+	handler.write_end = iostream_write_end;
 
 	iostream = raptor_new_iostream_from_handler(world, (void *) &s, &handler);
 	rdf_serializer = raptor_new_serializer(world, getType(notation)) ;
@@ -78,18 +94,33 @@ RDFSerializerRaptor::~RDFSerializerRaptor() {
 }
 
 raptor_term *getTerm(string &str, raptor_world *world) {
+
 	if(str=="") {
-		return NULL;
+		throw "Empty Value on triple!";
 	}
 
-	if(str.at(0)=='<'){
-		return raptor_new_term_from_uri_string(world, (const unsigned char *)str.substr(1, str.length()-2).c_str());
-	} else if(str.at(0)=='"') {
+	if(str.at(0)=='"') {
+		size_t pos=str.find("\"^^");
+		if(pos!=string::npos) {
+			// Extract literal and datatype
+			string datatypeStr = str.substr(pos+4, str.length()-(pos+5)).c_str();
+			if(datatypeStr.at(0)=='<' && datatypeStr.at(datatypeStr.length()-1)=='>') {
+				datatypeStr = datatypeStr.substr(1, datatypeStr.length()-2);
+			}
+			raptor_uri *datatype = raptor_new_uri(world, (unsigned char *)datatypeStr.c_str());
+			return raptor_new_term_from_literal(world, (unsigned char *)str.substr(1, pos-1).c_str(), datatype, NULL);
+		}
+		pos=str.find("\"@");
+		if(pos!=string::npos) {
+			// Extract literal and language separately
+			return raptor_new_term_from_literal(world, (unsigned char *)str.substr(1, pos-1).c_str(), NULL, (unsigned char *)str.substr(pos+2).c_str());
+		}
+		// Remove " "
 		return raptor_new_term_from_literal(world, (const unsigned char *)str.substr(1, str.length()-2).c_str(), NULL, NULL);
 	} else if(str.at(0)=='_') {
 		return raptor_new_term_from_blank(world, (const unsigned char *)str.c_str());
 	} else {
-		throw "Unknown kind of term";
+		return raptor_new_term_from_uri_string(world, (const unsigned char *)str.c_str());
 	}
 }
 
@@ -121,7 +152,7 @@ void RDFSerializerRaptor::serialize(IteratorTripleString *it, ProgressListener *
 			triple->subject = getTerm(ts->getSubject(), world);
 			triple->predicate = getTerm(ts->getPredicate(), world);
 			triple->object = getTerm(ts->getObject(), world);
-			raptor_statement_print(triple, stdout);
+			//raptor_statement_print(triple, stdout);
 			raptor_serializer_serialize_statement(rdf_serializer, triple);
 			raptor_free_statement(triple);
 		}

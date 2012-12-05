@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 		TripleString *triple = it->next();
 		cout << "Result: " << triple->getSubject() << ", " << triple->getPredicate() << ", " << triple->getObject() << endl;
 	}
-	delete it;
+	delete it; // Remember to delete iterator to avoid memory leaks!
 	
 	// Enumerate all different predicates
 	cout << "Dataset contains " << hdt->getDictionary()->getNpredicates() << " predicates.";
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 		cout << str << endl;
 		itPred->freeStr(str);
 	}
-	delete itPred;
-	
-	delete hdt;
+	delete itPred;  // Remember to delete iterator to avoid memory leaks!
+
+	delete hdt; // Remember to delete instance when no longer needed!
 }

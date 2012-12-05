@@ -44,7 +44,7 @@ Dependencies:
 	*(Optional) Raptor RDF Parser Library Version 2+  (for more information see: http://http://librdf.org/raptor/)
 		Note: Without Raptor the library is only capable of importing and exporting RDF in NTriples format.
 	*(Optional) Kyoto Cabinet. Allows to convert very big RDF files on machines with limited amount of main memory.
-	*(Optional) Libz. Allows to load files in ntriples compressed with GZIP (i.e. file.nt.gz)
+	*(Optional) Libz. Allows to load files in ntriples compressed with GZIP (i.e. file.nt.gz) and compressed HDTs (file.hdt.gz)
 
 Edit Makefile uncommenting these lines to include compile support for the optional libraries:
 #RAPTOR_SUPPORT=true
@@ -136,6 +136,9 @@ $ tools/hdtSearch -q "? <http://example.org/predicate1> ?" data/test.hdt > outpu
 
 # To browse the header of an HDT file:
 $ tools/hdtInfo data/test.hdt
+
+# To replace the Header of an HDT file with a new one. For example by editing the existing one as extracted using hdtInfo:
+$ tools/replaceHeader data/test.hdt data/testOutput.hdt newHeader.nt
 
 USING THE LIBRARY
 =================

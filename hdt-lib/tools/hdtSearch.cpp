@@ -174,16 +174,15 @@ int main(int argc, char **argv) {
 			char line[1024*10];
 
 			signal(SIGINT, &signalHandler);
-			cout << ">> ";
+			cout << "                                                 \r>> ";
 			while(cin.getline(line, 1024*10)) {
 				if(strcmp(line, "exit")==0|| strcmp(line,"quit")==0) {
 					break;
 				}
-				if(strcmp(line, "help")==0) {
-					cout << "Please write Triple Search Pattern, using '?' for wildcards. e.g " << endl;
+				if(strlen(line)==0 || strcmp(line, "help")==0) {
+					cout << "Please type Triple Search Pattern, using '?' for wildcards. e.g " << endl;
 					cout << "   http://www.somewhere.com/mysubject ? ?" << endl;
-					cout << "If you just press 'enter', all triples will be shown, Interrupt with Control+C."<< endl;
-					cout << "Type 'exit', 'quit' or Control+D to exit the shell." << endl;
+					cout << "Interrupt with Control+C. Type 'exit', 'quit' or Control+D to exit the shell." << endl;
 					cout << ">> ";
 					continue;
 				}

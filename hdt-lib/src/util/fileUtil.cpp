@@ -157,7 +157,7 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 #endif
 }
 
-DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileStream(NULL) {
+DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileStream(NULL), in(NULL) {
 
 #ifdef USE_LIBZ
 	gzStream = NULL;

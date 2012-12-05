@@ -35,7 +35,6 @@ RCC_DIR = $${OutputDir}
 UI_DIR = $${OutputDir}
 
 SOURCES += \
-    ../src/rdf/RDFSerializerN3.cpp \
     ../src/hdt/HDTSpecification.cpp \
     ../src/hdt/HDTFactory.cpp \
     ../src/hdt/HDTManager.cpp \
@@ -72,6 +71,7 @@ SOURCES += \
     ../src/dictionary/LiteralDictionary.cpp \
     ../src/rdf/RDFParserNtriples.cpp \
     ../src/rdf/RDFParser.cpp \
+    ../src/rdf/RDFSerializerNTriples.cpp \
     ../src/rdf/RDFSerializerRaptor.cpp \
     ../src/rdf/RDFSerializer.cpp \
     ../src/util/fileUtil.cpp \
@@ -118,7 +118,6 @@ HEADERS += \
     ../include/ControlInformation.hpp \
     ../include/RDFParser.hpp \
     ../include/RDFSerializer.hpp \
-    ../src/rdf/RDFSerializerN3.hpp \
     ../src/hdt/BasicHDT.hpp \
     ../src/hdt/BasicModifiableHDT.hpp \
     ../src/hdt/HDTFactory.hpp \
@@ -148,6 +147,7 @@ HEADERS += \
     ../src/libdcs/fmindex/SuffixArray.h \
     ../src/libdcs/fmindex/SSA.h \
     ../src/rdf/RDFParserNtriples.hpp \
+    ../src/rdf/RDFSerializerNTriples.hpp \
     ../src/rdf/RDFSerializerRaptor.hpp \
     ../src/rdf/RDFParserRaptorCallback.hpp \
     ../src/sparql/VarBindingInterface.hpp \
