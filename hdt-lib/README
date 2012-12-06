@@ -109,7 +109,7 @@ $ tools/rdf2hdt data/test.nt data/test.hdt
 # This converts back the HDT to RDF.
 $ tools/hdt2rdf data/test.hdt data/test.hdtexport.nt
 
-# This allows browsing a dataset interactively.
+# This allows browsing a dataset interactively. It will create a file data/test.hdt.index with an additional index to perform all kind of queries efficiently. The following times it will use this file.
 $ tools/hdtSearch data/test.hdt
 
 >> ? ? ?
