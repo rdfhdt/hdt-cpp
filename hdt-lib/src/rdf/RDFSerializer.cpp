@@ -15,28 +15,28 @@ namespace hdt {
 
 RDFSerializer *RDFSerializer::getSerializer(std::ostream &out, RDFNotation notation) {
 
-	if(notation==NTRIPLES) {
-		return new RDFSerializerNTriples(out,notation);
-	} else {
 #ifdef USE_RAPTOR
 		return new RDFSerializerRaptor(out, notation);
 #else
+	if(notation==NTRIPLES) {
+		return new RDFSerializerNTriples(out,notation);
+	} else {
 		throw "RDFSerialization not available";
-#endif
 	}
+#endif
 }
 
 RDFSerializer *RDFSerializer::getSerializer(const char *fileName, RDFNotation notation) {
 
-	if(notation==NTRIPLES) {
-		return new RDFSerializerNTriples(fileName,notation);
-	} else {
 #ifdef USE_RAPTOR
 	return new RDFSerializerRaptor(fileName, notation);
 #else
+	if(notation==NTRIPLES) {
+		return new RDFSerializerNTriples(fileName,notation);
+	} else {
 		throw "RDFSerialization not available";
-#endif
 	}
+#endif
 }
 
 }

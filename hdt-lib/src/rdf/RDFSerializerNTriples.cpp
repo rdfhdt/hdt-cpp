@@ -34,6 +34,8 @@ void serializeTerm(std::string str, ostream &output) {
 		throw "Empty Value on triple!";
 	}
 
+	// FIXME: Escape non-ascii.
+
 	if(str.at(0)=='"') {
 		output << str;
 	} else if(str.at(0)=='_') {
