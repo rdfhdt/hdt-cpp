@@ -144,6 +144,7 @@ const char *RDFSerializerRaptor::getType(RDFNotation notation) {
 
 void RDFSerializerRaptor::serialize(IteratorTripleString *it, ProgressListener *listener, unsigned int totalTriples)
 {
+	unsigned int numTriple=0;
 	while( it->hasNext() ) {
 		TripleString *ts = it->next();
 
@@ -155,7 +156,10 @@ void RDFSerializerRaptor::serialize(IteratorTripleString *it, ProgressListener *
 			//raptor_statement_print(triple, stdout);
 			raptor_serializer_serialize_statement(rdf_serializer, triple);
 			raptor_free_statement(triple);
+
+			NOTIFYCOND(listener, "Exporting HDT to RDF", numTriple, totalTriples);
 		}
+		numTriple++;
 	}
 }
 
