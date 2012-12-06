@@ -44,7 +44,10 @@ CSD_Cache2::CSD_Cache2(CSD *child) : child(child)
 CSD_Cache2::~CSD_Cache2()
 {
 	for(std::vector<unsigned char *>::iterator it = array.begin(); it != array.end(); ++it) {
-	    child->freeString(*it);
+		unsigned char *value = *it;
+		if(value!=NULL) {
+			child->freeString(*it);
+		}
 	}
 
 	delete child;
