@@ -16,6 +16,7 @@
 #include <fstream>
 
 #include "../src/dictionary/LiteralDictionary.hpp"
+#include "../src/dictionary/FourSectionDictionary.hpp"
 
 #include "../src/util/StopWatch.hpp"
 
@@ -72,13 +73,20 @@ int main(int argc, char **argv) {
 
 		// CONVERT
 		Dictionary *dict = hdt->getDictionary();
-		LiteralDictionary litDict;
+		//LiteralDictionary litDict;
+		FourSectionDictionary litDict;
 		ConvertProgress progress;
 		litDict.import(dict, &progress);
 
 		// SAVE
 		ofstream out(outputFile.c_str(), ios::binary | ios::out);
 		ControlInformation ci;
+
+		// GLOBAL
+		ci.clear();
+		ci.setType(GLOBAL);
+		ci.setFormat(HDTVocabulary::HDT_CONTAINER);
+		ci.save(out);
 
 		// HEADER
 		ci.clear();
