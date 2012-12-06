@@ -3,4 +3,4 @@ triples.type = <http://purl.org/HDT/hdt#triplesBitmap>
 dictionary.type = <http://purl.org/HDT/hdt#dictionaryFrontCoding>
 stream.y = <http://purl.org/HDT/hdt#streamWavelet>
 stream.z = <http://purl.org/HDT/hdt#streamLog>
-triples.component.order = SPO
+triplesOrder = SPO

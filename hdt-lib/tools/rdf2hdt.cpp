@@ -48,7 +48,7 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-i\t\tAlso generate index to solve all triple patterns." << endl;
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
-	cout << "\t-o\t<options>\tHDT Additional options (option1:value1;option2:value2;...)" << endl;
+	cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
 	cout << "\t-f\t<format>\tFormat of the RDF input (ntriples, nquad, n3, turtle, rdfxml)" << endl;
 	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
 	//cout << "\t-v\tVerbose output" << endl;

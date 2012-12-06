@@ -55,7 +55,7 @@ BitmapTriples::BitmapTriples() : order(SPO) {
 }
 
 BitmapTriples::BitmapTriples(HDTSpecification &specification) : spec(specification) {
-	std::string orderStr = spec.get("triples.component.order");
+	std::string orderStr = spec.get("triplesOrder");
 	order= parseOrder(orderStr.c_str());
 	if(order==Unknown)
 		order = SPO;

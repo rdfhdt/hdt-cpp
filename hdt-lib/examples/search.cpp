@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 	HDT *hdt = HDTManager::mapHDT("data/test.hdt");
 
 	// Enumerate all triples matching a pattern ("" means any)
-	IteratorTripleString *it = hdt->search("<http://example.org/uri3>","","");
+	IteratorTripleString *it = hdt->search("http://example.org/uri3","","");
 	while(it->hasNext()){
 		TripleString *triple = it->next();
 		cout << "Result: " << triple->getSubject() << ", " << triple->getPredicate() << ", " << triple->getObject() << endl;

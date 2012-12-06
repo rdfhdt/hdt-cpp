@@ -113,26 +113,26 @@ $ tools/hdt2rdf data/test.hdt data/test.hdtexport.nt
 $ tools/hdtSearch data/test.hdt
 
 >> ? ? ?
-<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri4>
-<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri5>
-<http://example.org/uri1> <http://example.org/predicate1> "literal1"
-<http://example.org/uri1> <http://example.org/predicate1> "literalA"
-<http://example.org/uri1> <http://example.org/predicate1> "literalB"
-<http://example.org/uri1> <http://example.org/predicate1> "literalC"
-<http://example.org/uri1> <http://example.org/predicate2> <http://example.org/uri3>
-<http://example.org/uri1> <http://example.org/predicate2> <http://example.org/uriA3>
-<http://example.org/uri2> <http://example.org/predicate1> "literal1"
+http://example.org/uri3 http://example.org/predicate3 http://example.org/uri4
+http://example.org/uri3 http://example.org/predicate3 http://example.org/uri5
+http://example.org/uri1 http://example.org/predicate1 "literal1"
+http://example.org/uri1 http://example.org/predicate1 "literalA"
+http://example.org/uri1 http://example.org/predicate1 "literalB"
+http://example.org/uri1 http://example.org/predicate1 "literalC"
+http://example.org/uri1 http://example.org/predicate2 http://example.org/uri3
+http://example.org/uri1 http://example.org/predicate2 http://example.org/uriA3
+http://example.org/uri2 http://example.org/predicate1 "literal1"
 9 results shown.
 
->> <http://example.org/uri3> ? ?
-<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri4>
-<http://example.org/uri3> <http://example.org/predicate3> <http://example.org/uri5>
+>> http://example.org/uri3 ? ?
+http://example.org/uri3 http://example.org/predicate3 http://example.org/uri4
+http://example.org/uri3 http://example.org/predicate3 http://example.org/uri5
 2 results shown.
 
 >> exit
 
 # You can also dump the results of a query to a file
-$ tools/hdtSearch -q "? <http://example.org/predicate1> ?" data/test.hdt > output.txt
+$ tools/hdtSearch -q "? http://example.org/predicate1 ?" data/test.hdt > output.txt
 
 # To browse the header of an HDT file:
 $ tools/hdtInfo data/test.hdt
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
         HDT *hdt = HDTManager::mapHDT("data/test.hdt");
 
         // Enumerate all triples matching a pattern ("" means any)
-        IteratorTripleString *it = hdt->search("<http://example.org/uri3>","","");
+        IteratorTripleString *it = hdt->search("http://example.org/uri3","","");
         while(it->hasNext()){
                 TripleString *triple = it->next();
                 cout << "Result: " << triple->getSubject() << ", " << triple->getPredicate() << ", " << triple->getObject() << endl;

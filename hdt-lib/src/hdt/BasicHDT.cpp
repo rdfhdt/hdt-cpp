@@ -274,7 +274,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 
 		// SORT & Duplicates
 		TripleComponentOrder order = parseOrder(
-				spec.get("triples.component.order").c_str());
+				spec.get("triplesOrder").c_str());
 		if (order == Unknown) {
 			order = SPO;
 		}

@@ -4,4 +4,4 @@ dictionary.type = <http://purl.org/HDT/hdt#dictionaryPlain>
 stream.x = <http://purl.org/HDT/hdt#streamHuffman>
 stream.y = <http://purl.org/HDT/hdt#streamHuffman>
 stream.z = <http://purl.org/HDT/hdt#streamHuffman>
-triples.component.order = SPO
+triplesOrder = SPO

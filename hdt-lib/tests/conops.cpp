@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
 		// Generate new OPS BitmapTriples
 		cout << "TriplesList to new BitmapTriples" << endl;
 		HDTSpecification spec;
-		spec.set("triples.component.order", "OPS");
+		spec.set("triplesOrder", "OPS");
 		BitmapTriples bt(spec);
 		st.reset();
 		bt.load(tlist, &progress);
