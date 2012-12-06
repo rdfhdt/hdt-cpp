@@ -55,13 +55,13 @@ namespace csd
 	/**
 	 * Decode value from the buffer using VByte.
 	 */
-    size_t VByte::decode(const unsigned char *buffer, uint64_t *value )
+    size_t VByte::decode(const unsigned char *buffer, const unsigned char *maxPtr, uint64_t *value)
 	{
 		*value = 0;
 		int i = 0;
 		int shift = 0;
 		
-		while ( !(buffer[i] & 0x80) )
+		while ( (&buffer[i]<=maxPtr) && !(buffer[i] & 0x80) )
 		{
 		   	if(shift>50) {
 		   		cerr << "VByte.decode(uint64_t) Read too many bytes and still did not find a terminating byte" << endl;
@@ -81,13 +81,13 @@ namespace csd
 	/**
 	 * Decode value from the buffer using VByte.
 	 */
-    size_t VByte::decode(const unsigned char *buffer, uint32_t *value )
+    size_t VByte::decode(const unsigned char *buffer, const unsigned char *maxPtr, uint32_t *value)
 	{
 		*value = 0;
 		int i = 0;
 		int shift = 0;
 
-		while ( !(buffer[i] & 0x80) )
+		while ((&buffer[i]<=maxPtr) && !(buffer[i] & 0x80) )
 		{
 			if(shift>50) {
 		   		cerr << "VByte.decode(uint32_t) Read too many bytes and still did not find a terminating byte" << endl;

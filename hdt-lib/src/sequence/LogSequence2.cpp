@@ -232,25 +232,30 @@ void LogSequence2::load(std::istream & input)
 	IsMapped = false;
 }
 
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw "Could not read completely the HDT from the file.";
+
 size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener) {
 	size_t count = 0;
 
 	// Read type
+	CHECKPTR(&ptr[count], ptrMax, 1);
 	if(ptr[count]!=TYPE_SEQLOG) {
-		//throw "Trying to read a LOGArray but data is not LogArray";
+		throw "Trying to read a LOGArray but data is not LogArray";
 	}
 	count++;
 
     // Read numbits
+	CHECKPTR(&ptr[count], ptrMax, 1);
 	numbits = ptr[count++];
 
     // Read numentries
     uint64_t numentries64;
-    count += csd::VByte::decode(&ptr[count], &numentries64);
+    count += csd::VByte::decode(&ptr[count], ptrMax, &numentries64);
 
     // Validate Checksum Header
     CRC8 crch;
     crch.update(&ptr[0], count);
+    CHECKPTR(&ptr[count], ptrMax, 1);
     if(crch.getValue()!=ptr[count++])
         throw "Checksum error while reading LogSequence2 header.";
 
@@ -270,6 +275,7 @@ size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax,
     if(&ptr[count]>=ptrMax)
         throw "LogSequence2 tries to read beyond the end of the file";
 
+    CHECKPTR(&ptr[count], ptrMax, 4);
     count+=4; // CRC of data
 
 	return count;

@@ -302,9 +302,9 @@ size_t CSD_PFC::load(unsigned char *ptr, unsigned char *ptrMax) {
 	if(ptr[count++] != PFC)
 		throw "Trying to read a CSD_PFC but type does not match";
 
-	count += VByte::decode(&ptr[count], &numstrings);
-	count += VByte::decode(&ptr[count], &bytes);
-	count += VByte::decode(&ptr[count], &blocksize);
+	count += VByte::decode(&ptr[count], ptrMax, &numstrings);
+	count += VByte::decode(&ptr[count], ptrMax, &bytes);
+	count += VByte::decode(&ptr[count], ptrMax, &blocksize);
 
 	// CRC
 	CRC8 crch;
@@ -405,7 +405,7 @@ unsigned int CSD_PFC::locateInBlock(unsigned int block, const unsigned char *str
 	while ( (idInBlock<blocksize) && (pos<bytes))
 	{
 		// Decode the prefix
-		pos += VByte::decode(text+pos, &delta);
+		pos += VByte::decode(text+pos, text+bytes, &delta);
 
 		// Copy the suffix
 		tmpStr.resize(delta);
@@ -451,7 +451,7 @@ unsigned char *CSD_PFC::extractInBlock(unsigned int block, unsigned int o)
 	for (unsigned int j=0; j<o; j++)
 	{
 		// Decode the prefix
-		pos += VByte::decode(text+pos, &delta);
+		pos += VByte::decode(text+pos, text+bytes, &delta);
 
 		// Copy the suffix
 		tmpStr.resize(delta);
@@ -525,7 +525,7 @@ void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int ma
 		while ( (idInBlock<blocksize) && (pos<bytes) && !terminate)
 		{
 			// Decode the prefix
-			pos += VByte::decode(text+pos, &delta);
+			pos += VByte::decode(text+pos, text+bytes, &delta);
 
 			// Guess suffix size
 			slen = strlen((char*)text+pos)+1;

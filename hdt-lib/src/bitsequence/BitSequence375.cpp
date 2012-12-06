@@ -196,20 +196,25 @@ void BitSequence375::save(ostream & out) const
 	crcd.writeCRC(out);
 }
 
+
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw "Could not read completely the HDT from the file.";
+
 size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPtr, ProgressListener *listener){
 	size_t count=0;
 
     // Check type
+	CHECKPTR(&ptr[count], maxPtr, 1);
     if(ptr[count++]!=TYPE_BITMAP_PLAIN) {
         throw "Trying to read a BitSequence375 but the type does not match";
     }
 
     // Read numbits
-	count += csd::VByte::decode(&ptr[count], &numbits);
+	count += csd::VByte::decode(&ptr[count], maxPtr, &numbits);
 
     // CRC
     CRC8 crch;
     crch.update(&ptr[0], count);
+    CHECKPTR(&ptr[count], maxPtr, 1);
     if(ptr[count++]!=crch.getValue()) {
         throw "Wrong checksum in BitSequence375 Header.";
     }
@@ -225,6 +230,7 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
 	isMapped = true;
 	count += sizeBytes;
 
+	CHECKPTR(&ptr[count], maxPtr, 4);
     count += 4; // CRC of data
 
     // Force index rebuild.

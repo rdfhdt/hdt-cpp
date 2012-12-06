@@ -345,7 +345,7 @@ void CSD_HTFC::dumpBlock(uint block) {
 		//cout << "POS: " << pos << "/" << bytes << " Next block: "<< blocks->getField(block+1)<<endl;
 
 		// Decoding the prefix
-		pos += VByte::decode(text+pos, &delta);
+		pos += VByte::decode(text+pos, text+bytes, &delta);
 
 		// Copying the suffix
 		slen = strlen((char*)text+pos)+1;
@@ -542,7 +542,7 @@ bool CSD_HTFC::locateBlock(const unsigned char *s, uint *block)
 		uint pos = blocks->getField(c);
 
 		// Reading the compressed string length
-		pos += VByte::decode(text+pos, &delta);
+		pos += VByte::decode(text+pos, text+bytes, &delta);
 
 		// The comparison is performed by considering the
 		// shortest compressed string
@@ -601,7 +601,7 @@ uint CSD_HTFC::locateInBlock(uint block, const unsigned char *s, uint len)
 	uint offset = 0;
 
 	uint pos = blocks->getField(block);
-	pos += VByte::decode(text+pos, &delta);
+	pos += VByte::decode(text+pos, text+bytes, &delta);
 	tmplen = decompressFirstWord(text, &pos, tmp);
 
 	uint plcp_len = 0;
@@ -616,7 +616,7 @@ uint CSD_HTFC::locateInBlock(uint block, const unsigned char *s, uint len)
 
 		// Decoding the prefix (delta)
 		decompressDelta(text, &pos, &offset, deltaseq);
-		VByte::decode(deltaseq, &delta);
+		VByte::decode(deltaseq, deltaseq+DELTA, &delta);
 
 		if (delta < clcp_len)
 		{
@@ -665,14 +665,14 @@ void CSD_HTFC::extractInBlock(uint block, uint o, unsigned char *s)
 	uint offset = 0;
 
 	uint pos = blocks->getField(block);
-	pos += VByte::decode(text+pos, &delta);
+	pos += VByte::decode(text+pos, text+bytes, &delta);
 	delta = decompressFirstWord(text, &pos, s);
 
 	for (uint j=0; j<o; j++)
 	{
 		// Decoding the prefix (delta)
 		decompressDelta(text, &pos, &offset, deltaseq);
-		VByte::decode(deltaseq, &delta);
+		VByte::decode(deltaseq, deltaseq+DELTA, &delta);
 
 		// Decoding the suffix
 		delta += decompressWord(text, &pos, &offset, s+delta);

@@ -48,12 +48,12 @@ class VByte
 	/**
 	 * Decode value from the buffer using VByte.
 	 */
-    static size_t decode(const unsigned char *buffer, uint64_t *value );
+    static size_t decode(const unsigned char *buffer, const unsigned char *maxPtr, uint64_t *value);
 
 	/**
 	 * Decode value from the buffer using VByte.
 	 */
-    static size_t decode(const unsigned char *buffer, uint32_t *value );
+    static size_t decode(const unsigned char *buffer, const unsigned char *maxPtr, uint32_t *value);
 
     /** Encodes the integer 'c' in the sequence of bytes (uchar) 'r'.
      * @out Output stream

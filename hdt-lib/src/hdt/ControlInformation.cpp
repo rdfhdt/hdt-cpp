@@ -127,29 +127,35 @@ void ControlInformation::load(std::istream &in) {
 	}
 }
 
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw "Could not read completely the HDT from the file.";
+
 size_t ControlInformation::load(const unsigned char *ptr, const unsigned char *maxPtr) {
     this->clear();
 
 	size_t count=0;
 
 	// $HDT
+	CHECKPTR(ptr,maxPtr, 5);
 	if(strncmp((char *)&ptr[count],"$HDT", 4)!=0) {
 		throw "Non-HDT Section";
 	}
 	count+=4;
 
 	// Type
+	CHECKPTR(ptr,maxPtr, 1);
 	type = (ControlInformationType) ptr[count];
 	count++;
 
 	// Format
-	format.assign((char *)&ptr[count]);
-	count += format.length()+1;
+	size_t len = strnlen((char *)&ptr[count], (size_t)(maxPtr-&ptr[count]));
+	format.assign((char *)&ptr[count], len);
+	count += len+1;
 
 	// Read Options
 	string all;
-	all.assign((char *)&ptr[count]);
-	count += all.length()+1;
+	len = strnlen((char *)&ptr[count], (size_t)(maxPtr-&ptr[count]));
+	all.assign((char *)&ptr[count], len);
+	count += len+1;
 
 	// Process options
 	std::istringstream strm(all);
@@ -168,11 +174,12 @@ size_t ControlInformation::load(const unsigned char *ptr, const unsigned char *m
 	// CRC16
 	CRC16 crc;
 	crc.update(&ptr[0], count);
+	CHECKPTR(ptr,maxPtr, sizeof(crc16_t));
 	crc16_t filecrc = *((crc16_t *)&ptr[count]);
 	if(filecrc!=crc.getValue()) {
 		throw "CRC of control information does not match.";
 	}
-	count+=2;
+	count+=sizeof(crc16_t);
 
 	return count;
 }
