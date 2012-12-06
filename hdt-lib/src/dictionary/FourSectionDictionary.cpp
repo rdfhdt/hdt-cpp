@@ -157,7 +157,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 		shared = new csd::CSD_PFC();
 		throw "Could not read shared.";
 	}
-	shared = new csd::CSD_Cache(shared);
+	//shared = new csd::CSD_Cache(shared);
 
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
@@ -167,7 +167,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 		subjects = new csd::CSD_PFC();
 		throw "Could not read subjects.";
 	}
-	subjects = new csd::CSD_Cache(subjects);
+	//subjects = new csd::CSD_Cache(subjects);
 
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
@@ -187,7 +187,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 		objects = new csd::CSD_PFC();
 		throw "Could not read objects.";
 	}
-	objects = new csd::CSD_Cache(objects);
+	//objects = new csd::CSD_Cache(objects);
 }
 
 size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
@@ -210,7 +210,7 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
         throw "Could not read shared.";
     }
     count += shared->load(&ptr[count], ptrMax);
-    shared = new csd::CSD_Cache(shared);
+    //shared = new csd::CSD_Cache(shared);
 
     iListener.setRange(25,50);
     iListener.notifyProgress(0, "Dictionary read subjects.");
@@ -221,7 +221,7 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
         throw "Could not read subjects.";
     }
     count += subjects->load(&ptr[count], ptrMax);
-    subjects = new csd::CSD_Cache(subjects);
+    //subjects = new csd::CSD_Cache(subjects);
 
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read predicates.");
@@ -232,7 +232,7 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
         throw "Could not read predicates.";
     }
     count += predicates->load(&ptr[count], ptrMax);
-    predicates = new csd::CSD_Cache(predicates);
+    predicates = new csd::CSD_Cache2(predicates);
 
     iListener.setRange(75,100);
     iListener.notifyProgress(0, "Dictionary read objects.");
@@ -243,7 +243,7 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
         throw "Could not read objects.";
     }
     count += objects->load(&ptr[count], ptrMax);
-    objects = new csd::CSD_Cache(objects);
+    //objects = new csd::CSD_Cache(objects);
 
     return count;
 }
