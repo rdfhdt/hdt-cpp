@@ -95,7 +95,7 @@ std::string HDTSpecForm::getStreamType(int index) {
 
 void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
 {
-    hdt.set("triples.component.order", hdt::getOrderStr((hdt::TripleComponentOrder)(ui->triplesOrderCombo->currentIndex()+1)));
+    hdt.set("triplesOrder", hdt::getOrderStr((hdt::TripleComponentOrder)(ui->triplesOrderCombo->currentIndex()+1)));
 
     hdt.set("header.type", hdt::HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 
