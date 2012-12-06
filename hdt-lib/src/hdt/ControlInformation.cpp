@@ -147,13 +147,19 @@ size_t ControlInformation::load(const unsigned char *ptr, const unsigned char *m
 	count++;
 
 	// Format
-	size_t len = strnlen((char *)&ptr[count], (size_t)(maxPtr-&ptr[count]));
+	size_t len = 0;
+	for(unsigned char *p=(unsigned char *)&ptr[count]; p<maxPtr && *p; ++p) {
+		len++;
+	}
 	format.assign((char *)&ptr[count], len);
 	count += len+1;
 
 	// Read Options
 	string all;
-	len = strnlen((char *)&ptr[count], (size_t)(maxPtr-&ptr[count]));
+	len = 0;
+	for(unsigned char *p=(unsigned char *)&ptr[count]; p<maxPtr && *p; ++p) {
+		len++;
+	}
 	all.assign((char *)&ptr[count], len);
 	count += len+1;
 
