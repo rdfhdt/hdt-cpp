@@ -53,9 +53,6 @@ all:
 	@$(MAKE) tools
 	@$(MAKE) examples 
 
-doc:
-	$(DOXYGEN) 
-
 re:
 	@$(MAKE) clean
 	@$(MAKE) all 
@@ -103,5 +100,5 @@ doc:
 clean:
 	@echo " [CLN] Removing object files"
 	@rm -f $(OBJECTS) $(TOOLS) $(TESTS) $(EXAMPLES) libhdt.a *~
-	@rm -Rf tools/*dSYM tests/*dSYM examples/*dSYM
+	@rm -Rf tools/*dSYM tests/*dSYM examples/*dSYM docs/*
 
