@@ -53,6 +53,9 @@ all:
 	@$(MAKE) tools
 	@$(MAKE) examples 
 
+doc:
+	$(DOXYGEN) 
+
 re:
 	@$(MAKE) clean
 	@$(MAKE) all 
