@@ -27,7 +27,7 @@ class TripleComponentModel;
 class HDTController;
 
 #ifdef __APPLE__
-#define GESTURES
+//#define GESTURES
 #endif
 
 class MatrixViewWidget : public QGLWidget
