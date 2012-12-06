@@ -209,8 +209,8 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 		}
 
 		if (errorParsing == true || (pos != 0 && pos != 3)) {
-			cerr << "Error parsing file at line " << numline << "|" << origLine << "|" << endl;
-			throw "Error parsing ntriples file.";
+			cerr << endl << "Error parsing file at line " << numline << "|" << origLine << "|" << endl << endl;
+			//throw "Error parsing ntriples file.";
 		}
 
 		if(pos==3) {
