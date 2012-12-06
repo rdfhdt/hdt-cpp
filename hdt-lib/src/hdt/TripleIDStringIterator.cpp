@@ -14,6 +14,10 @@ TripleIDStringIterator::TripleIDStringIterator(Dictionary *dict, IteratorTripleI
 
 }
 
+TripleIDStringIterator::~TripleIDStringIterator() {
+	delete iterator;
+}
+
 bool TripleIDStringIterator::hasNext() {
 	return iterator->hasNext();
 }

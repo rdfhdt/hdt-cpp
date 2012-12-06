@@ -21,6 +21,7 @@ private:
 	TripleString result;
 public:
 	TripleIDStringIterator(Dictionary *dict, IteratorTripleID *iterator);
+	virtual ~TripleIDStringIterator();
 	bool hasNext();
 	TripleString *next();
 	bool hasPrevious();
