@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
 		cout << "       TriplesList to new BitmapTriples time" << st << endl;
 
 		// Update Header
-#if 0
+#if 1
 		cout << "Update Header" << endl;
 		string rootNode("_:triples");
 		TripleString ts (rootNode, "", "");

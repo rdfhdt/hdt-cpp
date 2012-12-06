@@ -7,6 +7,7 @@
 
 #include <HDT.hpp>
 #include <HDTManager.hpp>
+#include <HDTVocabulary.hpp>
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
