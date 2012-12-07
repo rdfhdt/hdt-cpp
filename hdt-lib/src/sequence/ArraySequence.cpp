@@ -75,8 +75,6 @@ void ArraySequence::load(std::istream & input)
 
 size_t ArraySequence::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener)
 {
-
-	// FIXME: Map instead of copy.
 	 std::stringstream localStream;
 	 localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
 
