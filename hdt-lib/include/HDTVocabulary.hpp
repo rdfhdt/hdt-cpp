@@ -112,6 +112,9 @@ namespace HDTVocabulary {
 	const std::string TRIPLES_TYPE_BITMAP = HDT_TRIPLES_BASE+"Bitmap>";
 	const std::string TRIPLES_TYPE_KYOTO = HDT_TRIPLES_BASE+"KYOTO>";
 
+	// Index types
+	const std::string INDEX_TYPE_FOQ = HDT_BASE+"indexFoQ>";
+
 	// Sequences
 	const std::string SEQ_TYPE_INT32 = HDT_SEQ_BASE+"Int32>";
 	const std::string SEQ_TYPE_INT64 = HDT_SEQ_BASE+"Int64>";

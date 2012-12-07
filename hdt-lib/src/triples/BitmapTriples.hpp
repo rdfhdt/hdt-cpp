@@ -52,7 +52,7 @@ private:
 	HDTSpecification spec;
 	IntSequence *arrayY, *arrayZ, *arrayIndex;
 	BitSequence375 *bitmapY, *bitmapZ, *bitmapIndex;
-	LogSequence2 *predicateCount;
+	IntSequence *predicateCount;
 	WaveletSequence *waveletY;
 
 	TripleComponentOrder order;

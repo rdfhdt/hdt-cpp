@@ -499,9 +499,9 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 	if(predicateCount!=NULL) {
 		delete predicateCount;
 	}
-	predicateCount = new LogSequence2(bits(arrayZ->getNumberOfElements()), maxpred);
+	LogSequence2 *predCount = new LogSequence2(bits(arrayZ->getNumberOfElements()), maxpred);
 	for(int i=0;i<maxpred;i++ ){
-		predicateCount->push_back(0);
+		predCount->push_back(0);
 	}
 
 	// Generate list and bitmap.
@@ -528,7 +528,7 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 
 		for(unsigned int j=0;j<index[i].size();j++){
 			stream->push_back(index[i][j].first);
-			predicateCount->set(index[i][j].second-1, predicateCount->get(index[i][j].second-1)+1);
+			predCount->set(index[i][j].second-1, predCount->get(index[i][j].second-1)+1);
 
 			if(j==index[i].size()-1) {
 				// Last element of the list
@@ -543,7 +543,9 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 	}
 	index.clear();
 
-	predicateCount->reduceBits();
+	predCount->reduceBits();
+	if(this->predicateCount!=NULL) delete this->predicateCount;
+	this->predicateCount = predCount;
 
 #if 1
     for(size_t i=0;i<arrayIndex->getNumberOfElements();i++) {
@@ -764,7 +766,8 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	controlInformation.clear();
     controlInformation.setType(INDEX);
 	controlInformation.setUint("numTriples", getNumberOfElements());
-	controlInformation.setFormat(arrayIndex->getType());
+	controlInformation.setUint("order", getOrder());
+	controlInformation.setFormat(HDTVocabulary::INDEX_TYPE_FOQ);
 	controlInformation.save(output);
 
     iListener.setRange(50,60);
@@ -789,11 +792,21 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
 	unsigned int numTriples = controlInformation.getUint("numTriples");
 
-	// FIXME: Check format
+	if(controlInformation.getType()!=INDEX) {
+		throw "Trying to read Index but data is not index.";
+	}
+
+	if(controlInformation.getFormat()!=HDTVocabulary::INDEX_TYPE_FOQ) {
+		throw "Error reading index. Please delete .hdt.index and let application generate it again.";
+	}
 
 	if(this->getNumberOfElements()!=numTriples) {
 		// FIXME: Force index regeneration instead of error.
 		throw "The supplied index does not have the same number of triples as the dataset";
+	}
+
+	if(this->getOrder()!=controlInformation.getUint("order")) {
+		throw "The order of the triples is different than the index.";
 	}
 
 	IntermediateListener iListener(listener);
@@ -804,7 +817,7 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 	}
 	iListener.setRange(0,10);
 	iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
-	predicateCount = new LogSequence2();
+	predicateCount = IntSequence::getArray(input);
 	predicateCount->load(input);
 
 	// LOAD BITMAP
