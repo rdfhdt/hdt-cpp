@@ -565,7 +565,7 @@ size_t BasicHDT::loadMMapIndex(ProgressListener *listener) {
 void BasicHDT::saveToHDT(const char *fileName, ProgressListener *listener)
 {
     try {
-        ofstream out(fileName, ios::binary | ios::out);
+        ofstream out(fileName, ios::binary | ios::out | ios::trunc);
         if(!out.good()){
             throw "Error opening file to save HDT.";
         }

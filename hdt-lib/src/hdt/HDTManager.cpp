@@ -59,9 +59,12 @@ HDT *HDTManager::mapIndexedHDT(const char *file, ProgressListener *listener){
 }
 
 HDT *HDTManager::loadIndexedHDT(const char *file, ProgressListener *listener){
-	// TODO: Intermediate listener
 	BasicHDT *h = new BasicHDT();
+    IntermediateListener iListener(listener);
+    iListener.setRange(0,50);
 	h->loadFromHDT(file, listener);
+
+	iListener.setRange(50,100);
 	h->loadOrCreateIndex(listener);
 	return h;
 }
