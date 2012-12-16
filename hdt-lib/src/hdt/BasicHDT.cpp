@@ -390,6 +390,206 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 	}
 }
 
+void BasicHDT::addDictionaryFromHDT(const char *fileName, ModifiableDictionary *dict, ProgressListener *listener) {
+        cout << fileName << endl;
+        BasicHDT hdt;
+        hdt.mapHDT(fileName, listener);
+
+        Dictionary *otherDict = hdt.getDictionary();
+
+        char str[100];
+
+        cout << endl << "Load dictionary from " << fileName << endl;
+        for(long long int i=0;i<otherDict->getNsubjects();i++) {
+                string a = otherDict->idToString(i+1, SUBJECT);
+                dict->insert(a, SUBJECT);
+
+                if ((listener != NULL) && (i % 100000) == 0) {
+                        sprintf(str, "%lld subjects added.", i);
+                        listener->notifyProgress((i*100)/otherDict->getNsubjects(), str);
+                }
+        }
+
+        for(long long int i=0;i<otherDict->getNpredicates();i++) {
+                string a = otherDict->idToString(i+1, PREDICATE);
+                dict->insert(a, PREDICATE);
+        }
+
+        for(long long int i=0;i<otherDict->getNobjects();i++) {
+                string a = otherDict->idToString(i+1, OBJECT);
+                dict->insert(a, OBJECT);
+
+                if ((listener != NULL) && (i % 100000) == 0) {
+                        sprintf(str, "%lld objects added.", i);
+                        listener->notifyProgress((i*100)/otherDict->getNobjects(), str);
+                }
+        }
+}
+
+
+void BasicHDT::loadDictionaryFromHDTs(const char** fileName, size_t numFiles, const char* baseUri, ProgressListener* listener) {
+
+        StopWatch st;
+        IntermediateListener iListener(listener);
+
+        // Create temporary dictionary
+       	ModifiableDictionary *dict = getLoadDictionary();
+       	dict->startProcessing();
+        try {
+        	NOTIFY(listener, "Loading Dictionary", 0, 100);
+        	iListener.setRange(0, 80);
+
+        	for(size_t i=0;i<numFiles;i++) {
+        		addDictionaryFromHDT(fileName[i], dict, &iListener);
+        	}
+
+        	iListener.setRange(80, 90);
+        	dict->stopProcessing(&iListener);
+
+        	// Convert to final format
+        	cout << "Convert to final format" << endl;
+        	dictionary->import(dict);
+        	cout << "Converted OK" << endl;
+
+        	delete dict;
+        } catch (const char *e) {
+        	cout << "Catch exception dictionary: " << e << endl;
+        	delete dict;
+        	throw e;
+        } catch (char *e) {
+        	cout << "Catch exception dictionary: " << e << endl;
+        	delete dict;
+        	throw e;
+        }
+}
+
+void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, const char* baseUri, ProgressListener* listener) {
+	// Generate Triples
+	ModifiableTriples* triplesList = new TriplesList(spec);
+	//ModifiableTriples *triplesList = new TriplesKyoto(spec);
+	//ModifiableTriples *triplesList = new TripleListDisk();
+	StopWatch st;
+	IntermediateListener iListener(listener);
+	try {
+		NOTIFY(listener, "Loading Triples", 0, 100);
+		iListener.setRange(0, 60);
+
+		triplesList->startProcessing(&iListener);
+
+		TriplesLoader tripLoader(dictionary, triplesList, &iListener);
+
+		// FIXME: Import from files
+
+		uint64_t totalOriginalSize=0;
+		BasicHDT hdt;
+
+		for(size_t i=0;i<numFiles;i++) {
+			const char *fileName = fileNames[i];
+	        cout << endl << "Load triples from " << fileName << endl;
+	        hdt.mapHDT(fileName);
+
+	        totalOriginalSize += hdt.getHeader()->getPropertyLong("_:statistics", HDTVocabulary::ORIGINAL_SIZE.c_str());
+
+	        Triples *otherDict = hdt.getTriples();
+	        size_t numtriples = hdt.getTriples()->getNumberOfElements();
+
+	        IteratorTripleString *it = hdt.search("","","");
+
+	        TripleID tid;
+	        char str[100];
+	        uint64_t j = 0;
+	        while(it->hasNext()) {
+	        	TripleString *ts = it->next();
+
+	        	dictionary->tripleStringtoTripleID(*ts, tid);
+
+	        	triplesList->insert(tid);
+
+	        	if ((listener != NULL) && (j % 100000) == 0) {
+	        		sprintf(str, "%lld triples added.", j);
+	        		listener->notifyProgress((j*100)/numtriples, str);
+	        	}
+	            j++;
+	        }
+	        delete it;
+		}
+
+		triplesList->stopProcessing(&iListener);
+
+		// SORT & Duplicates
+		TripleComponentOrder order = parseOrder(spec.get("triplesOrder").c_str());
+		if (order == Unknown) {
+			order = SPO;
+		}
+
+		iListener.setRange(80, 85);
+		triplesList->sort(order, &iListener);
+
+		iListener.setRange(85, 90);
+		triplesList->removeDuplicates(&iListener);
+
+		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, totalOriginalSize);
+	} catch (const char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw e;
+	}
+	if (triples->getType() == triplesList->getType()) {
+		delete triples;
+		triples = triplesList;
+	} else {
+		iListener.setRange(90, 100);
+		try {
+			triples->load(*triplesList, &iListener);
+		} catch (const char* e) {
+			delete triplesList;
+			throw e;
+		}
+		delete triplesList;
+	}
+
+	//cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
+
+}
+
+void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, string baseUri, ProgressListener *listener)
+{
+	try {
+		// Make sure that URI starts and ends with <>
+		if(baseUri.at(0)!='<')
+			baseUri = '<'+baseUri;
+		if(baseUri.at(baseUri.length()-1)!='>')
+			baseUri.append(">");
+
+		IntermediateListener iListener(listener);
+
+		iListener.setRange(0,50);
+		loadDictionaryFromHDTs(fileNames, numFiles, baseUri.c_str(), &iListener);
+
+		iListener.setRange(50,99);
+		loadTriplesFromHDTs(fileNames, numFiles, baseUri.c_str(), &iListener);
+
+		fillHeader(baseUri);
+
+	}catch (const char *e) {
+		cout << "Catch exception load: " << e << endl;
+		deleteComponents();
+		createComponents();
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception load: " << e << endl;
+		deleteComponents();
+		createComponents();
+		throw e;
+	}
+}
+
+
+
 void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 {
 	IteratorTripleString *it = search("", "", "");
