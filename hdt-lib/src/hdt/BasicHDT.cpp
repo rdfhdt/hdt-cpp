@@ -497,7 +497,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 
 	        TripleID tid;
 	        char str[100];
-	        uint64_t j = 0;
+	        long long int j = 0;
 	        while(it->hasNext()) {
 	        	TripleString *ts = it->next();
 

@@ -784,7 +784,7 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 
 #ifndef WIN32
     if(waveletY!=NULL) {
-        waveletY->save(output);
+        //waveletY->save(output);
     }
 #endif
 }
