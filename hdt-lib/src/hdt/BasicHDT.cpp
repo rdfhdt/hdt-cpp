@@ -487,23 +487,57 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 			const char *fileName = fileNames[i];
 	        cout << endl << "Load triples from " << fileName << endl;
 	        hdt.mapHDT(fileName);
+	        Dictionary *dict = hdt.getDictionary();
+
+	        // Create mapping arrays
+	        cout << "Generating mapping subjects" << endl;
+	        unsigned int nsubjects = dict->getNsubjects();
+	        LogSequence2 subjectMap(bits(dictionary->getNsubjects()), nsubjects);
+	        subjectMap.resize(nsubjects);
+	        for(unsigned int i=0;i<nsubjects;i++) {
+	        	string str = dict->idToString(i+1, SUBJECT);
+	        	unsigned int newid = dictionary->stringToId(str, SUBJECT);
+	        	subjectMap.set(i, newid);
+	        }
+
+	        cout << "Generating mapping predicates" << endl;
+	        unsigned int npredicates = dict->getNpredicates();
+	        LogSequence2 predicateMap(bits(dictionary->getNpredicates()), npredicates);
+	        predicateMap.resize(npredicates);
+	        for(unsigned int i=0;i<npredicates;i++) {
+	        	string str = dict->idToString(i+1, PREDICATE);
+	        	unsigned int newid = dictionary->stringToId(str, PREDICATE);
+	        	predicateMap.set(i, newid);
+	        }
+
+	        cout << "Generating mapping objects" << endl;
+	        unsigned int nobjects = dict->getNobjects();
+	        LogSequence2 objectMap(bits(dictionary->getNobjects()), nobjects);
+	        objectMap.resize(nobjects);
+	        for(unsigned int i=0;i<nobjects;i++) {
+	        	string str = dict->idToString(i+1, OBJECT);
+	        	unsigned int newid = dictionary->stringToId(str, OBJECT);
+	        	objectMap.set(i, newid);
+	        }
 
 	        totalOriginalSize += hdt.getHeader()->getPropertyLong("_:statistics", HDTVocabulary::ORIGINAL_SIZE.c_str());
 
-	        Triples *otherDict = hdt.getTriples();
 	        size_t numtriples = hdt.getTriples()->getNumberOfElements();
+	        IteratorTripleID *it = hdt.getTriples()->searchAll();
 
-	        IteratorTripleString *it = hdt.search("","","");
-
-	        TripleID tid;
+	        TripleID newTid;
 	        char str[100];
 	        long long int j = 0;
 	        while(it->hasNext()) {
-	        	TripleString *ts = it->next();
+	        	TripleID *tid = it->next();
 
-	        	dictionary->tripleStringtoTripleID(*ts, tid);
+	        	newTid.setAll(
+	        			(unsigned int)subjectMap.get(tid->getSubject()-1),
+	        			(unsigned int)predicateMap.get(tid->getPredicate()-1),
+	        			(unsigned int)objectMap.get(tid->getObject()-1)
+	        			);
 
-	        	triplesList->insert(tid);
+	        	triplesList->insert(newTid);
 
 	        	if ((listener != NULL) && (j % 100000) == 0) {
 	        		sprintf(str, "%lld triples added.", j);
