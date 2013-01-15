@@ -177,6 +177,8 @@ DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileS
 #else
 	if( suffix == "gz") {
 		pipeCommand = "gunzip -c ";
+	} else if(suffix=="snz") {
+		pipeCommand = "snzip -d -c ";
 	} else if(suffix=="bz2") {
 		pipeCommand = "bunzip2 -c ";
 	}
