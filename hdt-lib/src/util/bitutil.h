@@ -9,6 +9,7 @@
 #define BITUTIL_H_
 
 #include <stdint.h>
+#include <iostream>
 
 namespace hdt {
 
