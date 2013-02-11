@@ -5,9 +5,9 @@
  *      Author: mck
  */
 
-namespace hdt {
-
 #include "bitutil.h"
+
+namespace hdt {
 
 /** popcount array for uchars */
 extern const unsigned char popcount_tab[256] = {

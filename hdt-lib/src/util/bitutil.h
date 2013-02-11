@@ -8,7 +8,6 @@
 #ifndef BITUTIL_H_
 #define BITUTIL_H_
 
-#include <stdio.h>
 #include <stdint.h>
 
 namespace hdt {
@@ -17,6 +16,13 @@ extern const unsigned char popcount_tab[256];
 
 /** bits needed to represent a number between 0 and n */
 inline uint32_t bits(uint32_t n) {
+	uint32_t b = 0;
+	while (n) { b++; n >>= 1; }
+	return b;
+}
+
+/** bits needed to represent a number between 0 and n */
+inline uint32_t bits(uint64_t n) {
 	uint32_t b = 0;
 	while (n) { b++; n >>= 1; }
 	return b;
@@ -32,8 +38,20 @@ inline uint32_t wordSelect1(uint32_t value, uint32_t rank) {
 	return bitpos;
 }
 
+inline uint32_t wordSelect1(uint64_t value, uint64_t rank) {
+	uint32_t bitpos=0;
+	while(rank && value) {
+		rank -= value & 1;
+		bitpos++;
+		value>>=1;
+	}
+	return bitpos;
+}
+
 /** reads bit p from e */
-#define bitget(e,p) ((((e)[(p)>>5] >> ((p)&0x1F))) & 1)
+inline bool bitget(uint32_t *e, size_t p) {
+	return (e[p/32] >> (p%32)) & 1;
+}
 
 /** sets bit p in e */
 inline void bitset(uint32_t * e, size_t p) {
@@ -44,6 +62,21 @@ inline void bitset(uint32_t * e, size_t p) {
 inline void bitclean(uint32_t * e, size_t p) {
 	e[p/32] &= ~(1<<(p%32));
 }
+
+inline bool bitget64(uint64_t *e, uint64_t p) {
+	return (e[p/64] >> (p%64)) & 1;
+}
+
+/** sets bit p in e */
+inline void bitset64(uint64_t * e, uint64_t p) {
+	e[p/64] |= (1ULL<<(p%64));
+}
+
+/** cleans bit p in e */
+inline void bitclean64(uint64_t * e, uint64_t p) {
+	e[p/64] &= ~(1ULL<<(p%64));
+}
+
 
 /** Counts the number of 1s in x */
 inline uint32_t popcount64(const uint64_t x) {
