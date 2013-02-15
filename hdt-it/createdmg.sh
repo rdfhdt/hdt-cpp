@@ -4,7 +4,7 @@ SRCAPP="macx/HDT-it.app"
 FOLDER="macdmg"
 VOL="HDT-it"
 NAME="HDT-it!"
-VERS="1.0rc1"
+VERS="1.0rc1b"
 DMG="$VOL-$VERS.dmg"
 
 FRAMEWORK_BASE="$SRCAPP/Contents/Frameworks/"
@@ -23,8 +23,18 @@ rm -Rf $FOLDER/*
 echo macdeployqt $SRCAPP
 macdeployqt $SRCAPP
 
-# Add curl (Dependency of raptor)
+# Add dependencies of raptor)
 cp -R /usr/lib/libcurl.4.dylib $SRCAPP/Contents/Frameworks
+#cp -R /usr/lib/libxml2.2.dylib $SRCAPP/Contents/Frameworks
+#cp -R /usr/lib/libxslt.1.dylib $SRCAPP/Contents/Frameworks
+
+# Relocate references
+install_name_tool -change "/usr/lib/libcurl.4.dylib" "@executable_path/../Frameworks/libcurl.4.dylib" $SRCAPP/Contents/Frameworks/libraptor2.0.dylib
+#install_name_tool -change "/usr/lib/libxml2.2.dylib" "@executable_path/../Frameworks/libxml2.2.dylib" $SRCAPP/Contents/Frameworks/libraptor2.0.dylib
+#install_name_tool -change "/usr/lib/libxslt.1.dylib" "@executable_path/../Frameworks/libxslt.1.dylib" $SRCAPP/Contents/Frameworks/libraptor2.0.dylib
+
+#install_name_tool -change "/usr/lib/libxml2.2.dylib" "@executable_path/../Frameworks/libxml2.2.dylib" $SRCAPP/Contents/Frameworks/libxslt.1.dylib
+#install_name_tool -change "/usr/lib/libxslt.1.lib" "@executable_path/../Frameworks/libxslt.1.dylib" $SRCAPP/Contents/Frameworks/libxslt.1.dylib
 
 # ADD Translation files
 cp -Rf *.qm $SRCAPP/Contents/Resources
