@@ -23,6 +23,9 @@ rm -Rf $FOLDER/*
 echo macdeployqt $SRCAPP
 macdeployqt $SRCAPP
 
+# Add curl (Dependency of raptor)
+cp -R /usr/lib/libcurl.4.dylib $SRCAPP/Contents/Frameworks
+
 # ADD Translation files
 cp -Rf *.qm $SRCAPP/Contents/Resources
 
