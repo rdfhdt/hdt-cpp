@@ -56,8 +56,7 @@ EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
 all:
 	@$(MAKE) showflags 
 	@$(MAKE) -C $(LIBCDSPATH)
-	@$(MAKE) tools
-	@$(MAKE) examples 
+	@$(MAKE) tools examples
 
 re:
 	@$(MAKE) clean
