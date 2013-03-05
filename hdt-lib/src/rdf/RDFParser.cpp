@@ -11,6 +11,7 @@
 #endif
 #include "RDFParserNtriples.hpp"
 #include "RDFParserNtriplesCallback.hpp"
+#include "RDFParserSerd.hpp"
 
 namespace hdt {
 
@@ -32,6 +33,11 @@ RDFParserPull *RDFParserPull::getParserPull(const char *fileName, RDFNotation no
 
 
 RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
+#ifdef USE_SERD
+    if(notation==TURTLE) {
+        return new RDFParserSerd();
+    }
+#endif
 	if(notation==NTRIPLES) {
 		return new RDFParserNtriplesCallback();
 	} else {

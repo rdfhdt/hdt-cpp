@@ -6,6 +6,7 @@ LIBCDSPATH = ../libcds-v1.0.12
 #RAPTOR_SUPPORT=true
 #KYOTO_SUPPORT=true
 #LIBZ_SUPPORT=true
+#SERD_SUPPORT=true
 
 CPP=g++
 FLAGS=-O3 -Wno-deprecated
@@ -28,6 +29,11 @@ endif
 ifeq ($(LIBZ_SUPPORT), true)
 DEFINES:=$(DEFINES) -DUSE_LIBZ
 LIB:=$(LIB) -lz
+endif
+
+ifeq ($(SERD_SUPPORT), true)
+DEFINES:=$(DEFINES) -DUSE_SERD
+LIB:=$(LIB) -lserd-0
 endif
 
 ifeq ($(OS), Darwin)
