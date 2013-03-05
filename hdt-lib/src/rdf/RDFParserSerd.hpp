@@ -19,6 +19,7 @@ private:
     SerdEnv *env;
     RDFCallback *callback;
     char *error;
+    uint64_t numByte=0;
 
     string getString(const SerdNode *term);
     string getStringObject(const SerdNode *term, const SerdNode *dataType, const SerdNode *lang);

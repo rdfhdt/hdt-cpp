@@ -1,6 +1,10 @@
 
 #ifdef USE_SERD
+
+
+#include "../util/fileUtil.hpp"
 #include "RDFParserSerd.hpp"
+
 
 namespace hdt {
 
@@ -92,7 +96,7 @@ SerdStatus hdtserd_process_triple(void* handle,
     RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
 
     TripleString ts( raptorParser->getString(subject), raptorParser->getString(predicate), raptorParser->getStringObject(object, object_datatype, object_lang));
-    raptorParser->callback->processTriple(ts, 0);
+    raptorParser->callback->processTriple(ts, raptorParser->numByte);
 
     return SERD_SUCCESS;
 }
@@ -108,8 +112,7 @@ SerdStatus hdtserd_end(void* handle, const SerdNode* node) {
     return SERD_SUCCESS;
 }
 
-static SerdStatus
-quiet_error_sink(void* handle, const SerdError* e)
+static SerdStatus quiet_error_sink(void* handle, const SerdError* e)
 {
         return SERD_SUCCESS;
 }
@@ -140,6 +143,8 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 
     SerdURI  base_uri = SERD_URI_NULL;
     SerdNode base = SERD_NODE_NULL;
+
+    numByte = fileUtil::getSize(fileName);
 
     string file(fileName);
 

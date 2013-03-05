@@ -24,6 +24,7 @@ private:
 	raptor_parser *rdf_parser;
 	RDFCallback *callback;
 	char *error;
+    uint64_t numByte=0;
 
 	const char *getParserType(RDFNotation notation);
 public:

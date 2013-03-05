@@ -42,7 +42,7 @@ void raptor_callback_process_triple(void *user_data, raptor_statement *triple) {
 	TripleString ts( getString(triple->subject), getString(triple->predicate), getString(triple->object));
 
 	RDFParserRaptorCallback *raptorParser = reinterpret_cast<RDFParserRaptorCallback *>(user_data);
-	raptorParser->callback->processTriple(ts, 0);
+    raptorParser->callback->processTriple(ts, raptorParser->numByte);
 }
 
 void raptor_callback_log_handler(void *user_data, raptor_log_message *message) {
@@ -108,6 +108,8 @@ void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri,
 		return;
 	}
 	this->callback = callback;
+
+    numByte = fileUtil::getSize(fileName);
 
 	raptor_world *world = raptor_new_world();
 	raptor_world_set_log_handler(world, (void *)this, raptor_callback_log_handler);
