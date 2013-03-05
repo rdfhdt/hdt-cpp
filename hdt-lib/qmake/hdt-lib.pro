@@ -22,7 +22,8 @@ TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += USE_LIBZ USE_RAPTOR RAPTOR_STATIC
+DEFINES += USE_LIBZ USE_RAPTOR RAPTOR_STATIC 
+#USE_SERD
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'
@@ -76,6 +77,7 @@ SOURCES += \
     ../src/rdf/RDFSerializer.cpp \
     ../src/util/fileUtil.cpp \
     ../src/rdf/RDFParserRaptorCallback.cpp \
+    ../src/rdf/RDFParserSerd.cpp \
     ../src/sparql/TriplePatternBinding.cpp \
     ../src/sparql/MergeJoinBinding.cpp \
     ../src/sparql/JoinAlgorithms.cpp \
@@ -150,6 +152,7 @@ HEADERS += \
     ../src/rdf/RDFSerializerNTriples.hpp \
     ../src/rdf/RDFSerializerRaptor.hpp \
     ../src/rdf/RDFParserRaptorCallback.hpp \
+    ../src/rdf/RDFParserSerd.hpp \
     ../src/sparql/VarBindingInterface.hpp \
     ../src/sparql/TriplePatternBinding.hpp \
     ../src/sparql/MergeJoinBinding.hpp \
