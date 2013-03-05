@@ -61,6 +61,22 @@ void HDTSpecForm::on_inputFileButton_clicked()
         if(getBaseUri()=="") {
             ui->baseUriText->setText("<file://"+file+">");
         }
+
+        QString noCompression=file;
+
+        if(file.endsWith(".gz", Qt::CaseInsensitive)) {
+            noCompression = file.left(file.length()-3);
+        }
+
+        if(noCompression.endsWith(".ttl", Qt::CaseInsensitive)) {
+            ui->rdfInputCombo->setCurrentIndex(2);
+        } else if(noCompression.endsWith(".nt", Qt::CaseInsensitive)) {
+            ui->rdfInputCombo->setCurrentIndex(0);
+        } else if(noCompression.endsWith(".n3", Qt::CaseInsensitive)) {
+            ui->rdfInputCombo->setCurrentIndex(1);
+        } else if(noCompression.endsWith(".rdf", Qt::CaseInsensitive) || noCompression.endsWith(".xml", Qt::CaseInsensitive)) {
+            ui->rdfInputCombo->setCurrentIndex(3);
+        }
     }
     ui->rdfInputFile->setText(file);
 }
