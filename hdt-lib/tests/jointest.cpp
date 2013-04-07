@@ -104,8 +104,12 @@ SparqlQuery parseSparql(string query) {
 				if(word.at(0)=='{') {
 
 				} else if(word.at(0)!='.'){
+					if(word.at(0)=='<') {
+						pattern.push_back(word.substr(1, word.length()-2));
+					} else {
 				   cout << "**"<< word << "**" << endl;
 				    pattern.push_back(word);
+					}
                                 }
                         }
                 }
