@@ -78,7 +78,7 @@ void raptor_callback_log_handler(void *user_data, raptor_log_message *message) {
 	}
 }
 
-RDFParserRaptorCallback::RDFParserRaptorCallback()
+RDFParserRaptorCallback::RDFParserRaptorCallback() : numByte(0)
 {
 }
 
