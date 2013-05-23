@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 		}
 		totalPages++;
 	    }
-	    printf("Pages in memory %lu / %lu  Percent: %lu \n", (unsigned long)numMemory, (unsigned long)totalPages, (unsigned long)(100UL*numMemory/totalPages));
+	    printf("Pages in memory %lu / %lu  Percent: %lu  MB: %lu/%lu\n", (unsigned long)numMemory, (unsigned long)totalPages, (unsigned long)(100UL*numMemory/totalPages), numMemory*page_size/(1024*1024), totalPages*page_size/(1024*1024));
 	    //printf("%lu,%lu,%lu\n", count, (unsigned long)numMemory, (unsigned long)totalPages);
 	    sleep(1);
 	}
