@@ -163,7 +163,7 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	unsigned int i = 0;
 	unsigned int counter=0;
-	const char marker = '\n';
+	const char marker = '\1';
 
 	//shared subjects-objects from subjects
 	for (i = 0; i < shared.size(); i++) {
@@ -225,9 +225,8 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,25);
-	while(region<5 && getline(input, line)) {
+	while(region<5 && getline(input, line,'\1')) {
 		//std::cout << line << std::endl;
-
 		if(line!="") {
 			if (region == 1) { //shared SO
 				NOTIFYCOND(&iListener, "Dictionary loading shared area.", numLine, numElements);
@@ -255,11 +254,11 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 
 size_t PlainDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+    throw "Not implemented load";
 }
 
 void PlainDictionary::import(Dictionary *other, ProgressListener *listener) {
-	throw "Not implemented";
+	throw "Not implemented import";
 }
 
 IteratorUCharString *PlainDictionary::getSubjects() {

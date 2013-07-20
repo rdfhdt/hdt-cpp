@@ -215,9 +215,14 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		dict->stopProcessing(&iListener);
 
 		// Convert to final format
-		dictionary->import(dict);
+		if (dictionary->getType()!=HDTVocabulary::DICTIONARY_TYPE_PLAIN){
+			dictionary->import(dict);
+			delete dict;
+		}
+		else{
+			dictionary = dict;
+		}
 
-		delete dict;
 	} catch (const char *e) {
 		cout << "Catch exception dictionary: " << e << endl;
 		delete dict;
@@ -269,7 +274,6 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		pars->doParse(fileName, baseUri, notation, &tripLoader);
 		delete pars;
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, tripLoader.getSize());
-
 		triplesList->stopProcessing(&iListener);
 
 		// SORT & Duplicates
@@ -374,7 +378,6 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 
 		iListener.setRange(50,99);
 		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
-
 		fillHeader(baseUri);
 
 	}catch (const char *e) {
@@ -447,9 +450,7 @@ void BasicHDT::loadDictionaryFromHDTs(const char** fileName, size_t numFiles, co
         	dict->stopProcessing(&iListener);
 
         	// Convert to final format
-        	cout << "Convert to final format" << endl;
         	dictionary->import(dict);
-        	cout << "Converted OK" << endl;
 
         	delete dict;
         } catch (const char *e) {
