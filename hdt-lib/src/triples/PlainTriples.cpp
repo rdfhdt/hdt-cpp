@@ -79,14 +79,14 @@ void PlainTriples::load(ModifiableTriples &triples, ProgressListener *listener) 
 	iListener.setRange(33, 66);
 	iListener.notifyProgress(0, "PlainTriples Importing predicates");
 	IteratorTripleID *itP = triples.searchAll();
-	ComponentIterator predIt(itS, PREDICATE);
+	ComponentIterator predIt(itP, PREDICATE);
 	streamY->add(predIt);
 	delete itP;
 
 	iListener.setRange(66, 100);
 	iListener.notifyProgress(0, "PlainTriples Importing objects");
 	IteratorTripleID *itO = triples.searchAll();
-	ComponentIterator objIt(itS, OBJECT);
+	ComponentIterator objIt(itO, OBJECT);
 	streamZ->add(objIt);
 	delete itO;
 }
