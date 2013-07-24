@@ -1,6 +1,6 @@
 header.type = <http://purl.org/HDT/hdt#headerSimple>
 triples.type = <http://purl.org/HDT/hdt#triplesBitmap>
 dictionary.type = <http://purl.org/HDT/hdt#dictionaryFrontCoding>
-stream.y = <http://purl.org/HDT/hdt#streamWavelet>
-stream.z = <http://purl.org/HDT/hdt#streamLog>
+stream.y = <http://purl.org/HDT/hdt#seqWavelet>
+stream.z = <http://purl.org/HDT/hdt#seqLog>
 triplesOrder = SPO
