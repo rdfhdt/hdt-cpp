@@ -8,6 +8,10 @@
 #ifndef UNICODE_HPP_
 #define UNICODE_HPP_
 
+#include <iostream>
+
+using namespace std;
+
 /**
  * Append the value to the end of the string, as UTF8.
  */
@@ -20,8 +24,10 @@ void appendUnicodeUTF8(std::string &str, unsigned int c) {
 	 * U+D800 to U+DFFF (UTF-16 surrogates)
 	 * U+FFFE and U+FFFF
 	 */
-	if((c > 0xD7FF && c < 0xE000) || c == 0xFFFE || c == 0xFFFF)
-		throw "Unicode Range ERROR";
+	if((c > 0xD7FF && c < 0xE000) || c == 0xFFFE || c == 0xFFFF) {
+		cerr << "Ignoring character, Unicode Range ERROR: " << hex << c << dec << endl;
+		//throw "Unicode Range ERROR";
+	}
 
 	if      (c < 0x00000080)
 		size = 1;
