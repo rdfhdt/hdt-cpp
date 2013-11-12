@@ -81,7 +81,7 @@ typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 #ifdef GOOGLE_HASH 
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
-typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
+typedef std::hash_map<const char *, DictionaryEntry *, __gnu_cxx::hash<const char *>, str_cmp> DictEntryHash;
 #endif
 
 typedef DictEntryHash::const_iterator DictEntryIt;

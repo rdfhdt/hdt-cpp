@@ -260,10 +260,10 @@ namespace csd{
 		for(uint i=0;i<n+1;i++) {
 			if(_sa[i]%samplesuff==0) {
 				suff_sample[j++]=(uint)_sa[i];
-				bitset(sampled_vector,i);
+				cds_utils::bitset(sampled_vector,i);
 			}
 		}
-		bitset(sampled_vector,n+1);
+		cds_utils::bitset(sampled_vector,n+1);
 		sampled = _sbb->build(sampled_vector,n+1);
 		delete [] sampled_vector;
 		//delete [] _sa;

@@ -28,7 +28,7 @@
 #ifndef _CSDCACHE_H
 #define _CSDCACHE_H
 
-#include "../util/lru.hpp"
+//#include "../util/lru.hpp"
 
 #include <iostream>
 #include <cassert>
@@ -45,16 +45,16 @@ using namespace std;
 namespace csd
 {
 
-typedef lru::LRUCacheH4<uint32_t, string> LRU_Int;
-typedef lru::LRUCacheH4<char *, uint32_t> LRU_Str;
+//typedef lru::LRUCacheH4<uint32_t, string> LRU_Int;
+//typedef lru::LRUCacheH4<char *, uint32_t> LRU_Str;
 
 
 class CSD_Cache : public CSD
 {
 private:
 	CSD *child;
-	LRU_Int cacheint;
-	LRU_Str cachestr;
+	//LRU_Int cacheint;
+	//LRU_Str cachestr;
 
   public:		
     /** General constructor **/
