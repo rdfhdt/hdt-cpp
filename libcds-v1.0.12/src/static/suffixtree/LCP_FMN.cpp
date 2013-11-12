@@ -54,23 +54,23 @@ namespace cds_static
 				else {
 					bit_1 = true;
 					cont_1++;
-					bitset(z,cont_0-1);
+					cds_utils::bitset(z,cont_0-1);
 				}
 			}
 			else {
 				if(bit_1) {
 					bit_1 = false;
 					cont_0++;
-					bitset(o,cont_1-1);
+					cds_utils::bitset(o,cont_1-1);
 				}
 				else
 					cont_0++;
 			}
 		}
 		if(bit_1)
-			bitset(o,cont_1-1);
+			cds_utils::bitset(o,cont_1-1);
 		else
-			bitset(z,cont_0-1);
+			cds_utils::bitset(z,cont_0-1);
 		*O = o;
 		*Z = z;
 	}

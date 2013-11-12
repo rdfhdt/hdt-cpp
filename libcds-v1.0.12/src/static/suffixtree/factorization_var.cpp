@@ -146,7 +146,7 @@ namespace cds_static
 					cont[j]+=base_bits[j];
 					contB[j]++;
 					if(j<nLevels-1)
-						bitset(bits_BS,contB[j]-1);
+						cds_utils::bitset(bits_BS,contB[j]-1);
 					break;
 				}
 				j--;
@@ -154,7 +154,7 @@ namespace cds_static
 			//Para j=0 solo se cubre el bitmap
 		}
 		//Para simular ultimo array:
-		bitset(bits_BS,bits_BS_len-1);
+		cds_utils::bitset(bits_BS,bits_BS_len-1);
 		bS = new BitSequenceRG(bits_BS, bits_BS_len , 4);
 		//	for(j=0;j<nLevels;j++)
 		//		fprintf(stderr,"inilevel[%d]=%d\n",j,iniLevel[j]);

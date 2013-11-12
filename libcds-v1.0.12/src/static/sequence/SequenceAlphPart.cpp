@@ -207,8 +207,8 @@ namespace cds_static
 		lenIndexBuilder->unuse();
 		seqsBuilder->unuse();
 
-		this->maxLen = maxLen;
-		this->sigma = sigma;
+		//this->maxLen = maxLen;
+		//this->sigma = sigma;
 	}
 
 	SequenceAlphPart::SequenceAlphPart(uint * seq, size_t n, uint cut, SequenceBuilder * lenIndexBuilder, SequenceBuilder * seqsBuilder) : Sequence(n) {

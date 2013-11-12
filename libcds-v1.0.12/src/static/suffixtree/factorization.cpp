@@ -116,14 +116,14 @@ namespace cds_static
                         levels[cont[j]/2] = (unsigned char)newvalue%BASE;
 					cont[k]++;
 					if(j<nLevels-1)
-						bitset(bits_BS,cont[j]-1);
+						cds_utils::bitset(bits_BS,cont[j]-1);
 					break;
 				}
 				j--;
 			}
 		}
 		//The last array:
-		bitset(bits_BS,bits_BS_len-1);
+		cds_utils::bitset(bits_BS,bits_BS_len-1);
 								 //(bitarray, length, factor)
 		bS = new BitSequenceRG(bits_BS, bits_BS_len, 4);
 		// factor=2 => overhead 50%
