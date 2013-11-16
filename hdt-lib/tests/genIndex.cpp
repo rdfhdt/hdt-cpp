@@ -26,6 +26,18 @@ void help() {
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
+class ConvertProgress : public ProgressListener {
+private:
+public:
+        virtual ~ConvertProgress() { }
+
+    void notifyProgress(float level, const char *section) {
+        cout << section << ": " << level << " %";
+        cout << "\r " << section << ": " << level << " %                                                      \r";
+                cout.flush();
+        }
+
+};
 
 int main(int argc, char **argv) {
 	int c;
@@ -53,7 +65,8 @@ int main(int argc, char **argv) {
 
 
 	try {
-		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str());
+		ConvertProgress progress;
+		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(),&progress);
 
 		delete hdt;
 	} catch (char *e) {
