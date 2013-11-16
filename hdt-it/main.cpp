@@ -30,5 +30,10 @@ int main(int argc, char *argv[])
 
     w.show();
 
+    if(argc>1) {
+	QString str(argv[1]);
+	w.openHDTFile(str);
+    }
+
     return a.exec();
 }
