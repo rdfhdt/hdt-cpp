@@ -247,7 +247,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		maxCount = count>maxCount ? count : maxCount;
 		objectCount->set(val-1, count);
 
-		NOTIFYCOND3(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements(), 10000);
+		NOTIFYCOND3(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements(), 1000000);
 	}
 	cout << "Count Objects in " << st << " Max was: " << maxCount << endl;
 	st.reset();
@@ -265,7 +265,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
     for(size_t i=0;i<objectCount->getNumberOfElements();i++) {
 		tmpCount += objectCount->get(i);
 		bitmapIndex->set(tmpCount-1, true);
-		NOTIFYCOND3(&iListener, "Creating bitmap", i, objectCount->getNumberOfElements(), 10000);
+		NOTIFYCOND3(&iListener, "Creating bitmap", i, objectCount->getNumberOfElements(), 1000000);
 	}
 	bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
 	delete objectCount;
@@ -310,7 +310,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 			objectInsertedCount->set(objectValue-1, insertOffset+1);
 
 			objectArray->set(insertBase+insertOffset, posY);
-			NOTIFYCOND3(&iListener, "Generating object references", i, arrayZ->getNumberOfElements(), 20000);
+			NOTIFYCOND3(&iListener, "Generating object references", i, arrayZ->getNumberOfElements(), 1000000);
 	}
 	delete objectInsertedCount;
 	objectInsertedCount=NULL;
@@ -388,7 +388,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		}
 
         object++;
-		NOTIFYCOND3(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements(), 1000);
+		NOTIFYCOND3(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements(), 10000);
 	} while(object<=bitmapIndex->countOnes());
 
 	cout << "Sort lists in " << st << endl;
