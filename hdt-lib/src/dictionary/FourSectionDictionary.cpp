@@ -144,7 +144,8 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 	if(format!=getType()) {
 		throw "Trying to read a FourSectionDictionary but the data is not FourSectionDictionary";
 	}
-	this->mapping = ci.getUint("mapping");
+	//this->mapping = ci.getUint("mapping");
+	this->mapping = MAPPING2;
 	this->sizeStrings = ci.getUint("sizeStrings");
 
 	IntermediateListener iListener(listener);
@@ -198,7 +199,8 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
     ControlInformation ci;
     count += ci.load(&ptr[count], ptrMax);
 
-    this->mapping = ci.getUint("mapping");
+    //this->mapping = ci.getUint("mapping");
+    this->mapping = MAPPING2;
     this->sizeStrings = ci.getUint("sizeStrings");
 
     iListener.setRange(0,25);
