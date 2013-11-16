@@ -29,6 +29,8 @@
  *
  */
 
+#include <algorithm>
+
 #include "FourSectionDictionary.hpp"
 #include <HDTVocabulary.hpp>
 
