@@ -321,7 +321,7 @@ vector<hdt::TripleID> & HDTController::getTriples()
     return hdtCachedInfo->getTriples();
 }
 
-unsigned int HDTController::getNumResults()
+size_t HDTController::getNumResults()
 {
     return numResults;
 }

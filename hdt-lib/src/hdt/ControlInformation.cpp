@@ -213,12 +213,12 @@ void ControlInformation::set(std::string key, std::string value) {
 	map[key] = value;
 }
 
-uint32_t ControlInformation::getUint(std::string key) {
+uint64_t ControlInformation::getUint(std::string key) {
 	std::string str = map[key];
-	return atoi(str.c_str()); // TODO: WARNING: unsigned int??
+    return strtoull(str.c_str(), NULL, 10);
 }
 
-void ControlInformation::setUint(std::string key, uint32_t value) {
+void ControlInformation::setUint(std::string key, uint64_t value) {
 	std::stringstream out;
 	out << value;
 	map[key] = out.str();
@@ -226,6 +226,11 @@ void ControlInformation::setUint(std::string key, uint32_t value) {
 
 void ControlInformation::setType(ControlInformationType type) {
     this->type = type;
+}
+
+
+bool ControlInformation::isDefined(std::string key) {
+	return !map[key].empty();
 }
 
 ControlInformationType ControlInformation::getType() {

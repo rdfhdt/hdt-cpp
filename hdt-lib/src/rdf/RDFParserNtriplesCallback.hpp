@@ -26,7 +26,7 @@ public:
 	RDFParserNtriplesCallback();
 	virtual ~RDFParserNtriplesCallback();
 
-	void doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback);
+    void doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback);
 };
 
 

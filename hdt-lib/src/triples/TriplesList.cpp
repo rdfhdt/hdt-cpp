@@ -41,11 +41,11 @@
 
 namespace hdt {
 
-TriplesList::TriplesList() : order(Unknown), numValidTriples(0)
+TriplesList::TriplesList() : order(Unknown), numValidTriples(0), ptr(NULL)
 {
 }
 
-TriplesList::TriplesList(HDTSpecification &specification) : spec(specification), order(Unknown), numValidTriples(0) {
+TriplesList::TriplesList(HDTSpecification &specification) : spec(specification), order(Unknown), ptr(NULL), numValidTriples(0) {
 }
 
 TriplesList::~TriplesList()
@@ -73,7 +73,7 @@ float TriplesList::cost(TripleID &pattern)
 	throw "Not implemented";
 }
 
-unsigned int TriplesList::getNumberOfElements()
+size_t TriplesList::getNumberOfElements()
 {
 	return numValidTriples;
 }
@@ -115,15 +115,36 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 	while(input.good() && numRead<totalTriples) {
 		input.read((char *)&readTriple, sizeof(TripleID));
 		arrayOfTriples.push_back(readTriple);
+        ptr = &arrayOfTriples[0];
 		numRead++;
 		numValidTriples++;
 		NOTIFYCOND(listener, "TriplesList loading", numRead, totalTriples)
     }
 }
 
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw "Could not read completely the HDT from the file.";
+
 size_t TriplesList::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
-{
-    throw "Not implemented";
+{    
+    size_t count=0;
+
+    ControlInformation controlInformation;
+    count+=controlInformation.load(&ptr[count], ptrMax);
+
+    std::string format = controlInformation.getFormat();
+    if(format!=getType()) {
+        throw "Trying to read a TriplesList but the data is not TriplesList";
+    }
+
+    order = (TripleComponentOrder) controlInformation.getUint("order");
+    unsigned long long totalTriples = controlInformation.getUint("numTriples");
+    this->numValidTriples = 100000000;
+
+    //CHECKPTR(&ptr[count],ptrMax,numValidTriples*12);
+
+    this->ptr = (TripleID*)&ptr[count];
+
+    return count;
 }
 
 void TriplesList::load(ModifiableTriples &input, ProgressListener *listener)
@@ -188,14 +209,20 @@ void TriplesList::insert(TripleID &triple)
 	// Add the triple
 	order = Unknown;
 	arrayOfTriples.push_back(triple);
+    ptr = (TripleID*)&arrayOfTriples[0];
 	numValidTriples++;
 }
 
 void TriplesList::insert(IteratorTripleID *triples)
 {
+    size_t numres = triples->estimatedNumResults();
+
+    arrayOfTriples.resize(numres);
+    numValidTriples=0;
+
 	while( triples->hasNext() ) {
-		arrayOfTriples.push_back(*triples->next());
-		numValidTriples++;
+        arrayOfTriples[numValidTriples++] = *triples->next();
+        ptr = (TripleID*)&arrayOfTriples[0];
 	}
 	order = Unknown;
 }
@@ -258,7 +285,8 @@ void TriplesList::setOrder(TripleComponentOrder order)
 
 TripleID* TriplesList::getTripleID(unsigned int i)
 {
-	return &this->arrayOfTriples[i];
+    return &ptr[i];
+    //return &this->arrayOfTriples[i];
 }
 
 void TriplesList::removeDuplicates(ProgressListener *listener) {

@@ -18,7 +18,7 @@ class RDFParserSerd : public RDFParserCallback {
 private:
     SerdEnv *env;
     RDFCallback *callback;
-    char *error;
+    string error;
     uint64_t numByte=0;
 
     string getString(const SerdNode *term);
@@ -28,7 +28,7 @@ public:
     RDFParserSerd();
     virtual ~RDFParserSerd();
 
-    void doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback);
+    void doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback);
 
     friend SerdStatus hdtserd_process_triple(void* handle,
                                             SerdStatementFlags flags,
@@ -41,6 +41,7 @@ public:
 
     friend SerdStatus hdtserd_prefixchanged(void* handle,const SerdNode* name, const SerdNode* uri);
     friend SerdStatus hdtserd_basechanged(void* handle, const SerdNode* uri);
+    friend SerdStatus hdtserd_error_sink(void* handle, const SerdError* e);
 };
 
 }

@@ -239,7 +239,7 @@ void TripleListDisk::populateHeader(Header &header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
 }
 
-unsigned int TripleListDisk::getNumberOfElements()
+size_t TripleListDisk::getNumberOfElements()
 {
 	return numValidTriples;
 }

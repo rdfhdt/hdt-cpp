@@ -75,7 +75,7 @@ public:
 
 	unsigned int getNumberOfElements();
 
-	unsigned int size();
+    uint64_t size();
 
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();

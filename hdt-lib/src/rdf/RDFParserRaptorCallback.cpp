@@ -103,7 +103,7 @@ const char *RDFParserRaptorCallback::getParserType(RDFNotation notation){
 	}
 }
 
-void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback) {
+void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback) {
 	if(callback==NULL) {
 		return;
 	}

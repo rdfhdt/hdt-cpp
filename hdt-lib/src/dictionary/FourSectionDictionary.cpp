@@ -129,10 +129,6 @@ unsigned int FourSectionDictionary::stringToId(std::string &key, TripleComponent
 		if(ret != 0) {
 			return getGlobalId(ret,NOT_SHARED_OBJECT);
 		}
-		ret = objects->locate((const unsigned char *)key.c_str(), key.length());
-		if(ret != 0) {
-			return getGlobalId(ret,NOT_SHARED_OBJECT);
-		}
         return 0;
 	}
 }
@@ -412,12 +408,12 @@ unsigned int FourSectionDictionary::getMaxObjectID()
 	}
 }
 
-unsigned int FourSectionDictionary::getNumberOfElements()
+size_t FourSectionDictionary::getNumberOfElements()
 {
 	return shared->getLength()+subjects->getLength()+predicates->getLength()+objects->getLength();
 }
 
-unsigned int FourSectionDictionary::size()
+uint64_t FourSectionDictionary::size()
 {
 	return shared->getSize()+subjects->getSize()+predicates->getSize()+objects->getSize();
 }

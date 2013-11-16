@@ -72,7 +72,7 @@ void HDTit::updateNumResults()
 {
     ui->numResultsLabel->setText(
                 QString(tr("%1 results found."))
-                .arg(QLocale::system().toString(hdtController->getNumResults()))
+                .arg(QLocale::system().toString((uint64_t)hdtController->getNumResults()))
                 );
 }
 
@@ -206,7 +206,6 @@ void HDTit::on_actionExportRDF_triggered()
     QString file = lastDir;
     file.replace(".hdt",".nt");
 
-    // TODO: Rename lastDir
     file = QFileDialog::getSaveFileName(this,tr("Select Output RDF File"), file, tr("RDF Files(*.rdf *.RDF *.n3 *.N3 *.nt *.NT *.ttl *.TTL)"), 0, 0 );
     if(!file.isEmpty()) {
         // FIXME: Select notation.

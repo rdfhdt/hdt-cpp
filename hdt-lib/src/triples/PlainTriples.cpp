@@ -191,7 +191,7 @@ size_t PlainTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progre
 
 
 
-unsigned int PlainTriples::getNumberOfElements()
+size_t PlainTriples::getNumberOfElements()
 {
 	return streamX->getNumberOfElements();
 }

@@ -133,7 +133,7 @@ float TriplesKyoto::cost(TripleID &pattern)
 	throw "Not implemented";
 }
 
-unsigned int TriplesKyoto::getNumberOfElements()
+size_t TriplesKyoto::getNumberOfElements()
 {
 	return db.count();
 }

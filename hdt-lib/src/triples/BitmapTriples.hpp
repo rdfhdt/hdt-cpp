@@ -82,7 +82,7 @@ public:
 	 *
 	 * @return
 	 */
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
     size_t size();
 
@@ -124,6 +124,7 @@ public:
 	friend class ObjectIndexIterator;
     friend class PredicateIndexWavelet;
     friend class PredicateIndexArray;
+    friend class BTInterleavedIterator;
 };
 
 class BitmapTriplesSearchIterator : public IteratorTripleID {
@@ -133,9 +134,9 @@ private:
 	unsigned int patX, patY, patZ;
 
 	AdjacencyList adjY, adjZ;
-	unsigned int posY, posZ;
-	unsigned int minY, maxY, minZ, maxZ;
-        unsigned int nextY, nextZ, prevY, prevZ;
+    size_t posY, posZ;
+    size_t minY, maxY, minZ, maxZ;
+    size_t nextY, nextZ, prevY, prevZ;
 	unsigned int x, y, z;
 
 	void findRange();
@@ -151,7 +152,7 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
-	unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool canGoTo();
@@ -183,7 +184,7 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
-	unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool findNextOccurrence(unsigned int value, unsigned char component);
@@ -197,8 +198,8 @@ private:
 
 	AdjacencyList adjY, adjZ, adjIndex;
 	unsigned int patX, patY, patZ;
-	unsigned int posIndex;
-	unsigned int predicateOcurrence, numOcurrences;
+    size_t posIndex;
+    size_t predicateOcurrence, numOcurrences;
 	long long minIndex, maxIndex;
 	unsigned int x, y, z;
 
@@ -214,7 +215,7 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
-	unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool canGoTo();
@@ -222,6 +223,27 @@ public:
 	bool findNextOccurrence(unsigned int value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };
+
+
+class BTInterleavedIterator : public IteratorTripleID {
+private:
+    BitmapTriples *triples;
+    TripleID returnTriple;
+
+    AdjacencyList adjY, adjZ;
+    size_t posZ;
+    size_t skip;
+
+    void updateOutput();
+public:
+    BTInterleavedIterator(BitmapTriples *triples, size_t skip);
+
+    bool hasNext();
+    TripleID *next();
+};
+
+
+
 
 }
 

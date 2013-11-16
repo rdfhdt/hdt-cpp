@@ -130,7 +130,7 @@ void PlainHeader::save(std::ostream & output, ControlInformation &controlInforma
 	output << str;
 }
 
-unsigned int PlainHeader::getNumberOfElements() {
+size_t PlainHeader::getNumberOfElements() {
 	return triples.size();
 }
 

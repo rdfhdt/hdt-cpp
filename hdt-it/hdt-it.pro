@@ -9,7 +9,7 @@ QT       += core gui opengl
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
 
-#macx:QMAKE_CXXFLAGS += -msse4.2
+macx:QMAKE_CXXFLAGS += -msse4.2
 
 win32-g++:contains(QMAKE_HOST.arch, x86_64):{
         CONFIG += exceptions rtti
@@ -89,12 +89,11 @@ FORMS    += hdtit.ui \
 
 TRANSLATIONS += hdt-it_es.ts
 
-INCLUDEPATH += ../hdt-lib/include/ .
-
 LIBCDS = ../libcds-v1.0.12
 
 # Using Hard-coded Makefile
-#LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
+INCLUDEPATH += $${LIBCDS}/includes ../hdt-lib/include/ .
+LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
 
 # Using autotools
 #LIBS += $${LIBCDS}/src/.libs/libcds.a ../hdt-lib/.libs/libhdt.a
@@ -119,7 +118,7 @@ win32-g++:contains(QMAKE_HOST.arch, x86_64):{
 }
 
 #Unix (Linux & Mac)
-unix:LIBS += -lraptor2 -lz
+unix:LIBS += -lraptor2 -lz -lserd-0
 
 RESOURCES += \
     hdtresources.qrc

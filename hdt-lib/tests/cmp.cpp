@@ -12,7 +12,7 @@ using namespace std;
 #define NUM 2000000000
 
 class MyIterator : public hdt::IteratorUCharString {
-	unsigned long long count;
+	size_t count;
 	unsigned char *buffer;
 
 public:
@@ -30,11 +30,11 @@ public:
 	}
 
 	unsigned char *next() {
-		sprintf((char*)buffer, "AAA %015lld FINNN", count++);
+		sprintf((char*)buffer, "AAA %015lld FINNN", (uint64_t) count++);
 		return buffer;
 	}
 
-	unsigned int getNumberOfElements() {
+	size_t getNumberOfElements() {
 		return NUM;
 	}
 };

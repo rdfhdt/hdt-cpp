@@ -44,8 +44,9 @@ private:
 	HDTSpecification spec;
 
 	std::vector<TripleID> arrayOfTriples;
+    TripleID *ptr;
 	TripleComponentOrder order;
-	unsigned int numValidTriples;
+    size_t numValidTriples;
 
 public:
 	TriplesList();
@@ -77,7 +78,7 @@ public:
 	 *
 	 * @return
 	 */
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
 	/**
 	 * Returns size in bytes

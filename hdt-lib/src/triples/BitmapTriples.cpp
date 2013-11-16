@@ -273,9 +273,9 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	cout << "Bitmap in " << st << endl;
 	st.reset();
 
+    cout << "Bitmap bits: " << bitmapIndex->getNumBits() << " Ones: " << bitmapIndex->countOnes() << endl;
 #if 0
-	cout << "Bitmap bits: " << bitmapIndex->getNumBits() << endl;
-	for(int i=0;i<bitmapIndex->getNumBits();i++) {
+    for(size_t i=0;i<bitmapIndex->getNumBits();i++) {
 		if(bitmapIndex->access(i)){
 			cout << "1";
 		} else {
@@ -337,10 +337,10 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 
 		// Hard-coded size-2 for speed (They are quite common).
         if(listLen==2) {
-			unsigned int aPos = objectArray->get(first);
-			unsigned int a = arrayY->get(aPos);
-            unsigned int bPos = objectArray->get(last-1);
-			unsigned int b = arrayY->get(bPos);
+            size_t aPos = objectArray->get(first);
+            size_t a = arrayY->get(aPos);
+            size_t bPos = objectArray->get(last-1);
+            size_t b = arrayY->get(bPos);
 			if(a>b) {
 				objectArray->set(first, bPos);
                 objectArray->set(last-1, aPos);
@@ -367,12 +367,12 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 				objectArray->set(i, tempList[i-first].first);
 			}
 #else
-			vector<unsigned int> tempList;
+            vector<size_t> tempList;
 			tempList.reserve(listLen);
 
 			// Create temporary list of (position, predicate)
 			for(size_t i=first; i<last;i++) {
-				unsigned int adjZlist = (unsigned int)objectArray->get(i);
+                size_t adjZlist = objectArray->get(i);
 				tempList.push_back(adjZlist);
 			}
 
@@ -400,11 +400,11 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 
 #if 0
     for(size_t i=0;i<arrayIndex->getNumberOfElements();i++) {
-		unsigned int indexPtr = (unsigned int)arrayIndex->get(i);
-		unsigned int pred = arrayY->get(indexPtr);
+        size_t indexPtr = arrayIndex->get(i);
+        size_t pred = arrayY->get(indexPtr);
 
-		unsigned int cobject = i==0 ? 1 : bitmapIndex->rank1(i-1)+1;
-		unsigned int subject = indexPtr==0 ? 1 : bitmapY->rank1(indexPtr-1)+1;
+        size_t cobject = i==0 ? 1 : bitmapIndex->rank1(i-1)+1;
+        size_t subject = indexPtr==0 ? 1 : bitmapY->rank1(indexPtr-1)+1;
 		cout << "\tFinal: " << i << " (" << indexPtr << " > " <<  cobject << "-" << pred << "-"<<subject<<")" << endl;
 
         if(bitmapIndex->access(i)) {
@@ -727,7 +727,7 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 }
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
-	unsigned int numTriples = controlInformation.getUint("numTriples");
+    size_t numTriples = controlInformation.getUint("numTriples");
 
 	if(controlInformation.getType()!=INDEX) {
 		throw "Trying to read Index but data is not index.";
@@ -782,7 +782,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
         throw "Trying to load an HDT Index, but the ControlInformation states that it's not an index.";
     }
 
-    unsigned int numTriples = controlInformation.getUint("numTriples");
+    size_t numTriples = controlInformation.getUint("numTriples");
     std::string typeIndex = controlInformation.get("stream.index");
 
     if(this->getNumberOfElements()!=numTriples) {
@@ -819,7 +819,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     return count;
 }
 
-unsigned int BitmapTriples::getNumberOfElements()
+size_t BitmapTriples::getNumberOfElements()
 {
 	return arrayZ->getNumberOfElements();
 }

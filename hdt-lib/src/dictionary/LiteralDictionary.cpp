@@ -315,7 +315,7 @@ public:
 		return previous;
 	}
 
-	unsigned int getNumberOfElements() {
+    size_t getNumberOfElements() {
 		return child->getNumberOfElements();
 	}
 
@@ -527,12 +527,12 @@ unsigned int LiteralDictionary::getMaxObjectID() {
 	}
 }
 
-unsigned int LiteralDictionary::getNumberOfElements() {
+size_t LiteralDictionary::getNumberOfElements() {
 	return shared->getLength() + subjects->getLength() + predicates->getLength()
 			+ objectsLiterals->getLength()+objectsNotLiterals->getLength();
 }
 
-unsigned int LiteralDictionary::size() {
+uint64_t LiteralDictionary::size() {
 	return shared->getSize() + subjects->getSize() + predicates->getSize()
 			+ objectsLiterals->getSize()+objectsNotLiterals->getSize();
 }

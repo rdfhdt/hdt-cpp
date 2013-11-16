@@ -66,6 +66,16 @@ LogSequence2::LogSequence2(unsigned int numbits, size_t capacity) : numentries(0
 	arraysize = totalSize;
 }
 
+LogSequence2::LogSequence2(unsigned int numbits, size_t capacity, bool initialize) : numbits(numbits), IsMapped(false) {
+    maxval = maxVal(numbits);
+    size_t totalSize = numElementsFor(numbits, capacity);
+    if(totalSize==0) data.reserve(1);
+    data.resize(totalSize);
+    array = &data[0];
+    arraysize = totalSize;
+    numentries=initialize ? capacity : 0;
+}
+
 LogSequence2::~LogSequence2() {
 
 }

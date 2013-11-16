@@ -1,6 +1,8 @@
 #include "hdtcachedinfo.hpp"
 #include "constants.h"
 
+#include "../../hdt-lib/src/triples/BitmapTriples.hpp"
+
 #include <fstream>
 
 HDTCachedInfo::HDTCachedInfo(hdt::HDT *hdt) : hdt(hdt)
@@ -17,6 +19,7 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
     predicateCount.clear();
     predicateCount.resize(nPred+1);
 
+	// TODO: Use predicateCount directly
     hdt::Triples *t = hdt->getTriples();
     hdt::TripleID triplePredicate;
     for(int p=1;p<=nPred;p++) {
@@ -51,18 +54,36 @@ void HDTCachedInfo::generateMatrix(hdt::ProgressListener *listener)
 {
     // Generate matrix
     hdt::Triples *t = hdt->getTriples();
-    unsigned int increment = t->getNumberOfElements()/RENDER_NUM_POINTS;
+    size_t increment = t->getNumberOfElements()/RENDER_NUM_POINTS;
     increment = increment < 1 ? 1 : increment;
 
-    hdt::IteratorTripleID *it = t->searchAll();
-    for(int i=0;i<t->getNumberOfElements();i+=increment) {
-        it->goTo(i);
-        hdt::TripleID *tid = it->next();
-        triples.push_back(*tid);
 
-        NOTIFYCOND(listener, "Generating Matrix", i, t->getNumberOfElements());
+    hdt::BTInterleavedIterator it(dynamic_cast<hdt::BitmapTriples *>(t), increment);
+
+    size_t count=0;
+    while(it.hasNext()) {
+        hdt::TripleID *tid = it.next();
+        triples.push_back(*tid);
+        //cout << *tid << endl;
+
+        NOTIFYCOND(listener, "Generating Matrix", count, RENDER_NUM_POINTS);
+        count++;
+        //if((count%100)==0)
+            //cout << "Iteration: " << count << endl;
     }
-    delete it;
+
+//    hdt::IteratorTripleID *it = t->searchAll();
+//    size_t count=0;
+//    for(size_t i=0;i<t->getNumberOfElements();i+=increment) {
+//        it->goTo(i);
+//        hdt::TripleID *tid = it->next();
+//        triples.push_back(*tid);
+//        NOTIFYCOND(listener, "Generating Matrix", i, t->getNumberOfElements());
+//        count++;
+//        if((count%100)==0)
+//            cout << "Iteration: " << count << endl;
+//    }
+//    delete it;
 
 }
 

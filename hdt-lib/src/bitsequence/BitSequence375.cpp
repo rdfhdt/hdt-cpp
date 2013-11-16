@@ -42,20 +42,20 @@ BitSequence375::BitSequence375(): numbits(0), numones(0), numwords(0), indexRead
     array = &data[0];
 }
 
-BitSequence375::BitSequence375(uint64_t capacity): numbits(0), numones(0), indexReady(false), isMapped(false)
+BitSequence375::BitSequence375(size_t capacity): numbits(0), numones(0), indexReady(false), isMapped(false)
 {
     numwords = numWords(numbits);
-    data.resize(numwords>0?numwords:1);
+    data.resize(numwords);
     array = &data[0];
 }
 
-BitSequence375::BitSequence375(uint32_t *bitarray, uint64_t n) : numbits(n), indexReady(false), isMapped(false)
+BitSequence375::BitSequence375(size_t *bitarray, size_t n) : numbits(n), indexReady(false), isMapped(false)
 {
     numwords = numWords(numbits);
-    data.resize(numwords>0?numwords:1);
+    data.resize(numwords);
     array = &data[0];
 
-    memcpy(&data[0], bitarray, numwords*sizeof(uint32_t));
+    memcpy(&data[0], bitarray, numwords*sizeof(size_t));
 
 	buildIndex();
 }
@@ -84,11 +84,14 @@ void BitSequence375::buildIndex()
 
 	trimToSize();
 
-	uint32_t blockPop=0, superBlockPop=0, blockIndex=0, superblockIndex=0;
+	size_t blockPop=0, superBlockPop=0;
+	size_t blockIndex=0, superblockIndex=0;
 
 	// Reserve the buffers for blocks / superblocks
 	blocks.resize(numwords);
 	superblocks.resize(1+(numwords-1)/BLOCKS_PER_SUPER);
+
+	//cout << "Blocks: " << numwords << " Super: "<< superblocks.size() << " Size: " << superblocks.size()*8 << endl;
 
 	// Fill them
 	while(blockIndex < numwords)
@@ -103,7 +106,7 @@ void BitSequence375::buildIndex()
 		}
 
 		blocks[blockIndex] = blockPop;
-		blockPop += popcount32(array[blockIndex]);
+		blockPop += popcount64(array[blockIndex]);
 		blockIndex++;
 	}
 
@@ -127,15 +130,15 @@ size_t BitSequence375::rank1(const size_t pos) const
 		return numones;
 	}
 
-    uint32_t superBlockIndex = pos/(BLOCKS_PER_SUPER*WORDSIZE);
-    uint32_t superBlockRank = superblocks[superBlockIndex];
+    size_t superBlockIndex = pos/(BLOCKS_PER_SUPER*WORDSIZE);
+    size_t superBlockRank = superblocks[superBlockIndex];
 
-    uint32_t blockIndex = pos/WORDSIZE;
-    uint32_t blockRank = blocks[blockIndex];
+    size_t blockIndex = pos/WORDSIZE;
+    size_t blockRank = blocks[blockIndex];
 
-    uint32_t chunkIndex = WORDSIZE-1-pos%WORDSIZE;
-    uint32_t block = array[blockIndex] << chunkIndex;
-    uint32_t chunkRank = popcount32(block);
+    size_t chunkIndex = WORDSIZE-1-pos%WORDSIZE;
+    size_t block = array[blockIndex] << chunkIndex;
+    size_t chunkRank = popcount64(block);
 
     return superBlockRank + blockRank + chunkRank;
 }
@@ -145,7 +148,7 @@ void BitSequence375::set(const size_t i, bool val) {
 		throw "This data structure is readonly when mapped.";
 	}
 
-	size_t requiredCapacity = 1+(i >> LOGWORDSIZE);
+	size_t requiredCapacity = 1+(i/WORDSIZE);
 
 	if(data.size()<requiredCapacity) {
 		data.resize(requiredCapacity*2);
@@ -169,7 +172,7 @@ void BitSequence375::append(bool bit) {
 
 bool BitSequence375::access(const size_t i) const
 {
-	return array[i/WORDSIZE] & (1u << (i & 0x1F));
+	return bitget(array, i);
 }
 
 void BitSequence375::save(ostream & out) const
@@ -209,7 +212,12 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
     }
 
     // Read numbits
-	count += csd::VByte::decode(&ptr[count], maxPtr, &numbits);
+    uint64_t totalBits;
+	count += csd::VByte::decode(&ptr[count], maxPtr, &totalBits);
+	if(sizeof(size_t)==4 && totalBits>0xFFFFFFFF) {
+		throw "This File is too big to be processed using 32Bit version. Please compile with 64bit support";
+	}
+	this->numbits = (size_t) totalBits;
 
     // CRC
     CRC8 crch;
@@ -226,7 +234,7 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
         throw "BitSequence375 tries to read beyond the end of the file";
     }
 
-    array = (uint32_t *) &ptr[count];
+    array = (size_t *) &ptr[count];
 	isMapped = true;
 	count += sizeBytes;
 
@@ -257,7 +265,12 @@ BitSequence375 * BitSequence375::load(istream & in)
 	BitSequence375 * ret = new BitSequence375();
 
 	// Load number of total bits
-	ret->numbits = csd::VByte::decode(in);
+	uint64_t totalBits = csd::VByte::decode(in);
+	if(sizeof(size_t)==4 && totalBits>0xFFFFFFFF) {
+		throw "This File is too big to be processed using 32Bit version. Please compile with 64bit support";
+	}
+	ret->numbits = (size_t) totalBits;
+
 
 	size_t len = csd::VByte::encode(arr, ret->numbits);
 	crch.update(arr,len);
@@ -290,12 +303,13 @@ BitSequence375 * BitSequence375::load(istream & in)
 
 size_t BitSequence375::getSizeBytes() const
 {
-	return (this->numwords*sizeof(uint32_t)) + (sizeof(uint32_t)*superblocks.size()) + (sizeof(unsigned char)*blocks.size()) + (sizeof(BitSeq));
+	//return (this->numwords*sizeof(size_t)) + (sizeof(size_t)*superblocks.size()) + (sizeof(unsigned char)*blocks.size()) + (sizeof(BitSeq));
+	return this->numwords*sizeof(size_t);
 }
 
 size_t BitSequence375::selectPrev1(const size_t start) const
 {
-	throw "BitSequence375 Not implemented";
+	throw "BitSequence375 selectPrev1 Not implemented";
 	return 0;
 }
 
@@ -307,11 +321,11 @@ size_t BitSequence375::selectPrev1(const size_t start) const
 
 size_t BitSequence375::selectNext1(const size_t fromIndex) const
 {
-	uint32_t wordIndex = fromIndex/32;
+	size_t wordIndex = fromIndex/64;
 	if (wordIndex >= numwords)
 		return -1;
 
-	uint32_t word = array[wordIndex] & (~((size_t)0) << fromIndex);
+	size_t word = array[wordIndex] & (~((size_t)0) << fromIndex);
 
 	while (true) {
 		if (word != 0)
@@ -332,7 +346,7 @@ size_t BitSequence375::select1(const size_t x) const
 		return numbits;
 	}
 
-	uint32_t superBlockIndex = binsearch((uint32_t *)&superblocks[0],superblocks.size(),x);
+	size_t superBlockIndex = binsearch((size_t *)&superblocks[0],superblocks.size(),x);
 
 	// If there is a run of many zeros, two correlative superblocks may have the same value,
 	// We need to position at the first of them.
@@ -340,8 +354,8 @@ size_t BitSequence375::select1(const size_t x) const
 		superBlockIndex--;
 	}
 
-	uint32_t countdown = x-superblocks[superBlockIndex];
-	uint32_t blockIdx = superBlockIndex * BLOCKS_PER_SUPER;
+	size_t countdown = x-superblocks[superBlockIndex];
+	size_t blockIdx = superBlockIndex * BLOCKS_PER_SUPER;
 
 	// Search block
 	while(true) {
@@ -363,46 +377,48 @@ size_t BitSequence375::select1(const size_t x) const
 	countdown -= blocks[blockIdx];
 
 	// Search bit inside block
-	uint32_t bitpos = wordSelect1(array[blockIdx], countdown);
+	size_t bitpos = wordSelect1(array[blockIdx], countdown);
 
 	return blockIdx * WORDSIZE + bitpos - 1;
 }
 
 size_t BitSequence375::select0(const size_t x1) const
 {
-	if(!indexReady) {
-		(const_cast<BitSequence375 *>(this))->buildIndex();
-	}
-	uint32_t spos,bpos,pos,word,x;
-	const unsigned char *blk;
-	size_t j = x1;
-	if (j > (numbits-numones)) return numbits;
-	spos = binsearch0((uint32_t*)&superblocks[0],(numbits+256-1)/256,j);
-
-	j -= 256*spos-superblocks[spos];
-	pos = spos<<8;
-	blk = &blocks[0];
-	blk += pos>>5;
-	bpos = 0;
-
-	while ( ((spos*8+bpos) < ((numbits-1)/WORDSIZE)) && (bpos < (1<<3)-1) && (((32*(bpos+1))-blk[bpos+1]) < j)) bpos++;
-
-	pos += bpos<<5;	
-	word = array[pos>>5];
-	j -= (32*bpos)-blk[bpos];
-
-	while (1) 
-	{
-		x = 8-popcount8(word);
-
-		if (j <= x) break;
-		j -= x; pos += 8;
-		word >>= 8;
-	}
-
-	while (j) { if (!(word & 1)) j--; word >>= 1; pos++; }
-
-	return pos-1;
+	throw "Not implemented";
+	// FIXME Try on 64Bit.
+//	if(!indexReady) {
+//		(const_cast<BitSequence375 *>(this))->buildIndex();
+//	}
+//	size_t spos,bpos,pos,word,x;
+//	const unsigned char *blk;
+//	size_t j = x1;
+//	if (j > (numbits-numones)) return numbits;
+//	spos = binsearch0((size_t*)&superblocks[0],(numbits+256-1)/256,j);
+//
+//	j -= 256*spos-superblocks[spos];
+//	pos = spos<<8;
+//	blk = &blocks[0];
+//	blk += pos>>6;
+//	bpos = 0;
+//
+//	while ( ((spos*8+bpos) < ((numbits-1)/WORDSIZE)) && (bpos < (1<<3)-1) && (((64*(bpos+1))-blk[bpos+1]) < j)) bpos++;
+//
+//	pos += bpos<<6;
+//	word = array[pos>>6];
+//	j -= (64*bpos)-blk[bpos];
+//
+//	while (1)
+//	{
+//		x = 8-popcount8(word);
+//
+//		if (j <= x) break;
+//		j -= x; pos += 8;
+//		word >>= 8;
+//	}
+//
+//	while (j) { if (!(word & 1)) j--; word >>= 1; pos++; }
+//
+//	return pos-1;
 }
 
 size_t BitSequence375::getNumBits() const {

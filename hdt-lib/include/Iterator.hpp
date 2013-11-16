@@ -55,7 +55,7 @@ public:
 		return 0;
 	}
 
-	virtual unsigned int getNumberOfElements() {
+    virtual size_t getNumberOfElements() {
 		return 0;
 	}
 
@@ -67,7 +67,7 @@ public:
 class VectorIteratorUCharString : public IteratorUCharString {
 private:
 	std::vector<std::string> &vector;
-	unsigned int pos;
+    size_t pos;
 public:
 	VectorIteratorUCharString(std::vector<std::string> &vector) : vector(vector), pos(0) { }
 	virtual ~VectorIteratorUCharString() { }
@@ -81,13 +81,13 @@ public:
 	}
 };
 
-class FileteratorUCharString : public IteratorUCharString {
+class FileIteratorUCharString : public IteratorUCharString {
 private:
     std::ifstream in;
     std::string line;
 public:
-    FileteratorUCharString(std::string file) : in(file.c_str(), ios::binary) { }
-    virtual ~FileteratorUCharString() {
+    FileIteratorUCharString(std::string file) : in(file.c_str(), ios::binary) { }
+    virtual ~FileIteratorUCharString() {
         in.close();
     }
 
@@ -125,7 +125,7 @@ public:
 	}
 	virtual void goToStart() {
 	}
-	virtual unsigned int estimatedNumResults() {
+    virtual size_t estimatedNumResults() {
 		return 0;
 	}
 	virtual ResultEstimationType numResultEstimation() {

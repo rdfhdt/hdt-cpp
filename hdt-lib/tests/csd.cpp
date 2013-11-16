@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 
 		ConvertProgress progress;
 		// CONVERT
-		FileteratorUCharString iterator(inputFile);
+		FileIteratorUCharString iterator(inputFile);
 
 		CSD_PFC *csd = new CSD_PFC(&iterator, 32, &progress);
 

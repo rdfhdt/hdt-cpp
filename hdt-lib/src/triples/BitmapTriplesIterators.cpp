@@ -225,7 +225,7 @@ void BitmapTriplesSearchIterator::goToStart()
     }
 }
 
-unsigned int BitmapTriplesSearchIterator::estimatedNumResults()
+size_t BitmapTriplesSearchIterator::estimatedNumResults()
 {
     return maxZ-minZ;
 }
@@ -432,7 +432,7 @@ void MiddleWaveletIterator::goToStart()
     z = adjZ.get(posZ);
 }
 
-unsigned int MiddleWaveletIterator::estimatedNumResults()
+size_t MiddleWaveletIterator::estimatedNumResults()
 {
     return predicateIndex->getNumAppearances(patY);
 }
@@ -738,7 +738,7 @@ void ObjectIndexIterator::goToStart()
     posIndex=minIndex;
 }
 
-unsigned int ObjectIndexIterator::estimatedNumResults()
+size_t ObjectIndexIterator::estimatedNumResults()
 {
     return maxIndex-minIndex+1;
 }
@@ -812,5 +812,37 @@ bool ObjectIndexIterator::isSorted(TripleComponentRole role) {
 
     throw "Order not supported";
 }
+
+
+BTInterleavedIterator::BTInterleavedIterator(BitmapTriples *triples, size_t skip) :
+            triples(triples),
+            skip(skip),
+            posZ(0),
+            adjY(triples->arrayY, triples->bitmapY),
+            adjZ(triples->arrayZ, triples->bitmapZ)
+{
+}
+
+bool BTInterleavedIterator::hasNext()
+{
+    return posZ<triples->getNumberOfElements();
+}
+
+TripleID *BTInterleavedIterator::next()
+{
+    size_t posY = adjZ.findListIndex(posZ);
+
+    unsigned int z = adjZ.get(posZ);
+    unsigned int y = adjY.get(posY);
+    unsigned int x = adjY.findListIndex(posY)+1;
+
+    posZ+=skip;
+
+    returnTriple.setAll(x,y,z);
+
+    return &returnTriple;
+}
+
+
 
 }

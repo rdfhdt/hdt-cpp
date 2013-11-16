@@ -103,12 +103,12 @@ public:
     *
     * @return
     */
-    virtual unsigned int getNumberOfElements() =0;
+    virtual size_t getNumberOfElements() =0;
 
     /**
      * Returns size in bytes of the overall structure.
      */
-    virtual unsigned int size()=0;
+    virtual uint64_t size()=0;
 
     /* Return the number of different subjects of the current dictionary. */
     virtual unsigned int getNsubjects()=0;

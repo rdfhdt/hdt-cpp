@@ -116,6 +116,13 @@ public:
 	 */
 	LogSequence2(unsigned int numbits, size_t capacity);
 
+
+    /**
+     * Create a data structure where each entry needs numbits, initialize the booked entries to zero, so getNumberOfElements
+     * returns 0 and one is able to do set(pos) where pos<capacity.
+     */
+    LogSequence2(unsigned int numbits, size_t capacity, bool initialize);
+
 	/**
 	 * Destructor.
 	 */

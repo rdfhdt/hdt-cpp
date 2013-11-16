@@ -3,10 +3,10 @@ OS := $(shell uname)
 LIBCDSPATH = ../libcds-v1.0.12
 
 # Uncomment here to enable optional dependencies
-#RAPTOR_SUPPORT=true
+RAPTOR_SUPPORT=true
 #KYOTO_SUPPORT=true
-#LIBZ_SUPPORT=true
-#SERD_SUPPORT=true
+LIBZ_SUPPORT=true
+SERD_SUPPORT=true
 
 CPP=g++
 FLAGS=-O3 -Wno-deprecated
@@ -38,7 +38,7 @@ endif
 
 ifeq ($(OS), Darwin)
 CPP=clang++
-FLAGS:=$(FLAGS) -arch x86_64 #-msse4.2 
+FLAGS:=$(FLAGS) -arch x86_64 -msse4.2 
 endif
 
 ifeq ($(CPP), g++)
@@ -56,7 +56,8 @@ EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
 all:
 	@$(MAKE) showflags 
 	@$(MAKE) -C $(LIBCDSPATH)
-	@$(MAKE) tools examples
+	@$(MAKE) tools tests/jointest
+	#@$(MAKE) tests examples
 
 re:
 	@$(MAKE) clean
