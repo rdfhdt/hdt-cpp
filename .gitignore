@@ -1,1 +1,16 @@
+.DS_Store
+*.pro.user
 *.o
+unix
+macx
+win32
+delete_me
+Makefile
+README
+autom4te.cache/
+config.h
+*~
+config.log
+config.status
+stamp-h1
+.deps/
