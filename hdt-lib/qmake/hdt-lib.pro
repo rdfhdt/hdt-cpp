@@ -102,7 +102,8 @@ SOURCES += \
     ../src/util/bitutil.cpp \
     ../src/util/filemap.cpp \
     ../third/gzstream.cpp \
-    ../src/rdf/RDFParserNtriplesCallback.cpp
+    ../src/rdf/RDFParserNtriplesCallback.cpp \
+    ../src/triples/predicaateindex.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
@@ -186,7 +187,8 @@ HEADERS += \
     ../src/util/filemap.h \
     ../third/fdstream.hpp \
     ../third/gzstream.h \
-    ../src/rdf/RDFParserNtriplesCallback.hpp
+    ../src/rdf/RDFParserNtriplesCallback.hpp \
+    ../src/triples/predicateindex.hpp
 
 #For hdt-lib
 INCLUDEPATH += ../include

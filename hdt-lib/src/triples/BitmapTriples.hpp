@@ -36,15 +36,16 @@
 #include <HDTSpecification.hpp>
 
 #include "../bitsequence/BitSequence375.h"
-#include "../sequence/WaveletSequence.hpp"
 #include "../sequence/LogSequence2.hpp"
 #include "../sequence/AdjacencyList.hpp"
 
+#include "predicateindex.hpp"
+
 #include "TripleOrderConvert.hpp"
 
-#undef size_t
-
 namespace hdt {
+
+class PredicateIndex;
 
 class BitmapTriples : public Triples {
 private:
@@ -52,13 +53,9 @@ private:
 	HDTSpecification spec;
 	IntSequence *arrayY, *arrayZ, *arrayIndex;
 	BitSequence375 *bitmapY, *bitmapZ, *bitmapIndex;
-	IntSequence *predicateCount;
-	WaveletSequence *waveletY;
+    PredicateIndex *predicateIndex;
 
 	TripleComponentOrder order;
-
-	void generateWavelet(ProgressListener *listener = NULL);
-
 public:
 	BitmapTriples();
 	BitmapTriples(HDTSpecification &specification);
@@ -125,6 +122,8 @@ public:
 	friend class BitmapTriplesSearchIterator;
 	friend class MiddleWaveletIterator;
 	friend class ObjectIndexIterator;
+    friend class PredicateIndexWavelet;
+    friend class PredicateIndexArray;
 };
 
 class BitmapTriplesSearchIterator : public IteratorTripleID {
@@ -167,7 +166,7 @@ private:
 	TripleID pattern, returnTriple;
 
 	AdjacencyList adjY, adjZ;
-	WaveletSequence *wavelet;
+    PredicateIndex *predicateIndex;
 	unsigned int patX, patY, patZ;
 	unsigned int posY, posZ;
 	unsigned int predicateOcurrence, numOcurrences;

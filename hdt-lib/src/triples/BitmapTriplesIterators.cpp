@@ -321,7 +321,7 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     adjY(trip->arrayY, trip->bitmapY),
     adjZ(trip->arrayZ, trip->bitmapZ),
     predicateOcurrence(1),
-    wavelet(trip->waveletY)
+    predicateIndex(trip->predicateIndex)
 {
     // Convert pattern to local order.
     swapComponentOrder(&pattern, SPO, triples->order);
@@ -345,7 +345,7 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     maxZ = trip->arrayZ->getNumberOfElements();
 
     // Find position of the first matching pattern.
-    numOcurrences = wavelet->rank(patY, wavelet->getNumberOfElements());
+    numOcurrences = predicateIndex->getNumAppearances(patY);
 
     goToStart();
 }
@@ -367,7 +367,7 @@ TripleID *MiddleWaveletIterator::next()
     //cout << "nextTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
     if(posZ>nextZ) {
         predicateOcurrence++;
-        posY = wavelet->select(patY, predicateOcurrence);
+        posY = predicateIndex->getAppearance(patY, predicateOcurrence);
         prevZ = adjZ.find(posY);
 
         nextZ = adjZ.last(posY);
@@ -397,7 +397,7 @@ TripleID *MiddleWaveletIterator::previous()
     //cout << "previousTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
     if(posZ<=prevZ) {
         predicateOcurrence--;
-        posY = wavelet->select(patY, predicateOcurrence);
+        posY = predicateIndex->getAppearance(patY, predicateOcurrence);
 
         prevZ = adjZ.find(posY);
         nextZ = adjZ.last(posY);
@@ -420,7 +420,7 @@ TripleID *MiddleWaveletIterator::previous()
 void MiddleWaveletIterator::goToStart()
 {
     predicateOcurrence = 1;
-    posY = wavelet->select(patY, predicateOcurrence);
+    posY = predicateIndex->getAppearance(patY, predicateOcurrence);
     prevZ = adjZ.find(posY);
     nextZ = adjZ.last(posY);
     //nextZ = adjZ.findNext(prevZ)-1;
@@ -434,15 +434,12 @@ void MiddleWaveletIterator::goToStart()
 
 unsigned int MiddleWaveletIterator::estimatedNumResults()
 {
-    if(triples->predicateCount!=NULL) {
-	return triples->predicateCount->get(patY-1);
-    }
-    return numOcurrences*2;
+    return predicateIndex->getNumAppearances(patY);
 }
 
 ResultEstimationType MiddleWaveletIterator::numResultEstimation()
 {
-    if(triples->predicateCount!=NULL) {
+    if(triples->predicateIndex!=NULL) {
 	return EXACT;
     }
     return APPROXIMATE;
@@ -460,7 +457,7 @@ bool MiddleWaveletIterator::findNextOccurrence(unsigned int value, unsigned char
             if(predicateOcurrence>numOcurrences) {  // FIXME CHECK COMP
                 return false;
             }
-            posY = wavelet->select(patY, predicateOcurrence);
+            posY = predicateIndex->getAppearance(patY, predicateOcurrence);
             x = adjY.findListIndex(posY)+1;
         }
 
@@ -476,7 +473,7 @@ bool MiddleWaveletIterator::findNextOccurrence(unsigned int value, unsigned char
             if(predicateOcurrence>numOcurrences) {  // FIXME CHECK COMP
                 return false;
             }
-            posY = wavelet->select(patY, predicateOcurrence);
+            posY = predicateIndex->getAppearance(patY, predicateOcurrence);
             try {
                 posZ = adjZ.find(posY, value);
 
