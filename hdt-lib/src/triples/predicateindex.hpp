@@ -85,9 +85,10 @@ class PredicateIndexArray : public PredicateIndex {
     IntSequence *array;
     //LogSequence2 *predCount;
     BitSequence375 *bitmap;
+    size_t currpred,currpos;
 
 public:
-    PredicateIndexArray(BitmapTriples *triples) : PredicateIndex(triples), array(NULL), bitmap(NULL) {
+    PredicateIndexArray(BitmapTriples *triples) : PredicateIndex(triples), array(NULL), bitmap(NULL),currpred(0) {
 
     }
 
@@ -107,36 +108,32 @@ public:
     }
 
     size_t getNumAppearances(size_t predicate) {
-        //cout << "Using bitmap " << bitmap << endl;
-        size_t a = bitmap->select1(predicate)-bitmap->select1(predicate-1);
-//        size_t b = predCount->get(predicate-1);
-//        if(a!=b) {
-//            cout << "Error: " << a << " / "<< b <<endl;
-//        }
-        return a;
+	if(currpred!=predicate) {
+		currpred = predicate;
+		currpos=bitmap->select1(predicate);
+	}
+        return currpos-bitmap->select1(predicate-1);
+//      return  predCount->get(predicate-1);
     }
 
     size_t getAppearance(size_t predicate, size_t appearance) {
+	// Warning: Not concurrency friendly
+	if(currpred!=predicate) {
+		currpred = predicate;
+		currpos=bitmap->select1(predicate);
+	}
+	
         // FIXME: Cache last select1 call?
-        return array->get(bitmap->select1(predicate)+appearance-1);
+        return array->get(currpos+appearance-1);
     }
 
     void save(std::ostream &output, ProgressListener *listener = NULL) {
         bitmap->save(output);
-
-        cout << "Saved bitmap " << bitmap <<" / " << bitmap->getNumBits() << " / " << bitmap->countOnes() << endl;
-
-        //predCount->save(output);
         array->save(output);
     }
 
     void load(std::istream &input, ProgressListener *listener = NULL) {
         bitmap = BitSequence375::load(input);
-
-        cout << "Loaded bitmap " << bitmap <<" / " << bitmap->getNumBits() << " / " << bitmap->countOnes() << endl;
-
-        //predCount = new LogSequence2();
-        //predCount->load(input);
 
         array = IntSequence::getArray(input);
         array->load(input);
@@ -146,11 +143,6 @@ public:
         size_t count = 0;
         bitmap = new BitSequence375();
         count += bitmap->load(&ptr[count], ptrMax, listener);
-
-        cout << "Mapped bitmap " << bitmap <<" / " << bitmap->getNumBits() << " / " << bitmap->countOnes() << endl;
-
-        //predCount = new LogSequence2();
-        //count += predCount->load(ptr, ptrMax, listener);
 
         array = new LogSequence2();
         count += array->load(&ptr[count], ptrMax, listener);
