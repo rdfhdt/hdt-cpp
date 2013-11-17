@@ -104,7 +104,8 @@ int main(int argc, char **argv) {
 	}
 
 	try {
-		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
+		StdoutProgressListener progress;
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str(), &progress);
 
 		if(outputFile!="-") {
 			RDFSerializer *serializer = RDFSerializer::getSerializer(outputFile.c_str(), notation);

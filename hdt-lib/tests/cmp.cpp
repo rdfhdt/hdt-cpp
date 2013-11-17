@@ -39,16 +39,6 @@ public:
 	}
 };
 
-class ConvertProgress : public hdt::ProgressListener {
-private:
-public:
-    void notifyProgress(float level, const char *section) {
-    	cout << "\r " << section << ": " << level << " %                      \r";
-		cout.flush();
-	}
-
-};
-
 int main(int argc, char **argv) {
 
 #if 0
@@ -86,9 +76,9 @@ int main(int argc, char **argv) {
 
 #else
 
-	ConvertProgress progress;
+	hdt::StdoutProgressListener progress;
 	StopWatch st;
-	csd::CSD_PFC *pfc = new csd::CSD_PFC(it, 32, (hdt::ProgressListener*)&progress);
+	csd::CSD_PFC *pfc = new csd::CSD_PFC(it, 32, &progress);
 	free(it);
 
 	cout << endl << NUM << " entries added in " << st << endl;

@@ -5,8 +5,6 @@
  *      Author: mck
  */
 
-#include <iomanip>
-
 #include <HDT.hpp>
 #include <HDTManager.hpp>
 
@@ -27,22 +25,6 @@ void help() {
 
 	//cout << "\t-v\tVerbose output" << endl;
 }
-
-class ConvertProgress : public ProgressListener {
-private:
-public:
-        virtual ~ConvertProgress() { }
-
-    void notifyProgress(float level, const char *section) {
-    	cout << "\r " << std::setw( 3 ) << std::setprecision( 2 )<< section << ": " << level << " %                      \r";
-        }
-
-    void notifyProgress(float task, float level, const char *section) {
-    	cout << "\r " << std::setw( 3 ) << std::setprecision( 2 )<< section << ": " << task << " % / " << level << " %                      \r";
-                cout.flush();
-        }
-
-};
 
 int main(int argc, char **argv) {
 	int c;
@@ -70,8 +52,8 @@ int main(int argc, char **argv) {
 
 
 	try {
-		ConvertProgress progress;
-		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(),&progress);
+		StdoutProgressListener progress;
+		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &progress);
 
 		delete hdt;
 	} catch (char *e) {

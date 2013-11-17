@@ -33,6 +33,8 @@
 #ifndef HDTLISTENER_HPP_
 #define HDTLISTENER_HPP_
 
+#include <iostream>
+#include <iomanip>
 #include <stddef.h>
 
 namespace hdt {
@@ -75,6 +77,24 @@ public:
 		this->min=min;
 		this->max=max;
 	}
+};
+
+
+class StdoutProgressListener : public ProgressListener {
+private:
+public:
+	virtual ~StdoutProgressListener() { }
+
+    void notifyProgress(float level, const char *section) {
+    	std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << level << " %                      \r";
+		std::cout.flush();
+	}
+
+    void notifyProgress(float task, float level, const char *section) {
+    	std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << task << " % / " << level << " %                      \r";
+                std::cout.flush();
+        }
+
 };
 
 #define NOTIFY(listener, message, number, total) \
