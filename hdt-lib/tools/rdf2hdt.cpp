@@ -29,6 +29,8 @@
  *
  */
 
+#include <iomanip>
+
 #include <HDT.hpp>
 #include <HDTManager.hpp>
 
@@ -60,10 +62,14 @@ public:
 	virtual ~ConvertProgress() { }
 
     void notifyProgress(float level, const char *section) {
-    	cout << section << ": " << level << " %";
-    	cout << "\r " << section << ": " << level << " %                      \r";
+    	cout << "\r " << std::setw( 3 ) << std::setprecision( 2 )<< section << ": " << level << " %                      \r";
 		cout.flush();
 	}
+
+    void notifyProgress(float task, float level, const char *section) {
+    	cout << "\r " << std::setw( 3 ) << std::setprecision( 2 )<< section << ": " << task << " % / " << level << " %                      \r";
+                cout.flush();
+        }
 
 };
 

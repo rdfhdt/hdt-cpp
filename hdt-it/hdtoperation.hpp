@@ -58,6 +58,7 @@ public:
     void execute();
     int exec();
     void notifyProgress(float level, const char *section);
+    void notifyProgress(float task, float level, const char *section);
 signals:
     void progressChanged(int progress);
     void messageChanged(QString message);

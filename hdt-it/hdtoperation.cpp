@@ -116,6 +116,18 @@ void HDTOperation::notifyProgress(float level, const char *section) {
     emit messageChanged(QString(section));
 }
 
+void HDTOperation::notifyProgress(float task, float level, const char *section)
+{
+#ifdef OPERATION_CANCELABLE
+    if(isCancelled) {
+        cout << "Throwing exception to cancel" << endl;
+        throw (char *)"Cancelled by user";
+    }
+#endif
+    emit progressChanged((int)level);
+    emit messageChanged(QString(section));
+}
+
 void HDTOperation::saveToRDF(QString &fileName, hdt::RDFNotation notation)
 {
     this->op = RDF_WRITE;

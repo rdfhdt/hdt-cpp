@@ -40,7 +40,11 @@ namespace hdt {
 class ProgressListener {
 public:
 	virtual ~ProgressListener() { }
-	virtual void notifyProgress(float level, const char *section)=0;
+    void notifyProgress(float level, const char *section) {
+        this->notifyProgress(level, level, section);
+    }
+
+    virtual void notifyProgress(float task, float level, const char *section)=0;
 };
 
 class IntermediateListener : public ProgressListener {
@@ -53,12 +57,19 @@ public:
 
 	virtual ~IntermediateListener() { }
 
-	virtual void notifyProgress(float level, const char *section) {
+    virtual void notifyProgress(float task, float level, const char *section) {
 		if(child!=NULL){
             float newLevel = min + level*(max-min)/100;
-            child->notifyProgress(newLevel, section);
+            child->notifyProgress(task, newLevel, section);
 		}
 	}
+
+    void notifyProgress(float level, const char *section) {
+        if(child!=NULL){
+            float newLevel = min + level*(max-min)/100;
+            child->notifyProgress(level, newLevel, section);
+        }
+    }
 
 	void setRange(float min, float max) {
 		this->min=min;
