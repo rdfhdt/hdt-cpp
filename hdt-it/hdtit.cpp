@@ -16,7 +16,8 @@ HDTit::HDTit(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::HDTit),
     hdtController(new HDTController()),
-    lastDir(QDir::currentPath())
+   // lastDir(QDir::currentPath())
+    lastDir("/Users/mck/rdf/dataset/hdt/")
 {
     ui->setupUi(this);
     //this->setUnifiedTitleAndToolBarOnMac(true);
@@ -166,9 +167,9 @@ void HDTit::hdtChanged(QString &file)
 
 void HDTit::on_actionOpenHDT_triggered()
 {
-    QString file = QFileDialog::getOpenFileName(this,tr("Select HDT File"), lastDir , tr("HDT Files(*.hdt *.HDT *.hdt.gz *.HDT.gz)"), 0, 0 );
+    QString file = QFileDialog::getOpenFileName(this,tr("Select HDT File"), "/Users/mck/rdf/dataset/hdt/" , tr("HDT Files(*.hdt *.HDT *.hdt.gz *.HDT.gz)"), 0, 0 );
     if(!file.isEmpty()) {
-        lastDir = file;
+        //lastDir = file;
         openHDTFile(file);
     }
 }
@@ -192,7 +193,7 @@ void HDTit::on_actionSaveHDT_triggered()
 {
     QString file = QFileDialog::getSaveFileName(this,tr("Select Output HDT File"), lastDir, tr("HDT Files(*.hdt *.HDT)"), 0, 0 );
     if(!file.isEmpty()) {
-        lastDir = file;
+        //lastDir = file;
         hdtController->saveHDTFile(file);
     }
 }
@@ -209,7 +210,7 @@ void HDTit::on_actionExportRDF_triggered()
     file = QFileDialog::getSaveFileName(this,tr("Select Output RDF File"), file, tr("RDF Files(*.rdf *.RDF *.n3 *.N3 *.nt *.NT *.ttl *.TTL)"), 0, 0 );
     if(!file.isEmpty()) {
         // FIXME: Select notation.
-        lastDir = file;
+        //lastDir = file;
         hdtController->exportResultsRDFFile(file, hdt::NTRIPLES);
     }
 }

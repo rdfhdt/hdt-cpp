@@ -54,6 +54,10 @@ public:
 	CompactTriples(HDTSpecification &specification);
 	virtual ~CompactTriples();
 
+    bool isIndexed() {
+        return false;
+    }
+
 	/**
 	 * Returns a vector of triples matching the pattern
 	 *

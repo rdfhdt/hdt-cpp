@@ -133,6 +133,10 @@ public:
 	 * @return
 	 */
 	IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+
+    bool isIndexed() {
+        return triples->isIndexed();
+    }
 };
 
 class DictionaryLoader : public RDFCallback {

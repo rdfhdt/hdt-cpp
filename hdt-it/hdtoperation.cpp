@@ -43,7 +43,12 @@ void HDTOperation::execute() {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
             iListener.setRange(0,70);
 #if 1
-            hdt = hdt::HDTManager::mapIndexedHDT(fileName.toAscii(), &iListener);
+            //QFile file(fileName);
+            //if(file.size()>4000000000L) {
+                //hdt = hdt::HDTManager::mapHDT(fileName.toAscii(), &iListener);
+            //} else {
+                hdt = hdt::HDTManager::mapIndexedHDT(fileName.toAscii(), &iListener);
+            //}
 #else            
             hdt = hdt::HDTManager::loadIndexedHDT(fileName.toAscii(), &iListener);
 #endif

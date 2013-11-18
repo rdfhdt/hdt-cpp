@@ -123,6 +123,7 @@ public:
 
     virtual size_t loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
 
+    virtual bool isIndexed()=0;
 	/**
 	 * Adds all known information about the triples to the Header.
 	 *

@@ -110,6 +110,8 @@ public:
     IteratorTripleString *search(TripleString &pattern) {
         return search(pattern.getSubject().c_str(), pattern.getPredicate().c_str(), pattern.getObject().c_str());
     }
+
+    virtual bool isIndexed()=0;
 };
 
 
@@ -146,6 +148,7 @@ public:
 	 * @param triples
 	 */
 	virtual void remove(IteratorTripleString *triples) = 0;
+
 };
 
 }

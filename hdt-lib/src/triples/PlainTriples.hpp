@@ -54,6 +54,11 @@ public:
 	PlainTriples(HDTSpecification &spec);
 	~PlainTriples();
 
+
+    bool isIndexed() {
+        return false;
+    }
+
 	/**
 	 * Returns a vector of triples matching the pattern
 	 *

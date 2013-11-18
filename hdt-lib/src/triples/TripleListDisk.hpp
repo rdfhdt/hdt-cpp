@@ -58,6 +58,10 @@ private:
 
 	TripleID *getTripleID(unsigned int num);
 
+    bool isIndexed() {
+        return false;
+    }
+
 public:
 	TripleListDisk();
 	TripleListDisk(const char *file);

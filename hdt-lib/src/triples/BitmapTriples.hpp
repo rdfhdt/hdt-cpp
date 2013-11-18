@@ -61,6 +61,10 @@ public:
 	BitmapTriples(HDTSpecification &specification);
 	virtual ~BitmapTriples();
 
+    bool isIndexed() {
+        return arrayIndex && bitmapIndex && predicateIndex;
+    }
+
 	/**
 	 * Returns a vector of triples matching the pattern
 	 *

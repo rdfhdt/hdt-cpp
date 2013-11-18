@@ -60,6 +60,11 @@ public:
 
     int32_t compare (const char *akbuf, size_t aksiz, const char *bkbuf, size_t bksiz);
 
+
+    bool isIndexed() {
+        return false;
+    }
+
 	// From Triples
 
 	/**

@@ -53,6 +53,11 @@ public:
 	TriplesList(HDTSpecification &specification);
 	virtual ~TriplesList();
 
+
+    bool isIndexed() {
+        return false;
+    }
+
 	// From Triples
 
 	/**

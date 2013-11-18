@@ -20,17 +20,19 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
     predicateCount.resize(nPred+1);
 
 	// TODO: Use predicateCount directly
-    hdt::Triples *t = hdt->getTriples();
-    hdt::TripleID triplePredicate;
-    for(int p=1;p<=nPred;p++) {
-        triplePredicate.setAll(0, p, 0);
-        hdt::IteratorTripleID *predIt = t->search(triplePredicate);
+    if(hdt->isIndexed()) {
+        hdt::Triples *t = hdt->getTriples();
+        hdt::TripleID triplePredicate;
+        for(int p=1;p<=nPred;p++) {
+            triplePredicate.setAll(0, p, 0);
+            hdt::IteratorTripleID *predIt = t->search(triplePredicate);
 
-        predicateCount[p] = predIt->estimatedNumResults();
+            predicateCount[p] = predIt->estimatedNumResults();
 
-        maxPredicateCount = max(maxPredicateCount, predicateCount[p]);
+            maxPredicateCount = max(maxPredicateCount, predicateCount[p]);
 
-        delete predIt;
+            delete predIt;
+        }
     }
 
     // Calculate Predicate Colors
