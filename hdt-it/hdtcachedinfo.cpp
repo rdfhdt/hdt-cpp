@@ -22,7 +22,7 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
    NOTIFYCOND(listener, "Loading predicates", 0, 100);
 
 	// TODO: Use predicateCount directly
-    if(hdt->isIndexed()) {
+    if(hdt->isIndexed() && hdt->getTriples()->getNumberOfElements()<3000000000L) {
         hdt::Triples *t = hdt->getTriples();
         hdt::TripleID triplePredicate;
         for(int p=1;p<=nPred;p++) {
@@ -57,6 +57,14 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
         it2->next();
     }
     delete it2;
+
+    // Iterate over elements of the array to make sure their dictionary entries are loaded.
+#if 1
+    hdt::TripleString out;
+    for(size_t i=0;i<triples.size();i++) {
+	hdt->getDictionary()->tripleIDtoTripleString(triples[i], out);
+    }
+#endif
 }
 
 void HDTCachedInfo::generateMatrix(hdt::ProgressListener *listener)

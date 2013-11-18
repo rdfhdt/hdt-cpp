@@ -701,6 +701,7 @@ size_t BitmapTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressLi
 }
 
 void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener) {
+   #if 0
 	IntermediateListener iListener(listener);
 
     iListener.setRange(10,50);
@@ -724,6 +725,7 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	arrayIndex->save(output);
 
     predicateIndex->save(output);
+#endif
 }
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
@@ -830,9 +832,9 @@ size_t BitmapTriples::size()
 		return bitmapY->getSizeBytes()
 				+bitmapZ->getSizeBytes()
 				+arrayY->size()
-				+arrayZ->size()
-				+arrayIndex->size()
-				+bitmapIndex->getSizeBytes();
+                +arrayZ->size();
+                //+arrayIndex->size()
+                //+bitmapIndex->getSizeBytes();
 	}
 	return arrayY->size()+arrayZ->size()+bitmapY->getSizeBytes()+bitmapZ->getSizeBytes();
 }
