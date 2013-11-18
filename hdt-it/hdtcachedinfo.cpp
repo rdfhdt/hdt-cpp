@@ -19,11 +19,17 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
     predicateCount.clear();
     predicateCount.resize(nPred+1);
 
+   NOTIFYCOND(listener, "Loading predicates", 0, 100);
+
 	// TODO: Use predicateCount directly
     if(hdt->isIndexed()) {
         hdt::Triples *t = hdt->getTriples();
         hdt::TripleID triplePredicate;
         for(int p=1;p<=nPred;p++) {
+            predicateCount[p] = t->getNumAppearances(p);
+#if 0
+
+
             triplePredicate.setAll(0, p, 0);
             hdt::IteratorTripleID *predIt = t->search(triplePredicate);
 
@@ -32,6 +38,7 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
             maxPredicateCount = max(maxPredicateCount, predicateCount[p]);
 
             delete predIt;
+#endif
         }
     }
 

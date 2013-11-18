@@ -65,6 +65,13 @@ public:
         return arrayIndex && bitmapIndex && predicateIndex;
     }
 
+    size_t getNumAppearances(size_t pred) {
+        if(predicateIndex) {
+            return predicateIndex->getNumAppearances(pred);
+        }
+        return 0;
+    }
+
 	/**
 	 * Returns a vector of triples matching the pattern
 	 *

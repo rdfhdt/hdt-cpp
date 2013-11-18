@@ -218,11 +218,11 @@ public:
 };
 
 void BitmapTriples::generateIndex(ProgressListener *listener) {
-	generateIndexMemory(listener);
+	//generateIndexMemory(listener);
 	//generateIndexMemoryFast(listener);
 
-    predicateIndex = new PredicateIndexArray(this);
-    predicateIndex->generate(listener);
+    //predicateIndex = new PredicateIndexArray(this);
+    //predicateIndex->generate(listener);
 }
 
 void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
