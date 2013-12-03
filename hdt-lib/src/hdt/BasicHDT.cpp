@@ -869,13 +869,11 @@ void BasicHDT::saveIndex(ProgressListener *listener) {
 		return;
 	}
 
-#if 0
 	string indexname = this->fileName + ".index";
 	ofstream out(indexname.c_str(), ios::binary);
 	ControlInformation ci;
 	triples->saveIndex(out, ci, listener);
 	out.close();
-#endif
 }
 
 }
