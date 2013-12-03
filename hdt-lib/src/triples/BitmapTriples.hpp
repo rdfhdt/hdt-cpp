@@ -132,6 +132,7 @@ public:
 
 	friend class BitmapTriplesSearchIterator;
 	friend class MiddleWaveletIterator;
+	friend class IteratorY;
 	friend class ObjectIndexIterator;
     friend class PredicateIndexWavelet;
     friend class PredicateIndexArray;
@@ -189,6 +190,35 @@ private:
 	void updateOutput();
 public:
 	MiddleWaveletIterator(BitmapTriples *triples, TripleID &pat);
+
+	bool hasNext();
+	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
+    size_t estimatedNumResults();
+	ResultEstimationType numResultEstimation();
+	TripleComponentOrder getOrder();
+	bool findNextOccurrence(unsigned int value, unsigned char component);
+	bool isSorted(TripleComponentRole role);
+};
+
+class IteratorY : public IteratorTripleID {
+private:
+	BitmapTriples *triples;
+	TripleID pattern, returnTriple;
+
+	AdjacencyList adjY, adjZ;
+	size_t patX, patY, patZ;
+	size_t posY, posZ;
+	size_t prevY, prevZ;
+	size_t nextY, nextZ;
+
+	size_t x, y, z;
+
+	void updateOutput();
+public:
+	IteratorY(BitmapTriples *triples, TripleID &pat);
 
 	bool hasNext();
 	TripleID *next();

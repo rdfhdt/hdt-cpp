@@ -565,6 +565,10 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	swapComponentOrder(&reorderedPat, SPO, this->order);
 	std::string patternString = reorderedPat.getPatternString();
 
+	if(patternString=="?P?") {
+		return new IteratorY(this, pattern);
+	}
+
 	if(patternString=="S?O") {
 	    if(this->order == SPO) {
 		return new SequentialSearchIteratorTripleID(pattern, new BitmapTriplesSearchIterator(this, pattern));
