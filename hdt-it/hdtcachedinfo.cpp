@@ -22,14 +22,13 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
    NOTIFYCOND(listener, "Loading predicates", 0, 100);
 
 	// TODO: Use predicateCount directly
-    if(hdt->isIndexed() && hdt->getTriples()->getNumberOfElements()<3000000000L) {
+    if(hdt->isIndexed()) {
         hdt::Triples *t = hdt->getTriples();
         hdt::TripleID triplePredicate;
         for(int p=1;p<=nPred;p++) {
+#if 1
             predicateCount[p] = t->getNumAppearances(p);
-#if 0
-
-
+#else
             triplePredicate.setAll(0, p, 0);
             hdt::IteratorTripleID *predIt = t->search(triplePredicate);
 
@@ -59,7 +58,7 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
     delete it2;
 
     // Iterate over elements of the array to make sure their dictionary entries are loaded.
-#if 1
+#if 0
     hdt::TripleString out;
     for(size_t i=0;i<triples.size();i++) {
 	hdt->getDictionary()->tripleIDtoTripleString(triples[i], out);
@@ -75,6 +74,7 @@ void HDTCachedInfo::generateMatrix(hdt::ProgressListener *listener)
     increment = increment < 1 ? 1 : increment;
 
 
+// Using InterleavedIterator to jump directly to the triple and get the related information.
     hdt::BTInterleavedIterator it(dynamic_cast<hdt::BitmapTriples *>(t), increment);
 
     size_t count=0;
@@ -89,6 +89,7 @@ void HDTCachedInfo::generateMatrix(hdt::ProgressListener *listener)
             //cout << "Iteration: " << count << endl;
     }
 
+// Using normal iterator that goes through all entries.
 //    hdt::IteratorTripleID *it = t->searchAll();
 //    size_t count=0;
 //    for(size_t i=0;i<t->getNumberOfElements();i+=increment) {
