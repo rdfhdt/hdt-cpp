@@ -104,7 +104,7 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
     for(size_t i=0;i<predCount->getNumberOfElements();i++) {
         tempCountPred += predCount->get(i);
         bitmap->set(tempCountPred-1, true);
-        NOTIFYCOND3(&iListener, "Creating bitmap", i, predCount->getNumberOfElements(), 100000);
+        NOTIFYCOND3(&iListener, "Creating Predicate bitmap", i, predCount->getNumberOfElements(), 100000);
     }
     bitmap->set(triples->arrayY->getNumberOfElements()-1, true);
     cout << "Predicate Bitmap in " << st << endl;
