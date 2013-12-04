@@ -14,6 +14,57 @@ PredicateIndexWavelet::PredicateIndexWavelet(BitmapTriples *triples) : Predicate
 
 }
 
+size_t PredicateIndexArray::calculatePos(size_t predicate) {
+	if(predicate<=1) {
+		return 0;
+	}
+	return bitmap->select1(predicate);
+}
+
+size_t PredicateIndexArray::getAppearance(size_t predicate, size_t appearance) {
+	// Warning: Not concurrency friendly
+	//if(currpred!=predicate) {
+	currpred = predicate;
+	currpos=calculatePos(predicate);
+	//}
+
+	size_t val = array->get(currpos+appearance-1);
+	//cout << "Appearance at pos: " << currpos << " => "<< val<< endl;
+	return val;
+}
+
+size_t PredicateIndexArray::getNumPredicates() {
+    //return predCount->getNumberOfElements();
+    return bitmapTriples->predicateCount->getNumberOfElements();
+}
+
+size_t PredicateIndexArray::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener) {
+    size_t count = 0;
+    bitmap = new BitSequence375();
+    count += bitmap->load(&ptr[count], ptrMax, listener);
+
+    array = new LogSequence2();
+    count += array->load(&ptr[count], ptrMax, listener);
+
+#if 0
+    cout << "Predicate index:                                                    " << endl;
+    for(size_t i=0;i<array->getNumberOfElements();i++) {
+    	cout << array->get(i) << " " << bitmap->access(i)<< endl;
+    }
+    for(size_t i=1;i<=getNumPredicates();i++) {
+    	cout << "Predicate "<<i<< " first pos: " << calculatePos(i) << " occurs "<< getNumAppearances(i) << " times. "<<endl;
+
+    	for(size_t j=1; j<=getNumAppearances(i);j++) {
+    		cout << "\t Appearance "<< j<< " at " << getAppearance(i, j) << endl;
+    	}
+
+
+    }
+#endif
+
+    return count;
+}
+
 void PredicateIndexArray::generate(ProgressListener *listener) {
     // Count predicates
 

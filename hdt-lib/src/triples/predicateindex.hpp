@@ -86,9 +86,11 @@ class PredicateIndexArray : public PredicateIndex {
     //LogSequence2 *predCount;
     BitSequence375 *bitmap;
     size_t currpred,currpos;
+    size_t numPredicates;
+    BitmapTriples *bitmapTriples;
 
 public:
-    PredicateIndexArray(BitmapTriples *triples) : PredicateIndex(triples), array(NULL), bitmap(NULL),currpred(0) {
+    PredicateIndexArray(BitmapTriples *triples) : PredicateIndex(triples), array(NULL), bitmap(NULL),currpred(0),bitmapTriples(triples) {
 
     }
 
@@ -102,30 +104,21 @@ public:
         }
     }
 
-    size_t getNumPredicates() {
-        //return predCount->getNumberOfElements();
-        return bitmap->countOnes();
-    }
+
+    size_t getNumPredicates();
 
     size_t getNumAppearances(size_t predicate) {
-	if(currpred!=predicate) {
+	//if(currpred!=predicate) {
 		currpred = predicate;
 		currpos=bitmap->select1(predicate);
-	}
+	//}
         return currpos-bitmap->select1(predicate-1);
 //      return  predCount->get(predicate-1);
     }
 
-    size_t getAppearance(size_t predicate, size_t appearance) {
-	// Warning: Not concurrency friendly
-	if(currpred!=predicate) {
-		currpred = predicate;
-		currpos=bitmap->select1(predicate);
-	}
-	
-        // FIXME: Cache last select1 call?
-        return array->get(currpos+appearance-1);
-    }
+    size_t calculatePos(size_t predicate);
+
+    size_t getAppearance(size_t predicate, size_t appearance);
 
     void save(std::ostream &output, ProgressListener *listener = NULL) {
         bitmap->save(output);
@@ -139,16 +132,7 @@ public:
         array->load(input);
     }
 
-    size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL) {
-        size_t count = 0;
-        bitmap = new BitSequence375();
-        count += bitmap->load(&ptr[count], ptrMax, listener);
-
-        array = new LogSequence2();
-        count += array->load(&ptr[count], ptrMax, listener);
-
-        return count;
-    }
+    size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
     void generate(ProgressListener *listener);
 };

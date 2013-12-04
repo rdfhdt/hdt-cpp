@@ -53,6 +53,7 @@ private:
 	HDTSpecification spec;
 	IntSequence *arrayY, *arrayZ, *arrayIndex;
 	BitSequence375 *bitmapY, *bitmapZ, *bitmapIndex;
+	IntSequence *predicateCount;
     PredicateIndex *predicateIndex;
 
 	TripleComponentOrder order;
@@ -66,8 +67,8 @@ public:
     }
 
     size_t getNumAppearances(size_t pred) {
-        if(predicateIndex) {
-            return predicateIndex->getNumAppearances(pred);
+        if(predicateCount) {
+            return predicateCount->get(pred-1);
         }
         return 0;
     }

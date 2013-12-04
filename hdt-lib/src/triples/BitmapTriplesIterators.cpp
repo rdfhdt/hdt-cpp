@@ -368,21 +368,18 @@ TripleID *MiddleWaveletIterator::next()
     if(posZ>nextZ) {
         predicateOcurrence++;
         posY = predicateIndex->getAppearance(patY, predicateOcurrence);
-        prevZ = adjZ.find(posY);
 
+        posZ = prevZ = adjZ.find(posY);
         nextZ = adjZ.last(posY);
         //nextZ = adjZ.findNext(prevZ)-1;
-
-        posZ = prevZ;
 
         x = adjY.findListIndex(posY)+1;
         y = adjY.get(posY);
         z = adjZ.get(posZ);
-        posZ++;
     } else {
         z = adjZ.get(posZ);
-        posZ++;
     }
+    posZ++;
     updateOutput();
     return &returnTriple;
 }
@@ -400,18 +397,15 @@ TripleID *MiddleWaveletIterator::previous()
         posY = predicateIndex->getAppearance(patY, predicateOcurrence);
 
         prevZ = adjZ.find(posY);
-        nextZ = adjZ.last(posY);
+        posZ = nextZ = adjZ.last(posY);
         //nextZ = adjZ.findNext(prevZ)-1;
-
-        posZ = nextZ;
 
         x = adjY.findListIndex(posY)+1;
         y = adjY.get(posY);
         z = adjZ.get(posZ);
     } else {
-        posZ--;
         z = adjZ.get(posZ);
-
+        posZ--;
     }
     updateOutput();
     return &returnTriple;
@@ -421,11 +415,10 @@ void MiddleWaveletIterator::goToStart()
 {
     predicateOcurrence = 1;
     posY = predicateIndex->getAppearance(patY, predicateOcurrence);
-    prevZ = adjZ.find(posY);
+
+    posZ = prevZ = adjZ.find(posY);
     nextZ = adjZ.last(posY);
     //nextZ = adjZ.findNext(prevZ)-1;
-
-    posZ = prevZ;
 
     x = adjY.findListIndex(posY)+1;
     y = adjY.get(posY);
