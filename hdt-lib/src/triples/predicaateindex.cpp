@@ -18,7 +18,7 @@ size_t PredicateIndexArray::calculatePos(size_t predicate) {
 	if(predicate<=1) {
 		return 0;
 	}
-	return bitmap->select1(predicate);
+	return bitmap->select1(predicate-1)+1;
 }
 
 size_t PredicateIndexArray::getAppearance(size_t predicate, size_t appearance) {
@@ -48,17 +48,16 @@ size_t PredicateIndexArray::load(unsigned char *ptr, unsigned char *ptrMax, Prog
 
 #if 0
     cout << "Predicate index:                                                    " << endl;
-    for(size_t i=0;i<array->getNumberOfElements();i++) {
-    	cout << array->get(i) << " " << bitmap->access(i)<< endl;
-    }
+//    for(size_t i=0;i<array->getNumberOfElements();i++) {
+//    	cout << array->get(i) << " " << bitmap->access(i)<< endl;
+//    }
     for(size_t i=1;i<=getNumPredicates();i++) {
     	cout << "Predicate "<<i<< " first pos: " << calculatePos(i) << " occurs "<< getNumAppearances(i) << " times. "<<endl;
 
     	for(size_t j=1; j<=getNumAppearances(i);j++) {
-    		cout << "\t Appearance "<< j<< " at " << getAppearance(i, j) << endl;
+    		size_t pos = getAppearance(i, j);
+    		cout << "\t Appearance "<< j<< " at " << pos << " => " << bitmapTriples->arrayY->get(pos) << endl;
     	}
-
-
     }
 #endif
 
@@ -89,7 +88,7 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
         maxCount = count>maxCount ? count : maxCount;
         predCount->set(val-1, count);
 
-        //NOTIFYCOND3(&iListener, "Counting appearances of predicates", i, array->getNumberOfElements(), 20000);
+        NOTIFYCOND3(&iListener, "Counting appearances of predicates", i, triples->arrayY->getNumberOfElements(), 20000);
     }
     predCount->reduceBits();
 
@@ -105,7 +104,7 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
     for(size_t i=0;i<predCount->getNumberOfElements();i++) {
         tempCountPred += predCount->get(i);
         bitmap->set(tempCountPred-1, true);
-        NOTIFYCOND3(&iListener, "Creating bitmap", i, predCount->getNumberOfElements(), 10000);
+        NOTIFYCOND3(&iListener, "Creating bitmap", i, predCount->getNumberOfElements(), 100000);
     }
     bitmap->set(triples->arrayY->getNumberOfElements()-1, true);
     cout << "Predicate Bitmap in " << st << endl;
@@ -128,7 +127,7 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
             insertArray->set(predicateValue-1, insertOffset+1);
 
             array->set(insertBase+insertOffset, i);
-            //NOTIFYCOND3(&iListener, "Generating predicate references", i, triples->arrayY->getNumberOfElements(), 20000);
+            NOTIFYCOND3(&iListener, "Generating predicate references", i, triples->arrayY->getNumberOfElements(), 100000);
     }
 
     this->array = array;

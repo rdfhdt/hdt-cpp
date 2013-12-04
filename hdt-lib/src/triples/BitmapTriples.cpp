@@ -305,11 +305,8 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	if(predicateCount!=NULL) {
 		delete predicateCount;
 	}
-	size_t maxpred = predicateIndex->getNumPredicates();
-	LogSequence2 *predCount = new LogSequence2(bits(arrayZ->getNumberOfElements()), maxpred);
-	for(size_t i=0;i<maxpred;i++ ){
-		predCount->push_back(0);
-	}
+	size_t maxpred = 0;
+	LogSequence2 *predCount = new LogSequence2(bits(arrayZ->getNumberOfElements()));
 
 	iListener.setRange(25,60);
 	// Copy each object reference to its position
@@ -330,7 +327,13 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 			objectArray->set(insertBase+insertOffset, posY);
 
             size_t yval = arrayY->get(posY)-1;
-            predCount->set(yval, predCount->get(yval)+1);
+            if(yval>maxpred) {
+            	predCount->resize(yval+1);
+            	maxpred = yval;
+            	predCount->set(yval, 1);
+            } else {
+            	predCount->set(yval, predCount->get(yval)+1);
+            }
 
 			NOTIFYCOND3(&iListener, "Generating object references", i, arrayZ->getNumberOfElements(), 1000000);
 	}
@@ -342,7 +345,6 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	predCount->reduceBits();
 	if(this->predicateCount!=NULL) delete this->predicateCount;
 	this->predicateCount = predCount;
-	cout << "Saved" << endl;
 
 #if 0
     for(size_t i=0;i<objectArray->getNumberOfElements();i++) {
