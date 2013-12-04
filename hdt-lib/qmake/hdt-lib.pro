@@ -103,7 +103,7 @@ SOURCES += \
     ../src/util/filemap.cpp \
     ../third/gzstream.cpp \
     ../src/rdf/RDFParserNtriplesCallback.cpp \
-    ../src/triples/predicaateindex.cpp
+    ../src/triples/predicateindex.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
