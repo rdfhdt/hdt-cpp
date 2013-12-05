@@ -232,14 +232,18 @@ size_t AdjacencyList::findNextAppearance(size_t oldpos, unsigned int element) {
 }
 
 size_t AdjacencyList::findPreviousAppearance(size_t oldpos, unsigned int element) {
-	size_t y;
 	long long old=oldpos;
-	do {
+    if(oldpos==-1 || element==0) {
+        return -1;
+    }
+
+    size_t y=0; // 0 = Non valid.
+    while(old>=0 && y!=element) {
 		y = elements->get(old--);
-	} while(old>=0 && y!=element);
+    }
 
 	// No previous appearances of predicate
-	if(old<0) {
+    if(old<0 || y!=element) {
 		return -1;
 	}
 	return old+1;
