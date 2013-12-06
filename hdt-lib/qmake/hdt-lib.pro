@@ -207,7 +207,7 @@ INCLUDEPATH += $${LIBCDSBASE}/utils \
 
 
 #For raptor
-macx:INCLUDEPATH += /usr/local/include
+INCLUDEPATH += /usr/local/include
 
 #Windows
 win32-g++:contains(QMAKE_HOST.arch, x86_64):{
