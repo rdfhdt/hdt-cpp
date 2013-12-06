@@ -65,6 +65,7 @@ signals:
     void processFinished(int status);
 private slots:
     void cancel();
+    void finished();
 };
 
 #endif // HDTOPERATION_HPP

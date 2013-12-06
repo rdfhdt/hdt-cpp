@@ -5,6 +5,7 @@
 
 #include "hdtoperation.hpp"
 
+#define USE_DIALOG
 //#define OPERATION_CANCELABLE
 
 HDTOperationDialog::HDTOperationDialog()
@@ -37,6 +38,7 @@ HDTOperation::HDTOperation(hdt::HDT *hdt, HDTCachedInfo *hdtInfo) : hdt(hdt), hd
 }
 
 void HDTOperation::execute() {
+    errorMessage=NULL;
     try {
         switch(op) {
         case HDT_READ: {
@@ -102,6 +104,7 @@ void HDTOperation::execute() {
         errorMessage = (char *)err;
         emit processFinished(1);
     }
+   sleep(1);	// To ensure that dialog receives the signal and closes.
 }
 
 
@@ -112,8 +115,10 @@ void HDTOperation::notifyProgress(float level, const char *section) {
         throw (char *)"Cancelled by user";
     }
 #endif
+#ifdef USE_DIALOG
     emit progressChanged((int)level);
     emit messageChanged(QString(section));
+#endif
 }
 
 void HDTOperation::notifyProgress(float task, float level, const char *section)
@@ -124,6 +129,14 @@ void HDTOperation::notifyProgress(float task, float level, const char *section)
         throw (char *)"Cancelled by user";
     }
 #endif
+    int levelInt = (int) level;
+    if(levelInt<0) {
+        levelInt=0;
+    }
+    if(levelInt>=100) {
+        levelInt=99;
+    }
+
     emit progressChanged((int)level);
     emit messageChanged(QString(section));
 }
@@ -178,6 +191,8 @@ HDTCachedInfo *HDTOperation::getHDTInfo()
 
 int HDTOperation::exec()
 {
+
+#ifdef USE_DIALOG
     dialog.setRange(0,100);
     dialog.setAutoClose(false);
     dialog.setFixedSize(400,130);
@@ -207,16 +222,23 @@ int HDTOperation::exec()
     dialog.setCancelButton(&btn);
 #endif
 
+    QFutureWatcher<void> watcher;
+
+    connect(&watcher, SIGNAL(finished()), this, SLOT(finished()), Qt::QueuedConnection);
+
     connect(this, SIGNAL(progressChanged(int)), &dialog, SLOT(setValue(int)), Qt::QueuedConnection);
     connect(this, SIGNAL(messageChanged(QString)), &dialog, SLOT(setLabelText(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(processFinished(int)), &dialog, SLOT(done(int)), Qt::QueuedConnection);
+
+#ifdef OPERATION_CANCELABLE
     connect(&dialog, SIGNAL(canceled()), this, SLOT(cancel()));
+#endif
 
     isCancelled=false;
-    QtConcurrent::run(this, &HDTOperation::execute);
-    int result = dialog.exec();
+    QFuture<void> f = QtConcurrent::run(this, &HDTOperation::execute);
+    watcher.setFuture(f);
 
-    //cout << "Dialog returned" << endl;
+    int result = dialog.exec();
 
     if(errorMessage) {
         result = 1;
@@ -225,12 +247,26 @@ int HDTOperation::exec()
 
     QApplication::alert(QApplication::activeWindow());
     return result;
+#else
+    this->execute();
+    if(errorMessage!=NULL)  {
+        return 1;
+    } else {
+        return 0;
+    }
+#endif
 }
 
 void HDTOperation::cancel()
 {
     //cout << "Operation cancelled" << endl;
     isCancelled = true;
+}
+
+void HDTOperation::finished()
+{
+    cout << "Finished! :)" << endl;
+    emit processFinished(0);
 }
 
 
