@@ -225,10 +225,14 @@ public:
 void BitmapTriples::generateIndex(ProgressListener *listener) {
 	StopWatch global;
 
-    predicateIndex = new PredicateIndexArray(this);
-    predicateIndex->generate(listener);
+    IntermediateListener iListener(listener);
+    iListener.setRange(0,30);
 
-    generateIndexMemory(listener);
+    predicateIndex = new PredicateIndexArray(this);
+    predicateIndex->generate(&iListener);
+
+    iListener.setRange(30,100);
+    generateIndexMemory(&iListener);
    	//generateIndexMemoryFast(listener);
 
 	cout << "Index generated in "<< global << endl;
@@ -355,7 +359,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	}
 #endif
 
-	iListener.setRange(60,90);
+    iListener.setRange(60,100);
 	unsigned int object=1;
 	do {
 		size_t first = object==1 ? 0 : bitmapIndex->select1(object-1)+1;
@@ -860,7 +864,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     bitmapIndex = bitIndex;
 
     // LOAD SEQ
-    iListener.setRange(10,50);
+    iListener.setRange(20,50);
     iListener.notifyProgress(0, "BitmapTriples loading Array Index");
     if(arrayIndex!=NULL) {
         delete arrayIndex;

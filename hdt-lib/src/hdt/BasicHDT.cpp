@@ -858,8 +858,12 @@ void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
         }
         in.close();
 	} else {
-		triples->generateIndex(listener);
-		this->saveIndex(listener);
+        IntermediateListener iListener(listener);
+        iListener.setRange(0,90);
+        triples->generateIndex(&iListener);
+
+        iListener.setRange(90,100);
+        this->saveIndex(&iListener);
     }
 }
 

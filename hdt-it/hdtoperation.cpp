@@ -51,14 +51,15 @@ void HDTOperation::execute() {
         case HDT_READ: {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
             iListener.setRange(0,70);
+
+            // TODO: Decompress GZIP here using progress bar.
+            // TODO: Detect whether .hdtcache and .hdt.index exist to be more accurate with the progress
 #if 1
             hdt = hdt::HDTManager::mapIndexedHDT(fileName.toAscii(), &iListener);
 #else            
             hdt = hdt::HDTManager::loadIndexedHDT(fileName.toAscii(), &iListener);
 #endif
-            iListener.setRange(70, 90);
-
-            iListener.setRange(90, 100);
+            iListener.setRange(70, 100);
             hdtInfo = new HDTCachedInfo(hdt);
             if(fileName.endsWith('.gz')){
                 fileName.left(fileName.length()-3);

@@ -70,7 +70,7 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
 
     StopWatch st;
     IntermediateListener iListener(listener);
-    iListener.setRange(90,100);
+    iListener.setRange(0,20);
     LogSequence2 *predCount = new LogSequence2(bits(triples->arrayY->getNumberOfElements()));
 
     size_t maxCount = 0;
@@ -101,6 +101,7 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
     // Convert predicate count to bitmap
     bitmap = new BitSequence375(triples->arrayY->getNumberOfElements());
     size_t tempCountPred=0;
+    iListener.setRange(20,25);
     for(size_t i=0;i<predCount->getNumberOfElements();i++) {
         tempCountPred += predCount->get(i);
         bitmap->set(tempCountPred-1, true);
@@ -119,6 +120,7 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
     LogSequence2 *insertArray = new LogSequence2(bits(triples->arrayY->getNumberOfElements()), bitmap->countOnes());
     insertArray->resize(bitmap->countOnes());
 
+    iListener.setRange(25,100);
     for(size_t i=0;i<triples->arrayY->getNumberOfElements(); i++) {
             size_t predicateValue = triples->arrayY->get(i);
 
