@@ -336,7 +336,7 @@ IteratorUCharString *KyotoDictionary::getShared() {
 	return new KyotoDictIterator(&this->shared);
 }
 
-unsigned int KyotoDictionary::getNumberOfElements()
+size_t KyotoDictionary::getNumberOfElements()
 {
 	return subjects.count()+predicates.count()+objects.count()+shared.count();
 }

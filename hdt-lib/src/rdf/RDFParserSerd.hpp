@@ -1,7 +1,7 @@
 #ifndef RDFPARSERSERD_HPP
 #define RDFPARSERSERD_HPP
 
-#ifdef USE_SERD
+#ifdef HAVE_LIBSERD_0
 
 #include <stdint.h>
 

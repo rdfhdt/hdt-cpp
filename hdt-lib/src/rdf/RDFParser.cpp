@@ -11,7 +11,9 @@
 #endif
 #include "RDFParserNtriples.hpp"
 #include "RDFParserNtriplesCallback.hpp"
+#ifdef HAVE_LIBSERD_0
 #include "RDFParserSerd.hpp"
+#endif
 
 namespace hdt {
 

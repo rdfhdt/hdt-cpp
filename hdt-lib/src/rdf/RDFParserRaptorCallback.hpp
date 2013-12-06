@@ -8,6 +8,8 @@
 #ifndef RDFPARSERRAPTORCALLBACK_H_
 #define RDFPARSERRAPTORCALLBACK_H_
 
+#ifdef HAVE_LIBRAPTOR2
+
 #include <stdint.h>
 
 #include <raptor2/raptor2.h>
@@ -40,5 +42,7 @@ public:
 
 
 }
+
+#endif
 
 #endif

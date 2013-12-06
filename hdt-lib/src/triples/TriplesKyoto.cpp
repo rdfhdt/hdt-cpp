@@ -30,6 +30,7 @@
  */
 
 #include <HDTVocabulary.hpp>
+#include <unistd.h>
 
 #include "TriplesKyoto.hpp"
 #include "TriplesComparator.hpp"

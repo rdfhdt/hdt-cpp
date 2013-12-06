@@ -42,8 +42,7 @@
 #include <fstream>
 #include <iostream>
 
-
-#ifdef USE_KYOTO
+#ifdef HAVE_LIBKYOTOCABINET
 
 #include <kcpolydb.h>
 
@@ -73,7 +72,7 @@ public:
 	std::string idToString(unsigned int id, TripleComponentRole position);
 	unsigned int stringToId(std::string &str, TripleComponentRole position);
 
-	unsigned int getNumberOfElements();
+	size_t getNumberOfElements();
 
     uint64_t size();
 
@@ -150,7 +149,7 @@ public:
 		return (unsigned char*)(key.c_str());
 	}
 
-	unsigned int getNumberOfElements() {
+	size_t getNumberOfElements() {
 		return db->count();
 	}
 };

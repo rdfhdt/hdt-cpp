@@ -39,7 +39,8 @@
 #include "TriplesComparator.hpp"
 #include "../libdcs/CSD.h"
 
-#ifdef USE_KYOTO
+#ifdef HAVE_LIBKYOTOCABINET
+
 #include <kcpolydb.h>
 
 using namespace kyotocabinet;
