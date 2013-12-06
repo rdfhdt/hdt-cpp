@@ -2,3 +2,7 @@ Makefile
 Makefile.Debug
 Makefile.Release
 unix/
+macx/
+win32/
+hdt-lib.pro.user*
+object_script.*
