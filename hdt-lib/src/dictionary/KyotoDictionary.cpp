@@ -30,6 +30,7 @@
  */
 
 #include <sstream>
+#include <unistd.h>
 
 #include "KyotoDictionary.hpp"
 
