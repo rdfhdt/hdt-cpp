@@ -29,6 +29,8 @@
  *
  */
 
+#ifdef HAVE_CDS
+
 #include <HDTVocabulary.hpp>
 
 #include "WaveletSequence.hpp"
@@ -160,3 +162,6 @@ size_t WaveletSequence::select(size_t symbol, size_t pos) {
 }
 
 }
+#else
+int WaveletSequenceDummySymbol;
+#endif

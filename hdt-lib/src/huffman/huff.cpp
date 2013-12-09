@@ -20,6 +20,8 @@
 */
 // implements canonical Huffman
 
+#if HAVE_CDS
+
 #include "huff.h"
 using namespace cds_utils;
 
@@ -264,3 +266,6 @@ namespace URICompressed{
     }
 
 };
+#else
+int HuffmanDummySymbol;
+#endif

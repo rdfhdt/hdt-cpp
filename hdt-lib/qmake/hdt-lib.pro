@@ -22,6 +22,8 @@ TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
+DEFINES += HAVE_CDS
+
 DEFINES += HAVE_LIBZ HAVE_LIBRAPTOR2 RAPTOR_STATIC 
 #HAVE_LIBSERD_0
 
@@ -82,8 +84,6 @@ SOURCES += \
     ../src/sparql/MergeJoinBinding.cpp \
     ../src/sparql/JoinAlgorithms.cpp \
     ../src/sparql/IndexJoinBinding.cpp \
-    ../src/sparql/CachedBinding.cpp \
-    ../src/sparql/BaseJoinBinding.cpp \
     ../src/sparql/SortBinding.cpp \
     ../src/sequence/WaveletSequence.cpp \
     ../src/sequence/LogSequence2.cpp \

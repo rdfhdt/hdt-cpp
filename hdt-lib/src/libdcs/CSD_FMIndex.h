@@ -34,6 +34,8 @@
 #ifndef _CSDFMINDEX_H
 #define _CSDFMINDEX_H
 
+#if HAVE_CDS
+
 #include "CSD.h"
 
 #include <Iterator.hpp>
@@ -133,4 +135,6 @@ namespace csd{
 	};
 
 };
+
+#endif
 #endif  /* _URICDFMINDEX_H */

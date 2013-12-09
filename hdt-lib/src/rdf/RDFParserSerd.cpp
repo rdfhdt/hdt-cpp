@@ -173,4 +173,6 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 }
 
 }
+#else
+int RDFParserSerdDummySymbol;
 #endif

@@ -146,4 +146,6 @@ void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri,
 }
 
 }
+#else
+int RaptorParserSupportDummySymbol;
 #endif 

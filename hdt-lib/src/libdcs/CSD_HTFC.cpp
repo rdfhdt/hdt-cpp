@@ -27,6 +27,8 @@
 
 #include "CSD_HTFC.h"
 
+#if HAVE_CDS
+
 namespace csd
 {
 CSD_HTFC::CSD_HTFC()
@@ -799,5 +801,9 @@ void CSD_HTFC::fillSuggestions(const char *base, vector<std::string> &out, int m
 }
 
 }
+
+#else
+int HTFCDummySymbol;
+#endif
 
 

@@ -29,6 +29,8 @@
  *
  */
 
+#if HAVE_CDS
+
 #include "LiteralDictionary.hpp"
 #include <HDTVocabulary.hpp>
 #include "../libdcs/CSD_PFC.h"
@@ -692,3 +694,6 @@ void LiteralDictionary::getSuggestions(const char *base, hdt::TripleComponentRol
 
 }
 
+#else
+int LiteralDictionayDummySymbol;
+#endif

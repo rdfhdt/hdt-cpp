@@ -29,11 +29,14 @@
  *
  */
 
+#ifdef HAVE_CDS
 #include "LogSequence.hpp"
-#include "LogSequence2.hpp"
-#include "ArraySequence.hpp"
 #include "HuffmanSequence.hpp"
 #include "WaveletSequence.hpp"
+#endif
+
+#include "LogSequence2.hpp"
+#include "ArraySequence.hpp"
 
 #include <HDTVocabulary.hpp>
 
@@ -45,10 +48,12 @@ IntSequence *IntSequence::getArray(std::string type)
 		return new ArraySequence();
 	} else if(type==HDTVocabulary::SEQ_TYPE_LOG2) {
 		return new LogSequence2();
+#ifdef HAVE_CDS
 	} else if(type==HDTVocabulary::SEQ_TYPE_HUFFMAN) {
 		return new HuffmanSequence();
 	} else if(type==HDTVocabulary::SEQ_TYPE_WAVELET) {
 		return new WaveletSequence();
+#endif
 	}
 	return new LogSequence2();
 }
@@ -59,10 +64,12 @@ IntSequence *IntSequence::getArray(unsigned char type)
 		return new ArraySequence();
 	} else if(type==SEQ_TYPE_LOG) {
 		return new LogSequence2();
+#ifdef HAVE_CDS
 	} else if(type==SEQ_TYPE_HUFFMAN) {
 		return new HuffmanSequence();
 	} else if(type==SEQ_TYPE_WAVELET) {
 		return new WaveletSequence();
+#endif
 	}
 	return new LogSequence2();
 }

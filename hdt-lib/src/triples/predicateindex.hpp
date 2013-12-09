@@ -52,15 +52,18 @@ public:
     }
 
     size_t getNumPredicates() {
-
+	return 0;
     }
+	
 
     size_t getNumAppearances(size_t predicate) {
          //return wavelet->rank(predicate, wavelet->getNumberOfElements());
+	return 0;
     }
 
     size_t getAppearance(size_t predicate, size_t appearance) {
         //return wavelet->select(predicate, appearance);
+	return 0;
     }
 
     void save(std::ostream &output, ProgressListener *listener = NULL) {
@@ -72,7 +75,7 @@ public:
     }
 
     size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL) {
-
+	return 0;
     }
 
     void generate(ProgressListener *listener) {

@@ -31,6 +31,8 @@
  * Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
 
+#ifdef HAVE_CDS
+
 #include <assert.h>
 
 #include "SSA.h"
@@ -394,3 +396,6 @@ namespace csd{
 	}
 
 };
+#else
+int FMIndexSSADummySymbol;
+#endif

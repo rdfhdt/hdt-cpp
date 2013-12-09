@@ -162,6 +162,8 @@ void gzstreambase::close() {
 } // namespace GZSTREAM_NAMESPACE
 #endif
 
+#else
+int GzStreamDummySymbol;
 #endif
 // ============================================================================
 // EOF //

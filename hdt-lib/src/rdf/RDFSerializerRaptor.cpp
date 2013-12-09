@@ -164,4 +164,6 @@ void RDFSerializerRaptor::serialize(IteratorTripleString *it, ProgressListener *
 }
 
 }
+#else
+int RDFSerializerRaptorDummySymbol;
 #endif

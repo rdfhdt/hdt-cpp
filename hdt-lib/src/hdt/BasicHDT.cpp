@@ -43,7 +43,10 @@
 #include "../dictionary/PlainDictionary.hpp"
 #include "../dictionary/KyotoDictionary.hpp"
 #include "../dictionary/FourSectionDictionary.hpp"
+
+#ifdef HAVE_CDS
 #include "../dictionary/LiteralDictionary.hpp"
+#endif
 
 #include "../triples/TriplesList.hpp"
 #include "../triples/TriplesKyoto.hpp"
@@ -97,7 +100,11 @@ void BasicHDT::createComponents() {
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		dictionary = new PlainDictionary(spec);
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
-			dictionary = new LiteralDictionary(spec);
+#ifdef HAVE_CDS
+		dictionary = new LiteralDictionary(spec);
+#else
+		throw "This version has been compiled without support for this dictionary";
+#endif
 	} else {
 		dictionary = new FourSectionDictionary(spec);
 	}

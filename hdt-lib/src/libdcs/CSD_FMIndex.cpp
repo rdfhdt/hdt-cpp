@@ -31,6 +31,8 @@
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
 
+#if HAVE_CDS
+
 #include <HDTListener.hpp>
 
 #include "CSD_FMIndex.h"
@@ -372,3 +374,6 @@ void csd::CSD_FMIndex::fillSuggestions(const char *base,
 }
 
 }
+#else
+int FMIndexDummySymbol;
+#endif

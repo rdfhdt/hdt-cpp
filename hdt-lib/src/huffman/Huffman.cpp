@@ -19,6 +19,8 @@
 
 */
 
+#if HAVE_CDS
+
 #include "Huffman.h"
 
 namespace URICompressed{
@@ -94,3 +96,6 @@ namespace URICompressed{
     }
 
 };
+#else
+int HuffmanCppDummySymbol;
+#endif
