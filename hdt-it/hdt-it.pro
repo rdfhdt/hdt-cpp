@@ -93,16 +93,21 @@ INCLUDEPATH += ../hdt-lib/include/ .
 
 LIBCDS = ../libcds-v1.0.12
 
-# Using Traditional Makefile
+# Using Hard-coded Makefile
 #LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
+
+# Using autotools
+#LIBS += $${LIBCDS}/src/.libs/libcds.a ../hdt-lib/.libs/libhdt.a
 
 # Using Qt Projects
 win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a $${LIBCDS}/qmake/win32/libcds.a
-
 unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a $${LIBCDS}/qmake/unix/libcds.a -lGLU
 macx:LIBS += $${LIBCDS}/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
-
 PRE_TARGETDEPS += $$LIBS
+
+# Installed in the system
+#LIBS += -lcds -lhdt
+
 
 #External libs
 
