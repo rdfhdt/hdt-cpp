@@ -749,11 +749,6 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	controlInformation.setUint("order", getOrder());
 	controlInformation.setFormat(HDTVocabulary::INDEX_TYPE_FOQ);
 	controlInformation.save(output);
-
-    iListener.setRange(50,60);
-	iListener.notifyProgress(0, "BitmapTriples saving Predicate count");
-	predicateCount->save(output);
-
     iListener.setRange(60,70);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Index");
 	bitmapIndex->save(output);
@@ -765,6 +760,10 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
     iListener.setRange(90,100);
 	iListener.notifyProgress(0, "BitmapTriples saving Predicate Index");
     predicateIndex->save(output);
+
+    iListener.setRange(50,60);
+	iListener.notifyProgress(0, "BitmapTriples saving Predicate count");
+	predicateCount->save(output);
 }
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
@@ -789,15 +788,6 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 
 	IntermediateListener iListener(listener);
 
-	// Load predicate count
-	if(predicateCount!=NULL) {
-		delete predicateCount;
-	}
-	iListener.setRange(0,10);
-	iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
-	predicateCount = IntSequence::getArray(input);
-	predicateCount->load(input);
-
 	// LOAD BITMAP
 	if(bitmapIndex!=NULL) {
 		delete bitmapIndex;
@@ -820,6 +810,15 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 	iListener.notifyProgress(0, "BitmapTriples loading Predicate Index");
     predicateIndex = new PredicateIndexArray(this);
     predicateIndex->load(input,&iListener);
+
+	// Load predicate count
+	if(predicateCount!=NULL) {
+		delete predicateCount;
+	}
+	iListener.setRange(0,10);
+	iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
+	predicateCount = IntSequence::getArray(input);
+	predicateCount->load(input);
 }
 
 size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
@@ -842,18 +841,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
         throw "The supplied index does not have the same number of triples as the dataset";
     }
 
-    // LOAD PREDICATES
-    iListener.setRange(0,10);
-    iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
-    LogSequence2 *pCount = new LogSequence2();
-    count += pCount->load(&ptr[count], ptrMax, &iListener);
-
-    if(predicateCount) {
-        delete predicateCount;
-    }
-    predicateCount = pCount;
-
-    // LOAD BITMAP
+    // Load Bitmap
     iListener.setRange(10,20);
     iListener.notifyProgress(0, "BitmapTriples loading Bitmap Index");
     if(bitmapIndex!=NULL) {
@@ -863,7 +851,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     count += bitIndex->load(&ptr[count], ptrMax, &iListener);
     bitmapIndex = bitIndex;
 
-    // LOAD SEQ
+    // Load Seq
     iListener.setRange(20,50);
     iListener.notifyProgress(0, "BitmapTriples loading Array Index");
     if(arrayIndex!=NULL) {
@@ -873,11 +861,22 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     count += arrIndex->load(&ptr[count], ptrMax, &iListener);
     arrayIndex = arrIndex;
 
-    // TODO: Guess type from file
+    // Load Predicate Index. TODO: Guess type from file
     iListener.setRange(50,100);
     iListener.notifyProgress(0, "BitmapTriples loading Predicate Index");
     predicateIndex = new PredicateIndexArray(this);
     count += predicateIndex->load(&ptr[count], ptrMax, &iListener);
+
+    // Load predicate counts
+    iListener.setRange(0,10);
+    iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
+    LogSequence2 *pCount = new LogSequence2();
+    count += pCount->load(&ptr[count], ptrMax, &iListener);
+
+    if(predicateCount) {
+        delete predicateCount;
+    }
+    predicateCount = pCount;
 
     return count;
 }
