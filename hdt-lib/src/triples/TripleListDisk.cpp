@@ -343,7 +343,7 @@ bool TripleListDisk::remove(IteratorTripleID *triples)
 
 	bool removed = false;
 	for(tid=arrayTriples; tid<arrayTriples+numTotalTriples; tid++) {
-		for(int i=0; i<allPat.size(); i++) {
+		for(size_t i=0; i<allPat.size(); i++) {
 			if (tid->match(allPat[i])) {
 				tid->clear();
 				numValidTriples--;

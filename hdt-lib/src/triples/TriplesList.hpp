@@ -193,7 +193,7 @@ class TriplesListIterator : public IteratorTripleID {
 private:
 	TripleID pattern, returnTriple;
 	TriplesList *triples;
-	int64_t pos;
+	uint64_t pos;
 
 public:
 	TriplesListIterator(TriplesList *triples, TripleID &pattern);
