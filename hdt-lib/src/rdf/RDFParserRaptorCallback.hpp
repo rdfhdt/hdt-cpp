@@ -8,7 +8,7 @@
 #ifndef RDFPARSERRAPTORCALLBACK_H_
 #define RDFPARSERRAPTORCALLBACK_H_
 
-#ifdef HAVE_LIBRAPTOR2
+#ifdef HAVE_RAPTOR
 
 #include <stdint.h>
 

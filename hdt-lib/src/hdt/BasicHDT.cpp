@@ -714,7 +714,7 @@ void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
     std::string suffix = fileStr.substr(pos + 1);
 
     if( suffix == "gz") {
-        #ifdef USE_LIBZ
+        #ifdef HAVE_LIBZ
             this->fileName.assign(fileStr.substr(0, pos));
             ifstream test(fileName.c_str());
             if(test.good()) {

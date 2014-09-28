@@ -40,7 +40,7 @@
 
 #include "../util/Histogram.h"
 
-#ifdef USE_KYOTO
+#ifdef HAVE_KYOTO
 
 namespace hdt {
 
@@ -295,4 +295,4 @@ TripleID *TriplesKyotoIterator::next() {
 
 }
 
-#endif /* USE_KYOTO */
+#endif /* HAVE_KYOTO */

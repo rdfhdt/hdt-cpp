@@ -5,7 +5,7 @@
  *      Author: mck
  */
 
-#ifdef USE_RAPTOR
+#ifdef HAVE_RAPTOR
 #include "RDFParserRaptorCallback.hpp"
 #include "../util/fileUtil.hpp"
 

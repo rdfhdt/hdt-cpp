@@ -8,7 +8,7 @@
 #ifndef RDFSERIALIZERRAPTOR_H_
 #define RDFSERIALIZERRAPTOR_H_
 
-#ifdef HAVE_LIBRAPTOR2
+#ifdef HAVE_RAPTOR
 #include <raptor2/raptor2.h>
 
 #include "RDFSerializer.hpp"

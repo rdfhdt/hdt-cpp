@@ -31,7 +31,7 @@
 #include <sys/stat.h>
 #include "fileUtil.hpp"
 
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 #include <zlib.h>
 #endif
 
@@ -64,7 +64,7 @@ uint64_t fileUtil::getSize(const char *file) {
 
 void fileUtil::decompress(const char *input, const char * output, hdt::ProgressListener *listener) {
 
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 #ifdef WIN32
 	const size_t CHUNK=64*1024;
 #else
@@ -159,7 +159,7 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 
 DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileStream(NULL), in(NULL) {
 
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 	gzStream = NULL;
 #endif
 	string fn = fileName;
@@ -168,7 +168,7 @@ DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileS
 
 #ifdef WIN32
 	if( suffix == "gz") {
-		#ifdef USE_LIBZ
+		#ifdef HAVE_LIBZ
 			in = gzStream = new igzstream(fileName);
 		#else
 			throw "Support for GZIP was not compiled in this version. Please Decompress the file before importing it.";
@@ -208,7 +208,7 @@ DecompressStream::DecompressStream(const char *fileName) : filePipe(NULL), fileS
 void DecompressStream::close() {
 	if(fileStream) fileStream->close();
 	if(filePipe) pclose(filePipe);
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 	if(gzStream) gzStream->close();
 #endif
 	delete in;

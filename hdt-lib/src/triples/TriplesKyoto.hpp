@@ -39,7 +39,7 @@
 #include "TriplesComparator.hpp"
 #include "../libdcs/CSD.h"
 
-#ifdef HAVE_LIBKYOTOCABINET
+#ifdef HAVE_KYOTO
 
 #include <kcpolydb.h>
 
@@ -204,7 +204,7 @@ public:
 
 }
 
-#endif /* USE_KYOTO */
+#endif /* HAVE_KYOTO */
 
 #endif /* TRIPLESKYOTO_H_ */
 

@@ -5,7 +5,7 @@
  *      Author: mck
  */
 
-#ifdef USE_RAPTOR
+#ifdef HAVE_RAPTOR
 #include "RDFSerializerRaptor.hpp"
 
 using namespace std;

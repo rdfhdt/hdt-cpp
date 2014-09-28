@@ -25,7 +25,7 @@ CONFIG += staticlib
 DEFINES += HAVE_CDS
 
 DEFINES += HAVE_LIBZ HAVE_LIBRAPTOR2 RAPTOR_STATIC 
-#HAVE_LIBSERD_0
+#HAVE_SERD
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'

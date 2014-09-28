@@ -1,7 +1,7 @@
 #ifndef RDFPARSERSERD_HPP
 #define RDFPARSERSERD_HPP
 
-#ifdef HAVE_LIBSERD_0
+#ifdef HAVE_SERD
 
 #include <stdint.h>
 
@@ -19,7 +19,7 @@ private:
     SerdEnv *env;
     RDFCallback *callback;
     string error;
-    uint64_t numByte=0;
+    uint64_t numByte;
 
     string getString(const SerdNode *term);
     string getStringObject(const SerdNode *term, const SerdNode *dataType, const SerdNode *lang);

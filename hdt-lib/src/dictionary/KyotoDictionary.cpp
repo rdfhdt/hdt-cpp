@@ -37,7 +37,7 @@
 #include <HDTVocabulary.hpp>
 #include <HDTEnums.hpp>
 
-#ifdef USE_KYOTO
+#ifdef HAVE_KYOTO
 
 namespace hdt {
 

@@ -42,7 +42,7 @@
 #include <fstream>
 #include <iostream>
 
-#ifdef HAVE_LIBKYOTOCABINET
+#ifdef HAVE_KYOTO
 
 #include <kcpolydb.h>
 
@@ -156,6 +156,6 @@ public:
 
 }
 
-#endif  /* USE_KYOTO */
+#endif  /* HAVE_KYOTO */
 
 #endif /* KYOTODICTIONARY_H_ */

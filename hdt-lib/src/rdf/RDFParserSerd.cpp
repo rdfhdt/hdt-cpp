@@ -1,5 +1,5 @@
 
-#ifdef USE_SERD
+#ifdef HAVE_SERD
 
 
 #include "../util/fileUtil.hpp"
@@ -117,7 +117,7 @@ SerdStatus hdtserd_end(void* handle, const SerdNode* node) {
 
 
 
-RDFParserSerd::RDFParserSerd()
+RDFParserSerd::RDFParserSerd() : numByte(0)
 {
 }
 
