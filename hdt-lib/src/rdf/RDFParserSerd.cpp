@@ -44,8 +44,9 @@ string RDFParserSerd::getStringObject(const SerdNode *term, const SerdNode *data
         out.append("\"");
     }
     if(dataType!=NULL) {
-        out.append("^^");
+        out.append("^^<");
         out.append((char *)dataType->buf);
+        out.append(">");
     }
 
     //cout << out << endl;

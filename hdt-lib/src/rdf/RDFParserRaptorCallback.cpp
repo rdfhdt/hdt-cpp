@@ -26,8 +26,9 @@ string getString(raptor_term *term) {
 			out.append("\"");
 		}
 		if(term->value.literal.datatype) {
-			out.append("^^");
+			out.append("^^<");
 			out.append((char *)raptor_uri_as_string(term->value.literal.datatype));
+			out.append(">");
 		}
 	} else if(term->type==RAPTOR_TERM_TYPE_BLANK) {
 		out.append((char *)term->value.blank.string);
