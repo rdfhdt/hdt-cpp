@@ -88,7 +88,7 @@ private:
 	}
 
 	inline size_t numBytes(size_t bits) const {
-		return ((bits-1)>>3) + 1;
+		return bits==0 ? 1 : ((bits-1)>>3) + 1;
 	}
 
 	inline size_t numWords(size_t bits) const {

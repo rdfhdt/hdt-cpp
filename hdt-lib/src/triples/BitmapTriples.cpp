@@ -280,7 +280,8 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		bitmapIndex->set(tmpCount-1, true);
 		NOTIFYCOND3(&iListener, "Creating Index bitmap", i, objectCount->getNumberOfElements(), 1000000);
 	}
-	bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
+	if (arrayZ->getNumberOfElements())
+	  bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
 	delete objectCount;
 	objectCount=NULL;
 	cout << "Bitmap in " << st << endl;
