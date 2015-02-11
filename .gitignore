@@ -2,7 +2,10 @@
 *.hdt
 *.index
 *.a
-tests/
-tools/
-examples/
+**/examples/*
+**/tests/*
+**/tools/*
 libcds-v1.0.12/includes
+!**/examples/*.cpp
+!**/tests/*.cpp
+!**/tools/*.cpp
