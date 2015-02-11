@@ -1,0 +1,8 @@
+*.o
+*.hdt
+*.index
+*.a
+tests/
+tools/
+examples/
+libcds-v1.0.12/includes

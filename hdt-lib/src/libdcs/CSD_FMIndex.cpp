@@ -180,13 +180,17 @@ CSD_FMIndex::~CSD_FMIndex() {
 }
 
 uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len) {
+    return this->locate(s, len, false);
+}
+
+uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len, bool caseInsensitive) {
 	unsigned char *n_s = new unsigned char[len + 2];
 	uint o;
 	n_s[0] = '\1';
 	for (uint32_t i = 1; i <= len; i++)
 		n_s[i] = s[i - 1];
 	n_s[len + 1] = '\1';
-	o = fm_index->locate_id(n_s, len + 2);
+	o = fm_index->locate_id(n_s, len + 2, caseInsensitive);
 	delete[] n_s;
 	if (o != 0)
 		return o - 2;
@@ -194,6 +198,10 @@ uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len) {
 }
 
 uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint32_t **occs) {
+    return this->locate_substring(s, len, false, occs);
+}
+
+uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs) {
 	if (!use_sampling) {
 		*occs = NULL;
 		return 0;
@@ -201,7 +209,7 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint32_t 
 	uint num_occ, i;
 	uint32_t res = 0;
 	uint32_t temp;
-	num_occ = fm_index->locate(s, (uint) len, occs);
+	num_occ = fm_index->locate(s, (uint) len, caseInsensitive, occs);
 	if (num_occ == 0) {
 		*occs = NULL;
 		return 0;

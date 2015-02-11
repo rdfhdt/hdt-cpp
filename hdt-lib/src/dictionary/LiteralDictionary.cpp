@@ -402,6 +402,10 @@ IteratorUCharString *LiteralDictionary::getShared() {
 }
 
 uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32_t **occs){
+    return this->substringToId(s, len, false, occs);
+}
+
+uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs){
 
 	if(len==0) {
 		return 0;
@@ -417,7 +421,7 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32
 	}
 
 	if(fmIndex!=NULL) {
-		uint32_t ret = fmIndex->locate_substring(s,len,occs);
+		uint32_t ret = fmIndex->locate_substring(s,len,caseInsensitive,occs);
 		for (int i=0;i<ret;i++){
 			(*occs)[i] = (*occs)[i]+shared->getLength();
 		}

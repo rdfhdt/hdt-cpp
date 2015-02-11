@@ -66,7 +66,9 @@ namespace csd{
 
 			uint LF(uint i);
 			uint locate_id(uchar * pattern, uint m);
+			uint locate_id(uchar * pattern, uint m, bool caseInsensitive);
 			uint locate(uchar * pattern, uint m, uint32_t **occs);
+            uint locate(uchar * pattern, uint m, bool caseInsensitive, uint32_t **occs);
 
 			uchar * extract_id(uint id, uint max_len);
             static SSA * load(istream &fp);
@@ -98,6 +100,14 @@ namespace csd{
 			void build_bwt();
 			void build_sa();
 			int cmp(uint i, uint j);
+        
+        private:
+            void charToUpperLower(uint c, uint* cp, uint* Cp);
+            void locateStringPointers(uchar* pattern, uint m, bool caseInsensitive, uint* spp, uint* epp);
+            uchar shiftChar(uchar c);
+            uchar unshiftChar(uchar c);
+            void shiftString(uchar* str);
+            void unshiftString(uchar* str);
 	};
 
 };

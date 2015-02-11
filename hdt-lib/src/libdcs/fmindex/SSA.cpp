@@ -40,6 +40,8 @@ namespace csd{
 	SSA::SSA(uchar *text, uint n, bool free_text, bool use_sampling) {
 		assert(n>0);
 
+        this->shiftString(text);
+        
 		// Initial values and default constructors
 		this->n=n;
 		this->_seq = text;
@@ -221,8 +223,8 @@ namespace csd{
 			occ[i]=0;
 
 		for(uint i=0;i<=n;i++)
-			occ[_bwt[i]+1]++;
-
+			occ[_bwt[i]+1]++;            
+        
 		for(uint i=1;i<=maxV;i++)
 			occ[i] += occ[i-1];
 
@@ -285,67 +287,87 @@ namespace csd{
 		for(unsigned long i=0;i<n;i++)
 			assert(cmp((uint)_sa[i],(uint)_sa[i+1])<=0);
 	}
+    
+    void SSA::charToUpperLower(uint c, uint* cp, uint* Cp) {
+        if (c >= 'A' && c < 'A' + 2*26) {
+            *Cp = (c-'A')/2*2 + 'A';
+            *cp = *Cp+1;
+        } else {
+            *cp = c;
+            *Cp = 0;
+        }
+    }
+    
+    void SSA::locateStringPointers(uchar* pattern, uint m, bool caseInsensitive, uint* spp, uint* epp) {
+        unsigned long i=m-1;
+        uint c, C = 0;
+        if (caseInsensitive) this->charToUpperLower(this->shiftChar(pattern[i]), &c, &C);
+        else                 c = this->shiftChar(pattern[i]);
+        *spp = C ? occ[C] : occ[c];
+        *epp = occ[c+1]-1;
+        while (*spp<=*epp && i>=1) {
+            if (caseInsensitive) this->charToUpperLower(this->shiftChar(pattern[--i]), &c, &C);
+            else                 c = this->shiftChar(pattern[--i]);
+            if(!alphabet[c] && !(C && alphabet[C])) {
+                *spp = 1;
+                *epp = 0;
+                return;
+            }
+            *spp = (C ? occ[C] : occ[c]) + (c && alphabet[c] ? bwt->rank(c,*spp-1) : 0) + (C && alphabet[C] ? bwt->rank(C,*spp-1) : 0);
+            *epp = (C ? occ[C] : occ[c]) + (c && alphabet[c] ? bwt->rank(c,*epp) : 0)   + (C && alphabet[C] ? bwt->rank(C,*epp) : 0) - 1;
+        }
+    }
+    
+    uint SSA::locate_id(uchar * pattern, uint m) {
+        return this->locate_id(pattern, m, false);
+    }
 
-	uint SSA::locate_id(uchar * pattern, uint m) {
-		unsigned long i=m-1;
-		uint c = pattern[i];
-		uint sp = occ[c];
-		uint ep = occ[c+1]-1;
-		while (sp<=ep && i>=1) {
-			c = pattern[--i];
-			if(!alphabet[c]){
-				return 0;
-			}	
-			sp = occ[c]+bwt->rank(c,sp-1);
-			ep = occ[c]+bwt->rank(c,ep)-1;
-		}
-		if (sp<=ep) {
-			return sp;
-		}
-		else
-			return 0;
-	}
+    uint SSA::locate_id(uchar * pattern, uint m, bool caseInsensitive) {
+        uint sp, ep;
+        this->locateStringPointers(pattern, m, caseInsensitive, &sp, &ep);
+        if (sp<=ep) {
+            uchar* tmp = extract_id(sp+1, m);
+            free(tmp);
+            return sp;
+        }
+        else
+            return 0;
+    }
 
-	uint SSA::locate(uchar * pattern, uint m, uint32_t **occs){
-		if(!use_sampling){
-			*occs = NULL;
-			return 0;
-		}
-		unsigned long i=m-1;
-		uint c = pattern[i];
-		uint sp = occ[c];
-		uint ep = occ[c+1]-1;
-		while (sp<=ep && i>=1) {
-			c = pattern[--i];
-			if(!alphabet[c]){
-				return 0;
-			}
-			sp = occ[c]+bwt->rank(c,sp-1);
-			ep = occ[c]+bwt->rank(c,ep)-1;
-		}
-		if (sp<=ep) {
-			uint matches = ep-sp+1;
-			*occs = new uint[matches];
-			uint i = sp;
-			uint j,dist;
-			size_t rank_tmp;
-			while(i<=ep) {
-				j = i;
-				dist = 0;
-				while(!sampled->access(j)) {
-					c = bwt->access(j,rank_tmp);
-					rank_tmp--;
-					j = occ[c]+rank_tmp;
-					dist++;
-				}
-				(*occs)[i-sp] = suff_sample[sampled->rank1(j)-1]+dist;
-				i++;
-			}
-			return ep-sp+1;
-		}
-		*occs=NULL;
-		return 0;
-	}
+    uint SSA::locate(uchar * pattern, uint m, uint32_t **occs){
+        return this->locate(pattern, m, false, occs);
+    }
+    
+    uint SSA::locate(uchar * pattern, uint m, bool caseInsensitive, uint32_t **occs){
+        if(!use_sampling){
+            *occs = NULL;
+            return 0;
+        }
+        uint sp, ep;
+        this->locateStringPointers(pattern, m, caseInsensitive, &sp, &ep);
+        if (sp<=ep) {
+            uint matches = ep-sp+1;
+            *occs = new uint[matches];
+            uint i = sp;
+            uint j,dist;
+            size_t rank_tmp;
+            while(i<=ep) {
+                j = i;
+                dist = 0;
+                while(!sampled->access(j)) {
+                    uint c = bwt->access(j,rank_tmp);
+                    rank_tmp--;
+                    j = occ[c]+rank_tmp;
+                    dist++;
+                }
+                (*occs)[i-sp] = suff_sample[sampled->rank1(j)-1]+dist;
+                i++;
+            }
+            return ep-sp+1;
+        }
+        *occs=NULL;
+        return 0;
+    }
 
 
 	uint SSA::LF(uint i){
@@ -378,6 +400,8 @@ namespace csd{
 		for(uint j=0; j<cont;j++)
 			res[j] = res[pos+j];
 		res[cont] = '\0';
+        
+        this->unshiftString(res);
 
 		return res;
 	}
@@ -392,5 +416,44 @@ namespace csd{
 		if(j<i) return -1;
 		return 1;
 	}
-
+    
+    uchar SSA::shiftChar(uchar c) {
+        if (c >= 'A' && c <= 'Z')
+            return c + (c-'A');
+        if (c >= 'a' && c <= 'z')
+            return c - 'a' + 'A' + 1 + (c-'a');
+        if (c > 'Z' && c < 'a')
+            return c + 26;
+        return c;
+    }
+    uchar SSA::unshiftChar(uchar c) {
+        if (c >= 'A' && c < 'A'+2*26) {
+            if ((c - 'A') % 2 == 0)
+                return c - (c-'A')/2;
+            else
+                return c - 1 - (c-'A')/2 + 'a' - 'A';
+        }
+        if (c <= 'z' && c >= 'A'+2*26)
+            return c - 26;
+        return c;
+    }
+            
+    void SSA::shiftString(uchar* str) {
+        int i = 0;
+        while (str[i])
+        {
+            char c = str[i];
+            str[i] = this->shiftChar(c);
+            i++;
+        }
+    }
+    void SSA::unshiftString(uchar* str) {
+        int i = 0;
+        while (str[i])
+        {
+            char c = str[i];
+            str[i] = this->unshiftChar(c);
+            i++;
+        }
+    }
 };

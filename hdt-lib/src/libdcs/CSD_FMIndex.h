@@ -70,16 +70,20 @@ namespace csd{
 			 * returns 0. 
 			 * @s: the string to be located.
 			 * @len: the length (in characters) of the string s.
+             * @caseInsensitive: if the search should be case insensitive (default: false)
 			 * */
 			uint32_t locate(const unsigned char *s, uint32_t len);
+			uint32_t locate(const unsigned char *s, uint32_t len, bool caseInsensitive);
 
 			/** Returns the number of IDs that contain s[1,..len] as a substring. It also 
 			 * return in occs the IDs. Otherwise return 0.
 			 *  @s: the substring to be located.
 			 *  @len: the length (in characters) of the string s.
+             *  @caseInsensitive: if the search should be case insensitive (default: false)
 			 *  @occs: pointer where the ID located will be stored.
 			 * */
 			uint32_t locate_substring(unsigned char *s, uint32_t len, uint32_t **occs);
+			uint32_t locate_substring(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs);
 
 			/** Returns the string identified by id.
 			 * @id: the identifier to be extracted.

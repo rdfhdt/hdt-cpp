@@ -67,9 +67,11 @@ public:
 	 * return in occs the IDs. Otherwise return 0.
 	 *  @s: the substring to be located.
 	 *  @len: the length (in characters) of the string s.
+     *  @caseInsensitive: if object string matching should be case insensitive (default: false)
 	 *  @occs: pointer where the ID located will be stored.
 	 * */
 	uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t **occs);
+	uint32_t substringToId(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs);
 
 	unsigned int getNumberOfElements();
 
