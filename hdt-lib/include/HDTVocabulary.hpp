@@ -83,6 +83,7 @@ namespace HDTVocabulary {
 	const std::string DICTIONARY_MAPPING = HDT_DICTIONARY_BASE+"mapping>";
 	const std::string DICTIONARY_SIZE_STRINGS = HDT_DICTIONARY_BASE+"sizeStrings>";
 	const std::string DICTIONARY_BLOCK_SIZE = HDT_DICTIONARY_BASE+"blockSize>";
+	const std::string DICTIONARY_CASE_INSENSITIVE = HDT_DICTIONARY_BASE+"caseInsensitive>";
 
 	// Dictionary Types
 	const std::string DICTIONARY_TYPE_PLAIN = HDT_DICTIONARY_BASE+"Plain>";

@@ -483,6 +483,7 @@ void LiteralDictionary::populateHeader(Header & header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_SIZE_STRINGS, size());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_BLOCK_SIZE,
 			this->blocksize);
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_CASE_INSENSITIVE, true);
 }
 
 unsigned int LiteralDictionary::getNsubjects() {
