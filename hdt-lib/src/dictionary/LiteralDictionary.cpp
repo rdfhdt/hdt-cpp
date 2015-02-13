@@ -218,8 +218,8 @@ size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Progre
     ControlInformation ci;
     count += ci.load(&ptr[count], ptrMax);
 
-    this->mapping = ci.getUint("$mapping");
-    this->sizeStrings = ci.getUint("$sizeStrings");
+    this->mapping = ci.getUint("mapping");
+    this->sizeStrings = ci.getUint("sizeStrings");
 
     iListener.setRange(0,25);
     iListener.notifyProgress(0, "Dictionary read shared area.");
@@ -421,7 +421,7 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32
 	if(fmIndex!=NULL) {
 		uint32_t ret = fmIndex->locate_substring(s,len,occs);
 		for (int i=0;i<ret;i++){
-			(*occs)[i] = (*occs)[i]+shared->getLength();
+			(*occs)[i] = this->getGlobalId((*occs)[i], NOT_SHARED_OBJECT);
 		}
 		return ret;
 	}
