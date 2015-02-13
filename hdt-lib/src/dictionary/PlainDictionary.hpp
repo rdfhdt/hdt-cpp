@@ -81,7 +81,7 @@ typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 #ifdef GOOGLE_HASH 
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
-typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
+typedef std::hash_map<const char *, DictionaryEntry *, __gnu_cxx::hash<const char *>, str_cmp> DictEntryHash;
 #endif
 
 typedef DictEntryHash::const_iterator DictEntryIt;
@@ -111,9 +111,9 @@ public:
 	std::string idToString(unsigned int id, TripleComponentRole position);
 	unsigned int stringToId(std::string &str, TripleComponentRole position);
 
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
-	unsigned int size();
+    uint64_t size();
 
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();
@@ -174,7 +174,7 @@ public:
 class DictIterator : public IteratorUCharString {
 private:
 	std::vector<DictionaryEntry *> &vector;
-	unsigned int pos;
+    size_t pos;
 public:
 	DictIterator(std::vector<DictionaryEntry *> &vector) : vector(vector), pos(0){
 
@@ -189,7 +189,7 @@ public:
 		return (unsigned char*)vector[pos++]->str;
 	}
 
-	virtual unsigned int getNumberOfElements() {
+    virtual size_t getNumberOfElements() {
 		return vector.size();
 	}
 };

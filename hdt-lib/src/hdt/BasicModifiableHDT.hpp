@@ -104,6 +104,9 @@ public:
 
 	void remove(IteratorTripleString *triples);
 
+    bool isIndexed() {
+        return false;
+    }
 };
 
 }

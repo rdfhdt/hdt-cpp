@@ -1,7 +1,7 @@
 #ifndef RDFPARSERSERD_HPP
 #define RDFPARSERSERD_HPP
 
-#ifdef USE_SERD
+#ifdef HAVE_SERD
 
 #include <stdint.h>
 
@@ -18,8 +18,8 @@ class RDFParserSerd : public RDFParserCallback {
 private:
     SerdEnv *env;
     RDFCallback *callback;
-    char *error;
-    uint64_t numByte=0;
+    string error;
+    uint64_t numByte;
 
     string getString(const SerdNode *term);
     string getStringObject(const SerdNode *term, const SerdNode *dataType, const SerdNode *lang);
@@ -28,7 +28,7 @@ public:
     RDFParserSerd();
     virtual ~RDFParserSerd();
 
-    void doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback);
+    void doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback);
 
     friend SerdStatus hdtserd_process_triple(void* handle,
                                             SerdStatementFlags flags,
@@ -41,6 +41,7 @@ public:
 
     friend SerdStatus hdtserd_prefixchanged(void* handle,const SerdNode* name, const SerdNode* uri);
     friend SerdStatus hdtserd_basechanged(void* handle, const SerdNode* uri);
+    friend SerdStatus hdtserd_error_sink(void* handle, const SerdError* e);
 };
 
 }

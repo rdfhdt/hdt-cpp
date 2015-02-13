@@ -73,9 +73,9 @@ public:
 	uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t **occs);
 	uint32_t substringToId(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs);
 
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
-    unsigned int size();
+    uint64_t size();
 
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();

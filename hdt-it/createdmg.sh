@@ -4,7 +4,7 @@ SRCAPP="macx/HDT-it.app"
 FOLDER="macdmg"
 VOL="HDT-it"
 NAME="HDT-it!"
-VERS="1.0rc1b"
+VERS="1.1"
 DMG="$VOL-$VERS.dmg"
 
 FRAMEWORK_BASE="$SRCAPP/Contents/Frameworks/"
@@ -12,7 +12,7 @@ REMOVE="QtSql.framework QtXmlPatterns.framework QtDeclarative.framework QtNetwor
 
 DATASETBASE="$HOME/rdf/dataset/"
 DATASETS="test.nt"
-DATASETHDTBASE="$HOME/rdf/hdt/"
+DATASETHDTBASE="$HOME/hdt/"
 DATASETSHDT="3kbo.hdt aaronland.hdt 3dnews.hdt aisricom.hdt"
 #DATASETSHDT="aifb.hdt apex.hdt 2blog.hdt 3kbo.hdt aaronland.hdt 3dnews.hdt aisricom.hdt"
 

@@ -59,7 +59,7 @@ public:
 	 *
 	 * @return
 	 */
-	virtual unsigned int getNumberOfElements()=0;
+    virtual size_t getNumberOfElements()=0;
 
 	/**
 	 * Search a Triple Pattern.

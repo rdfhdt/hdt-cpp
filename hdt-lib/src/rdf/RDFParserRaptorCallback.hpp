@@ -8,6 +8,8 @@
 #ifndef RDFPARSERRAPTORCALLBACK_H_
 #define RDFPARSERRAPTORCALLBACK_H_
 
+#ifdef HAVE_RAPTOR
+
 #include <stdint.h>
 
 #include <raptor2/raptor2.h>
@@ -31,7 +33,7 @@ public:
 	RDFParserRaptorCallback();
 	virtual ~RDFParserRaptorCallback();
 
-	void doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback);
+    void doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback);
 
 	friend void raptor_callback_process_triple(void *user_data, raptor_statement *triple);
 	friend void raptor_callback_log_handler(void *user_data, raptor_log_message *message);
@@ -40,5 +42,7 @@ public:
 
 
 }
+
+#endif
 
 #endif

@@ -46,18 +46,18 @@ namespace cds_static
 		uint *S = new uint[(uint)nb];
 		for(uint i=0; i < (uint)nb; i++)
 			S[i]=0;
-		bitset(S,0);
+		cds_utils::bitset(S,0);
 
 		lcp_prev = lcp[csa->getISA(0)];
 		pos += lcp_prev +1;
 		//calculate S and create U
 		for(uint i=1; i<n ;i++) {
-			bitset(S,pos);
+			cds_utils::bitset(S,pos);
 			lcp_act = lcp[csa->getISA(i)];
 			pos+= lcp_act - lcp_prev + 2;
 			lcp_prev = lcp_act;
 		}
-		bitset(S,pos);
+		cds_utils::bitset(S,pos);
 		if(op_rs==BRW32_HDR)
 								 //(bitarray, length, factor)
 			U = new BitSequenceRG(S, pos+1, 4);
@@ -86,17 +86,17 @@ namespace cds_static
 		uint *S = new uint[(uint)nb];
 		for(uint i=0; i < (uint)nb; i++)
 			S[i]=0;
-		bitset(S,0);
+		cds_utils::bitset(S,0);
 		lcp_prev = lcp->get_LCP(csa->getISA(0), csa);
 		pos += lcp_prev +1;
 		//calculate S and create U
 		for(uint i=1; i<n ;i++) {
-			bitset(S,pos);
+			cds_utils::bitset(S,pos);
 			lcp_act = lcp->get_LCP(csa->getISA(i), csa);
 			pos+= lcp_act - lcp_prev + 2;
 			lcp_prev = lcp_act;
 		}
-		bitset(S,pos);
+		cds_utils::bitset(S,pos);
 		if(op_rs==BRW32_HDR)
 								 //(bitarray, length, factor)
 			U = new BitSequenceRG(S, pos+1, 4);

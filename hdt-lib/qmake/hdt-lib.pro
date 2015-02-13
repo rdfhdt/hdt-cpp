@@ -22,8 +22,10 @@ TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += USE_LIBZ USE_RAPTOR RAPTOR_STATIC 
-#USE_SERD
+DEFINES += HAVE_CDS
+
+DEFINES += HAVE_LIBZ HAVE_LIBRAPTOR2 RAPTOR_STATIC 
+#HAVE_SERD
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'
@@ -82,8 +84,6 @@ SOURCES += \
     ../src/sparql/MergeJoinBinding.cpp \
     ../src/sparql/JoinAlgorithms.cpp \
     ../src/sparql/IndexJoinBinding.cpp \
-    ../src/sparql/CachedBinding.cpp \
-    ../src/sparql/BaseJoinBinding.cpp \
     ../src/sparql/SortBinding.cpp \
     ../src/sequence/WaveletSequence.cpp \
     ../src/sequence/LogSequence2.cpp \
@@ -102,7 +102,8 @@ SOURCES += \
     ../src/util/bitutil.cpp \
     ../src/util/filemap.cpp \
     ../third/gzstream.cpp \
-    ../src/rdf/RDFParserNtriplesCallback.cpp
+    ../src/rdf/RDFParserNtriplesCallback.cpp \
+    ../src/triples/predicateindex.cpp
 
 HEADERS += \
     ../include/Triples.hpp \
@@ -186,7 +187,8 @@ HEADERS += \
     ../src/util/filemap.h \
     ../third/fdstream.hpp \
     ../third/gzstream.h \
-    ../src/rdf/RDFParserNtriplesCallback.hpp
+    ../src/rdf/RDFParserNtriplesCallback.hpp \
+    ../src/triples/predicateindex.hpp
 
 #For hdt-lib
 INCLUDEPATH += ../include
@@ -205,7 +207,7 @@ INCLUDEPATH += $${LIBCDSBASE}/utils \
 
 
 #For raptor
-macx:INCLUDEPATH += /usr/local/include
+INCLUDEPATH += /usr/local/include
 
 #Windows
 win32-g++:contains(QMAKE_HOST.arch, x86_64):{

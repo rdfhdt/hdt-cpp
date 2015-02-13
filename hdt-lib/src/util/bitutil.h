@@ -39,6 +39,16 @@ inline uint32_t wordSelect1(uint32_t value, uint32_t rank) {
 	return bitpos;
 }
 
+inline size_t wordSelect1(size_t value, uint32_t rank) {
+	size_t bitpos=0;
+	while(rank && value) {
+		rank -= value & 1;
+		bitpos++;
+		value>>=1;
+	}
+	return bitpos;
+}
+
 inline uint32_t wordSelect1(uint64_t value, uint64_t rank) {
 	uint32_t bitpos=0;
 	while(rank && value) {
@@ -48,6 +58,25 @@ inline uint32_t wordSelect1(uint64_t value, uint64_t rank) {
 	}
 	return bitpos;
 }
+
+#define SIZET_SIZE (sizeof(size_t)*8)
+
+/** reads bit p from e */
+inline bool bitget(size_t *e, size_t p) {
+	return (e[p/SIZET_SIZE] >> (p%SIZET_SIZE)) & 1;
+}
+
+/** sets bit p in e */
+inline void bitset(size_t * e, size_t p) {
+	e[p/SIZET_SIZE] |= (((size_t)1)<<(p%SIZET_SIZE));
+}
+
+/** cleans bit p in e */
+inline void bitclean(size_t * e, size_t p) {
+	e[p/SIZET_SIZE] &= ~(((size_t)1)<<(p%SIZET_SIZE));
+}
+
+
 
 /** reads bit p from e */
 inline bool bitget(uint32_t *e, size_t p) {

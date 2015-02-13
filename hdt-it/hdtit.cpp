@@ -72,7 +72,7 @@ void HDTit::updateNumResults()
 {
     ui->numResultsLabel->setText(
                 QString(tr("%1 results found."))
-                .arg(QLocale::system().toString(hdtController->getNumResults()))
+                .arg(QLocale::system().toString((quint64)hdtController->getNumResults()))
                 );
 }
 

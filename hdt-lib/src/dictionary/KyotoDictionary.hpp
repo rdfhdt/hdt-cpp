@@ -42,8 +42,7 @@
 #include <fstream>
 #include <iostream>
 
-
-#ifdef USE_KYOTO
+#ifdef HAVE_KYOTO
 
 #include <kcpolydb.h>
 
@@ -73,9 +72,9 @@ public:
 	std::string idToString(unsigned int id, TripleComponentRole position);
 	unsigned int stringToId(std::string &str, TripleComponentRole position);
 
-	unsigned int getNumberOfElements();
+	size_t getNumberOfElements();
 
-	unsigned int size();
+    uint64_t size();
 
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();
@@ -150,13 +149,13 @@ public:
 		return (unsigned char*)(key.c_str());
 	}
 
-	unsigned int getNumberOfElements() {
+	size_t getNumberOfElements() {
 		return db->count();
 	}
 };
 
 }
 
-#endif  /* USE_KYOTO */
+#endif  /* HAVE_KYOTO */
 
 #endif /* KYOTODICTIONARY_H_ */

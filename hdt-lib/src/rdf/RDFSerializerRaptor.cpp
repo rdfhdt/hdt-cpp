@@ -5,7 +5,7 @@
  *      Author: mck
  */
 
-#ifdef USE_RAPTOR
+#ifdef HAVE_RAPTOR
 #include "RDFSerializerRaptor.hpp"
 
 using namespace std;
@@ -164,4 +164,6 @@ void RDFSerializerRaptor::serialize(IteratorTripleString *it, ProgressListener *
 }
 
 }
+#else
+int RDFSerializerRaptorDummySymbol;
 #endif

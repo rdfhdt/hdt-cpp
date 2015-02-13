@@ -11,6 +11,7 @@
 #include <Header.hpp>
 #include <Dictionary.hpp>
 #include <Triples.hpp>
+#include <unistd.h>
 
 #include <string>
 #include <iostream>
@@ -23,19 +24,6 @@
 
 using namespace hdt;
 using namespace std;
-
-class ConvertProgress : public ProgressListener {
-private:
-public:
-	virtual ~ConvertProgress() { }
-
-    void notifyProgress(float level, const char *section) {
-    	cout << section << ": " << level << " %";
-    	cout << "\r " << section << ": " << level << " %                      \r";
-		cout.flush();
-	}
-
-};
 
 int main(int argc, char **argv) {
 	int c;
@@ -76,7 +64,7 @@ int main(int argc, char **argv) {
 		Dictionary *dict = hdt->getDictionary();
 		//LiteralDictionary litDict;
 		FourSectionDictionary litDict;
-		ConvertProgress progress;
+		StdoutProgressListener progress;
 		litDict.import(dict, &progress);
 
 		// SAVE

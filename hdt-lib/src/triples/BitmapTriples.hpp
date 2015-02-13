@@ -36,15 +36,16 @@
 #include <HDTSpecification.hpp>
 
 #include "../bitsequence/BitSequence375.h"
-#include "../sequence/WaveletSequence.hpp"
 #include "../sequence/LogSequence2.hpp"
 #include "../sequence/AdjacencyList.hpp"
 
+#include "predicateindex.hpp"
+
 #include "TripleOrderConvert.hpp"
 
-#undef size_t
-
 namespace hdt {
+
+class PredicateIndex;
 
 class BitmapTriples : public Triples {
 private:
@@ -53,16 +54,24 @@ private:
 	IntSequence *arrayY, *arrayZ, *arrayIndex;
 	BitSequence375 *bitmapY, *bitmapZ, *bitmapIndex;
 	IntSequence *predicateCount;
-	WaveletSequence *waveletY;
+    PredicateIndex *predicateIndex;
 
 	TripleComponentOrder order;
-
-	void generateWavelet(ProgressListener *listener = NULL);
-
 public:
 	BitmapTriples();
 	BitmapTriples(HDTSpecification &specification);
 	virtual ~BitmapTriples();
+
+    bool isIndexed() {
+        return arrayIndex && bitmapIndex && predicateIndex;
+    }
+
+    size_t getNumAppearances(size_t pred) {
+        if(predicateCount) {
+            return predicateCount->get(pred-1);
+        }
+        return 0;
+    }
 
 	/**
 	 * Returns a vector of triples matching the pattern
@@ -85,7 +94,7 @@ public:
 	 *
 	 * @return
 	 */
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
     size_t size();
 
@@ -124,7 +133,11 @@ public:
 
 	friend class BitmapTriplesSearchIterator;
 	friend class MiddleWaveletIterator;
+	friend class IteratorY;
 	friend class ObjectIndexIterator;
+    friend class PredicateIndexWavelet;
+    friend class PredicateIndexArray;
+    friend class BTInterleavedIterator;
 };
 
 class BitmapTriplesSearchIterator : public IteratorTripleID {
@@ -134,9 +147,9 @@ private:
 	unsigned int patX, patY, patZ;
 
 	AdjacencyList adjY, adjZ;
-	unsigned int posY, posZ;
-	unsigned int minY, maxY, minZ, maxZ;
-        unsigned int nextY, nextZ, prevY, prevZ;
+    size_t posY, posZ;
+    size_t minY, maxY, minZ, maxZ;
+    size_t nextY, nextZ, prevY, prevZ;
 	unsigned int x, y, z;
 
 	void findRange();
@@ -152,7 +165,7 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
-	unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool canGoTo();
@@ -167,7 +180,7 @@ private:
 	TripleID pattern, returnTriple;
 
 	AdjacencyList adjY, adjZ;
-	WaveletSequence *wavelet;
+    PredicateIndex *predicateIndex;
 	unsigned int patX, patY, patZ;
 	unsigned int posY, posZ;
 	unsigned int predicateOcurrence, numOcurrences;
@@ -184,7 +197,36 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
-	unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
+	ResultEstimationType numResultEstimation();
+	TripleComponentOrder getOrder();
+	bool findNextOccurrence(unsigned int value, unsigned char component);
+	bool isSorted(TripleComponentRole role);
+};
+
+class IteratorY : public IteratorTripleID {
+private:
+	BitmapTriples *triples;
+	TripleID pattern, returnTriple;
+
+	AdjacencyList adjY, adjZ;
+	size_t patX, patY, patZ;
+	size_t posY, posZ;
+	size_t prevY, prevZ;
+	size_t nextY, nextZ;
+
+	size_t x, y, z;
+
+	void updateOutput();
+public:
+	IteratorY(BitmapTriples *triples, TripleID &pat);
+
+	bool hasNext();
+	TripleID *next();
+	bool hasPrevious();
+	TripleID *previous();
+	void goToStart();
+    size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool findNextOccurrence(unsigned int value, unsigned char component);
@@ -198,8 +240,8 @@ private:
 
 	AdjacencyList adjY, adjZ, adjIndex;
 	unsigned int patX, patY, patZ;
-	unsigned int posIndex;
-	unsigned int predicateOcurrence, numOcurrences;
+    size_t posIndex;
+    size_t predicateOcurrence, numOcurrences;
 	long long minIndex, maxIndex;
 	unsigned int x, y, z;
 
@@ -215,7 +257,7 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
-	unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool canGoTo();
@@ -223,6 +265,27 @@ public:
 	bool findNextOccurrence(unsigned int value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };
+
+
+class BTInterleavedIterator : public IteratorTripleID {
+private:
+    BitmapTriples *triples;
+    TripleID returnTriple;
+
+    AdjacencyList adjY, adjZ;
+    size_t posZ;
+    size_t skip;
+
+    void updateOutput();
+public:
+    BTInterleavedIterator(BitmapTriples *triples, size_t skip);
+
+    bool hasNext();
+    TripleID *next();
+};
+
+
+
 
 }
 

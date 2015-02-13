@@ -29,6 +29,8 @@
 #ifndef _CSDHTFC_H
 #define _CSDHTFC_H
 
+#if HAVE_CDS
+
 #include <iostream>
 #include <cassert>
 #include <string.h>
@@ -205,4 +207,5 @@ class CSD_HTFC : public CSD
   };
 };
 
+#endif
 #endif  

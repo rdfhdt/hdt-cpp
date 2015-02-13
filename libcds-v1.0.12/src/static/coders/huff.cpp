@@ -170,7 +170,7 @@ namespace cds_static
 		code += pos;
 		if (d > W) { bitzero(stream,ptr,d-W); ptr += d-W; d = W; }
 		while (d--) {
-			if ((code >> d) & 1) bitset(stream,ptr);
+			if ((code >> d) & 1) cds_utils::bitset(stream,ptr);
 			else bitclean(stream,ptr);
 			ptr++;
 		}

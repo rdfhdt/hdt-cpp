@@ -200,4 +200,53 @@ void AdjacencyList::dump() {
 #endif
 }
 
+
+size_t AdjacencyList::findNextAppearance(size_t oldpos, unsigned int element) {
+	// Keep doing binary search within each list until we find it.
+//		while(true) {
+//			long next = bitmap.selectNext1(oldpos+1);
+//			if(next==-1) {
+//				return -1;
+//			}
+////			System.out.println("Current: "+oldpos+ " Next: "+next);
+//			try {
+//				long pos = binSearch(element, oldpos, next);
+//				return pos;
+//			} catch (NotFoundException e) {
+//				oldpos=next;
+//			}
+//		}
+
+	// Sequential approach (Faster if lists are short due to caching).
+	size_t pos = oldpos;
+	size_t y;
+	while(pos<elements->getNumberOfElements()) {
+		y = elements->get(pos);
+		if(y==element) {
+			return pos;
+		}
+		pos++;
+	}
+
+	return -1;
+}
+
+size_t AdjacencyList::findPreviousAppearance(size_t oldpos, unsigned int element) {
+	long long old=oldpos;
+    if(oldpos==-1 || element==0) {
+        return -1;
+    }
+
+    size_t y=0; // 0 = Non valid.
+    while(old>=0 && y!=element) {
+		y = elements->get(old--);
+    }
+
+	// No previous appearances of predicate
+    if(old<0 || y!=element) {
+		return -1;
+	}
+	return old+1;
+}
+
 }

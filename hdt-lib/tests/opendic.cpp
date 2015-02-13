@@ -22,19 +22,6 @@
 using namespace hdt;
 using namespace std;
 
-class ConvertProgress : public ProgressListener {
-private:
-public:
-	virtual ~ConvertProgress() { }
-
-    void notifyProgress(float level, const char *section) {
-    	cout << section << ": " << level << " %";
-    	cout << "\r " << section << ": " << level << " %                      \r";
-		cout.flush();
-	}
-
-};
-
 int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
@@ -69,7 +56,7 @@ int main(int argc, char **argv) {
 	try {
 
 		// CONVERT
-		ConvertProgress progress;
+		StdoutProgressListener progress;
 		ControlInformation ci;
 		FourSectionDictionary dict;
 

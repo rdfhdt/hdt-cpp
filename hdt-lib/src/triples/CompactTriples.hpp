@@ -54,6 +54,10 @@ public:
 	CompactTriples(HDTSpecification &specification);
 	virtual ~CompactTriples();
 
+    bool isIndexed() {
+        return false;
+    }
+
 	/**
 	 * Returns a vector of triples matching the pattern
 	 *
@@ -77,7 +81,7 @@ public:
 	 *
 	 * @return
 	 */
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
     size_t size();
 

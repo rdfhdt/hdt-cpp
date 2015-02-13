@@ -29,6 +29,8 @@
  *
  */
 
+#if HAVE_CDS
+
 #include "LiteralDictionary.hpp"
 #include <HDTVocabulary.hpp>
 #include "../libdcs/CSD_PFC.h"
@@ -216,8 +218,8 @@ size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Progre
     ControlInformation ci;
     count += ci.load(&ptr[count], ptrMax);
 
-    this->mapping = ci.getUint("$mapping");
-    this->sizeStrings = ci.getUint("$sizeStrings");
+    this->mapping = ci.getUint("mapping");
+    this->sizeStrings = ci.getUint("sizeStrings");
 
     iListener.setRange(0,25);
     iListener.notifyProgress(0, "Dictionary read shared area.");
@@ -315,7 +317,7 @@ public:
 		return previous;
 	}
 
-	unsigned int getNumberOfElements() {
+    size_t getNumberOfElements() {
 		return child->getNumberOfElements();
 	}
 
@@ -423,7 +425,7 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, bool c
 	if(fmIndex!=NULL) {
 		uint32_t ret = fmIndex->locate_substring(s,len,caseInsensitive,occs);
 		for (int i=0;i<ret;i++){
-			(*occs)[i] = (*occs)[i]+shared->getLength();
+			(*occs)[i] = this->getGlobalId((*occs)[i], NOT_SHARED_OBJECT);
 		}
 		return ret;
 	}
@@ -532,12 +534,12 @@ unsigned int LiteralDictionary::getMaxObjectID() {
 	}
 }
 
-unsigned int LiteralDictionary::getNumberOfElements() {
+size_t LiteralDictionary::getNumberOfElements() {
 	return shared->getLength() + subjects->getLength() + predicates->getLength()
 			+ objectsLiterals->getLength()+objectsNotLiterals->getLength();
 }
 
-unsigned int LiteralDictionary::size() {
+uint64_t LiteralDictionary::size() {
 	return shared->getSize() + subjects->getSize() + predicates->getSize()
 			+ objectsLiterals->getSize()+objectsNotLiterals->getSize();
 }
@@ -697,3 +699,6 @@ void LiteralDictionary::getSuggestions(const char *base, hdt::TripleComponentRol
 
 }
 
+#else
+int LiteralDictionayDummySymbol;
+#endif

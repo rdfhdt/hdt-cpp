@@ -3,42 +3,42 @@ OS := $(shell uname)
 LIBCDSPATH = ../libcds-v1.0.12
 
 # Uncomment here to enable optional dependencies
-#RAPTOR_SUPPORT=true
+RAPTOR_SUPPORT=true
 #KYOTO_SUPPORT=true
-#LIBZ_SUPPORT=true
-#SERD_SUPPORT=true
+LIBZ_SUPPORT=true
+SERD_SUPPORT=true
 
 CPP=g++
 FLAGS=-O3 -Wno-deprecated
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
 LDFLAGS=
 DOXYGEN=doxygen
-DEFINES=
+DEFINES= -DHAVE_CDS
 LIB=$(LIBCDSPATH)/lib/libcds.a -L/usr/local/lib -lstdc++
 
 ifeq ($(RAPTOR_SUPPORT), true)
-DEFINES:=$(DEFINES) -DUSE_RAPTOR
+DEFINES:=$(DEFINES) -DHAVE_RAPTOR
 LIB:=$(LIB) -lraptor2
 endif
 
 ifeq ($(KYOTO_SUPPORT), true)
-DEFINES:=$(DEFINES) -DUSE_KYOTO
+DEFINES:=$(DEFINES) -DHAVE_KYOTO
 LIB:=$(LIB) -lkyotocabinet
 endif
 
 ifeq ($(LIBZ_SUPPORT), true)
-DEFINES:=$(DEFINES) -DUSE_LIBZ
+DEFINES:=$(DEFINES) -DHAVE_LIBZ
 LIB:=$(LIB) -lz
 endif
 
 ifeq ($(SERD_SUPPORT), true)
-DEFINES:=$(DEFINES) -DUSE_SERD
+DEFINES:=$(DEFINES) -DHAVE_SERD
 LIB:=$(LIB) -lserd-0
 endif
 
 ifeq ($(OS), Darwin)
 CPP=clang++
-FLAGS:=$(FLAGS) -arch x86_64 #-msse4.2 
+FLAGS:=$(FLAGS) -arch x86_64
 endif
 
 ifeq ($(CPP), g++)
@@ -56,7 +56,8 @@ EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
 all:
 	@$(MAKE) showflags 
 	@$(MAKE) -C $(LIBCDSPATH)
-	@$(MAKE) tools examples
+	@$(MAKE) tools tests/jointest
+	#@$(MAKE) tests examples
 
 re:
 	@$(MAKE) clean

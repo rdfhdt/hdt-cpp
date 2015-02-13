@@ -84,7 +84,7 @@ public:
 	 *
 	 * @return
 	 */
-	virtual unsigned int getNumberOfElements()=0;
+    virtual size_t getNumberOfElements()=0;
 
 	/**
 	 * Returns size in bytes of the overall structure.
@@ -122,6 +122,12 @@ public:
 	virtual void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener=NULL)=0;
 
     virtual size_t loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
+
+    virtual bool isIndexed()=0;
+
+    virtual size_t getNumAppearances(size_t pred) {
+        return 0;
+    }
 
 	/**
 	 * Adds all known information about the triples to the Header.

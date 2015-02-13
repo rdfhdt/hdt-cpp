@@ -33,6 +33,8 @@
 #ifndef HDTLISTENER_HPP_
 #define HDTLISTENER_HPP_
 
+#include <iostream>
+#include <iomanip>
 #include <stddef.h>
 
 namespace hdt {
@@ -40,7 +42,11 @@ namespace hdt {
 class ProgressListener {
 public:
 	virtual ~ProgressListener() { }
-	virtual void notifyProgress(float level, const char *section)=0;
+    void notifyProgress(float level, const char *section) {
+        this->notifyProgress(level, level, section);
+    }
+
+    virtual void notifyProgress(float task, float level, const char *section)=0;
 };
 
 class IntermediateListener : public ProgressListener {
@@ -53,17 +59,42 @@ public:
 
 	virtual ~IntermediateListener() { }
 
-	virtual void notifyProgress(float level, const char *section) {
+    virtual void notifyProgress(float task, float level, const char *section) {
 		if(child!=NULL){
             float newLevel = min + level*(max-min)/100;
-            child->notifyProgress(newLevel, section);
+            child->notifyProgress(task, newLevel, section);
 		}
 	}
+
+    void notifyProgress(float level, const char *section) {
+        if(child!=NULL){
+            float newLevel = min + level*(max-min)/100;
+            child->notifyProgress(level, newLevel, section);
+        }
+    }
 
 	void setRange(float min, float max) {
 		this->min=min;
 		this->max=max;
 	}
+};
+
+
+class StdoutProgressListener : public ProgressListener {
+private:
+public:
+	virtual ~StdoutProgressListener() { }
+
+    void notifyProgress(float level, const char *section) {
+    	std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << level << " %                      \r";
+		std::cout.flush();
+	}
+
+    void notifyProgress(float task, float level, const char *section) {
+    	std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << task << " % / " << level << " %                      \r";
+                std::cout.flush();
+        }
+
 };
 
 #define NOTIFY(listener, message, number, total) \

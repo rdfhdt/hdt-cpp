@@ -26,7 +26,6 @@ void help() {
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
-
 int main(int argc, char **argv) {
 	int c;
 	string inputFile;
@@ -53,7 +52,8 @@ int main(int argc, char **argv) {
 
 
 	try {
-		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str());
+		StdoutProgressListener progress;
+		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &progress);
 
 		delete hdt;
 	} catch (char *e) {

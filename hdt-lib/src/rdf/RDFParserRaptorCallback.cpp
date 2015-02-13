@@ -5,7 +5,7 @@
  *      Author: mck
  */
 
-#ifdef USE_RAPTOR
+#ifdef HAVE_RAPTOR
 #include "RDFParserRaptorCallback.hpp"
 #include "../util/fileUtil.hpp"
 
@@ -26,8 +26,9 @@ string getString(raptor_term *term) {
 			out.append("\"");
 		}
 		if(term->value.literal.datatype) {
-			out.append("^^");
+			out.append("^^<");
 			out.append((char *)raptor_uri_as_string(term->value.literal.datatype));
+			out.append(">");
 		}
 	} else if(term->type==RAPTOR_TERM_TYPE_BLANK) {
 		out.append((char *)term->value.blank.string);
@@ -103,7 +104,7 @@ const char *RDFParserRaptorCallback::getParserType(RDFNotation notation){
 	}
 }
 
-void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback) {
+void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback) {
 	if(callback==NULL) {
 		return;
 	}
@@ -146,4 +147,6 @@ void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri,
 }
 
 }
+#else
+int RaptorParserSupportDummySymbol;
 #endif 

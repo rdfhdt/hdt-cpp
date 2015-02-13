@@ -32,6 +32,8 @@
 #ifndef WAVELETSTREAM_HPP_
 #define WAVELETSTREAM_HPP_
 
+#ifdef HAVE_CDS
+
 #include "IntSequence.hpp"
 
 #include <WaveletTreeNoptrs.h>
@@ -99,5 +101,7 @@ public:
 };
 
 }
+
+#endif
 
 #endif /* WAVELETSTREAM_HPP_ */

@@ -25,19 +25,6 @@
 using namespace hdt;
 using namespace std;
 
-class ConvertProgress : public ProgressListener {
-private:
-public:
-	virtual ~ConvertProgress() { }
-
-    void notifyProgress(float level, const char *section) {
-    	cout << section << ": " << level << " %";
-    	cout << "\r " << section << ": " << level << " %                      \r";
-		cout.flush();
-	}
-
-};
-
 int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
@@ -68,16 +55,17 @@ int main(int argc, char **argv) {
 	}
 
 	inputFile = argv[optind];
+	StdoutProgressListener listener;
 
 	try {
 		// LOAD
-		HDT *hdt = HDTManager::mapHDT(inputFile.c_str());
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str(), &listener);
 
 		// CONVERT
 		Dictionary *dict = hdt->getDictionary();
 		LiteralDictionary litDict;
 		//FourSectionDictionary litDict;
-		ConvertProgress progress;
+		StdoutProgressListener progress;
 		litDict.import(dict, &progress);
 
 		// SAVE

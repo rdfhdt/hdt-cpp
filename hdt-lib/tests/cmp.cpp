@@ -12,7 +12,7 @@ using namespace std;
 #define NUM 2000000000
 
 class MyIterator : public hdt::IteratorUCharString {
-	unsigned long long count;
+	size_t count;
 	unsigned char *buffer;
 
 public:
@@ -30,23 +30,13 @@ public:
 	}
 
 	unsigned char *next() {
-		sprintf((char*)buffer, "AAA %015lld FINNN", count++);
+		sprintf((char*)buffer, "AAA %015lld FINNN", (uint64_t) count++);
 		return buffer;
 	}
 
-	unsigned int getNumberOfElements() {
+	size_t getNumberOfElements() {
 		return NUM;
 	}
-};
-
-class ConvertProgress : public hdt::ProgressListener {
-private:
-public:
-    void notifyProgress(float level, const char *section) {
-    	cout << "\r " << section << ": " << level << " %                      \r";
-		cout.flush();
-	}
-
 };
 
 int main(int argc, char **argv) {
@@ -86,9 +76,9 @@ int main(int argc, char **argv) {
 
 #else
 
-	ConvertProgress progress;
+	hdt::StdoutProgressListener progress;
 	StopWatch st;
-	csd::CSD_PFC *pfc = new csd::CSD_PFC(it, 32, (hdt::ProgressListener*)&progress);
+	csd::CSD_PFC *pfc = new csd::CSD_PFC(it, 32, &progress);
 	free(it);
 
 	cout << endl << NUM << " entries added in " << st << endl;

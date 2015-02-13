@@ -33,7 +33,7 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 
 #include <zlib.h>
 

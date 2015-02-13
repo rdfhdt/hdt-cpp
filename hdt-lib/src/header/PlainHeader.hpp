@@ -59,7 +59,7 @@ public:
 	 *
 	 * @return
 	 */
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
 	/**
 	 * @param subject

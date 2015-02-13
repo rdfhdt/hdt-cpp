@@ -50,10 +50,10 @@ HDT *HDTManager::mapHDT(const char *file, ProgressListener *listener){
 HDT *HDTManager::mapIndexedHDT(const char *file, ProgressListener *listener){
     BasicHDT *h = new BasicHDT();
     IntermediateListener iListener(listener);
-    iListener.setRange(0,50);
+    iListener.setRange(0,10);
     h->mapHDT(file, &iListener);
 
-    iListener.setRange(50,100);
+    iListener.setRange(10,100);
     h->loadOrCreateIndex(&iListener);
 	return h;
 }

@@ -63,6 +63,10 @@ public:
 	size_t binSearch(unsigned int element, size_t ini, size_t fin);
 	size_t linSearch(unsigned int element, size_t ini, size_t fin);
 
+	size_t findNextAppearance(size_t oldpos, unsigned int element);
+
+	size_t findPreviousAppearance(size_t oldpos, unsigned int element);
+
 	unsigned int get(size_t pos);
 
 	size_t getSize();

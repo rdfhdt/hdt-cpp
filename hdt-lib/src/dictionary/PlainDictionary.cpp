@@ -274,12 +274,12 @@ IteratorUCharString *PlainDictionary::getShared() {
 	return new DictIterator(this->shared);
 }
 
-unsigned int PlainDictionary::getNumberOfElements()
+size_t PlainDictionary::getNumberOfElements()
 {
 	return shared.size() + subjects.size() + objects.size() + predicates.size();
 }
 
-unsigned int PlainDictionary::size()
+uint64_t PlainDictionary::size()
 {
     return sizeStrings;
 }

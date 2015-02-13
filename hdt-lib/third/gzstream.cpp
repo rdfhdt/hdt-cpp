@@ -34,7 +34,7 @@
 namespace GZSTREAM_NAMESPACE {
 #endif
 
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 // ----------------------------------------------------------------------------
 // Internal classes to implement gzstream. See header file for user classes.
 // ----------------------------------------------------------------------------
@@ -162,6 +162,8 @@ void gzstreambase::close() {
 } // namespace GZSTREAM_NAMESPACE
 #endif
 
+#else
+int GzStreamDummySymbol;
 #endif
 // ============================================================================
 // EOF //

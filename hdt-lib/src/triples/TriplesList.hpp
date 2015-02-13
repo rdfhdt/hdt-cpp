@@ -44,13 +44,19 @@ private:
 	HDTSpecification spec;
 
 	std::vector<TripleID> arrayOfTriples;
+    TripleID *ptr;
 	TripleComponentOrder order;
-	unsigned int numValidTriples;
+    size_t numValidTriples;
 
 public:
 	TriplesList();
 	TriplesList(HDTSpecification &specification);
 	virtual ~TriplesList();
+
+
+    bool isIndexed() {
+        return false;
+    }
 
 	// From Triples
 
@@ -77,7 +83,7 @@ public:
 	 *
 	 * @return
 	 */
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
 	/**
 	 * Returns size in bytes
@@ -187,7 +193,7 @@ class TriplesListIterator : public IteratorTripleID {
 private:
 	TripleID pattern, returnTriple;
 	TriplesList *triples;
-	int64_t pos;
+	uint64_t pos;
 
 public:
 	TriplesListIterator(TriplesList *triples, TripleID &pattern);

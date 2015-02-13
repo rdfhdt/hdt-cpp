@@ -30,6 +30,7 @@
  */
 
 #include <HDTVocabulary.hpp>
+#include <unistd.h>
 
 #include "TriplesKyoto.hpp"
 #include "TriplesComparator.hpp"
@@ -39,7 +40,7 @@
 
 #include "../util/Histogram.h"
 
-#ifdef USE_KYOTO
+#ifdef HAVE_KYOTO
 
 namespace hdt {
 
@@ -133,7 +134,7 @@ float TriplesKyoto::cost(TripleID &pattern)
 	throw "Not implemented";
 }
 
-unsigned int TriplesKyoto::getNumberOfElements()
+size_t TriplesKyoto::getNumberOfElements()
 {
 	return db.count();
 }
@@ -294,4 +295,4 @@ TripleID *TriplesKyotoIterator::next() {
 
 }
 
-#endif /* USE_KYOTO */
+#endif /* HAVE_KYOTO */
