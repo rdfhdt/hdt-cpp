@@ -42,7 +42,7 @@ FLAGS:=$(FLAGS) -arch x86_64
 endif
 
 ifeq ($(CPP), g++)
-FLAGS:=$(FLAGS) -fopenmp
+FLAGS:=$(FLAGS) #-fopenmp
 endif
 
 SRCS=$(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard src/**/**/*.cpp)
