@@ -10,8 +10,11 @@
 
 #ifdef __WIN32__
 #include <windows.h>
-
 #define sleep(a) Sleep((a)*1000)
+#else
+#include <iostream>
+#include <unistd.h>
+#define sleep(a) usleep(a)
 #endif
 
 
