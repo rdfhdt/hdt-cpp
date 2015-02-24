@@ -33,6 +33,7 @@
 
 #include "PlainDictionary.hpp"
 #include "../util/Histogram.h"
+#include <strings.h>
 
 #include <HDTVocabulary.hpp>
 
@@ -40,6 +41,10 @@ namespace hdt {
 
 /* DICTIONARY ENTRY */
 
+// TODO: this is only necessary if we want case-insensitive substring matching
+bool DictionaryEntry::cmpLexicographicInsensitive(DictionaryEntry *c1, DictionaryEntry *c2) {
+    return strcasecmp(c1->str,c2->str)<0;
+}
 
 bool DictionaryEntry::cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2) {
     return strcmp(c1->str,c2->str)<0;
@@ -452,7 +457,7 @@ void PlainDictionary::lexicographicSort(ProgressListener *listener) {
         { sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic); }
         { sort(shared.begin(), shared.end(), DictionaryEntry::cmpLexicographic); }
         { sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpLexicographic); }
-        { sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographic); }
+        { sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographicInsensitive); }
     }
 #else
     NOTIFY(listener, "Sorting shared", 0, 100);
@@ -462,7 +467,7 @@ void PlainDictionary::lexicographicSort(ProgressListener *listener) {
     sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpLexicographic);
 
     NOTIFY(listener, "Sorting objects", 50, 100);
-    sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographic);
+    sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographicInsensitive);
 
     NOTIFY(listener, "Sorting predicates", 90, 100);
     sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic);

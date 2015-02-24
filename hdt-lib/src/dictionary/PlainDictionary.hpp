@@ -66,6 +66,7 @@ public:
 	unsigned int id;
 	char *str;
 
+	bool static cmpLexicographicInsensitive(DictionaryEntry *c1, DictionaryEntry *c2);
 	bool static cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2);
 	bool static cmpID(DictionaryEntry *c1, DictionaryEntry *c2);
 };

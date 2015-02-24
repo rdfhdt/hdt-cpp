@@ -32,12 +32,23 @@
  */
 
 #include "SuffixArray.h"
+#include <iostream>
 
 namespace csd{
 
 	SuffixArray::SuffixArray(){
 
 	}
+    
+    unsigned char DUMMY(unsigned char c) {
+        if (c >= 'A' && c < 'A' + 2*26) {
+            if ((c - 'A') % 2 == 1 )
+                return c-1;
+            else
+                return c;
+        } else
+            return c;
+    }
 
     long* SuffixArray::sort(unsigned char *text, unsigned long length){
 		 long c, *x, *p;
@@ -55,16 +66,17 @@ namespace csd{
 		 l=UCHAR_MAX;
 		 k=1;
 		 nn=0;
+         
          for (nn=0; (unsigned long)nn<length; nn++) {
-			x[nn]=c=text[nn];
+			x[nn]=c=DUMMY(text[nn]);
 			if (c<l)
 				 l=c;
 			if (c>=k)
 				 k=c+1;
 		 }
 #else
-		 for (nn; nn<length; nn++) {
-				x[nn]=text[nn];
+		 for (nn; nn<length; nn++)
+				x[nn]=DUMMY(text[nn]);
 #if COMPACT==0
 		 l=0;
 		 k=UCHAR_MAX+1;

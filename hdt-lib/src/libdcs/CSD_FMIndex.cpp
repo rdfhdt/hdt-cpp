@@ -187,15 +187,32 @@ uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len) {
 
 uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len, bool caseInsensitive) {
 	unsigned char *n_s = new unsigned char[len + 2];
-	uint o;
+	uint o, ep;
 	n_s[0] = '\1';
 	for (uint32_t i = 1; i <= len; i++)
 		n_s[i] = s[i - 1];
 	n_s[len + 1] = '\1';
-	o = fm_index->locate_id(n_s, len + 2, caseInsensitive);
+	o = fm_index->locate_id(n_s, len + 2, &ep);
 	delete[] n_s;
-	if (o != 0)
-		return o - 2;
+    // TODO: this can be done more efficiently by comparing while extracting the string
+    if (!caseInsensitive) {
+        while (o <= ep) {
+            uchar* res = this->extract(o+1);
+            int cmp = strcmp((char*)s, (char*)res);
+            delete [] res;
+            if (cmp)
+                ++o;
+            else
+                break;
+        }
+        if (o > ep)
+            o = UINT_MAX;
+    }
+    
+    this->extract(o+1);
+	if (o < UINT_MAX)
+        // +1 because we want our indices to start at 1
+		return o + 1; // -1 since result will never be 0 (\1 in BWT) or 1 (the '"' preceding the last \1 in the total string)
 	return 0;
 }
 
@@ -210,34 +227,41 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, bool case
 	}
 	uint num_occ, i;
 	uint32_t res = 0;
-	uint32_t temp;
-	num_occ = fm_index->locate(s, (uint) len, caseInsensitive, occs);
+	uint32_t temp, prev = 0;
+	num_occ = fm_index->locate(s, (uint) len, occs);
 	if (num_occ == 0) {
 		*occs = NULL;
 		return 0;
 	}
 	quicksort((*occs), 0, num_occ - 1);
-	i = 1;
-	(*occs)[res] = separators->rank1((*occs)[0]);
+	i = 0;
+	//(*occs)[res] = separators->rank1((*occs)[0]);
 	while (i < num_occ) {
 		temp = separators->rank1((*occs)[i]);
-		if (temp != (*occs)[res]) {
-			(*occs)[res + 1] = temp;
-			res++;
+		if (temp != prev) {
+            bool match = caseInsensitive;
+            if (!caseInsensitive) {
+                // TODO: again, this could be done more efficiently by checking while building the string
+                uchar* res = this->extract(temp);
+                match = strstr((char*)res, (char*)s) != NULL;
+                delete [] res;
+            }
+            if (match) {
+                (*occs)[res] = temp;
+                res++;
+            }
 		}
+        prev = temp;
 		i++;
 	}
-	return res + 1;
+	return res;
 }
 
 unsigned char * CSD_FMIndex::extract(uint32_t id) {
 	if (id == 0 || id > numstrings)
 		return NULL;
-	uint i;
-	if (id == numstrings)
-		i = 2;
-	else
-		i = id + 3;
+    // +1 because we want the beginning of the next string (has already been added by the locate function)
+	uint i = id;
 	return fm_index->extract_id(i, maxlength);
 }
 

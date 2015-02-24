@@ -66,13 +66,14 @@ namespace csd{
 
 			uint LF(uint i);
 			uint locate_id(uchar * pattern, uint m);
-			uint locate_id(uchar * pattern, uint m, bool caseInsensitive);
+			uint locate_id(uchar * pattern, uint m, uint* epp);
 			uint locate(uchar * pattern, uint m, uint32_t **occs);
-            uint locate(uchar * pattern, uint m, bool caseInsensitive, uint32_t **occs);
 
 			uchar * extract_id(uint id, uint max_len);
             static SSA * load(istream &fp);
             void save(ostream & fp);
+            
+            uint select(uchar c, uint i);
 
 		protected:
 			uint n;
@@ -103,7 +104,7 @@ namespace csd{
         
         private:
             void charToUpperLower(uint c, uint* cp, uint* Cp);
-            void locateStringPointers(uchar* pattern, uint m, bool caseInsensitive, uint* spp, uint* epp);
+            void locateStringPointers(uchar* pattern, uint m, uint* spp, uint* epp);
             uchar shiftChar(uchar c);
             uchar unshiftChar(uchar c);
             void shiftString(uchar* str);
