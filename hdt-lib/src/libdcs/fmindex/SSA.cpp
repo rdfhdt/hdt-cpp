@@ -34,7 +34,6 @@
 #ifdef HAVE_CDS
 
 #include <assert.h>
-#include <cstring>
 
 #include "SSA.h"
 
@@ -49,7 +48,7 @@ namespace csd{
         text[n-1] = 255;
         
 		// Initial values and default constructors
-		this->n=n-1;
+		this->n=n-1; // don't need \0 delimiter
 		this->_seq = text;
 		this->built = false;
 		this->free_text=free_text;
