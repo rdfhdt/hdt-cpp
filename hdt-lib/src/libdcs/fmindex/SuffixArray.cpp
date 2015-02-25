@@ -40,7 +40,7 @@ namespace csd{
 
 	}
     
-    unsigned char DUMMY(unsigned char c) {
+    unsigned char toShiftedUpper(unsigned char c) {
         if (c >= 'A' && c < 'A' + 2*26) {
             if ((c - 'A') % 2 == 1 )
                 return c-1;
@@ -68,7 +68,7 @@ namespace csd{
 		 nn=0;
          
          for (nn=0; (unsigned long)nn<length; nn++) {
-			x[nn]=c=DUMMY(text[nn]);
+			x[nn]=c=toShiftedUpper(text[nn]);
 			if (c<l)
 				 l=c;
 			if (c>=k)
@@ -76,7 +76,7 @@ namespace csd{
 		 }
 #else
 		 for (nn; nn<length; nn++)
-				x[nn]=DUMMY(text[nn]);
+				x[nn]=toShiftedUpper(text[nn]);
 #if COMPACT==0
 		 l=0;
 		 k=UCHAR_MAX+1;
