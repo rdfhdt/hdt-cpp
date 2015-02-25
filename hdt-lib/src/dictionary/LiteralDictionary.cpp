@@ -100,8 +100,11 @@ std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole p
 
 	return string();
 }
-
 unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole position) {
+    return this->stringToId(key, position, false);
+}
+
+unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole position, bool caseInsensitive) {
 	unsigned int ret;
 
 	if (key.length() == 0) {
@@ -128,8 +131,27 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 
 	case OBJECT:
 		if (key.at(0) == '"') {
-			ret = objectsLiterals->locate((const unsigned char *) key.c_str(),
-					key.length());
+            if (caseInsensitive) {
+                // TODO: should be in separate function because of duplication
+                csd::CSD_FMIndex *fmIndex=NULL;
+
+                csd::CSD_Cache *cache = dynamic_cast<csd::CSD_Cache *>(objectsLiterals);
+                if(cache!=NULL) {
+                    fmIndex = dynamic_cast<csd::CSD_FMIndex  *>(cache->getChild());
+                } else {
+                    fmIndex = dynamic_cast<csd::CSD_FMIndex  *>(objectsLiterals);
+                }
+                
+                if (fmIndex) {
+                    ret = fmIndex->locate((const unsigned char *) key.c_str(), key.length(), caseInsensitive);
+                }
+                else {
+                    throw "Error accessing FM index";
+                }
+            }
+            else {
+                ret = objectsLiterals->locate((const unsigned char *) key.c_str(), key.length());
+            }
 			if (ret != 0) {
 				return getGlobalId(ret, NOT_SHARED_OBJECT);
 			}

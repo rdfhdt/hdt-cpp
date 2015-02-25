@@ -366,7 +366,7 @@ namespace csd{
             return ep-sp+1;
         }
         *occs=NULL;
-        return UINT_MAX;
+        return 0;
     }
 
 

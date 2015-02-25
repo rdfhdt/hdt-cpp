@@ -233,7 +233,8 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, bool case
 		*occs = NULL;
 		return 0;
 	}
-	quicksort((*occs), 0, num_occ - 1);
+	//quicksort((*occs), 0, num_occ - 1);
+    sort(*occs, (*occs)+num_occ); // TODO: the quicksort ^ doesn't work, but this sort might have performance issues?
 	i = 0;
 	//(*occs)[res] = separators->rank1((*occs)[0]);
 	while (i < num_occ) {
@@ -242,9 +243,9 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, bool case
             bool match = caseInsensitive;
             if (!caseInsensitive) {
                 // TODO: again, this could be done more efficiently by checking while building the string
-                uchar* res = this->extract(temp);
-                match = strstr((char*)res, (char*)s) != NULL;
-                delete [] res;
+                uchar* tempS = this->extract(temp);
+                match = strstr((char*)tempS, (char*)s) != NULL;
+                delete [] tempS;
             }
             if (match) {
                 (*occs)[res] = temp;

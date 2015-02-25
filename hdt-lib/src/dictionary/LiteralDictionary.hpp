@@ -62,6 +62,7 @@ public:
 
 	std::string idToString(unsigned int id, TripleComponentRole position);
 	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	unsigned int stringToId(std::string &str, TripleComponentRole position, bool caseInsensitive);
 
 	/** Returns the number of IDs that contain s[1,..len] as a substring. It also
 	 * return in occs the IDs. Otherwise return 0.
