@@ -118,13 +118,13 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 		if (ret != 0) {
 			return getGlobalId(ret, NOT_SHARED_SUBJECT);
 		}
-		throw "Subject not found in dictionary";
+    return 0;
 	case PREDICATE:
 		ret = predicates->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) {
 			return getGlobalId(ret, NOT_SHARED_PREDICATE);
 		}
-		throw "Predicate not found in dictionary";
+    return 0;
 
 	case OBJECT:
 		if (key.at(0) == '"') {
@@ -133,9 +133,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 			if (ret != 0) {
 				return getGlobalId(ret, NOT_SHARED_OBJECT);
 			}
-			else{
-				throw "Object not found in dictionary";
-			}
+      return 0;
 		} else {
 			ret = shared->locate((const unsigned char *) key.c_str(), key.length());
 			if (ret != 0) {
@@ -145,7 +143,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 			if (ret != 0) {
 				return getGlobalId(ret, NOT_SHARED_OBJECT)+	objectsLiterals->getLength();
 			}
-			throw "Object not found in dictionary";
+      return 0;
 		}
 	}
 }

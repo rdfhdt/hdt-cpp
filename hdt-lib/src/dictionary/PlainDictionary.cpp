@@ -106,28 +106,19 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 {
 	DictEntryIt ret;
 
-	if(key=="")
+	if(key.length()==0)
 		return 0;
 
 	switch (position) {
 	case SUBJECT:
 		ret = hashSubject.find(key.c_str());
-		if(ret!=hashSubject.end())
-			return ret->second->id;
-		else
-			throw "Subject not found in dictionary";
+    return ret==hashSubject.end()   ? 0 : ret->second->id;
 	case PREDICATE:
 		ret = hashPredicate.find(key.c_str());
-		if (ret != hashPredicate.end())
-			return ret->second->id;
-		else
-			throw "Predicate not found in dictionary";
+    return ret==hashPredicate.end() ? 0 : ret->second->id;
 	case OBJECT:
 		ret = hashObject.find(key.c_str());
-		if (ret != hashObject.end())
-			return ret->second->id;
-		else
-			throw "Object not found in dictionary";
+    return ret==hashObject.end()    ? 0 : ret->second->id;
 	}
 }
 
