@@ -14,3 +14,16 @@ config.log
 config.status
 stamp-h1
 .deps/
+
+*.hdt
+*.hdt.index
+*.nt
+*.rdf
+*.a
+**/examples/*
+**/tests/*
+**/tools/*
+libcds-v1.0.12/includes
+!**/examples/*.cpp
+!**/tests/*.cpp
+!**/tools/*.cpp

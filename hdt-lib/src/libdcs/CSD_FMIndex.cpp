@@ -196,30 +196,37 @@ uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len) {
 }
 
 uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint32_t **occs) {
+    uint dummy;
+    return this->locate_substring(s, len, 0, 0, true, occs, &dummy);
+}
+
+uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint offset, uint limit, bool deduplicate, uint32_t **occs, uint* num_occ) {
 	if (!use_sampling) {
 		*occs = NULL;
 		return 0;
 	}
-	uint num_occ, i;
+	uint matches, i;
 	uint32_t res = 0;
 	uint32_t temp;
-	num_occ = fm_index->locate(s, (uint) len, occs);
-	if (num_occ == 0) {
+	matches = fm_index->locate(s, (uint) len, offset, limit, occs, num_occ);
+	if (*num_occ == 0) {
 		*occs = NULL;
 		return 0;
 	}
-	quicksort((*occs), 0, num_occ - 1);
+	quicksort((*occs), 0, *num_occ - 1);
 	i = 1;
 	(*occs)[res] = separators->rank1((*occs)[0]);
-	while (i < num_occ) {
+    // TODO: combining limit/offset and deduplicate will give wrong results
+	while (i < *num_occ) {
 		temp = separators->rank1((*occs)[i]);
-		if (temp != (*occs)[res]) {
+		if (!deduplicate || temp != (*occs)[res]) {
 			(*occs)[res + 1] = temp;
 			res++;
 		}
 		i++;
 	}
-	return res + 1;
+    *num_occ = res + 1;
+	return matches;
 }
 
 unsigned char * CSD_FMIndex::extract(uint32_t id) {

@@ -309,6 +309,11 @@ namespace csd{
 	}
 
 	uint SSA::locate(uchar * pattern, uint m, uint32_t **occs){
+        uint dummy = 0; // return value is equal to array size in this call
+        return this->locate(pattern, m, 0, 0, occs, &dummy);
+    }
+    
+	uint SSA::locate(uchar * pattern, uint m, uint offset, uint limit, uint32_t **occs, uint* num_occ){
 		if(!use_sampling){
 			*occs = NULL;
 			return 0;
@@ -325,10 +330,14 @@ namespace csd{
 			sp = occ[c]+bwt->rank(c,sp-1);
 			ep = occ[c]+bwt->rank(c,ep)-1;
 		}
+        uint matches = ep-sp+1;
+		sp = sp + offset;
+        if (limit > 0 && i + limit - 1 < ep)
+            ep = sp + limit - 1;
 		if (sp<=ep) {
-			uint matches = ep-sp+1;
-			*occs = new uint[matches];
-			uint i = sp;
+			*num_occ = ep-sp+1; // ep and sp can have different values by this point
+			*occs = new uint[*num_occ];
+            uint i = sp;
 			uint j,dist;
 			size_t rank_tmp;
 			while(i<=ep) {
@@ -343,7 +352,8 @@ namespace csd{
 				(*occs)[i-sp] = suff_sample[sampled->rank1(j)-1]+dist;
 				i++;
 			}
-			return ep-sp+1;
+            std::cout << matches << "\n";
+			return matches;
 		}
 		*occs=NULL;
 		return 0;
