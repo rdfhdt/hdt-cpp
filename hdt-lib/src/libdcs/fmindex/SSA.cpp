@@ -352,7 +352,6 @@ namespace csd{
 				(*occs)[i-sp] = suff_sample[sampled->rank1(j)-1]+dist;
 				i++;
 			}
-            std::cout << matches << "\n";
 			return matches;
 		}
 		*occs=NULL;
