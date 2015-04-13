@@ -25,6 +25,8 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-f\t<query>\t\tPrefix Query predicate (no <>);object literal (no quotes)." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
+	cout << "\t-s\t<offset>\tThe offset value (default 0)." << endl;
+	cout << "\t-l\t<limit>\tThe limit value (default 0)." << endl;
 	//cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
 
 	//cout << "\t-v\tVerbose output" << endl;
