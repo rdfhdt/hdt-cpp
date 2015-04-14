@@ -213,7 +213,9 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint offs
 		*occs = NULL;
 		return 0;
 	}
-	quicksort((*occs), 0, *num_occ - 1);
+    // TODO: another reason not to combine limit/offset with deduplicate
+    if (deduplicate)
+        quicksort((*occs), 0, *num_occ - 1);
 	i = 1;
 	(*occs)[res] = separators->rank1((*occs)[0]);
     // TODO: combining limit/offset and deduplicate will give wrong results
