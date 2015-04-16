@@ -314,10 +314,10 @@ namespace csd{
     }
     
 	uint SSA::locate(uchar * pattern, uint m, uint offset, uint limit, uint32_t **occs, uint* num_occ){
-		if(!use_sampling){
-			*occs = NULL;
+		*occs=NULL;
+		*num_occ = 0;
+		if(!use_sampling)
 			return 0;
-		}
 		unsigned long i=m-1;
 		uint c = pattern[i];
 		uint sp = occ[c];
@@ -352,10 +352,8 @@ namespace csd{
 				(*occs)[i-sp] = suff_sample[sampled->rank1(j)-1]+dist;
 				i++;
 			}
-			return matches;
 		}
-		*occs=NULL;
-		return 0;
+		return matches;
 	}
 
 

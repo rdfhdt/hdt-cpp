@@ -423,7 +423,7 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32
 
 	if(fmIndex!=NULL) {
 		uint32_t ret = fmIndex->locate_substring(s, len, offset, limit, deduplicate, occs, num_occ);
-		for (int i=0;i<ret;i++){
+		for (int i=0;i<*num_occ;i++){
 			(*occs)[i] = this->getGlobalId((*occs)[i], NOT_SHARED_OBJECT);
 		}
 		return ret;

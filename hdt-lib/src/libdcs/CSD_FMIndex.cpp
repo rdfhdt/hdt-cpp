@@ -209,25 +209,23 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint offs
 	uint32_t res = 0;
 	uint32_t temp;
 	matches = fm_index->locate(s, (uint) len, offset, limit, occs, num_occ);
-	if (*num_occ == 0) {
-		*occs = NULL;
-		return 0;
-	}
-    // TODO: another reason not to combine limit/offset with deduplicate
-    if (deduplicate)
-        quicksort((*occs), 0, *num_occ - 1);
-	i = 1;
-	(*occs)[res] = separators->rank1((*occs)[0]);
-    // TODO: combining limit/offset and deduplicate will give wrong results
-	while (i < *num_occ) {
-		temp = separators->rank1((*occs)[i]);
-		if (!deduplicate || temp != (*occs)[res]) {
-			(*occs)[res + 1] = temp;
-			res++;
+	if (*num_occ > 0) {
+		// TODO: another reason not to combine limit/offset with deduplicate
+		if (deduplicate)
+			quicksort((*occs), 0, *num_occ - 1);
+		i = 1;
+		(*occs)[res] = separators->rank1((*occs)[0]);
+		// TODO: combining limit/offset and deduplicate will give wrong results
+		while (i < *num_occ) {
+			temp = separators->rank1((*occs)[i]);
+			if (!deduplicate || temp != (*occs)[res]) {
+				(*occs)[res + 1] = temp;
+				res++;
+			}
+			i++;
 		}
-		i++;
+		*num_occ = res + 1;
 	}
-    *num_occ = res + 1;
 	return matches;
 }
 
