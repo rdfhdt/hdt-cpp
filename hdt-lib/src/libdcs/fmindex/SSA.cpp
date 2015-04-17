@@ -332,7 +332,7 @@ namespace csd{
 		}
         uint matches = ep-sp+1;
 		sp = sp + offset;
-        if (limit > 0 && i + limit - 1 < ep)
+        if (limit > 0 && sp + limit - 1 < ep)
             ep = sp + limit - 1;
 		if (sp<=ep) {
 			*num_occ = ep-sp+1; // ep and sp can have different values by this point
