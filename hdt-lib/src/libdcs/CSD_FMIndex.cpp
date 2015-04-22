@@ -221,25 +221,29 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint32_t 
 }
 
 uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs) {
-	if (!use_sampling) {
-		*occs = NULL;
+    uint dummy;
+    return this->locate_substring(s, len, caseInsensitive, 0, 0, true, occs, &dummy);
+}
+
+uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, bool caseInsensitive, uint offset, uint limit, bool deduplicate, uint32_t **occs, uint* num_occ) {
+	*occs = NULL;
+	if (!use_sampling)
 		return 0;
-	}
-	uint num_occ, i;
+	uint matches, i;
 	uint32_t res = 0;
 	uint32_t temp, prev = 0;
-	num_occ = fm_index->locate(s, (uint) len, occs);
-	if (num_occ == 0) {
-		*occs = NULL;
+	matches = fm_index->locate(s, (uint) len, offset, limit, occs, num_occ);
+	if (matches == 0)
 		return 0;
-	}
-	//quicksort((*occs), 0, num_occ - 1);
-    sort(*occs, (*occs)+num_occ); // TODO: the quicksort ^ doesn't work, but this sort might have performance issues?
+    // TODO: another reason not to combine limit/offset with deduplicate
+	if (deduplicate)
+        //quicksort((*occs), 0, *num_occ - 1);
+        sort(*occs, (*occs)+*num_occ); // TODO: the quicksort ^ doesn't work, but this sort might have performance issues?
 	i = 0;
 	//(*occs)[res] = separators->rank1((*occs)[0]);
-	while (i < num_occ) {
+	while (i < *num_occ) {
 		temp = separators->rank1((*occs)[i]);
-		if (temp != prev) {
+		if (!deduplicate || temp != prev) {
             bool match = caseInsensitive;
             if (!caseInsensitive) {
                 // TODO: again, this could be done more efficiently by checking while building the string
@@ -255,7 +259,8 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, bool case
         prev = temp;
 		i++;
 	}
-	return res;
+    *num_occ = res;
+	return matches;
 }
 
 unsigned char * CSD_FMIndex::extract(uint32_t id) {

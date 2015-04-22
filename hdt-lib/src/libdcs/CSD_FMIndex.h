@@ -86,6 +86,7 @@ namespace csd{
 			 * */
 			uint32_t locate_substring(unsigned char *s, uint32_t len, uint32_t **occs);
 			uint32_t locate_substring(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs);
+            uint32_t locate_substring(unsigned char *s, uint32_t len, bool caseInsensitive, uint offset, uint limit, bool deduplicate, uint32_t **occs, uint* num_occ);
 
 			/** Returns the string identified by id.
 			 * @id: the identifier to be extracted.

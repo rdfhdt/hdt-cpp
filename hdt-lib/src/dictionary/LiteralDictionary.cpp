@@ -425,11 +425,16 @@ IteratorUCharString *LiteralDictionary::getShared() {
 	throw "Not implemented";
 }
 
-uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32_t **occs){
+uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32_t **occs) {
     return this->substringToId(s, len, false, occs);
 }
 
-uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs){
+uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t **occs) {
+    uint32_t dummy;
+    return this->substringToId(s, len, caseInsensitive, 0, 0, true, occs, &dummy);
+}
+
+uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, bool caseInsensitive, uint32_t offset, uint32_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ) {
 
 	if(len==0) {
 		return 0;
@@ -445,8 +450,8 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, bool c
 	}
 
 	if(fmIndex!=NULL) {
-		uint32_t ret = fmIndex->locate_substring(s,len,caseInsensitive,occs);
-		for (int i=0;i<ret;i++){
+        uint32_t ret = fmIndex->locate_substring(s, len, caseInsensitive, offset, limit, deduplicate, occs, num_occ);
+		for (int i=0;i<*num_occ;i++){
 			(*occs)[i] = this->getGlobalId((*occs)[i], NOT_SHARED_OBJECT);
 		}
 		return ret;

@@ -337,15 +337,24 @@ namespace csd{
             return UINT_MAX;
     }
     
-    uint SSA::locate(uchar * pattern, uint m, uint32_t **occs){
-        if(!use_sampling){
-            *occs = NULL;
+    uint SSA::locate(uchar * pattern, uint m, uint32_t **occs) {
+        uint dummy = 0; // return value is equal to array size in this call
+        return this->locate(pattern, m, 0, 0, occs, &dummy);
+    }
+    
+    uint SSA::locate(uchar * pattern, uint m, uint offset, uint limit, uint32_t **occs, uint* num_occ) {
+        // TODO: no way to do case insensitivity check at this point?
+        *occs=NULL;
+        if(!use_sampling)
             return UINT_MAX;
-        }
         uint sp, ep;
         this->locateStringPointers(pattern, m, &sp, &ep);
+        uint matches = ep-sp+1;
+        sp = sp + offset;
+        if (limit > 0 && sp + limit - 1 < ep)
+            ep = sp + limit - 1;
         if (sp<=ep) {
-            uint matches = ep-sp+1;
+            *num_occ = ep-sp+1;
             *occs = new uint[matches];
             uint i = sp;
             uint j,dist;
@@ -363,10 +372,8 @@ namespace csd{
                 (*occs)[i-sp] = suff_sample[sampled->rank1(j)-1]+dist;
                 i++;
             }
-            return ep-sp+1;
         }
-        *occs=NULL;
-        return 0;
+        return matches;
     }
 
 

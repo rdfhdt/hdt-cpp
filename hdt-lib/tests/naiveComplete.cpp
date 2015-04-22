@@ -25,6 +25,8 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-f\t<query>\t\tPrefix Query predicate (no <>);object literal (no quotes)." << endl;
 	cout << "\t-i\t\tMake search case insensitive." << endl;
+    cout << "\t-s\t<offset>\tThe offset value (default 0)." << endl;
+	cout << "\t-l\t<limit>\tThe limit value (default 0)." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
 	//cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
 
@@ -36,8 +38,9 @@ int main(int argc, char **argv) {
 	string query, inputFile, outputFile, filter1, filter2;
 	bool measure = false;
     bool caseInsensitive = false;
+    uint offset = 0, limit = 0;
 
-	while ((c = getopt(argc, argv, "h:o:f:F:i")) != -1) {
+	while ((c = getopt(argc, argv, "h:o:f:F:is:l:")) != -1) {
 		switch (c) {
 		case 'h':
 			help();
@@ -53,6 +56,12 @@ int main(int argc, char **argv) {
 			break;
         case 'i':
             caseInsensitive = true;
+            break;
+        case 's':
+            offset = atoi(optarg);
+            break;
+        case 'l':
+            limit = atoi(optarg);
             break;
 		default:
 			cout << "ERROR: Unknown option" << endl;
@@ -121,11 +130,12 @@ int main(int argc, char **argv) {
 				hdt::Triples *triples = hdt->getTriples();
 
 				uint32_t *results = NULL;
-				size_t numResults = dict->substringToId((unsigned char *) value.c_str(), value.length(), caseInsensitive, &results);
+                uint32_t resultCount = 0;
+				size_t numResults = dict->substringToId((unsigned char *) value.c_str(), value.length(), caseInsensitive, offset, limit, false, &results, &resultCount);
 
 				TripleID pattern(0, dict->stringToId(property, PREDICATE), 0);
 
-				for (size_t i = 0; i < numResults; i++) {
+				for (size_t i = 0; i < resultCount; i++) {
 
 					pattern.setObject(results[i]);
 
