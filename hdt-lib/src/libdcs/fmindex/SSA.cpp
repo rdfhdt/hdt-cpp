@@ -388,7 +388,7 @@ namespace csd{
         return this->bwt->select(c, i);
     }
 
-	uchar * SSA::extract_id(uint id, uint max_len){	
+	uchar * SSA::extract_id(uint id, uint max_len){
 		uchar *res = new uchar[max_len+2];
 		uint i = id;
 		uint pos = max_len+1;
@@ -446,7 +446,7 @@ namespace csd{
             else
                 return c - 1 - (c-'A')/2 + 'a' - 'A';
         }
-        if (c <= 'z' && c >= 'A'+2*26)
+        if (c > 'Z' + 26 && c < 'a'+26)
             return c - 26;
         return c;
     }

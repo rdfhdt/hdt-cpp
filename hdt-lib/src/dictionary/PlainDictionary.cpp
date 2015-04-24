@@ -41,9 +41,55 @@ namespace hdt {
 
 /* DICTIONARY ENTRY */
 
+// TODO: copy/pasting is bad mmkey
+char shiftChar(char c) {
+    if (c >= 'A' && c <= 'Z')
+        return c + (c-'A');
+    if (c >= 'a' && c <= 'z')
+        return c - 'a' + 'A' + 1 + (c-'a');
+    if (c > 'Z' && c < 'a')
+        return c + 26;
+    return c;
+}
+char unshiftChar(char c) {
+    if (c >= 'A' && c < 'A'+2*26) {
+        if ((c - 'A') % 2 == 0)
+            return c - (c-'A')/2;
+        else
+            return c - 1 - (c-'A')/2 + 'a' - 'A';
+    }
+    if (c > 'Z' + 26 && c < 'a'+26)
+        return c - 26;
+    return c;
+}
+        
+void shiftString(char* str) {
+    int i = 0;
+    while (str[i])
+    {
+        char c = str[i];
+        str[i] = shiftChar(c);
+        i++;
+    }
+}
+void unshiftString(char* str) {
+    int i = 0;
+    while (str[i])
+    {
+        char c = str[i];
+        str[i] = unshiftChar(c);
+        i++;
+    }
+}
+
 // TODO: this is only necessary if we want case-insensitive substring matching
 bool DictionaryEntry::cmpLexicographicInsensitive(DictionaryEntry *c1, DictionaryEntry *c2) {
-    return strcasecmp(c1->str,c2->str)<0;
+    shiftString(c1->str);
+    shiftString(c2->str);
+    bool result = strcmp(c1->str,c2->str)<0;
+    unshiftString(c1->str);
+    unshiftString(c2->str);
+    return result;
 }
 
 bool DictionaryEntry::cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2) {
@@ -132,7 +178,7 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 		if (ret != hashObject.end())
 			return ret->second->id;
 		else
-			throw "Object not found in dictionary";
+			throw std::string("Object not found in dictionary: ") + key;
 	}
 }
 

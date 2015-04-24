@@ -209,7 +209,6 @@ uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len, bool caseInse
             o = UINT_MAX;
     }
     
-    this->extract(o+1);
 	if (o < UINT_MAX)
         // +1 because we want our indices to start at 1
 		return o + 1; // -1 since result will never be 0 (\1 in BWT) or 1 (the '"' preceding the last \1 in the total string)
