@@ -84,11 +84,16 @@ void unshiftString(char* str) {
 
 // TODO: this is only necessary if we want case-insensitive substring matching
 bool DictionaryEntry::cmpLexicographicInsensitive(DictionaryEntry *c1, DictionaryEntry *c2) {
-    shiftString(c1->str);
-    shiftString(c2->str);
+    bool literals = (c1->str[0] == '"') && (c2->str[0] == '"');
+    if (literals) {
+        shiftString(c1->str);
+        shiftString(c2->str);
+    }
     bool result = strcmp(c1->str,c2->str)<0;
-    unshiftString(c1->str);
-    unshiftString(c2->str);
+    if (literals) {
+        unshiftString(c1->str);
+        unshiftString(c2->str);
+    }
     return result;
 }
 
@@ -178,7 +183,7 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 		if (ret != hashObject.end())
 			return ret->second->id;
 		else
-			throw std::string("Object not found in dictionary: ") + key;
+			throw (std::string("Object not found in dictionary:") + key).c_str();
 	}
 }
 

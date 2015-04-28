@@ -169,7 +169,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 			if (ret != 0) {
 				return getGlobalId(ret, NOT_SHARED_OBJECT)+	objectsLiterals->getLength();
 			}
-			throw "Object not found in dictionary";
+			throw (std::string("Object not found in dictionary:") + key).c_str();
 		}
 	}
 }
