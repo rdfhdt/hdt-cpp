@@ -68,10 +68,10 @@ bool DictionaryEntry::cmpLexicographicInsensitive(DictionaryEntry *c1, Dictionar
     char * dummy1 = c1->str;
     char * dummy2 = c2->str;
     if (literals) {
-        dummy1 = new char[strlen(c1->str)];
-        strncpy(dummy1, c1->str, strlen(c1->str));
-        dummy2 = new char[strlen(c2->str)];
-        strncpy(dummy2, c2->str, strlen(c2->str));
+        dummy1 = new char[strlen(c1->str)+1];
+        strncpy(dummy1, c1->str, strlen(c1->str)+1);
+        dummy2 = new char[strlen(c2->str)+1];
+        strncpy(dummy2, c2->str, strlen(c2->str)+1);
         shiftStringToUpper(dummy1);
         shiftStringToUpper(dummy2);
     }
