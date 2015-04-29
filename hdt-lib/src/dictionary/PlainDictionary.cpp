@@ -42,42 +42,22 @@ namespace hdt {
 /* DICTIONARY ENTRY */
 
 // TODO: copy/pasting is bad mmkey
-char shiftChar(char c) {
+char shiftCharToUpper(char c) {
     if (c >= 'A' && c <= 'Z')
         return c + (c-'A');
     if (c >= 'a' && c <= 'z')
-        return c - 'a' + 'A' + 1 + (c-'a');
+        return c - 'a' + 'A' + (c-'a');
     if (c > 'Z' && c < 'a')
         return c + 26;
     return c;
 }
-char unshiftChar(char c) {
-    if (c >= 'A' && c < 'A'+2*26) {
-        if ((c - 'A') % 2 == 0)
-            return c - (c-'A')/2;
-        else
-            return c - 1 - (c-'A')/2 + 'a' - 'A';
-    }
-    if (c > 'Z' + 26 && c < 'a'+26)
-        return c - 26;
-    return c;
-}
         
-void shiftString(char* str) {
+void shiftStringToUpper(char* str) {
     int i = 0;
     while (str[i])
     {
         char c = str[i];
-        str[i] = shiftChar(c);
-        i++;
-    }
-}
-void unshiftString(char* str) {
-    int i = 0;
-    while (str[i])
-    {
-        char c = str[i];
-        str[i] = unshiftChar(c);
+        str[i] = shiftCharToUpper(c);
         i++;
     }
 }
@@ -85,14 +65,20 @@ void unshiftString(char* str) {
 // TODO: this is only necessary if we want case-insensitive substring matching
 bool DictionaryEntry::cmpLexicographicInsensitive(DictionaryEntry *c1, DictionaryEntry *c2) {
     bool literals = (c1->str[0] == '"') && (c2->str[0] == '"');
+    char * dummy1 = c1->str;
+    char * dummy2 = c2->str;
     if (literals) {
-        shiftString(c1->str);
-        shiftString(c2->str);
+        dummy1 = new char[strlen(c1->str)];
+        strncpy(dummy1, c1->str, strlen(c1->str));
+        dummy2 = new char[strlen(c2->str)];
+        strncpy(dummy2, c2->str, strlen(c2->str));
+        shiftStringToUpper(dummy1);
+        shiftStringToUpper(dummy2);
     }
-    bool result = strcmp(c1->str,c2->str)<0;
+    bool result = strcmp(dummy1,dummy2)<0;
     if (literals) {
-        unshiftString(c1->str);
-        unshiftString(c2->str);
+        delete [] dummy1;
+        delete [] dummy2;
     }
     return result;
 }
