@@ -486,6 +486,7 @@ void PlainDictionary::split(ProgressListener *listener) {
  * @return void
  */
 void PlainDictionary::lexicographicSort(ProgressListener *listener) {
+	bool literalDict = this->spec.get("dictionary.type") == HDTVocabulary::DICTIONARY_TYPE_LITERAL;
 
 #ifdef _OPENMP
     NOTIFY(listener, "Sorting dictionary", 0, 100);
@@ -494,7 +495,7 @@ void PlainDictionary::lexicographicSort(ProgressListener *listener) {
         { sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic); }
         { sort(shared.begin(), shared.end(), DictionaryEntry::cmpLexicographic); }
         { sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpLexicographic); }
-        { sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographicInsensitive); }
+        { sort(objects.begin(), objects.end(), literalDict ? DictionaryEntry::cmpLexicographicInsensitive : DictionaryEntry::cmpLexicographic); }
     }
 #else
     NOTIFY(listener, "Sorting shared", 0, 100);
@@ -504,7 +505,7 @@ void PlainDictionary::lexicographicSort(ProgressListener *listener) {
     sort(subjects.begin(), subjects.end(), DictionaryEntry::cmpLexicographic);
 
     NOTIFY(listener, "Sorting objects", 50, 100);
-    sort(objects.begin(), objects.end(), DictionaryEntry::cmpLexicographicInsensitive);
+    sort(objects.begin(), objects.end(), literalDict ? DictionaryEntry::cmpLexicographicInsensitive : DictionaryEntry::cmpLexicographic);
 
     NOTIFY(listener, "Sorting predicates", 90, 100);
     sort(predicates.begin(), predicates.end(), DictionaryEntry::cmpLexicographic);
