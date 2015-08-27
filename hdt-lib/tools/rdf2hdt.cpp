@@ -51,6 +51,7 @@ void help() {
 	cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
 	cout << "\t-f\t<format>\tFormat of the RDF input (ntriples, nquad, n3, turtle, rdfxml)" << endl;
 	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
+	cout << "\t-t\t\tPrint the current status in triple format." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
@@ -59,6 +60,7 @@ int main(int argc, char **argv) {
 	string outputFile;
 	bool verbose=false;
 	bool generateIndex=false;
+    bool triples = false;
 	string configFile;
 	string options;
 	string rdfFormat;
@@ -67,7 +69,7 @@ int main(int argc, char **argv) {
 	RDFNotation notation = NTRIPLES;
 
 	int c;
-	while( (c = getopt(argc,argv,"c:o:vf:B:i"))!=-1) {
+	while( (c = getopt(argc,argv,"c:o:vf:B:it"))!=-1) {
 		switch(c) {
 		case 'c':
 			configFile = optarg;
@@ -79,6 +81,9 @@ int main(int argc, char **argv) {
 			break;
 		case 'v':
 			verbose = true;
+			break;
+		case 't':
+			triples = true;
 			break;
 		case 'f':
 			rdfFormat = optarg;
@@ -141,10 +146,12 @@ int main(int argc, char **argv) {
 	}
 
 	// Process
-	StdoutProgressListener progress;
 	HDTSpecification spec(configFile);
 
 	spec.setOptions(options);
+    spec.set("output.format", triples ? "turtle" : "text");
+    
+	StdoutProgressListener progress(spec);
 
 	try {
 		// Read RDF
@@ -163,11 +170,18 @@ int main(int argc, char **argv) {
 		out.close();
 
 		globalTimer.stop();
-		cout << "HDT Successfully generated.                        " << endl;
-		cout << "Total processing time: ";
-		cout << "Clock(" << globalTimer.getRealStr();
-		cout << ")  User(" << globalTimer.getUserStr();
-		cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
+        if (triples) {
+            cout << ":HDT :status :finished ;";
+            cout << " :clockTime \"" << globalTimer.getRealStr() << "\" ;";
+            cout << " :userTime \"" << globalTimer.getUserStr() << "\" ;";
+            cout << " :systemTime \"" << globalTimer.getSystemStr() << "\".\n";
+        } else {
+            cout << "HDT Successfully generated.                        " << endl;
+            cout << "Total processing time: ";
+            cout << "Clock(" << globalTimer.getRealStr();
+            cout << ")  User(" << globalTimer.getUserStr();
+            cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
+        }
 
 		if(generateIndex) {
 			hdt = HDTManager::indexedHDT(hdt, &progress);

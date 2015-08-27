@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
 
 	try {
-		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str());
+		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), true);
 
 		if (filter1 != "" || filter2 != "") {
 			ostream *out;

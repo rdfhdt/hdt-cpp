@@ -36,6 +36,7 @@
 #include <iostream>
 #include <iomanip>
 #include <stddef.h>
+#include <HDTSpecification.hpp>
 
 namespace hdt {
 
@@ -82,18 +83,28 @@ public:
 
 class StdoutProgressListener : public ProgressListener {
 private:
+    HDTSpecification spec;
 public:
-	virtual ~StdoutProgressListener() { }
+    StdoutProgressListener(HDTSpecification spec) : spec(spec) { }
+	virtual ~StdoutProgressListener() {}
 
     void notifyProgress(float level, const char *section) {
-    	std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << level << " %                      \r";
-		std::cout.flush();
+        if (this->spec.get("output.format") == "turtle") {
+            std::cout << ":HDT :statusUpdate [ rdf:label \"" << section << "\" ; :progress" << std::setprecision( 5 ) << level/100 << " ] .\n";
+        } else {
+            std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << level << " %                      \r";
+            std::cout.flush();
+        }
 	}
 
     void notifyProgress(float task, float level, const char *section) {
-    	std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << task << " % / " << level << " %                      \r";
-                std::cout.flush();
+        if (this->spec.get("output.format") == "turtle") {
+            std::cout << ":HDT :statusUpdate [ rdf:label \"" << section << std::setprecision( 5 ) << "\" ; :task " << task << " ; :progress " << level/100 << " ] .\n";
+        } else {
+            std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << task << " % / " << level << " %                      \r";
+            std::cout.flush();
         }
+    }
 
 };
 

@@ -68,6 +68,7 @@ public:
 	 * Maps an HDT file and load/generate additional indexes to solve efficiently all queries.
 	 */
 	static HDT *mapIndexedHDT(const char *file, ProgressListener *listener=NULL);
+	static HDT *mapIndexedHDT(const char *file, bool statusAsTriples, ProgressListener *listener=NULL);
 
 	/**
 	 * Return an indexed HDT that is efficient for all kind of queries, given a (possibly) not indexed HDT.

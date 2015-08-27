@@ -79,17 +79,17 @@ ModifiableHDT *HDTFactory::createModifiableHDT(HDTSpecification &spec)
 	return h;
 }
 
-Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
+Triples *HDTFactory::readTriples(ControlInformation &controlInformation, HDTSpecification* specification) {
 	std::string triplesType = controlInformation.getFormat();
 
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
-		return new BitmapTriples();
+		return specification ? new BitmapTriples(*specification) : new BitmapTriples();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_COMPACT) {
-		return new CompactTriples();
+		return specification ? new CompactTriples(*specification) : new CompactTriples();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
-		return new PlainTriples();
+		return specification ? new PlainTriples(*specification) : new PlainTriples();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
-		return new TriplesList();
+		return specification ? new TriplesList(*specification) : new TriplesList();
 #ifndef WIN32
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		return new TripleListDisk();

@@ -56,7 +56,16 @@ string RDFParserSerd::getStringObject(const SerdNode *term, const SerdNode *data
 SerdStatus hdtserd_error(void* handle, const SerdError* error) {
     //RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
     //raptorParser->error.append("File: "+e->filename+" Line "+e->line+" Col "+e->col+" Parsing Error: "+e->fmt);
-    fprintf(stderr, error->fmt, error->args);
+    string* outputFormat = (string*)handle;
+    if (outputFormat && *outputFormat == "turtle") {
+        char str[256];
+        sprintf(str, error->fmt, error->args);
+        cout << ":HDT :error [ rdf:label \"" << str << "\" ; :line " << error->line << " ; :col " << error->col << " ; :filename \"" << error->filename << "\" ].\n";
+    }
+    else {
+        fprintf(stderr, error->fmt, error->args);
+    }
+    
     return SERD_SUCCESS;
 }
 
@@ -118,7 +127,7 @@ SerdStatus hdtserd_end(void* handle, const SerdNode* node) {
 
 
 
-RDFParserSerd::RDFParserSerd() : numByte(0)
+RDFParserSerd::RDFParserSerd(string outputFormat) : numByte(0), outputFormat(outputFormat)
 {
 }
 
@@ -154,7 +163,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
                 (SerdStatementSink)hdtserd_process_triple,
                 (SerdEndSink)hdtserd_end);
 
-    serd_reader_set_error_sink(reader, hdtserd_error, NULL);
+    serd_reader_set_error_sink(reader, hdtserd_error, &this->outputFormat);
 
 
     const uint8_t* input=serd_uri_to_path((const uint8_t *)fileName);

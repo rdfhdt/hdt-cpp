@@ -7,7 +7,6 @@ namespace hdt {
 
 PredicateIndex::PredicateIndex(BitmapTriples *triples) : triples(triples) {
 
-
 }
 
 PredicateIndexWavelet::PredicateIndexWavelet(BitmapTriples *triples) : PredicateIndex(triples) {
@@ -108,7 +107,10 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
         NOTIFYCOND3(&iListener, "Creating Predicate bitmap", i, predCount->getNumberOfElements(), 100000);
     }
     bitmap->set(triples->arrayY->getNumberOfElements()-1, true);
-    cout << "Predicate Bitmap in " << st << endl;
+    if (spec && this->spec->get("output.format") == "turtle")
+        cout << ":HDT :predicateBitmapTime \"" << st << "\" .\n";
+    else
+        cout << "Predicate Bitmap in " << st << endl;
     st.reset();
 
     delete predCount;
@@ -136,7 +138,10 @@ void PredicateIndexArray::generate(ProgressListener *listener) {
 
     delete insertArray;
 
-    cout << "Count predicates in " << st << endl;
+    if (spec && this->spec->get("output.format") == "turtle")
+        cout << ":HDT :countPredicatesTime \"" << st << "\" .\n";
+    else
+        cout << "Count predicates in " << st << endl;
 }
 
 }

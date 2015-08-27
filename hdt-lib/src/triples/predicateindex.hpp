@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include <HDTListener.hpp>
+#include <HDTSpecification.hpp>
 
 
 #include "../bitsequence/BitSequence375.h"
@@ -91,9 +92,10 @@ class PredicateIndexArray : public PredicateIndex {
     size_t currpred,currpos;
     size_t numPredicates;
     BitmapTriples *bitmapTriples;
+    HDTSpecification* spec;
 
 public:
-    PredicateIndexArray(BitmapTriples *triples) : PredicateIndex(triples), array(NULL), bitmap(NULL),currpred(0),bitmapTriples(triples) {
+    PredicateIndexArray(BitmapTriples *triples, HDTSpecification* specification = NULL) : PredicateIndex(triples), array(NULL), bitmap(NULL),currpred(0),bitmapTriples(triples),spec(specification) {
 
     }
 

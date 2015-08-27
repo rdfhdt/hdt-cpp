@@ -228,14 +228,17 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
     IntermediateListener iListener(listener);
     iListener.setRange(0,30);
 
-    predicateIndex = new PredicateIndexArray(this);
+    predicateIndex = new PredicateIndexArray(this, &(this->spec));
     predicateIndex->generate(&iListener);
 
     iListener.setRange(30,100);
     generateIndexMemory(&iListener);
    	//generateIndexMemoryFast(listener);
 
-	cout << "Index generated in "<< global << endl;
+    if (this->spec.get("output.format") == "turtle")
+        cout << ":HDT :indexTime \"" << global << "\" .\n";
+    else
+        cout << "Index generated in "<< global << endl;
 }
 
 void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
@@ -262,7 +265,10 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 
 		NOTIFYCOND3(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements(), 1000000);
 	}
-	cout << "Count Objects in " << st << " Max was: " << maxCount << endl;
+    if (this->spec.get("output.format") == "turtle")
+        cout << ":HDT :countObjectsTime \"" << st << "\" ; :countObjectsMax " << maxCount << " .\n";
+    else
+        cout << "Countz Objects in " << st << " Max was: " << maxCount << endl;
 	st.reset();
 
 #if 0
@@ -283,10 +289,16 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
 	delete objectCount;
 	objectCount=NULL;
-	cout << "Bitmap in " << st << endl;
+    if (this->spec.get("output.format") == "turtle")
+        cout << ":HDT :bitmapTime \"" << st << "\" .\n";
+    else
+        cout << "Bitmap in " << st << endl;
 	st.reset();
 
-    cout << "Bitmap bits: " << bitmapIndex->getNumBits() << " Ones: " << bitmapIndex->countOnes() << endl;
+    if (this->spec.get("output.format") == "turtle")
+        cout << ":HDT :bitmapBits " << bitmapIndex->getNumBits() << " ; :bitmapOnes " << bitmapIndex->countOnes() << " .\n";
+    else
+        cout << "Bitmap bits: " << bitmapIndex->getNumBits() << " Ones: " << bitmapIndex->countOnes() << endl;
 #if 0
     for(size_t i=0;i<bitmapIndex->getNumBits();i++) {
 		if(bitmapIndex->access(i)){
@@ -343,7 +355,10 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	}
 	delete objectInsertedCount;
 	objectInsertedCount=NULL;
-	cout << "Object references in " << st << endl;
+    if (this->spec.get("output.format") == "turtle")
+        cout << ":HDT :objectReferencesTime \"" << st << "\" .\n";
+    else
+        cout << "Object references in " << st << endl;
 	st.reset();
 
 	predCount->reduceBits();
@@ -424,7 +439,10 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		NOTIFYCOND3(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements(), 10000);
 	} while(object<=bitmapIndex->countOnes());
 
-	cout << "Sort lists in " << st << endl;
+    if (this->spec.get("output.format") == "turtle")
+        cout << ":HDT :sortListsTime \"" << st << "\" .\n";
+    else
+        cout << "Sort lists in " << st << endl;
 	st.reset();
 
 	// Save Object Index
@@ -452,8 +470,13 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,40);
 
-    cout << "Generate Object Index" << endl;
-    cout << " Gather object lists..." << endl;
+    if (this->spec.get("output.format") == "turtle") {
+        cout << ":HDT :status \"Generate Object Index\" .\n";
+        cout << ":HDT :status \"Gather object lists...\" .\n";
+    } else {
+        cout << "Generate Object Index" << endl;
+        cout << " Gather object lists..." << endl;
+    }
 
 	// For each object, a list of (zpos, predicate)
 	vector<vector<pair<unsigned int, unsigned int> > > index;
@@ -491,7 +514,10 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 	}
 	bitmapIndex = new BitSequence375(arrayZ->getNumberOfElements());
 
-    cout << " Serialize object lists..." << endl;
+    if (this->spec.get("output.format") == "turtle")
+        cout << ":HDT :status \"Serialize object lists...\" .\n";
+    else
+        cout << " Serialize object lists..." << endl;
 	iListener.setRange(40, 80);
 	unsigned int pos=0;
 	unsigned int numBits = bits(arrayY->getNumberOfElements());
@@ -543,18 +569,33 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
     }
 #endif
 
-	cout << "Index generated in " << st << endl;
+    if (this->spec.get("output.format") == "turtle") {
+        cout << ":HDT :indexTime \"" << st << "\" .\n";
+        
+        cout << ":HDT :numTriples " << getNumberOfElements() << " .\n";
+        cout << ":HDT :order \"" << getOrderStr(order) << "\" .\n";
+        cout << ":HDT :originalTriplesSize " << size() << " .\n";
+        cout << ":HDT :streamSize " << arrayIndex->size() << " ; :streamSizeRatio " << (((unsigned long long)(arrayIndex->size())) / size()) << " .\n";
+        cout << ":HDT :bitmapObjectSize " << bitmapIndex->getSizeBytes() << " ; :bitmapObjectSizeRatio " << (((unsigned long long)(bitmapIndex->getSizeBytes())) / size()) << " .\n";
+        
+        cout << ":HDT :indexSize " << bitmapIndex->getSizeBytes()+arrayIndex->size() << " ; :indexRatio " << (((unsigned long long)(bitmapIndex->getSizeBytes()+arrayIndex->size())) / size()) << " .\n";
+        cout << ":HDT :size " << size()+bitmapIndex->getSizeBytes()+arrayIndex->size() << " .\n";
+        
+        cout << ":HDT :nrOfLists " << bitmapZ->countOnes() << " ; :nrOfBits " << bits(bitmapZ->countOnes()) << " .\n";
+    } else {
+        cout << "Index generated in " << st << endl;
 
-	cout << "Num triples: " << getNumberOfElements() << endl;
-	cout << "Order: " << getOrderStr(order) << endl;
-	cout << "Original triples size: " << size() << endl;
-	cout << "Stream size: " << arrayIndex->size() << " <" << ((unsigned long long)(arrayIndex->size())*100) / size() << "%>"<< endl;
-	cout << "Bitmap Object size: " << bitmapIndex->getSizeBytes() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()))*100 / size() << "%>"<< endl;
+        cout << "Num triples: " << getNumberOfElements() << endl;
+        cout << "Order: " << getOrderStr(order) << endl;
+        cout << "Original triples size: " << size() << endl;
+        cout << "Stream size: " << arrayIndex->size() << " <" << ((unsigned long long)(arrayIndex->size())*100) / size() << "%>"<< endl;
+        cout << "Bitmap Object size: " << bitmapIndex->getSizeBytes() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()))*100 / size() << "%>"<< endl;
 
-    cout << "Total Index size: " << bitmapIndex->getSizeBytes()+arrayIndex->size() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()+arrayIndex->size()))*100 / size() << "%>"<< endl;
-    cout << "Total size: " << size()+bitmapIndex->getSizeBytes()+arrayIndex->size() << endl;
+        cout << "Total Index size: " << bitmapIndex->getSizeBytes()+arrayIndex->size() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()+arrayIndex->size()))*100 / size() << "%>"<< endl;
+        cout << "Total size: " << size()+bitmapIndex->getSizeBytes()+arrayIndex->size() << endl;
 
-	cout << "Number of lists: " << bitmapZ->countOnes() << " Bits: " << bits(bitmapZ->countOnes()) << endl;
+        cout << "Number of lists: " << bitmapZ->countOnes() << " Bits: " << bits(bitmapZ->countOnes()) << endl;
+    }
 }
 
 void BitmapTriples::populateHeader(Header &header, string rootNode) {
@@ -808,7 +849,7 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
     // TODO: Guess type from file
 	iListener.setRange(10,50);
 	iListener.notifyProgress(0, "BitmapTriples loading Predicate Index");
-    predicateIndex = new PredicateIndexArray(this);
+    predicateIndex = new PredicateIndexArray(this, &(this->spec));
     predicateIndex->load(input,&iListener);
 
 	// Load predicate count
@@ -864,7 +905,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     // Load Predicate Index. TODO: Guess type from file
     iListener.setRange(50,100);
     iListener.notifyProgress(0, "BitmapTriples loading Predicate Index");
-    predicateIndex = new PredicateIndexArray(this);
+    predicateIndex = new PredicateIndexArray(this, &(this->spec));
     count += predicateIndex->load(&ptr[count], ptrMax, &iListener);
 
     // Load predicate counts

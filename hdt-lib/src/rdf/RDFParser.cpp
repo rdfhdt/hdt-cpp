@@ -34,10 +34,10 @@ RDFParserPull *RDFParserPull::getParserPull(const char *fileName, RDFNotation no
 }
 
 
-RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
+RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation, string outputFormat) {
 #ifdef HAVE_SERD
-    if(notation==TURTLE) {
-        return new RDFParserSerd();
+    if(notation==TURTLE || notation==NTRIPLES) {
+        return new RDFParserSerd(outputFormat);
     }
 #endif
 	if(notation==NTRIPLES) {

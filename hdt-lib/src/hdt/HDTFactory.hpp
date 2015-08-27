@@ -88,7 +88,7 @@ public:
 	 * @param controlInformation
 	 * @return
 	 */
-	static Triples *readTriples(ControlInformation &controlInformation);
+	static Triples *readTriples(ControlInformation &controlInformation, HDTSpecification* specification = NULL);
 };
 }
 

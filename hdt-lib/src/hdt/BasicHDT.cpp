@@ -168,7 +168,10 @@ IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicat
 		TripleIDStringIterator* iterator = new TripleIDStringIterator(dictionary, iterID);
 		return iterator;
 	} catch (char* e) {
-		cout << "Exception: " << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Exception: " << e << "\" .\n";
+        else
+            cout << "Exception: " << e << endl;
 	}
 	return new IteratorTripleString();
 }
@@ -214,7 +217,7 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		// Load data
 		DictionaryLoader dictLoader(dict, &iListener);
 
-		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation);
+		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation, this->spec.get("output.format"));
         parser->doParse(fileName, baseUri, notation, true, &dictLoader);
 		delete parser;
 
@@ -231,11 +234,17 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		}
 
 	} catch (const char *e) {
-		cout << "Catch exception dictionary: " << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception dictionary: " << e << "\" .\n";
+        else
+            cout << "Catch exception dictionary: " << e << endl;
 		delete dict;
 		throw e;
 	} catch (char *e) {
-		cout << "Catch exception dictionary: " << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception dictionary: " << e << "\" .\n";
+        else
+            cout << "Catch exception dictionary: " << e << endl;
 		delete dict;
 		throw e;
 	}
@@ -276,8 +285,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 
 		TriplesLoader tripLoader(dictionary, triplesList, &iListener);
 
-		RDFParserCallback *pars = RDFParserCallback::getParserCallback(
-				notation);
+		RDFParserCallback *pars = RDFParserCallback::getParserCallback(notation, this->spec.get("output.format"));
 		pars->doParse(fileName, baseUri, notation, true, &tripLoader);
 		delete pars;
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, tripLoader.getSize());
@@ -296,11 +304,17 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		iListener.setRange(85, 90);
 		triplesList->removeDuplicates(&iListener);
 	} catch (const char *e) {
-		cout << "Catch exception triples" << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception triples: " << e << "\" .\n";
+        else
+            cout << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw e;
 	} catch (char *e) {
-		cout << "Catch exception triples" << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception triples: " << e << "\" .\n";
+        else
+            cout << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw e;
 	}
@@ -389,12 +403,18 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 		fillHeader(baseUri);
 
 	}catch (const char *e) {
-		cout << "Catch exception load: " << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception load: " << e << "\" .\n";
+        else
+            cout << "Catch exception load: " << e << endl;
 		deleteComponents();
 		createComponents();
 		throw e;
 	} catch (char *e) {
-		cout << "Catch exception load: " << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception load: " << e << "\" .\n";
+        else
+            cout << "Catch exception load: " << e << endl;
 		deleteComponents();
 		createComponents();
 		throw e;
@@ -402,7 +422,10 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 }
 
 void BasicHDT::addDictionaryFromHDT(const char *fileName, ModifiableDictionary *dict, ProgressListener *listener) {
-        cout << fileName << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :fileName \"" << fileName << "\" .\n";
+        else
+            cout << fileName << endl;
         BasicHDT hdt;
         hdt.mapHDT(fileName, listener);
 
@@ -410,7 +433,10 @@ void BasicHDT::addDictionaryFromHDT(const char *fileName, ModifiableDictionary *
 
         char str[100];
 
-        cout << endl << "Load dictionary from " << fileName << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :status \"Load dictionary from " << fileName << "\" .\n";
+        else
+            cout << endl << "Load dictionary from " << fileName << endl;
         for(long long int i=0;i<otherDict->getNsubjects();i++) {
                 string a = otherDict->idToString(i+1, SUBJECT);
                 dict->insert(a, SUBJECT);
@@ -462,11 +488,17 @@ void BasicHDT::loadDictionaryFromHDTs(const char** fileName, size_t numFiles, co
 
         	delete dict;
         } catch (const char *e) {
-        	cout << "Catch exception dictionary: " << e << endl;
+            if (this->spec.get("output.format") == "turtle")
+                cout << ":HDT :error \"Catch exception dictionary " << e << "\" .\n";
+            else
+                cout << "Catch exception dictionary: " << e << endl;
         	delete dict;
         	throw e;
         } catch (char *e) {
-        	cout << "Catch exception dictionary: " << e << endl;
+            if (this->spec.get("output.format") == "turtle")
+                cout << ":HDT :error \"Catch exception dictionary " << e << "\" .\n";
+            else
+                cout << "Catch exception dictionary: " << e << endl;
         	delete dict;
         	throw e;
         }
@@ -494,7 +526,10 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 
 		for(size_t i=0;i<numFiles;i++) {
 			const char *fileName = fileNames[i];
-	        cout << endl << "Load triples from " << fileName << endl;
+            if (this->spec.get("output.format") == "turtle")
+                cout << ":HDT :status \"Load triples from " << fileName << "\" .\n";
+            else
+                cout << endl << "Load triples from " << fileName << endl;
 	        hdt.mapHDT(fileName);
 	        Dictionary *dict = hdt.getDictionary();
 
@@ -570,11 +605,17 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, totalOriginalSize);
 	} catch (const char *e) {
-		cout << "Catch exception triples" << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception triples " << e << "\" .\n";
+        else
+            cout << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw e;
 	} catch (char *e) {
-		cout << "Catch exception triples" << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception triples " << e << "\" .\n";
+        else
+            cout << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw e;
 	}
@@ -616,12 +657,18 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 		fillHeader(baseUri);
 
 	}catch (const char *e) {
-		cout << "Catch exception load: " << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception load: " << e << "\" .\n";
+        else
+            cout << "Catch exception load: " << e << endl;
 		deleteComponents();
 		createComponents();
 		throw e;
 	} catch (char *e) {
-		cout << "Catch exception load: " << e << endl;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Catch exception load: " << e << "\" .\n";
+        else
+            cout << "Catch exception load: " << e << endl;
 		deleteComponents();
 		createComponents();
 		throw e;
@@ -686,15 +733,21 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	iListener.setRange(60,100);
 	controlInformation.load(input);
 	delete triples;
-	triples = HDTFactory::readTriples(controlInformation);
+	triples = HDTFactory::readTriples(controlInformation, &(this->spec));
 	triples->load(input, controlInformation, &iListener);
     } catch (const char *ex) {
-        cout << "Exception loading HDT: " << ex;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Exception loading HDT: " << ex << "\" .\n";
+        else
+            cout << "Exception loading HDT: " << ex;
         deleteComponents();
         createComponents();
         throw ex;
     } catch (char *ex) {
-    	cout << "Exception loading HDT: " << ex;
+        if (this->spec.get("output.format") == "turtle")
+            cout << ":HDT :error \"Exception loading HDT: " << ex << "\" .\n";
+        else
+            cout << "Exception loading HDT: " << ex;
     	deleteComponents();
         createComponents();
         throw ex;
@@ -777,7 +830,7 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     iListener.setRange(60,100);
     controlInformation.load(&ptr[count], ptrMax);
     delete triples;
-    triples = HDTFactory::readTriples(controlInformation);
+    triples = HDTFactory::readTriples(controlInformation, &(this->spec));
     count += triples->load(&ptr[count], ptrMax,  &iListener);
 
 	return count;
@@ -852,7 +905,6 @@ void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
 	string indexname = this->fileName + ".index";
 
 	ifstream in(indexname.c_str(), ios::binary);
-
 	if(in.good()) {
         if(mappedHDT) {
             // Map

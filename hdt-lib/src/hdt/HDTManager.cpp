@@ -48,7 +48,18 @@ HDT *HDTManager::mapHDT(const char *file, ProgressListener *listener){
 }
 
 HDT *HDTManager::mapIndexedHDT(const char *file, ProgressListener *listener){
-    BasicHDT *h = new BasicHDT();
+    return HDTManager::mapIndexedHDT(file, listener);
+}
+
+HDT *HDTManager::mapIndexedHDT(const char *file, bool statusAsTriples, ProgressListener *listener){
+    BasicHDT *h;
+    if (statusAsTriples) {
+        HDTSpecification spec;
+        spec.set("output.format", "turtle");
+        h = new BasicHDT(spec);
+    } else {
+        h = new BasicHDT();
+    }
     IntermediateListener iListener(listener);
     iListener.setRange(0,10);
     h->mapHDT(file, &iListener);
