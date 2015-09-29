@@ -85,6 +85,7 @@ class StdoutProgressListener : public ProgressListener {
 private:
     HDTSpecification spec;
 public:
+    StdoutProgressListener() { }
     StdoutProgressListener(HDTSpecification spec) : spec(spec) { }
 	virtual ~StdoutProgressListener() {}
 
