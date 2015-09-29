@@ -92,6 +92,7 @@ public:
     void notifyProgress(float level, const char *section) {
         if (this->spec.get("output.format") == "turtle") {
             std::cout << ":HDT :statusUpdate [ rdf:label \"" << section << "\" ; :progress" << std::setprecision( 5 ) << level/100 << " ] .\n";
+            std::cout.flush();
         } else {
             std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << level << " %                      \r";
             std::cout.flush();
@@ -101,6 +102,7 @@ public:
     void notifyProgress(float task, float level, const char *section) {
         if (this->spec.get("output.format") == "turtle") {
             std::cout << ":HDT :statusUpdate [ rdf:label \"" << section << std::setprecision( 5 ) << "\" ; :task " << task << " ; :progress " << level/100 << " ] .\n";
+            std::cout.flush();
         } else {
             std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << task << " % / " << level << " %                      \r";
             std::cout.flush();

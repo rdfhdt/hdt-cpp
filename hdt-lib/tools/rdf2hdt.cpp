@@ -171,10 +171,10 @@ int main(int argc, char **argv) {
 
 		globalTimer.stop();
         if (triples) {
-            cout << ":HDT :status :finished ;";
+            cout << ":HDT :statusUpdate [ rdf:label \"finished\" ; :progress 1.0 ;";
             cout << " :clockTime \"" << globalTimer.getRealStr() << "\" ;";
             cout << " :userTime \"" << globalTimer.getUserStr() << "\" ;";
-            cout << " :systemTime \"" << globalTimer.getSystemStr() << "\".\n";
+            cout << " :systemTime \"" << globalTimer.getSystemStr() << "\"] .\n";
         } else {
             cout << "HDT Successfully generated.                        " << endl;
             cout << "Total processing time: ";
