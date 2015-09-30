@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
             cout << ":HDT :statusUpdate [ rdf:label \"finished\" ; :progress 1.0 ;";
             cout << " :clockTime \"" << globalTimer.getRealStr() << "\" ;";
             cout << " :userTime \"" << globalTimer.getUserStr() << "\" ;";
-            cout << " :systemTime \"" << globalTimer.getSystemStr() << "\"] .\n";
+            cout << " :systemTime \"" << globalTimer.getSystemStr() << "\" ] .\n";
         } else {
             cout << "HDT Successfully generated.                        " << endl;
             cout << "Total processing time: ";
