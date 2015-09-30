@@ -90,6 +90,7 @@ namespace HDTVocabulary {
 	const std::string DICTIONARY_TYPE_FOUR = HDT_DICTIONARY_BASE+"Four>";
 	const std::string DICTIONARY_TYPE_HTFC = HDT_DICTIONARY_BASE+"FrontCodingHuTucker>";
 	const std::string DICTIONARY_TYPE_LITERAL = HDT_DICTIONARY_BASE+"Literal>";
+	const std::string DICTIONARY_TYPE_CASE_INSENSITIVE_LITERAL = HDT_DICTIONARY_BASE+"CaseInsensitiveLiteral>";
 
 	// Triples
 	const std::string TRIPLES_TYPE = DUBLIN_CORE+"format>";

@@ -99,12 +99,14 @@ void BasicHDT::createComponents() {
 		dictionary = new FourSectionDictionary(spec);
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		dictionary = new PlainDictionary(spec);
-	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
+	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_CASE_INSENSITIVE_LITERAL) {
 #ifdef HAVE_CDS
 		dictionary = new LiteralDictionary(spec);
 #else
 		throw "This version has been compiled without support for this dictionary";
 #endif
+    } else if(dictType==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
+        throw "Case-sensitive HDT files are not supported by this version.";
 	} else {
 		dictionary = new FourSectionDictionary(spec);
 	}
