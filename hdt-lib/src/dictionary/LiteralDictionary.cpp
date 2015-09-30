@@ -464,7 +464,7 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, bool c
 }
 
 void LiteralDictionary::save(std::ostream & output,	ControlInformation & controlInformation, ProgressListener *listener) {
-	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_LITERAL);
+	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_CASE_INSENSITIVE_LITERAL);
 
 	controlInformation.setUint("mapping", this->mapping);
 	controlInformation.setUint("sizeStrings", this->sizeStrings);
@@ -496,7 +496,7 @@ void LiteralDictionary::save(std::ostream & output,	ControlInformation & control
 
 void LiteralDictionary::populateHeader(Header & header, string rootNode) {
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE,
-			HDTVocabulary::DICTIONARY_TYPE_LITERAL);
+			HDTVocabulary::DICTIONARY_TYPE_CASE_INSENSITIVE_LITERAL);
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSUBJECTS,
 			getNsubjects());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMPREDICATES,
@@ -586,7 +586,7 @@ unsigned int LiteralDictionary::insert(std::string & str,
 }
 
 string LiteralDictionary::getType() {
-	return HDTVocabulary::DICTIONARY_TYPE_LITERAL;
+	return HDTVocabulary::DICTIONARY_TYPE_CASE_INSENSITIVE_LITERAL;
 }
 
 unsigned int LiteralDictionary::getMapping() {

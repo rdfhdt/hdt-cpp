@@ -486,7 +486,7 @@ void PlainDictionary::split(ProgressListener *listener) {
  * @return void
  */
 void PlainDictionary::lexicographicSort(ProgressListener *listener) {
-	bool literalDict = this->spec.get("dictionary.type") == HDTVocabulary::DICTIONARY_TYPE_LITERAL;
+	bool literalDict = this->spec.get("dictionary.type") == HDTVocabulary::DICTIONARY_TYPE_CASE_INSENSITIVE_LITERAL;
 
 #ifdef _OPENMP
     NOTIFY(listener, "Sorting dictionary", 0, 100);

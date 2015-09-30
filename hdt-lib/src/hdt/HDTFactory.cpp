@@ -107,13 +107,15 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 	} else if(type==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
 		return new FourSectionDictionary();
 
-	} else if(type==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
+	} else if(type==HDTVocabulary::DICTIONARY_TYPE_CASE_INSENSITIVE_LITERAL) {
 #ifdef HAVE_CDS
 		return new LiteralDictionary();
 #else
 		throw "This version has been compiled without support for this dictionary";
 #endif
-	}
+	} else if(type==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
+		throw "Case-sensitive HDT files are not supported by this version.";
+    }
 
 	throw "Dictionary Implementation not available";
 }
