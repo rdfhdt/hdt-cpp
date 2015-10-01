@@ -108,12 +108,12 @@ unsigned int KyotoDictionary::stringToId(std::string &key, TripleComponentRole p
 		if(subjects.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) {
 			return getGlobalId(ret,NOT_SHARED_SUBJECT);
 		}
-		throw "Subject not found in dictionary";
+    return 0;
 	case PREDICATE:
 		if(predicates.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) {
 			return getGlobalId(ret, NOT_SHARED_PREDICATE);
 		}
-		throw "Predicate not found in dictionary";
+    return 0;
 
 	case OBJECT:
 		if(shared.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) {
@@ -122,7 +122,7 @@ unsigned int KyotoDictionary::stringToId(std::string &key, TripleComponentRole p
 		if(objects.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) {
 			return getGlobalId(ret,NOT_SHARED_OBJECT);
 		}
-		throw "Object not found in dictionary";
+    return 0;
 	}
 
 	// NOT REACHED

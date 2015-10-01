@@ -123,13 +123,13 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 		if (ret != 0) {
 			return getGlobalId(ret, NOT_SHARED_SUBJECT);
 		}
-		throw "Subject not found in dictionary";
+    return 0;
 	case PREDICATE:
 		ret = predicates->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) {
 			return getGlobalId(ret, NOT_SHARED_PREDICATE);
 		}
-		throw "Predicate not found in dictionary";
+    return 0;
 
 	case OBJECT:
 		if (key.at(0) == '"') {
@@ -138,40 +138,32 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
                 csd::CSD_FMIndex *fmIndex=NULL;
 
                 csd::CSD_Cache *cache = dynamic_cast<csd::CSD_Cache *>(objectsLiterals);
-                if(cache!=NULL) {
+                if(cache!=NULL)
                     fmIndex = dynamic_cast<csd::CSD_FMIndex  *>(cache->getChild());
-                } else {
+                else
                     fmIndex = dynamic_cast<csd::CSD_FMIndex  *>(objectsLiterals);
-                }
                 
-                if (fmIndex) {
+                if (fmIndex)
                     ret = fmIndex->locate((const unsigned char *) key.c_str(), key.length(), caseInsensitive);
-                }
-                else {
+                else
                     throw "Error accessing FM index";
-                }
-            }
-            else {
+            } else {
                 ret = objectsLiterals->locate((const unsigned char *) key.c_str(), key.length());
             }
-			if (ret != 0) {
-				return getGlobalId(ret, NOT_SHARED_OBJECT);
-			}
-			else{
-				throw (std::string("Object not found in dictionary:") + key).c_str();
-			}
-		} else {
-			ret = shared->locate((const unsigned char *) key.c_str(), key.length());
-			if (ret != 0) {
-				return getGlobalId(ret, SHARED_OBJECT);
-			}
-			ret = objectsNotLiterals->locate((const unsigned char *) key.c_str(), key.length());
-			if (ret != 0) {
-				return getGlobalId(ret, NOT_SHARED_OBJECT)+	objectsLiterals->getLength();
-			}
-			throw (std::string("Object not found in dictionary:") + key).c_str();
-		}
-	}
+            if (ret != 0)
+                return getGlobalId(ret, NOT_SHARED_OBJECT);
+            else
+                throw (std::string("Object not found in dictionary:") + key).c_str();
+        } else {
+            ret = shared->locate((const unsigned char *) key.c_str(), key.length());
+            if (ret != 0)
+                return getGlobalId(ret, SHARED_OBJECT);
+            ret = objectsNotLiterals->locate((const unsigned char *) key.c_str(), key.length());
+            if (ret != 0)
+                return getGlobalId(ret, NOT_SHARED_OBJECT)+	objectsLiterals->getLength();
+            throw (std::string("Object not found in dictionary:") + key).c_str();
+        }
+    }
 }
 
 void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	ProgressListener *listener) {
