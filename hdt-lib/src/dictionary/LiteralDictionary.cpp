@@ -153,7 +153,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
             if (ret != 0)
                 return getGlobalId(ret, NOT_SHARED_OBJECT);
             else
-                throw (std::string("Object not found in dictionary:") + key).c_str();
+                return 0;
         } else {
             ret = shared->locate((const unsigned char *) key.c_str(), key.length());
             if (ret != 0)
@@ -161,7 +161,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
             ret = objectsNotLiterals->locate((const unsigned char *) key.c_str(), key.length());
             if (ret != 0)
                 return getGlobalId(ret, NOT_SHARED_OBJECT)+	objectsLiterals->getLength();
-            throw (std::string("Object not found in dictionary:") + key).c_str();
+            return 0;
         }
     }
 }
