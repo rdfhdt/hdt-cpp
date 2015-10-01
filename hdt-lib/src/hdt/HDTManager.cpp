@@ -48,7 +48,7 @@ HDT *HDTManager::mapHDT(const char *file, ProgressListener *listener){
 }
 
 HDT *HDTManager::mapIndexedHDT(const char *file, ProgressListener *listener){
-    return HDTManager::mapIndexedHDT(file, listener);
+    return HDTManager::mapIndexedHDT(file, false, listener);
 }
 
 HDT *HDTManager::mapIndexedHDT(const char *file, bool statusAsTriples, ProgressListener *listener){
