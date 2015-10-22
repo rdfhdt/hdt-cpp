@@ -43,7 +43,10 @@
 #include "../dictionary/PlainDictionary.hpp"
 #include "../dictionary/KyotoDictionary.hpp"
 #include "../dictionary/FourSectionDictionary.hpp"
+
+#ifdef HAVE_CDS
 #include "../dictionary/LiteralDictionary.hpp"
+#endif
 
 #include "../triples/TriplesList.hpp"
 #include "../triples/TriplesKyoto.hpp"
@@ -97,7 +100,11 @@ void BasicHDT::createComponents() {
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
 		dictionary = new PlainDictionary(spec);
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
-			dictionary = new LiteralDictionary(spec);
+#ifdef HAVE_CDS
+		dictionary = new LiteralDictionary(spec);
+#else
+		throw "This version has been compiled without support for this dictionary";
+#endif
 	} else {
 		dictionary = new FourSectionDictionary(spec);
 	}
@@ -208,7 +215,7 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		DictionaryLoader dictLoader(dict, &iListener);
 
 		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation);
-		parser->doParse(fileName, baseUri, notation, &dictLoader);
+        parser->doParse(fileName, baseUri, notation, true, &dictLoader);
 		delete parser;
 
 		iListener.setRange(80, 90);
@@ -271,7 +278,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 
 		RDFParserCallback *pars = RDFParserCallback::getParserCallback(
 				notation);
-		pars->doParse(fileName, baseUri, notation, &tripLoader);
+		pars->doParse(fileName, baseUri, notation, true, &tripLoader);
 		delete pars;
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, tripLoader.getSize());
 		triplesList->stopProcessing(&iListener);
@@ -378,6 +385,7 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 
 		iListener.setRange(50,99);
 		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
+
 		fillHeader(baseUri);
 
 	}catch (const char *e) {
@@ -491,7 +499,6 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 	        Dictionary *dict = hdt.getDictionary();
 
 	        // Create mapping arrays
-	        cout << "Generating mapping subjects" << endl;
 	        unsigned int nsubjects = dict->getNsubjects();
 	        LogSequence2 subjectMap(bits(dictionary->getNsubjects()), nsubjects);
 	        subjectMap.resize(nsubjects);
@@ -501,7 +508,6 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 	        	subjectMap.set(i, newid);
 	        }
 
-	        cout << "Generating mapping predicates" << endl;
 	        unsigned int npredicates = dict->getNpredicates();
 	        LogSequence2 predicateMap(bits(dictionary->getNpredicates()), npredicates);
 	        predicateMap.resize(npredicates);
@@ -511,7 +517,6 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 	        	predicateMap.set(i, newid);
 	        }
 
-	        cout << "Generating mapping objects" << endl;
 	        unsigned int nobjects = dict->getNobjects();
 	        LogSequence2 objectMap(bits(dictionary->getNobjects()), nobjects);
 	        objectMap.resize(nobjects);
@@ -709,7 +714,7 @@ void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
     std::string suffix = fileStr.substr(pos + 1);
 
     if( suffix == "gz") {
-        #ifdef USE_LIBZ
+        #ifdef HAVE_LIBZ
             this->fileName.assign(fileStr.substr(0, pos));
             ifstream test(fileName.c_str());
             if(test.good()) {
@@ -860,8 +865,12 @@ void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
         }
         in.close();
 	} else {
-		triples->generateIndex(listener);
-		this->saveIndex(listener);
+        IntermediateListener iListener(listener);
+        iListener.setRange(0,90);
+        triples->generateIndex(&iListener);
+
+        iListener.setRange(90,100);
+        this->saveIndex(&iListener);
     }
 }
 

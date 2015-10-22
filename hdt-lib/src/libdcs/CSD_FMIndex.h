@@ -34,6 +34,8 @@
 #ifndef _CSDFMINDEX_H
 #define _CSDFMINDEX_H
 
+#if HAVE_CDS
+
 #include "CSD.h"
 
 #include <Iterator.hpp>
@@ -80,6 +82,7 @@ namespace csd{
 			 *  @occs: pointer where the ID located will be stored.
 			 * */
 			uint32_t locate_substring(unsigned char *s, uint32_t len, uint32_t **occs);
+            uint32_t locate_substring(unsigned char *s, uint32_t len, uint offset, uint limit, bool deduplicate, uint32_t **occs, uint* num_occ);
 
 			/** Returns the string identified by id.
 			 * @id: the identifier to be extracted.
@@ -133,4 +136,6 @@ namespace csd{
 	};
 
 };
+
+#endif
 #endif  /* _URICDFMINDEX_H */

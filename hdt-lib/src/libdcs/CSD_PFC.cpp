@@ -140,7 +140,7 @@ uint32_t CSD_PFC::locate(const unsigned char *s, uint32_t len)
 		return 0;
 
 	// Locating the candidate block for 's'
-	unsigned int block;
+    size_t block;
 	bool cmp = locateBlock(s, &block);
 
 	//	dumpBlock(block);
@@ -150,7 +150,7 @@ uint32_t CSD_PFC::locate(const unsigned char *s, uint32_t len)
 		return (block*blocksize)+1;
 	} else {
 		// The block is sequentially scanned to find the URI
-		unsigned int idblock = locateInBlock(block, s, len);
+        unsigned int idblock = locateInBlock(block, s, len);
 
 		// If idblock = 0, the URI is not in the dictionary
 		if (idblock != 0) {
@@ -332,7 +332,7 @@ size_t CSD_PFC::load(unsigned char *ptr, unsigned char *ptrMax) {
 	return count;
 }
 
-bool CSD_PFC::locateBlock(const unsigned char *s, unsigned int *block)
+bool CSD_PFC::locateBlock(const unsigned char *s, size_t *block)
 {
 	if(nblocks==0) {
 		return false;
@@ -383,13 +383,13 @@ bool CSD_PFC::locateBlock(const unsigned char *s, unsigned int *block)
 	return false;
 }
 
-unsigned int CSD_PFC::locateInBlock(unsigned int block, const unsigned char *str, unsigned int len)
+unsigned int CSD_PFC::locateInBlock(size_t block, const unsigned char *str, unsigned int len)
 {
 	if(block>=nblocks){
 		return 0;
 	}
 
-	unsigned int delta = 0;
+    uint64_t delta = 0;
 	unsigned int idInBlock = 0;
 	unsigned int commonPrefix = 0;
 
@@ -442,7 +442,7 @@ unsigned int CSD_PFC::locateInBlock(unsigned int block, const unsigned char *str
 unsigned char *CSD_PFC::extractInBlock(unsigned int block, unsigned int o)
 {
 	size_t pos = blocks->get(block);
-	unsigned int delta = 0;
+    uint64_t delta = 0;
 
 	// Read the first string
 	string tmpStr((char*)(text+pos));
@@ -466,10 +466,10 @@ unsigned char *CSD_PFC::extractInBlock(unsigned int block, unsigned int o)
 	return buf;
 }
 
-unsigned int CSD_PFC::longest_common_prefix(const unsigned char* str1, const unsigned char* str2, unsigned int lstr1, unsigned int lstr2)
+size_t CSD_PFC::longest_common_prefix(const unsigned char* str1, const unsigned char* str2, size_t lstr1, size_t lstr2)
 {
-	unsigned int delta = 0;
-    unsigned int length = lstr1 < lstr2 ? lstr1 : lstr2;
+    size_t delta = 0;
+    size_t length = lstr1 < lstr2 ? lstr1 : lstr2;
 
     while ( (delta<length) && (str1[delta] == str2[delta])) {
         delta++;
@@ -485,7 +485,7 @@ hdt::IteratorUCharString *CSD_PFC::listAll() {
 
 void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
 {
-	unsigned int block;
+    size_t block;
 	locateBlock((unsigned char *)base, &block);
 
 	if(!text || !blocks || block>=nblocks){
@@ -493,11 +493,11 @@ void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int ma
 	}
 
 	string tmpStr;
-	unsigned int baselen = strlen(base);
+    unsigned int baselen = strlen(base);
 	bool terminate = false;
 
 	while(block<nblocks && !terminate) {
-		unsigned int pos = blocks->get(block);
+        size_t pos = blocks->get(block);
 
 		unsigned int delta = 0;
 		unsigned int idInBlock = 0;
@@ -506,7 +506,7 @@ void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int ma
 		tmpStr.clear();
 		tmpStr.append((char*)(text+pos));
 
-		unsigned int slen = tmpStr.length()+1;
+        unsigned int slen = tmpStr.length()+1;
 		pos+=slen;
 
 		int cmp = strncmp(base, tmpStr.c_str(), baselen);

@@ -29,6 +29,8 @@
  *
  */
 
+#ifdef HAVE_CDS
+
 #include <HDTVocabulary.hpp>
 #include "HuffmanSequence.hpp"
 
@@ -153,3 +155,6 @@ std::string HuffmanSequence::getType()
 }
 
 }
+#else
+int HuffmanSequenceDummySymbol;
+#endif

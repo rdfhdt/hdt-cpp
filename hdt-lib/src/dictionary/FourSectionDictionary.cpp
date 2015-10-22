@@ -29,6 +29,8 @@
  *
  */
 
+#include <algorithm>
+
 #include "FourSectionDictionary.hpp"
 #include <HDTVocabulary.hpp>
 
@@ -129,10 +131,6 @@ unsigned int FourSectionDictionary::stringToId(std::string &key, TripleComponent
 		if(ret != 0) {
 			return getGlobalId(ret,NOT_SHARED_OBJECT);
 		}
-		ret = objects->locate((const unsigned char *)key.c_str(), key.length());
-		if(ret != 0) {
-			return getGlobalId(ret,NOT_SHARED_OBJECT);
-		}
         return 0;
 	}
 }
@@ -144,7 +142,8 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 	if(format!=getType()) {
 		throw "Trying to read a FourSectionDictionary but the data is not FourSectionDictionary";
 	}
-	this->mapping = ci.getUint("mapping");
+	//this->mapping = ci.getUint("mapping");
+	this->mapping = MAPPING2;
 	this->sizeStrings = ci.getUint("sizeStrings");
 
 	IntermediateListener iListener(listener);
@@ -198,7 +197,8 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
     ControlInformation ci;
     count += ci.load(&ptr[count], ptrMax);
 
-    this->mapping = ci.getUint("mapping");
+    //this->mapping = ci.getUint("mapping");
+    this->mapping = MAPPING2;
     this->sizeStrings = ci.getUint("sizeStrings");
 
     iListener.setRange(0,25);
@@ -410,12 +410,12 @@ unsigned int FourSectionDictionary::getMaxObjectID()
 	}
 }
 
-unsigned int FourSectionDictionary::getNumberOfElements()
+size_t FourSectionDictionary::getNumberOfElements()
 {
 	return shared->getLength()+subjects->getLength()+predicates->getLength()+objects->getLength();
 }
 
-unsigned int FourSectionDictionary::size()
+uint64_t FourSectionDictionary::size()
 {
 	return shared->getSize()+subjects->getSize()+predicates->getSize()+objects->getSize();
 }

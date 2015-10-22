@@ -106,28 +106,19 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 {
 	DictEntryIt ret;
 
-	if(key=="")
+	if(key.length()==0)
 		return 0;
 
 	switch (position) {
 	case SUBJECT:
 		ret = hashSubject.find(key.c_str());
-		if(ret!=hashSubject.end())
-			return ret->second->id;
-		else
-			throw "Subject not found in dictionary";
+    return ret==hashSubject.end()   ? 0 : ret->second->id;
 	case PREDICATE:
 		ret = hashPredicate.find(key.c_str());
-		if (ret != hashPredicate.end())
-			return ret->second->id;
-		else
-			throw "Predicate not found in dictionary";
+    return ret==hashPredicate.end() ? 0 : ret->second->id;
 	case OBJECT:
 		ret = hashObject.find(key.c_str());
-		if (ret != hashObject.end())
-			return ret->second->id;
-		else
-			throw "Object not found in dictionary";
+    return ret==hashObject.end()    ? 0 : ret->second->id;
 	}
 }
 
@@ -274,12 +265,12 @@ IteratorUCharString *PlainDictionary::getShared() {
 	return new DictIterator(this->shared);
 }
 
-unsigned int PlainDictionary::getNumberOfElements()
+size_t PlainDictionary::getNumberOfElements()
 {
 	return shared.size() + subjects.size() + objects.size() + predicates.size();
 }
 
-unsigned int PlainDictionary::size()
+uint64_t PlainDictionary::size()
 {
     return sizeStrings;
 }

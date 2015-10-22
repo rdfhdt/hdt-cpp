@@ -32,6 +32,8 @@
 #ifndef HUFFMANSTREAM_HPP_
 #define HUFFMANSTREAM_HPP_
 
+#ifdef HAVE_CDS
+
 #include "IntSequence.hpp"
 
 #include "../huffman/Huffman.h"
@@ -98,6 +100,6 @@ public:
 
 }
 
-
+#endif
 
 #endif /* HUFFMANSTREAM_HPP_ */

@@ -89,32 +89,38 @@ FORMS    += hdtit.ui \
 
 TRANSLATIONS += hdt-it_es.ts
 
-INCLUDEPATH += ../hdt-lib/include/ .
-
 LIBCDS = ../libcds-v1.0.12
 
-# Using Traditional Makefile
-#LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
+# Using Hard-coded Makefile
+INCLUDEPATH += $${LIBCDS}/includes ../hdt-lib/include/ .
+LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
+
+# Using autotools
+#LIBS += $${LIBCDS}/src/.libs/libcds.a ../hdt-lib/.libs/libhdt.a
 
 # Using Qt Projects
 win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a $${LIBCDS}/qmake/win32/libcds.a
-
 unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a $${LIBCDS}/qmake/unix/libcds.a -lGLU
 macx:LIBS += $${LIBCDS}/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
-
 PRE_TARGETDEPS += $$LIBS
+
+# Installed in the system
+#LIBS += -lcds -lhdt
+
 
 #External libs
 
 #Windows
 win32-g++:contains(QMAKE_HOST.arch, x86_64):{
-    win32:LIBS += -L"C:/msys/local/lib/" -lraptor2 -lxml2 -lws2_32
+#win32:LIBS += -L"C:/msys/local/lib/" -L"/usr/local/lib" -lraptor2 -lxml2 -lws2_32 -lz
 } else {
-    win32:LIBS += -L"C:/MinGW/msys/1.0/local/lib/" -lraptor2 -lxml2 -lws2_32
+
 }
 
+win32:LIBS += -L"C:/msys/local/lib/" -L"/usr/local/lib" -L"C:/MinGW/msys/1.0/local/lib/" -lraptor2 -lxml2 -lws2_32 -lz
+
 #Unix (Linux & Mac)
-unix:LIBS += -lraptor2 -lz
+unix:LIBS += -lraptor2 -lz -lserd-0
 
 RESOURCES += \
     hdtresources.qrc

@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
 
 
 	try {
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 		igzstream *inGz;
 #endif
 		ifstream *inF;
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
 		std::string pipeCommand;
 
 		if( suffix == "gz"){
-			#ifdef USE_LIBZ
+			#ifdef HAVE_LIBZ
 				in = inGz = new igzstream(inputFile.c_str());
 			#else
 				throw "Support for GZIP was not compiled in this version. Please Decompress the file before importing it.";
@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
 		header->load(*in, controlInformation);
 
 		if( suffix == "gz") {
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 			inGz->close();
 #endif
 		} else {

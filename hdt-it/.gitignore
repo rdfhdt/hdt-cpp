@@ -1,0 +1,8 @@
+Makefile
+Makefile.Debug
+Makefile.Release
+unix/
+win32/
+macx/
+hdt-it.pro.user*
+object_script.*

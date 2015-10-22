@@ -62,9 +62,9 @@ public:
 	std::string idToString(unsigned int id, TripleComponentRole position);
 	unsigned int stringToId(std::string &str, TripleComponentRole position);
 
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
-    unsigned int size();
+    uint64_t size();
 
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();

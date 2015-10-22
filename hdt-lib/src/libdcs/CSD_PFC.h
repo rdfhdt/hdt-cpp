@@ -115,7 +115,7 @@ class CSD_PFC : public CSD
 	@return: a boolean value pointing if the string is located (this only
 	 occurs when 's' is the first string in 'block').
     */
-    bool locateBlock(const unsigned char *s, unsigned int *block);
+    bool locateBlock(const unsigned char *s, size_t *block);
 
     /** Locates the offset for 's' in 'block' (returning its global ID) or 
 	return 0 if it is  not exist 
@@ -124,7 +124,7 @@ class CSD_PFC : public CSD
 	@len: the length (in characters) of the string s.
 	@return: the ID for 's' or 0 if it is not exist.
     */
-    unsigned int locateInBlock(unsigned int block, const unsigned char *s, unsigned int len);
+    unsigned int locateInBlock(size_t block, const unsigned char *s, unsigned int len);
 
     /** Extracts the o-th string in the given 'block'.
 	@block: block to be accesed.
@@ -140,7 +140,7 @@ class CSD_PFC : public CSD
 	@lstr1: length of the first string.
 	@lstr2: length of the second string.
     */
-    inline unsigned int longest_common_prefix(const unsigned char* str1, const unsigned char* str2, unsigned int lstr1, unsigned int lstr2);
+    inline size_t longest_common_prefix(const unsigned char* str1, const unsigned char* str2, size_t lstr1, size_t lstr2);
 
     friend class PFCIterator;
   };
@@ -165,7 +165,7 @@ public:
 		return pfc->extract(count++);
 	}
 
-	unsigned int getNumberOfElements() {
+    size_t getNumberOfElements() {
 		return max;
 	}
 

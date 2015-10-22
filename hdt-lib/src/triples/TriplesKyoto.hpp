@@ -39,7 +39,8 @@
 #include "TriplesComparator.hpp"
 #include "../libdcs/CSD.h"
 
-#ifdef USE_KYOTO
+#ifdef HAVE_KYOTO
+
 #include <kcpolydb.h>
 
 using namespace kyotocabinet;
@@ -59,6 +60,11 @@ public:
 	virtual ~TriplesKyoto();
 
     int32_t compare (const char *akbuf, size_t aksiz, const char *bkbuf, size_t bksiz);
+
+
+    bool isIndexed() {
+        return false;
+    }
 
 	// From Triples
 
@@ -85,7 +91,7 @@ public:
 	 *
 	 * @return
 	 */
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
 	/**
 	 * Returns size in bytes
@@ -198,7 +204,7 @@ public:
 
 }
 
-#endif /* USE_KYOTO */
+#endif /* HAVE_KYOTO */
 
 #endif /* TRIPLESKYOTO_H_ */
 

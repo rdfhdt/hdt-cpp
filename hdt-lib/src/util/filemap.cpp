@@ -32,7 +32,6 @@
 #include "filemap.h"
 
 #include <inttypes.h>
-#include <stdio.h>  // perror
 #include <fcntl.h>	// open
 #include <unistd.h>
 #include <sys/stat.h>	// stat
@@ -97,14 +96,12 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
 	// Open file
 	fd = open(fileName, O_RDONLY);
 	if(fd<=0) {
-		perror("mmap");
 		throw "Error opening HDT file for mapping.";
 	}
 
 	// Guess size
 	struct stat statbuf;
 	if(stat(fileName,&statbuf)!=0) {
-		perror("Error on stat()");
 		throw "Error trying to guess the file size";
 	}
 	mappedSize = statbuf.st_size;
@@ -112,7 +109,6 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
 	// Do mmap
 	ptr = (unsigned char *) mmap(0, mappedSize, PROT_READ, MAP_PRIVATE, fd, 0);
 	if(ptr==MAP_FAILED) {
-		perror("Error on mmap");
 		throw "Error trying to mmap HDT file";
 	}
 

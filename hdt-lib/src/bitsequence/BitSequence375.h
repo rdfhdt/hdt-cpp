@@ -32,29 +32,27 @@ class BitSequence375 : public BitSeq
 {
 private:
 	const static uint8_t TYPE_BITMAP_PLAIN = 1;
-	const static unsigned char WORDSIZE = 32;
-	const static unsigned char LOGWORDSIZE = 5;
-
-	const static unsigned char BLOCKS_PER_SUPER = 8;
+	const static unsigned char WORDSIZE = 8*sizeof(size_t);
+	const static unsigned char BLOCKS_PER_SUPER = 256/WORDSIZE;
 
 	/** Length of the bitstring */
-	uint64_t numbits;
-	uint32_t numwords;
-	uint64_t numones;
+	size_t numbits;
+	size_t numwords;
+	size_t numones;
 
-	vector<uint32_t> data;
-    uint32_t *array;
+	vector<size_t> data;
+    size_t *array;
 	
 	bool isMapped;
 
-	vector<uint32_t> superblocks;	// superblock counters
+	vector<size_t> superblocks;	// superblock counters
 	vector<unsigned char> blocks;	// block counters
 
 	bool indexReady;
 
-	static uint32_t binsearch (uint32_t *data, uint32_t size, uint32_t val)
+	static size_t binsearch (size_t *data, size_t size, size_t val)
 	{
-		uint32_t i,j,m;
+		size_t i,j,m;
 		i = 0; j = size;
 
 		while (i+1 < j)
@@ -71,10 +69,10 @@ private:
 		return i;
 	}
 
-	static uint32_t binsearch0 (uint32_t *data, uint32_t size, uint32_t val)
+	static size_t binsearch0 (size_t *data, size_t size, size_t val)
 	{
-		uint32_t i,j,m;
-		uint32_t zeros;
+		size_t i,j,m;
+		size_t zeros;
 		i = 0; j = size;
 
 		while (i+1 < j)
@@ -89,20 +87,20 @@ private:
 		return i;
 	}
 
-	inline size_t numBytes(uint64_t bits) const {
-		return ((bits-1)>>3) + 1;
+	inline size_t numBytes(size_t bits) const {
+		return bits==0 ? 1 : ((bits-1)>>3) + 1;
 	}
 
-	inline size_t numWords(uint64_t bits) const {
-		return ((bits-1)>>LOGWORDSIZE) + 1;
+	inline size_t numWords(size_t bits) const {
+		return bits==0 ? 1 : ((bits-1)/WORDSIZE) + 1;
 	}
 
 	void buildIndex();
 
 public:
 	BitSequence375();
-	BitSequence375(uint64_t capacity);
-	BitSequence375(uint32_t *bitarray, uint64_t numbits);
+	BitSequence375(size_t capacity);
+	BitSequence375(size_t *bitarray, size_t numbits);
 	~BitSequence375();
 
 	bool access(const size_t i) const;

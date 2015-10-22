@@ -236,7 +236,7 @@ size_t CompactTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Prog
 	return 0;
 }
 
-unsigned int CompactTriples::getNumberOfElements()
+size_t CompactTriples::getNumberOfElements()
 {
 	return numTriples;
 }

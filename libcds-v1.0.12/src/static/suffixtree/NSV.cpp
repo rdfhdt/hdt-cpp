@@ -52,10 +52,10 @@ namespace cds_static
 					if( i/b < j/b ) {
 						if( j/b !=  last_nsv/b) {
 							/*mark the pioneer in P*/
-							bitset(P_aux,i);
+							cds_utils::bitset(P_aux,i);
 							/*mark the pioneer and the NSV of the pioneer in R*/
-							bitset(R_aux,i);
-							bitset(R_aux,j);
+							cds_utils::bitset(R_aux,i);
+							cds_utils::bitset(R_aux,j);
 						}
 						last_nsv=j;
 					}
@@ -66,10 +66,10 @@ namespace cds_static
 				if(i/b < j/b) {
 					if(j/b != last_nsv/b) {
 						/*mark the pioneer in P*/
-						bitset(P_aux,i);
+						cds_utils::bitset(P_aux,i);
 						/*mark the pioneer and the NSV of the pioneer in R*/
-						bitset(R_aux,i);
-						bitset(R_aux,j);
+						cds_utils::bitset(R_aux,i);
+						cds_utils::bitset(R_aux,j);
 					}
 					last_nsv=j;
 				}
@@ -112,10 +112,10 @@ namespace cds_static
 						if( j/b != last_nsv/b) {
 							/*mark the pioneer in P*/
 							far_aux = R[level-1]->select1(i+1);
-							bitset(P_aux,far_aux);
+							cds_utils::bitset(P_aux,far_aux);
 							/*mark the pioneer and the NSV of the pioneer in R*/
-							bitset(R_aux, far_aux);
-							bitset(R_aux, R[level-1]->select1(j+1));
+							cds_utils::bitset(R_aux, far_aux);
+							cds_utils::bitset(R_aux, R[level-1]->select1(j+1));
 						}
 						last_nsv=j;
 					}
@@ -128,10 +128,10 @@ namespace cds_static
 					if( j/b !=  last_nsv/b) {
 						/*mark the pioneer in P*/
 						far_aux = R[level-1]->select1(i+1);
-						bitset(P_aux,far_aux);
+						cds_utils::bitset(P_aux,far_aux);
 						/*mark the pioneer and the NSV of the pioneer in R*/
-						bitset(R_aux,far_aux);
-						bitset(R_aux, n);
+						cds_utils::bitset(R_aux,far_aux);
+						cds_utils::bitset(R_aux, n);
 					}
 					last_nsv=j;
 				}

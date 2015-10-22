@@ -1,0 +1,7 @@
+Makefile
+Makefile.Debug
+Makefile.Release
+unix/
+win32/
+macx/
+object_script.*

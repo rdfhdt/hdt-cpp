@@ -29,6 +29,8 @@
  *
  */
 
+#if HAVE_CDS
+
 #include "LiteralDictionary.hpp"
 #include <HDTVocabulary.hpp>
 #include "../libdcs/CSD_PFC.h"
@@ -89,7 +91,9 @@ std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole p
 		const char * ptr = (const char *) section->extract(localid);
 		if (ptr != NULL) {
 			string out = ptr;
-			section->freeString((unsigned char*)ptr);
+			//section->freeString((unsigned char*)ptr);
+                        // TODO: find out why overloaded function 'freeString' isn't getting called, this solves it for now
+                        delete [] ptr;
 			return out;
 		} else {
 			//cout << "Not found: " << id << " as " << position << endl;
@@ -116,13 +120,13 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 		if (ret != 0) {
 			return getGlobalId(ret, NOT_SHARED_SUBJECT);
 		}
-		throw "Subject not found in dictionary";
+    return 0;
 	case PREDICATE:
 		ret = predicates->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) {
 			return getGlobalId(ret, NOT_SHARED_PREDICATE);
 		}
-		throw "Predicate not found in dictionary";
+    return 0;
 
 	case OBJECT:
 		if (key.at(0) == '"') {
@@ -131,9 +135,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 			if (ret != 0) {
 				return getGlobalId(ret, NOT_SHARED_OBJECT);
 			}
-			else{
-				throw "Object not found in dictionary";
-			}
+      return 0;
 		} else {
 			ret = shared->locate((const unsigned char *) key.c_str(), key.length());
 			if (ret != 0) {
@@ -143,7 +145,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 			if (ret != 0) {
 				return getGlobalId(ret, NOT_SHARED_OBJECT)+	objectsLiterals->getLength();
 			}
-			throw "Object not found in dictionary";
+      return 0;
 		}
 	}
 }
@@ -216,8 +218,8 @@ size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Progre
     ControlInformation ci;
     count += ci.load(&ptr[count], ptrMax);
 
-    this->mapping = ci.getUint("$mapping");
-    this->sizeStrings = ci.getUint("$sizeStrings");
+    this->mapping = ci.getUint("mapping");
+    this->sizeStrings = ci.getUint("sizeStrings");
 
     iListener.setRange(0,25);
     iListener.notifyProgress(0, "Dictionary read shared area.");
@@ -315,7 +317,7 @@ public:
 		return previous;
 	}
 
-	unsigned int getNumberOfElements() {
+    size_t getNumberOfElements() {
 		return child->getNumberOfElements();
 	}
 
@@ -402,6 +404,11 @@ IteratorUCharString *LiteralDictionary::getShared() {
 }
 
 uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32_t **occs){
+    uint32_t dummy;
+    return this->substringToId(s, len, 0, 0, true, occs, &dummy);
+}
+
+uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32_t offset, uint32_t limit, bool deduplicate, uint32_t **occs, uint* num_occ){
 
 	if(len==0) {
 		return 0;
@@ -417,9 +424,9 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32
 	}
 
 	if(fmIndex!=NULL) {
-		uint32_t ret = fmIndex->locate_substring(s,len,occs);
-		for (int i=0;i<ret;i++){
-			(*occs)[i] = (*occs)[i]+shared->getLength();
+		uint32_t ret = fmIndex->locate_substring(s, len, offset, limit, deduplicate, occs, num_occ);
+		for (int i=0;i<*num_occ;i++){
+			(*occs)[i] = this->getGlobalId((*occs)[i], NOT_SHARED_OBJECT);
 		}
 		return ret;
 	}
@@ -527,12 +534,12 @@ unsigned int LiteralDictionary::getMaxObjectID() {
 	}
 }
 
-unsigned int LiteralDictionary::getNumberOfElements() {
+size_t LiteralDictionary::getNumberOfElements() {
 	return shared->getLength() + subjects->getLength() + predicates->getLength()
 			+ objectsLiterals->getLength()+objectsNotLiterals->getLength();
 }
 
-unsigned int LiteralDictionary::size() {
+uint64_t LiteralDictionary::size() {
 	return shared->getSize() + subjects->getSize() + predicates->getSize()
 			+ objectsLiterals->getSize()+objectsNotLiterals->getSize();
 }
@@ -692,3 +699,6 @@ void LiteralDictionary::getSuggestions(const char *base, hdt::TripleComponentRol
 
 }
 
+#else
+int LiteralDictionayDummySymbol;
+#endif

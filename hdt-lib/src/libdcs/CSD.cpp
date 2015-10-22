@@ -33,12 +33,16 @@
 
 #include "CSD.h"
 #include "CSD_PFC.h"
+
+#ifdef HAVE_CDS
 #include "CSD_HTFC.h"
 #include "CSD_FMIndex.h"
 
 #include <libcdsBasics.h>
 
 using namespace cds_utils;
+
+#endif
 
 namespace csd
 {
@@ -49,23 +53,36 @@ CSD::CSD() : numstrings(0) {
 
 CSD * CSD::load(istream & fp)
 {
-    uchar type = loadValue<uchar>(fp);
+    int type = fp.get();
+    if(!fp.good()) {
+	throw "Error reading stream";
+    }
     switch(type)
     {
-    case HTFC: return CSD_HTFC::load(fp);
-    case PFC: return CSD_PFC::load(fp);
-    case FMINDEX: return CSD_FMIndex::load(fp);
+    case PFC: 
+	return CSD_PFC::load(fp);
+#ifdef HAVE_CDS
+    case FMINDEX: 
+	return CSD_FMIndex::load(fp);
+    case HTFC: 
+	return CSD_HTFC::load(fp);
+#endif
+    default:
+	throw "No implementation for CSD";
     }
     return NULL;
 }
 
-CSD *CSD::create(uchar type)
+CSD *CSD::create(unsigned char type)
 {
     switch(type)
     {
-    case HTFC: return new CSD_HTFC();
     case PFC: return new CSD_PFC();
+#ifdef HAVE_CDS
+    case HTFC: return new CSD_HTFC();
     case FMINDEX: return new CSD_FMIndex();
+#endif
+    default: throw "No implementation for CSD";
     }
 
     return NULL;

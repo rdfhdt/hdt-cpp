@@ -94,7 +94,7 @@ void BNode<T>::code(int level, Tcode **codes, BitString **tree, bool *bits, int 
     else
     {
 	uint code = 0;
-	for (int i=1; i<=level; i++) if (bits[i-1]) bitset(&code, level-i);
+	for (int i=1; i<=level; i++) if (bits[i-1]) cds_utils::bitset(&code, level-i);
 
 	(*codes)[pos].code = code;
 	(*codes)[pos].cbits = level;

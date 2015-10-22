@@ -45,7 +45,7 @@ private:
     hdt::TripleID searchPatternID;
     hdt::TripleString searchPatternString;
     hdt::IteratorTripleID *iteratorResults;
-    unsigned int numResults;
+    size_t numResults;
 
 public:
     hdt::HDT *getHDT();
@@ -77,7 +77,7 @@ public:
 
     vector<hdt::TripleID> &getTriples();
 
-    unsigned int getNumResults();
+    size_t getNumResults();
 
     QString getFileName();
 

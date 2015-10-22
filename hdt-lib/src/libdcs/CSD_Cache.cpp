@@ -32,7 +32,7 @@
 
 namespace csd
 {
-CSD_Cache::CSD_Cache(CSD *child) : child(child), cacheint(65536), cachestr(1024)
+CSD_Cache::CSD_Cache(CSD *child) : child(child)//, cacheint(65536), cachestr(1024)
 {
 	assert(child);
 	numstrings = child->getLength();
@@ -68,6 +68,8 @@ uint32_t CSD_Cache::locate(const unsigned char *s, uint32_t len)
 
 unsigned char* CSD_Cache::extract(uint32_t id)
 {
+	return child->extract(id);
+#if 0
 	LRU_Int::const_iterator it = cacheint.find(id);
 
 	if (it != cacheint.end()) {
@@ -89,6 +91,7 @@ unsigned char* CSD_Cache::extract(uint32_t id)
 
 		return (unsigned char *)value;
 	}
+#endif
 }
 
 void CSD_Cache::freeString(const unsigned char *str) {

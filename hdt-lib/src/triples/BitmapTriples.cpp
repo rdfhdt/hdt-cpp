@@ -50,8 +50,8 @@ BitmapTriples::BitmapTriples() : order(SPO) {
 	bitmapY = NULL;
 	bitmapZ = NULL;
 	bitmapIndex = NULL;
-	waveletY = NULL;
-	predicateCount = NULL;
+    predicateIndex = NULL;
+    predicateCount = NULL;
 }
 
 BitmapTriples::BitmapTriples(HDTSpecification &specification) : spec(specification) {
@@ -65,8 +65,8 @@ BitmapTriples::BitmapTriples(HDTSpecification &specification) : spec(specificati
 	bitmapY = NULL;
 	bitmapZ = NULL;
 	bitmapIndex = NULL;
-	waveletY = NULL;
-	predicateCount = NULL;
+    predicateIndex = NULL;
+   	predicateCount = NULL;
 }
 
 BitmapTriples::~BitmapTriples() {
@@ -76,8 +76,8 @@ BitmapTriples::~BitmapTriples() {
 	if(bitmapZ!=NULL) {
 		delete bitmapZ;
 	}
-	if(waveletY != NULL && waveletY != arrayY) {
-		delete waveletY;
+    if(predicateIndex != NULL) {
+        delete predicateIndex;
 	}
 	if(bitmapIndex!=NULL) {
 		delete bitmapIndex;
@@ -222,36 +222,33 @@ public:
 	}
 };
 
-void BitmapTriples::generateWavelet(ProgressListener *listener) {
-	NOTIFY(listener, "Generating wavelet", 0,100);
-	if(arrayY->getType()==HDTVocabulary::SEQ_TYPE_WAVELET) {
-		waveletY = reinterpret_cast<WaveletSequence *>(arrayY);
-	} else {
-		waveletY = new WaveletSequence(arrayY);
-#if 0
-        // FIXME: Substitute existing or leave both?
-        delete arrayY;
-        arrayY = waveletY;
-#endif
-	}
-}
-
 void BitmapTriples::generateIndex(ProgressListener *listener) {
-	generateIndexMemory(listener);
-	//generateIndexMemoryFast(listener);
+	StopWatch global;
+
+    IntermediateListener iListener(listener);
+    iListener.setRange(0,30);
+
+    predicateIndex = new PredicateIndexArray(this);
+    predicateIndex->generate(&iListener);
+
+    iListener.setRange(30,100);
+    generateIndexMemory(&iListener);
+   	//generateIndexMemoryFast(listener);
+
+	cout << "Index generated in "<< global << endl;
 }
 
 void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
-	StopWatch global, st;
+	StopWatch st;
 
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,20);
 
 	// Count the number of appearances of each object
 	LogSequence2 *objectCount = new LogSequence2(bits(arrayZ->getNumberOfElements()));
-	unsigned int maxCount = 0;
-	for(unsigned int i=0;i<arrayZ->getNumberOfElements(); i++) {
-		unsigned int val = arrayZ->get(i);
+    size_t maxCount = 0;
+    for(size_t i=0;i<arrayZ->getNumberOfElements(); i++) {
+        size_t val = arrayZ->get(i);
 		if(val==0) {
 			cerr << "ERROR: There is a zero value in the Z level." << endl;
 			continue;
@@ -259,17 +256,17 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		if(objectCount->getNumberOfElements()<val) {
 			objectCount->resize(val);
 		}
-		unsigned int count = objectCount->get(val-1)+1;
+        size_t count = objectCount->get(val-1)+1;
 		maxCount = count>maxCount ? count : maxCount;
 		objectCount->set(val-1, count);
 
-		NOTIFYCOND3(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements(), 10000);
+		NOTIFYCOND3(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements(), 1000000);
 	}
 	cout << "Count Objects in " << st << " Max was: " << maxCount << endl;
 	st.reset();
 
 #if 0
-	for(int i=0;i<objectCount->getNumberOfElements();i++) {
+    for(size_t i=0;i<objectCount->getNumberOfElements();i++) {
 		cout << "Object " << (i+1) << " appears " << objectCount->get(i) << " times." << endl;
 	}
 #endif
@@ -277,21 +274,22 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	iListener.setRange(20, 25);
 	// Calculate bitmap that separates each object sublist.
 	bitmapIndex = new BitSequence375(arrayZ->getNumberOfElements());
-	unsigned int tmpCount=0;
-	for(unsigned int i=0;i<objectCount->getNumberOfElements();i++) {
+    size_t tmpCount=0;
+    for(size_t i=0;i<objectCount->getNumberOfElements();i++) {
 		tmpCount += objectCount->get(i);
 		bitmapIndex->set(tmpCount-1, true);
-		NOTIFYCOND3(&iListener, "Creating bitmap", i, objectCount->getNumberOfElements(), 10000);
+		NOTIFYCOND3(&iListener, "Creating Index bitmap", i, objectCount->getNumberOfElements(), 1000000);
 	}
-	bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
+	if (arrayZ->getNumberOfElements())
+	  bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
 	delete objectCount;
 	objectCount=NULL;
 	cout << "Bitmap in " << st << endl;
 	st.reset();
 
+    cout << "Bitmap bits: " << bitmapIndex->getNumBits() << " Ones: " << bitmapIndex->countOnes() << endl;
 #if 0
-	cout << "Bitmap bits: " << bitmapIndex->getNumBits() << endl;
-	for(int i=0;i<bitmapIndex->getNumBits();i++) {
+    for(size_t i=0;i<bitmapIndex->getNumBits();i++) {
 		if(bitmapIndex->access(i)){
 			cout << "1";
 		} else {
@@ -309,6 +307,12 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	}
 #endif
 
+	if(predicateCount!=NULL) {
+		delete predicateCount;
+	}
+	size_t maxpred = 0;
+	LogSequence2 *predCount = new LogSequence2(bits(arrayZ->getNumberOfElements()));
+
 	iListener.setRange(25,60);
 	// Copy each object reference to its position
 	LogSequence2 *objectInsertedCount = new LogSequence2(bits(maxCount), bitmapIndex->countOnes());
@@ -317,24 +321,38 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	LogSequence2 *objectArray = new LogSequence2(bits(arrayY->getNumberOfElements()), arrayZ->getNumberOfElements());
 	objectArray->resize(arrayZ->getNumberOfElements());
 
-	for(unsigned int i=0;i<arrayZ->getNumberOfElements(); i++) {
+    for(size_t i=0;i<arrayZ->getNumberOfElements(); i++) {
 			unsigned int objectValue = arrayZ->get(i);
-			unsigned int posY = i>0 ?  bitmapZ->rank1(i-1) : 0;
+            size_t posY = i>0 ?  bitmapZ->rank1(i-1) : 0;
 
-			unsigned int insertBase = objectValue==1 ? 0 : bitmapIndex->select1(objectValue-1)+1;
-			unsigned int insertOffset = objectInsertedCount->get(objectValue-1);
+            size_t insertBase = objectValue==1 ? 0 : bitmapIndex->select1(objectValue-1)+1;
+            size_t insertOffset = objectInsertedCount->get(objectValue-1);
 			objectInsertedCount->set(objectValue-1, insertOffset+1);
 
 			objectArray->set(insertBase+insertOffset, posY);
-			NOTIFYCOND3(&iListener, "Generating object references", i, arrayZ->getNumberOfElements(), 20000);
+
+            size_t yval = arrayY->get(posY)-1;
+            if(yval>=maxpred) {
+            	predCount->resize(yval+1);
+            	maxpred = yval;
+            	predCount->set(yval, 1);
+            } else {
+            	predCount->set(yval, predCount->get(yval)+1);
+            }
+
+			NOTIFYCOND3(&iListener, "Generating object references", i, arrayZ->getNumberOfElements(), 1000000);
 	}
 	delete objectInsertedCount;
 	objectInsertedCount=NULL;
 	cout << "Object references in " << st << endl;
 	st.reset();
 
+	predCount->reduceBits();
+	if(this->predicateCount!=NULL) delete this->predicateCount;
+	this->predicateCount = predCount;
+
 #if 0
-	for(int i=0;i<objectArray->getNumberOfElements();i++) {
+    for(size_t i=0;i<objectArray->getNumberOfElements();i++) {
 		cout << "Position " << (i) << " references " << objectArray->get(i) << " ." << endl;
 		if(bitmapIndex->access(i)) {
 			cout << endl;
@@ -342,7 +360,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	}
 #endif
 
-	iListener.setRange(60,90);
+    iListener.setRange(60,100);
 	unsigned int object=1;
 	do {
 		size_t first = object==1 ? 0 : bitmapIndex->select1(object-1)+1;
@@ -353,10 +371,10 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 
 		// Hard-coded size-2 for speed (They are quite common).
         if(listLen==2) {
-			unsigned int aPos = objectArray->get(first);
-			unsigned int a = arrayY->get(aPos);
-            unsigned int bPos = objectArray->get(last-1);
-			unsigned int b = arrayY->get(bPos);
+            size_t aPos = objectArray->get(first);
+            size_t a = arrayY->get(aPos);
+            size_t bPos = objectArray->get(last-1);
+            size_t b = arrayY->get(bPos);
 			if(a>b) {
 				objectArray->set(first, bPos);
                 objectArray->set(last-1, aPos);
@@ -383,12 +401,12 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 				objectArray->set(i, tempList[i-first].first);
 			}
 #else
-			vector<unsigned int> tempList;
+            vector<size_t> tempList;
 			tempList.reserve(listLen);
 
 			// Create temporary list of (position, predicate)
 			for(size_t i=first; i<last;i++) {
-				unsigned int adjZlist = (unsigned int)objectArray->get(i);
+                size_t adjZlist = objectArray->get(i);
 				tempList.push_back(adjZlist);
 			}
 
@@ -404,53 +422,22 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		}
 
         object++;
-		NOTIFYCOND3(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements(), 1000);
+		NOTIFYCOND3(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements(), 10000);
 	} while(object<=bitmapIndex->countOnes());
 
 	cout << "Sort lists in " << st << endl;
 	st.reset();
 
-	// Count predicates
-
-	iListener.setRange(90,100);
-	LogSequence2 *predCount = new LogSequence2(bits(arrayY->getNumberOfElements()));
-	for(unsigned int i=0;i<arrayY->getNumberOfElements(); i++) {
-		// Read value
-		unsigned int val = arrayY->get(i);
-
-		// Grow if necessary
-		if(predCount->getNumberOfElements()<val) {
-			predCount->resize(val);
-		}
-
-		// Increment
-        predCount->set(val-1, predCount->get(val-1)+1);
-
-		NOTIFYCOND3(&iListener, "Counting appearances of predicates", i, arrayZ->getNumberOfElements(), 20000);
-	}
-	predCount->reduceBits();
-
-#if 0
-    for(size_t i=0;i<predCount->getNumberOfElements();i++) {
-        cout << "Predicate " << i << " appears " << predCount->get(i) << " times." << endl;
-    }
-#endif
-
-	cout << "Count predicates in " << st << endl;
-	st.reset();
-
 	// Save Object Index
-	arrayIndex = objectArray;
-	predicateCount = predCount;
-	cout << "Index generated in "<< global << endl;
+    arrayIndex = objectArray;
 
 #if 0
     for(size_t i=0;i<arrayIndex->getNumberOfElements();i++) {
-		unsigned int indexPtr = (unsigned int)arrayIndex->get(i);
-		unsigned int pred = arrayY->get(indexPtr);
+        size_t indexPtr = arrayIndex->get(i);
+        size_t pred = arrayY->get(indexPtr);
 
-		unsigned int cobject = i==0 ? 1 : bitmapIndex->rank1(i-1)+1;
-		unsigned int subject = indexPtr==0 ? 1 : bitmapY->rank1(indexPtr-1)+1;
+        size_t cobject = i==0 ? 1 : bitmapIndex->rank1(i-1)+1;
+        size_t subject = indexPtr==0 ? 1 : bitmapY->rank1(indexPtr-1)+1;
 		cout << "\tFinal: " << i << " (" << indexPtr << " > " <<  cobject << "-" << pred << "-"<<subject<<")" << endl;
 
         if(bitmapIndex->access(i)) {
@@ -458,11 +445,6 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
         }
     }
 #endif
-
-	// Generate Wavelet
-	st.reset();
-	generateWavelet();
-	cout << "Wavelet generated in " << st << endl;
 }
 
 void BitmapTriples::generateIndexFast(ProgressListener *listener) {
@@ -564,11 +546,6 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 
 	cout << "Index generated in " << st << endl;
 
-	// Generate Wavelet
-	st.reset();
-	generateWavelet();
-	cout << "Wavelet generated in " << st << endl;
-
 	cout << "Num triples: " << getNumberOfElements() << endl;
 	cout << "Order: " << getOrderStr(order) << endl;
 	cout << "Original triples size: " << size() << endl;
@@ -616,6 +593,14 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	swapComponentOrder(&reorderedPat, SPO, this->order);
 	std::string patternString = reorderedPat.getPatternString();
 
+	if(patternString=="?P?") {
+		if(predicateIndex!=NULL) {
+			return new MiddleWaveletIterator(this, pattern);
+		} else {
+			return new IteratorY(this, pattern);
+		}
+	}
+
 	if(patternString=="S?O") {
 	    if(this->order == SPO) {
 		return new SequentialSearchIteratorTripleID(pattern, new BitmapTriplesSearchIterator(this, pattern));
@@ -626,7 +611,7 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 
 	if((arrayIndex!=NULL) && (patternString=="??O" || patternString=="?PO" )) {
 		return new ObjectIndexIterator(this, pattern);
-	} else if( waveletY != NULL && patternString=="?P?") {
+    } else if( predicateIndex != NULL && patternString=="?P?") {
 		return new MiddleWaveletIterator(this, pattern);
 	} else {
 		if(patternString=="???" || patternString=="S??" || patternString=="SP?"|| patternString=="SPO" ) {
@@ -699,10 +684,6 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	delete arrayZ;
 	arrayZ = IntSequence::getArray(input);
     arrayZ->load(input);
-
-	if(arrayZ->getType()==HDTVocabulary::SEQ_TYPE_WAVELET) {
-		waveletY = reinterpret_cast<WaveletSequence *>(arrayZ);
-    }
 }
 
 size_t BitmapTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
@@ -769,28 +750,25 @@ void BitmapTriples::saveIndex(std::ostream &output, ControlInformation &controlI
 	controlInformation.setUint("order", getOrder());
 	controlInformation.setFormat(HDTVocabulary::INDEX_TYPE_FOQ);
 	controlInformation.save(output);
-
-    iListener.setRange(50,60);
-	iListener.notifyProgress(0, "BitmapTriples saving Predicate count");
-	predicateCount->save(output);
-
     iListener.setRange(60,70);
 	iListener.notifyProgress(0, "BitmapTriples saving Bitmap Index");
 	bitmapIndex->save(output);
 
-    iListener.setRange(70,100);
+    iListener.setRange(70,90);
 	iListener.notifyProgress(0, "BitmapTriples saving Array Index");
 	arrayIndex->save(output);
 
-#ifndef WIN32
-    if(waveletY!=NULL) {
-        waveletY->save(output);
-    }
-#endif
+    iListener.setRange(90,100);
+	iListener.notifyProgress(0, "BitmapTriples saving Predicate Index");
+    predicateIndex->save(output);
+
+    iListener.setRange(50,60);
+	iListener.notifyProgress(0, "BitmapTriples saving Predicate count");
+	predicateCount->save(output);
 }
 
 void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
-	unsigned int numTriples = controlInformation.getUint("numTriples");
+    size_t numTriples = controlInformation.getUint("numTriples");
 
 	if(controlInformation.getType()!=INDEX) {
 		throw "Trying to read Index but data is not index.";
@@ -811,15 +789,6 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 
 	IntermediateListener iListener(listener);
 
-	// Load predicate count
-	if(predicateCount!=NULL) {
-		delete predicateCount;
-	}
-	iListener.setRange(0,10);
-	iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
-	predicateCount = IntSequence::getArray(input);
-	predicateCount->load(input);
-
 	// LOAD BITMAP
 	if(bitmapIndex!=NULL) {
 		delete bitmapIndex;
@@ -837,18 +806,20 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
 	iListener.notifyProgress(0, "BitmapTriples loading Array Index");
 	arrayIndex->load(input);
 
-	// Make sure wavelet is generated
-	iListener.setRange(50,100);
-#ifndef WIN32
-    if(! input.eof() ) {
-#else
-    if(false){
-#endif
-        waveletY = new WaveletSequence();
-        waveletY->load(input);
-    } else {
-        generateWavelet(&iListener);
-    }
+    // TODO: Guess type from file
+	iListener.setRange(10,50);
+	iListener.notifyProgress(0, "BitmapTriples loading Predicate Index");
+    predicateIndex = new PredicateIndexArray(this);
+    predicateIndex->load(input,&iListener);
+
+	// Load predicate count
+	if(predicateCount!=NULL) {
+		delete predicateCount;
+	}
+	iListener.setRange(0,10);
+	iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
+	predicateCount = IntSequence::getArray(input);
+	predicateCount->load(input);
 }
 
 size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
@@ -863,7 +834,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
         throw "Trying to load an HDT Index, but the ControlInformation states that it's not an index.";
     }
 
-    unsigned int numTriples = controlInformation.getUint("numTriples");
+    size_t numTriples = controlInformation.getUint("numTriples");
     std::string typeIndex = controlInformation.get("stream.index");
 
     if(this->getNumberOfElements()!=numTriples) {
@@ -871,7 +842,33 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
         throw "The supplied index does not have the same number of triples as the dataset";
     }
 
-    // LOAD PREDICATES
+    // Load Bitmap
+    iListener.setRange(10,20);
+    iListener.notifyProgress(0, "BitmapTriples loading Bitmap Index");
+    if(bitmapIndex!=NULL) {
+        delete bitmapIndex;
+    }
+    BitSequence375 *bitIndex = new BitSequence375();
+    count += bitIndex->load(&ptr[count], ptrMax, &iListener);
+    bitmapIndex = bitIndex;
+
+    // Load Seq
+    iListener.setRange(20,50);
+    iListener.notifyProgress(0, "BitmapTriples loading Array Index");
+    if(arrayIndex!=NULL) {
+        delete arrayIndex;
+    }
+    LogSequence2 *arrIndex = new LogSequence2();
+    count += arrIndex->load(&ptr[count], ptrMax, &iListener);
+    arrayIndex = arrIndex;
+
+    // Load Predicate Index. TODO: Guess type from file
+    iListener.setRange(50,100);
+    iListener.notifyProgress(0, "BitmapTriples loading Predicate Index");
+    predicateIndex = new PredicateIndexArray(this);
+    count += predicateIndex->load(&ptr[count], ptrMax, &iListener);
+
+    // Load predicate counts
     iListener.setRange(0,10);
     iListener.notifyProgress(0, "BitmapTriples loading Predicate Count");
     LogSequence2 *pCount = new LogSequence2();
@@ -882,58 +879,23 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     }
     predicateCount = pCount;
 
-    // LOAD BITMAP
-    iListener.setRange(10,20);
-    iListener.notifyProgress(0, "BitmapTriples loading Bitmap Index");
-    if(bitmapIndex!=NULL) {
-        delete bitmapIndex;
-    }
-    BitSequence375 *bitIndex = new BitSequence375();
-    count += bitIndex->load(&ptr[count], ptrMax, &iListener);
-    bitmapIndex = bitIndex;
-
-    // LOAD SEQ
-    iListener.setRange(10,50);
-    iListener.notifyProgress(0, "BitmapTriples loading Array Index");
-    if(arrayIndex!=NULL) {
-        delete arrayIndex;
-    }
-    LogSequence2 *arrIndex = new LogSequence2();
-    count += arrIndex->load(&ptr[count], ptrMax, &iListener);
-    arrayIndex = arrIndex;
-
-    iListener.setRange(50,100);
-    if(arrayY->getType()==HDTVocabulary::SEQ_TYPE_WAVELET) {
-        waveletY = reinterpret_cast<WaveletSequence *>(arrayY);
-#ifndef WIN32
-    } else if(&ptr[count]<ptrMax) {
-        iListener.notifyProgress(0, "BitmapTriples loading Wavelet");
-
-        waveletY = new WaveletSequence();
-        count += waveletY->load(&ptr[count], ptrMax, &iListener);
-#endif
-    } else {
-        iListener.notifyProgress(0, "BitmapTriples generating Wavelet");
-        waveletY = new WaveletSequence(arrayY);
-    }
     return count;
 }
 
-unsigned int BitmapTriples::getNumberOfElements()
+size_t BitmapTriples::getNumberOfElements()
 {
 	return arrayZ->getNumberOfElements();
 }
 
 size_t BitmapTriples::size()
 {
-	if(bitmapY!=NULL && bitmapZ!=NULL && predicateCount!=NULL) {
+    if(bitmapY!=NULL && bitmapZ!=NULL) {
 		return bitmapY->getSizeBytes()
 				+bitmapZ->getSizeBytes()
 				+arrayY->size()
-				+arrayZ->size()
-				+arrayIndex->size()
-				+bitmapIndex->getSizeBytes();
-				//+predicateCount->size();
+                +arrayZ->size();
+                //+arrayIndex->size()
+                //+bitmapIndex->getSizeBytes();
 	}
 	return arrayY->size()+arrayZ->size()+bitmapY->getSizeBytes()+bitmapZ->getSizeBytes();
 }

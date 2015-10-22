@@ -28,6 +28,7 @@
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
  *
  */
+#include <iomanip>
 
 #include <HDT.hpp>
 #include <HDTManager.hpp>
@@ -104,19 +105,6 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 
 }
 
-class ConvertProgress : public ProgressListener {
-private:
-public:
-	virtual ~ConvertProgress() { }
-
-    void notifyProgress(float level, const char *section) {
-    	cout << section << ": " << level << " %";
-    	cout << "\r " << section << ": " << level << " %                      \r";
-		cout.flush();
-	}
-
-};
-
 int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
@@ -153,7 +141,7 @@ int main(int argc, char **argv) {
 
 
 	try {
-		ConvertProgress prog;
+		StdoutProgressListener prog;
 		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &prog);
 
 		ostream *out;

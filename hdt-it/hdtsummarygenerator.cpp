@@ -81,7 +81,7 @@ QString HDTSummaryGenerator::getSummary(HDTController *hdtController)
 #endif
 
     output.append(tr("<h3>Dictionary:</h3>"));
-    output.append(QString(tr("<b>Number of entries</b>: %1<br/>")).arg(loc.toString(dict->getNumberOfElements())));
+    output.append(QString(tr("<b>Number of entries</b>: %1<br/>")).arg(loc.toString((quint64)dict->getNumberOfElements())));
     output.append(QString(tr("<b>Different subjects</b>: %1<br/>")).arg(loc.toString(dict->getNsubjects())));
     output.append(QString(tr("<b>Different predicates</b>: %1<br/>")).arg(loc.toString(dict->getNpredicates())));
     output.append(QString(tr("<b>Different objects</b>: %1<br/>")).arg(loc.toString(dict->getNobjects())));
@@ -93,7 +93,7 @@ QString HDTSummaryGenerator::getSummary(HDTController *hdtController)
     output.append(tr("<br/>"));
 
     output.append(tr("<h3>Triples:</h3>"));
-    output.append(QString(tr("<b>Number of triples</b>: %1<br/>")).arg(loc.toString(triples->getNumberOfElements())));
+    output.append(QString(tr("<b>Number of triples</b>: %1<br/>")).arg(loc.toString((quint64)triples->getNumberOfElements())));
 
     output.append(QString(tr("<b>Type</b>: <small>%1</small><br/>")).arg(stringutils::escapeHTML(triples->getType().c_str())));
 

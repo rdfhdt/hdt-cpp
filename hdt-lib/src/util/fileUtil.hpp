@@ -54,7 +54,7 @@ private:
 	istream *in;
 	FILE *filePipe;
 	ifstream *fileStream;
-#ifdef USE_LIBZ
+#ifdef HAVE_LIBZ
 	igzstream *gzStream;
 #endif
 

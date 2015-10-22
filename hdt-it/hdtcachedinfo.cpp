@@ -1,6 +1,8 @@
 #include "hdtcachedinfo.hpp"
 #include "constants.h"
 
+#include "../../hdt-lib/src/triples/BitmapTriples.hpp"
+
 #include <fstream>
 
 HDTCachedInfo::HDTCachedInfo(hdt::HDT *hdt) : hdt(hdt)
@@ -17,17 +19,26 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
     predicateCount.clear();
     predicateCount.resize(nPred+1);
 
-    hdt::Triples *t = hdt->getTriples();
-    hdt::TripleID triplePredicate;
-    for(int p=1;p<=nPred;p++) {
-        triplePredicate.setAll(0, p, 0);
-        hdt::IteratorTripleID *predIt = t->search(triplePredicate);
+   NOTIFYCOND(listener, "Loading predicates", 0, 100);
 
-        predicateCount[p] = predIt->estimatedNumResults();
+	// TODO: Use predicateCount directly
+    if(hdt->isIndexed()) {
+        hdt::Triples *t = hdt->getTriples();
+        hdt::TripleID triplePredicate;
+        for(int p=1;p<=nPred;p++) {
+#if 1
+            predicateCount[p] = t->getNumAppearances(p);
+#else
+            triplePredicate.setAll(0, p, 0);
+            hdt::IteratorTripleID *predIt = t->search(triplePredicate);
 
-        maxPredicateCount = max(maxPredicateCount, predicateCount[p]);
+            predicateCount[p] = predIt->estimatedNumResults();
 
-        delete predIt;
+            maxPredicateCount = max(maxPredicateCount, predicateCount[p]);
+
+            delete predIt;
+#endif
+        }
     }
 
     // Calculate Predicate Colors
@@ -45,24 +56,52 @@ void HDTCachedInfo::generateGeneralInfo(hdt::ProgressListener *listener)
         it2->next();
     }
     delete it2;
+
+    // Iterate over elements of the array to make sure their dictionary entries are loaded.
+#if 0
+    hdt::TripleString out;
+    for(size_t i=0;i<triples.size();i++) {
+	hdt->getDictionary()->tripleIDtoTripleString(triples[i], out);
+    }
+#endif
 }
 
 void HDTCachedInfo::generateMatrix(hdt::ProgressListener *listener)
 {
     // Generate matrix
     hdt::Triples *t = hdt->getTriples();
-    unsigned int increment = t->getNumberOfElements()/RENDER_NUM_POINTS;
+    size_t increment = t->getNumberOfElements()/RENDER_NUM_POINTS;
     increment = increment < 1 ? 1 : increment;
 
-    hdt::IteratorTripleID *it = t->searchAll();
-    for(int i=0;i<t->getNumberOfElements();i+=increment) {
-        it->goTo(i);
-        hdt::TripleID *tid = it->next();
-        triples.push_back(*tid);
 
-        NOTIFYCOND(listener, "Generating Matrix", i, t->getNumberOfElements());
+// Using InterleavedIterator to jump directly to the triple and get the related information.
+    hdt::BTInterleavedIterator it(dynamic_cast<hdt::BitmapTriples *>(t), increment);
+
+    size_t count=0;
+    while(it.hasNext()) {
+        hdt::TripleID *tid = it.next();
+        triples.push_back(*tid);
+        //cout << *tid << endl;
+
+        NOTIFYCOND(listener, "Generating Matrix", count, RENDER_NUM_POINTS);
+        count++;
+        //if((count%100)==0)
+            //cout << "Iteration: " << count << endl;
     }
-    delete it;
+
+// Using normal iterator that goes through all entries.
+//    hdt::IteratorTripleID *it = t->searchAll();
+//    size_t count=0;
+//    for(size_t i=0;i<t->getNumberOfElements();i+=increment) {
+//        it->goTo(i);
+//        hdt::TripleID *tid = it->next();
+//        triples.push_back(*tid);
+//        NOTIFYCOND(listener, "Generating Matrix", i, t->getNumberOfElements());
+//        count++;
+//        if((count%100)==0)
+//            cout << "Iteration: " << count << endl;
+//    }
+//    delete it;
 
 }
 
@@ -88,11 +127,14 @@ vector<hdt::TripleID> &HDTCachedInfo::getTriples()
 
 void HDTCachedInfo::save(QString &fileName, hdt::ProgressListener *listener)
 {
-    std::ofstream out(fileName.toAscii(), ios::binary);
-    unsigned int numTriples = triples.size();
-    out.write((char *)&numTriples, sizeof(unsigned int));
-    out.write((char *)&triples[0], sizeof(hdt::TripleID)*numTriples);
-    out.close();
+	// Only save info of files bigger than 2M triples. Otherwise is fast to create from scratch.
+	if(hdt->getTriples()->getNumberOfElements()>2000000) {
+		std::ofstream out(fileName.toAscii(), ios::binary);
+		unsigned int numTriples = triples.size();
+		out.write((char *)&numTriples, sizeof(unsigned int));
+		out.write((char *)&triples[0], sizeof(hdt::TripleID)*numTriples);
+		out.close();
+	}
 }
 
 void HDTCachedInfo::load(QString &fileName, hdt::ProgressListener *listener)

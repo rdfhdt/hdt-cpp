@@ -29,7 +29,7 @@
  *
  */
 
-#ifndef FILE_MAP_H
+#ifndef FILE_MAP_H_
 #define FILE_MAP_H_
 
 #include <stdlib.h>

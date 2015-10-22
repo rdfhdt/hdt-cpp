@@ -29,6 +29,8 @@
  *
  */
 
+#ifdef HAVE_CSD
+
 #include <libcdsBasics.h>
 #include <HDTVocabulary.hpp>
 #include "LogSequence.hpp"
@@ -128,3 +130,6 @@ std::string LogSequence::getType()
 }
 
 }
+#else
+int LogSequenceDummySymbol;
+#endif

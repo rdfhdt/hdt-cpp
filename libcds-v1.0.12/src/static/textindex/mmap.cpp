@@ -19,7 +19,13 @@
 
 */
 
+#ifdef __APPLE__
+#include <sys/mman.h>
+#endif
+
+
 #include <mmap.h>
+
 #include <unistd.h>
 #include <stdio.h>
 

@@ -30,13 +30,14 @@
  */
 
 #include <sstream>
+#include <unistd.h>
 
 #include "KyotoDictionary.hpp"
 
 #include <HDTVocabulary.hpp>
 #include <HDTEnums.hpp>
 
-#ifdef USE_KYOTO
+#ifdef HAVE_KYOTO
 
 namespace hdt {
 
@@ -107,12 +108,12 @@ unsigned int KyotoDictionary::stringToId(std::string &key, TripleComponentRole p
 		if(subjects.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) {
 			return getGlobalId(ret,NOT_SHARED_SUBJECT);
 		}
-		throw "Subject not found in dictionary";
+    return 0;
 	case PREDICATE:
 		if(predicates.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) {
 			return getGlobalId(ret, NOT_SHARED_PREDICATE);
 		}
-		throw "Predicate not found in dictionary";
+    return 0;
 
 	case OBJECT:
 		if(shared.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) {
@@ -121,7 +122,7 @@ unsigned int KyotoDictionary::stringToId(std::string &key, TripleComponentRole p
 		if(objects.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) {
 			return getGlobalId(ret,NOT_SHARED_OBJECT);
 		}
-		throw "Object not found in dictionary";
+    return 0;
 	}
 
 	// NOT REACHED
@@ -140,9 +141,10 @@ void KyotoDictionary::startProcessing(ProgressListener *listener)
 
 	subjects.tune_options(TreeDB::TLINEAR /*| TreeDB::TCCOMPESS*/);
 	subjects.tune_alignment(0);
-	subjects.tune_buckets(1LL*1000*1000);
-	subjects.tune_map(256LL *1024*1024);			// 8Gb
-	//subjects.tune_page_cache(256LL*1024*1024);	// 512Mb
+	subjects.tune_buckets(10LL*1000*1000);
+	//subjects.tune_page(32768);
+	subjects.tune_page_cache(256LL*1024*1024);
+	subjects.tune_map(20LL*1024*1024*1024);
 	if (!subjects.open("subjects.kct", TreeDB::OWRITER | TreeDB::OCREATE)) {
 		cerr << "subjects db open error: " << subjects.error().name() << endl;
 	}
@@ -153,8 +155,10 @@ void KyotoDictionary::startProcessing(ProgressListener *listener)
 
 	objects.tune_options(TreeDB::TLINEAR /*| TreeDB::TCCOMPESS*/);
 	objects.tune_alignment(0);
-	objects.tune_buckets(1LL*1000*1000);
-	objects.tune_map(256LL*1024*1024);		// 8Gb
+	objects.tune_buckets(100LL*1000*1000);
+	//objects.tune_page(32768);
+	objects.tune_page_cache(256LL*1024*1024);			// 8Gb
+	objects.tune_map(20LL*1024*1024*1024);		// 8Gb
 	//objects.tune_page_cache(1<<30);	// 1Gb
 	if (!objects.open("objects.kct", TreeDB::OWRITER | TreeDB::OCREATE)) {
 		cerr << "objects db open error: " << objects.error().name() << endl;
@@ -162,8 +166,10 @@ void KyotoDictionary::startProcessing(ProgressListener *listener)
 
 	shared.tune_options(TreeDB::TLINEAR /*| TreeDB::TCCOMPESS*/);
 	shared.tune_alignment(0);
-	shared.tune_buckets(100LL*1000);
-	shared.tune_map(1LL *1024*1024*1024);			// 8GB
+	shared.tune_buckets(10*100LL*1000);
+	//shared.tune_page(32768);
+	shared.tune_page_cache(256LL*1024*1024);			// 8Gb
+	shared.tune_map(20LL*1024*1024*1024);			// 8GB
 	//shared.tune_page_cache(256LL *1024*1024);	// 256Mb
 	if (!shared.open("shared.kct", TreeDB::OWRITER | TreeDB::OCREATE)) {
 		cerr << "shared db open error: " << shared.error().name() << endl;
@@ -183,10 +189,70 @@ void KyotoDictionary::updateIDs(DB *db) {
 void KyotoDictionary::stopProcessing(ProgressListener *listener)
 {
 	// EXTRACT SHARED
+#if 0
+	// Go over subjects and objects in parallel
+	DB::Cursor* curSubj = subjects.cursor();
+	DB::Cursor* curObj = objects.cursor();
+	curSubj->jump();
+	curObj->jump();
+	string subjectStr;
+	string objectStr;
+	unsigned int count=1;
+	NOTIFY(listener, "Extracting Shared", 0, 100);
+
+	bool fetchLeft = true;
+	bool fetchRight = true;
+
+	size_t leftCount=1;
+	size_t rightCount=1;
+	size_t iterations=0;
+
+	size_t totalSubjects = subjects.count();
+	size_t totalObjects = objects.count();
+
+	fetchLeft = curSubj->get_key(&subjectStr);
+	fetchRight = curObj->get_key(&objectStr);
+
+	while(fetchLeft && fetchRight) {
+		int cmp = subjectStr.compare(objectStr);
+
+		//cout << " Left: "<< subjectStr << endl << "Right: " << objectStr << endl << "Cmp: " << cmp << endl << endl;
+
+		if(cmp==0) {
+			//cout << "New shared: " << subjectStr<<endl;
+			curSubj->remove();
+			curObj->remove();
+			shared.set(subjectStr.c_str(), subjectStr.length(), (const char *)&count, sizeof(count));
+			leftCount++;
+			rightCount++;
+			fetchLeft = curSubj->get_key(&subjectStr);
+			fetchRight = curObj->get_key(&objectStr);
+		} else if(cmp<0) {
+			curSubj->step();
+			fetchLeft = curSubj->get_key(&subjectStr);
+			leftCount++;
+		} else if(cmp>0) {
+			curObj->step();
+			fetchRight = curObj->get_key(&objectStr);
+			rightCount++;
+		}
+
+	if((iterations%100000)==0) {
+		cout << "Iterations: "<< (iterations/1000) << "K   " << endl;
+			cout << "Subjects " << leftCount << "/" << totalSubjects << endl;
+			cout << "Objects " << rightCount << "/" << totalObjects << endl;
+		}
+		iterations++;
+	}
+	delete curSubj;
+	delete curObj;
+#else 
+	// For each Subject, check object.
 	DB::Cursor* cur = subjects.cursor();
 	cur->jump();
 	string ckey;
-	unsigned int count=1;
+	size_t count=1;
+	size_t totalSubjects=subjects.count();
 	NOTIFY(listener, "Extracting Shared", 0, 100);
 	while (cur->get_key(&ckey, true)) {
 
@@ -198,10 +264,18 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 			// And add to shared
 			shared.set(ckey.c_str(), ckey.length(), (const char *)&count, sizeof(count));
 		}
+
+		if((count%100000)==0) {
+			cout << "Subjects: "<< (count/1000) << "K / " << (totalSubjects/1000) << "K" << endl;
+		}
+		count++;
 	}
 	delete cur;
+#endif
 
 	// Update IDs
+	// Not needed?
+#if 0
 	NOTIFY(listener, "Updating IDs Shared", 0, 100);
 	updateIDs(&shared);
 	NOTIFY(listener, "Updating IDs Subjects", 0, 100);
@@ -210,6 +284,7 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 	updateIDs(&predicates);
 	NOTIFY(listener, "Updating IDs Objects", 0, 100);
 	updateIDs(&objects);
+#endif
 
 #if 0
 	// Defrag
@@ -262,12 +337,12 @@ IteratorUCharString *KyotoDictionary::getShared() {
 	return new KyotoDictIterator(&this->shared);
 }
 
-unsigned int KyotoDictionary::getNumberOfElements()
+size_t KyotoDictionary::getNumberOfElements()
 {
 	return subjects.count()+predicates.count()+objects.count()+shared.count();
 }
 
-unsigned int KyotoDictionary::size()
+uint64_t KyotoDictionary::size()
 {
     return sizeStrings;
 }

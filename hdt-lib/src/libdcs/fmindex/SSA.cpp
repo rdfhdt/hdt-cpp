@@ -31,6 +31,8 @@
  * Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
 
+#ifdef HAVE_CDS
+
 #include <assert.h>
 
 #include "SSA.h"
@@ -260,10 +262,10 @@ namespace csd{
 		for(uint i=0;i<n+1;i++) {
 			if(_sa[i]%samplesuff==0) {
 				suff_sample[j++]=(uint)_sa[i];
-				bitset(sampled_vector,i);
+				cds_utils::bitset(sampled_vector,i);
 			}
 		}
-		bitset(sampled_vector,n+1);
+		cds_utils::bitset(sampled_vector,n+1);
 		sampled = _sbb->build(sampled_vector,n+1);
 		delete [] sampled_vector;
 		//delete [] _sa;
@@ -307,10 +309,15 @@ namespace csd{
 	}
 
 	uint SSA::locate(uchar * pattern, uint m, uint32_t **occs){
-		if(!use_sampling){
-			*occs = NULL;
+        uint dummy = 0; // return value is equal to array size in this call
+        return this->locate(pattern, m, 0, 0, occs, &dummy);
+    }
+    
+	uint SSA::locate(uchar * pattern, uint m, uint offset, uint limit, uint32_t **occs, uint* num_occ){
+		*occs=NULL;
+		*num_occ = 0;
+		if(!use_sampling)
 			return 0;
-		}
 		unsigned long i=m-1;
 		uint c = pattern[i];
 		uint sp = occ[c];
@@ -323,10 +330,14 @@ namespace csd{
 			sp = occ[c]+bwt->rank(c,sp-1);
 			ep = occ[c]+bwt->rank(c,ep)-1;
 		}
+        uint matches = ep-sp+1;
+		sp = sp + offset;
+        if (limit > 0 && sp + limit - 1 < ep)
+            ep = sp + limit - 1;
 		if (sp<=ep) {
-			uint matches = ep-sp+1;
-			*occs = new uint[matches];
-			uint i = sp;
+			*num_occ = ep-sp+1; // ep and sp can have different values by this point
+			*occs = new uint[*num_occ];
+            uint i = sp;
 			uint j,dist;
 			size_t rank_tmp;
 			while(i<=ep) {
@@ -341,10 +352,8 @@ namespace csd{
 				(*occs)[i-sp] = suff_sample[sampled->rank1(j)-1]+dist;
 				i++;
 			}
-			return ep-sp+1;
 		}
-		*occs=NULL;
-		return 0;
+		return matches;
 	}
 
 
@@ -394,3 +403,6 @@ namespace csd{
 	}
 
 };
+#else
+int FMIndexSSADummySymbol;
+#endif

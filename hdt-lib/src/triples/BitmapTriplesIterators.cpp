@@ -225,7 +225,7 @@ void BitmapTriplesSearchIterator::goToStart()
     }
 }
 
-unsigned int BitmapTriplesSearchIterator::estimatedNumResults()
+size_t BitmapTriplesSearchIterator::estimatedNumResults()
 {
     return maxZ-minZ;
 }
@@ -321,7 +321,7 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     adjY(trip->arrayY, trip->bitmapY),
     adjZ(trip->arrayZ, trip->bitmapZ),
     predicateOcurrence(1),
-    wavelet(trip->waveletY)
+    predicateIndex(trip->predicateIndex)
 {
     // Convert pattern to local order.
     swapComponentOrder(&pattern, SPO, triples->order);
@@ -345,7 +345,7 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     maxZ = trip->arrayZ->getNumberOfElements();
 
     // Find position of the first matching pattern.
-    numOcurrences = wavelet->rank(patY, wavelet->getNumberOfElements());
+    numOcurrences = predicateIndex->getNumAppearances(patY);
 
     goToStart();
 }
@@ -367,22 +367,19 @@ TripleID *MiddleWaveletIterator::next()
     //cout << "nextTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
     if(posZ>nextZ) {
         predicateOcurrence++;
-        posY = wavelet->select(patY, predicateOcurrence);
-        prevZ = adjZ.find(posY);
+        posY = predicateIndex->getAppearance(patY, predicateOcurrence);
 
+        posZ = prevZ = adjZ.find(posY);
         nextZ = adjZ.last(posY);
         //nextZ = adjZ.findNext(prevZ)-1;
-
-        posZ = prevZ;
 
         x = adjY.findListIndex(posY)+1;
         y = adjY.get(posY);
         z = adjZ.get(posZ);
-        posZ++;
     } else {
         z = adjZ.get(posZ);
-        posZ++;
     }
+    posZ++;
     updateOutput();
     return &returnTriple;
 }
@@ -397,21 +394,18 @@ TripleID *MiddleWaveletIterator::previous()
     //cout << "previousTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
     if(posZ<=prevZ) {
         predicateOcurrence--;
-        posY = wavelet->select(patY, predicateOcurrence);
+        posY = predicateIndex->getAppearance(patY, predicateOcurrence);
 
         prevZ = adjZ.find(posY);
-        nextZ = adjZ.last(posY);
+        posZ = nextZ = adjZ.last(posY);
         //nextZ = adjZ.findNext(prevZ)-1;
-
-        posZ = nextZ;
 
         x = adjY.findListIndex(posY)+1;
         y = adjY.get(posY);
         z = adjZ.get(posZ);
     } else {
-        posZ--;
         z = adjZ.get(posZ);
-
+        posZ--;
     }
     updateOutput();
     return &returnTriple;
@@ -420,29 +414,25 @@ TripleID *MiddleWaveletIterator::previous()
 void MiddleWaveletIterator::goToStart()
 {
     predicateOcurrence = 1;
-    posY = wavelet->select(patY, predicateOcurrence);
-    prevZ = adjZ.find(posY);
+    posY = predicateIndex->getAppearance(patY, predicateOcurrence);
+
+    posZ = prevZ = adjZ.find(posY);
     nextZ = adjZ.last(posY);
     //nextZ = adjZ.findNext(prevZ)-1;
-
-    posZ = prevZ;
 
     x = adjY.findListIndex(posY)+1;
     y = adjY.get(posY);
     z = adjZ.get(posZ);
 }
 
-unsigned int MiddleWaveletIterator::estimatedNumResults()
+size_t MiddleWaveletIterator::estimatedNumResults()
 {
-    if(triples->predicateCount!=NULL) {
-	return triples->predicateCount->get(patY-1);
-    }
-    return numOcurrences*2;
+    return predicateIndex->getNumAppearances(patY);
 }
 
 ResultEstimationType MiddleWaveletIterator::numResultEstimation()
 {
-    if(triples->predicateCount!=NULL) {
+    if(triples->predicateIndex!=NULL) {
 	return EXACT;
     }
     return APPROXIMATE;
@@ -460,7 +450,7 @@ bool MiddleWaveletIterator::findNextOccurrence(unsigned int value, unsigned char
             if(predicateOcurrence>numOcurrences) {  // FIXME CHECK COMP
                 return false;
             }
-            posY = wavelet->select(patY, predicateOcurrence);
+            posY = predicateIndex->getAppearance(patY, predicateOcurrence);
             x = adjY.findListIndex(posY)+1;
         }
 
@@ -476,7 +466,7 @@ bool MiddleWaveletIterator::findNextOccurrence(unsigned int value, unsigned char
             if(predicateOcurrence>numOcurrences) {  // FIXME CHECK COMP
                 return false;
             }
-            posY = wavelet->select(patY, predicateOcurrence);
+            posY = predicateIndex->getAppearance(patY, predicateOcurrence);
             try {
                 posZ = adjZ.find(posY, value);
 
@@ -518,6 +508,139 @@ bool MiddleWaveletIterator::isSorted(TripleComponentRole role) {
 
     throw "Order not supported";
 }
+
+
+
+
+
+
+
+IteratorY::IteratorY(BitmapTriples *trip, TripleID &pat) :
+    triples(trip),
+    pattern(pat),
+    adjY(trip->arrayY, trip->bitmapY),
+    adjZ(trip->arrayZ, trip->bitmapZ)
+{
+    // Convert pattern to local order.
+    swapComponentOrder(&pattern, SPO, triples->order);
+    patX = pattern.getSubject();
+    patY = pattern.getPredicate();
+    patZ = pattern.getObject();
+
+    if(patY==0) {
+        throw "This iterator is not suitable for this pattern";
+    }
+
+#if 0
+    cout << "AdjY: " << endl;
+    adjY.dump();
+    cout << "AdjZ: " << endl;
+    adjZ.dump();
+    cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+#endif
+
+    goToStart();
+}
+
+void IteratorY::updateOutput() {
+    // Convert local order to SPO
+    returnTriple.setAll(x,y,z);
+
+    swapComponentOrder(&returnTriple, triples->order, SPO);
+}
+
+bool IteratorY::hasNext()
+{
+    return nextY!=-1 || posZ<=nextZ;
+}
+
+TripleID *IteratorY::next()
+{
+	if(posZ>nextZ) {
+		prevY = posY;
+		posY = nextY;
+		nextY = adjY.findNextAppearance(nextY+1, patY);
+
+		posZ = prevZ = adjZ.find(posY);
+		nextZ = adjZ.last(posY);
+
+		x = adjY.findListIndex(posY)+1;
+		y = adjY.get(posY);
+		z = adjZ.get(posZ);
+	} else {
+		z = adjZ.get(posZ);
+	}
+	posZ++;
+
+	updateOutput();
+
+	return &returnTriple;
+}
+
+bool IteratorY::hasPrevious()
+{
+	return prevY!=-1 || posZ>=prevZ;
+}
+
+TripleID *IteratorY::previous()
+{
+	if(posZ<=prevZ) {
+		nextY = posY;
+		posY = prevY;
+		prevY = adjY.findPreviousAppearance(prevY-1, patY);
+
+		posZ = prevZ = adjZ.find(posY);
+		nextZ = adjZ.last(posY);
+
+		x = adjY.findListIndex(posY)+1;
+		y = adjY.get(posY);
+		z = adjZ.get(posZ);
+	} else {
+		posZ--;
+		z = adjZ.get(posZ);
+	}
+
+	updateOutput();
+
+	return &returnTriple;
+}
+
+void IteratorY::goToStart()
+{
+	prevY = -1;
+	posY = adjY.findNextAppearance(0, patY);
+	nextY = adjY.findNextAppearance(posY+1, patY);
+
+	posZ = prevZ = adjZ.find(posY);
+	nextZ = adjZ.last(posY);
+
+	x = adjY.findListIndex(posY)+1;
+	y = adjY.get(posY);
+    z = adjZ.get(posZ);
+}
+
+size_t IteratorY::estimatedNumResults()
+{
+	return adjZ.getSize();
+}
+
+ResultEstimationType IteratorY::numResultEstimation()
+{
+    return UNKNOWN;
+}
+
+TripleComponentOrder IteratorY::getOrder() {
+    return triples->order;
+}
+
+bool IteratorY::findNextOccurrence(unsigned int value, unsigned char component) {
+    throw "Not implemented";
+}
+
+bool IteratorY::isSorted(TripleComponentRole role) {
+    throw "Not implemented";
+}
+
 
 
 
@@ -741,7 +864,7 @@ void ObjectIndexIterator::goToStart()
     posIndex=minIndex;
 }
 
-unsigned int ObjectIndexIterator::estimatedNumResults()
+size_t ObjectIndexIterator::estimatedNumResults()
 {
     return maxIndex-minIndex+1;
 }
@@ -815,5 +938,37 @@ bool ObjectIndexIterator::isSorted(TripleComponentRole role) {
 
     throw "Order not supported";
 }
+
+
+BTInterleavedIterator::BTInterleavedIterator(BitmapTriples *triples, size_t skip) :
+            triples(triples),
+            skip(skip),
+            posZ(0),
+            adjY(triples->arrayY, triples->bitmapY),
+            adjZ(triples->arrayZ, triples->bitmapZ)
+{
+}
+
+bool BTInterleavedIterator::hasNext()
+{
+    return posZ<triples->getNumberOfElements();
+}
+
+TripleID *BTInterleavedIterator::next()
+{
+    size_t posY = adjZ.findListIndex(posZ);
+
+    unsigned int z = adjZ.get(posZ);
+    unsigned int y = adjY.get(posY);
+    unsigned int x = adjY.findListIndex(posY)+1;
+
+    posZ+=skip;
+
+    returnTriple.setAll(x,y,z);
+
+    return &returnTriple;
+}
+
+
 
 }

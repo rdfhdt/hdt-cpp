@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 
 	RDFParserCallback *parser = RDFParserCallback::getParserCallback(NTRIPLES);
 
-	parser->doParse(argv[1], "http://dataset.com/dataset", NTRIPLES, &proc);
+	parser->doParse(argv[1], "http://dataset.com/dataset", NTRIPLES, true, &proc);
 
 	cout << argv[1] << " parsed in " << st << endl;
 

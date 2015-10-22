@@ -70,10 +70,11 @@ public:
 	 *  @occs: pointer where the ID located will be stored.
 	 * */
 	uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t **occs);
+    uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t offset, uint32_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ);
 
-	unsigned int getNumberOfElements();
+    size_t getNumberOfElements();
 
-    unsigned int size();
+    uint64_t size();
 
 	unsigned int getNsubjects();
 	unsigned int getNpredicates();

@@ -67,6 +67,7 @@ namespace csd{
 			uint LF(uint i);
 			uint locate_id(uchar * pattern, uint m);
 			uint locate(uchar * pattern, uint m, uint32_t **occs);
+            uint locate(uchar * pattern, uint m, uint offset, uint limit, uint32_t **occs, uint* num_occ);
 
 			uchar * extract_id(uint id, uint max_len);
             static SSA * load(istream &fp);

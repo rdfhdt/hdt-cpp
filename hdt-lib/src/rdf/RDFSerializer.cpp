@@ -6,7 +6,7 @@
  */
 
 #include "RDFSerializer.hpp"
-#ifdef USE_RAPTOR
+#ifdef HAVE_RAPTOR
 #include "RDFSerializerRaptor.hpp"
 #endif
 #include "RDFSerializerNTriples.hpp"
@@ -15,7 +15,7 @@ namespace hdt {
 
 RDFSerializer *RDFSerializer::getSerializer(std::ostream &out, RDFNotation notation) {
 
-#ifdef USE_RAPTOR
+#ifdef HAVE_RAPTOR
 		return new RDFSerializerRaptor(out, notation);
 #else
 	if(notation==NTRIPLES) {
@@ -28,7 +28,7 @@ RDFSerializer *RDFSerializer::getSerializer(std::ostream &out, RDFNotation notat
 
 RDFSerializer *RDFSerializer::getSerializer(const char *fileName, RDFNotation notation) {
 
-#ifdef USE_RAPTOR
+#ifdef HAVE_RAPTOR
 	return new RDFSerializerRaptor(fileName, notation);
 #else
 	if(notation==NTRIPLES) {

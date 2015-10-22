@@ -37,7 +37,9 @@
 
 #include "../dictionary/PlainDictionary.hpp"
 #include "../dictionary/FourSectionDictionary.hpp"
+#ifdef HAVE_CDS
 #include "../dictionary/LiteralDictionary.hpp"
+#endif
 
 #include "../triples/TriplesList.hpp"
 #ifndef WIN32
@@ -104,8 +106,13 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 		return new PlainDictionary();
 	} else if(type==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
 		return new FourSectionDictionary();
+
 	} else if(type==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
+#ifdef HAVE_CDS
 		return new LiteralDictionary();
+#else
+		throw "This version has been compiled without support for this dictionary";
+#endif
 	}
 
 	throw "Dictionary Implementation not available";

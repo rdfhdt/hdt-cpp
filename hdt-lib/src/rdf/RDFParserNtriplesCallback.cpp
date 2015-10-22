@@ -25,7 +25,7 @@ RDFParserNtriplesCallback::~RDFParserNtriplesCallback() {
 
 }
 
-void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, RDFCallback *callback) {
+void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors,RDFCallback *callback) {
 
 	DecompressStream stream(fileName);
 	istream *in=stream.getStream();
