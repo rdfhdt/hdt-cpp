@@ -1,19 +1,19 @@
 # C++ library for the HDT triple format
-HDT keeps big RDF datasets compressed while maintaining search and browse operations.
+HDT keeps big RDF datasets compressed while maintaining efficient search and browse operations.
 
-To compile the library run `make` under the dir hdt-lib, this will generate the library and tools.
+To compile the library run `make` under the directory `hdt-lib`, this will generate the library and tools.
 
-The implementation can have the following optional dependencies:
-- [Raptor RDF Parser Library Version 2+](http://librdf.org/raptor/) (optional) This allows importing RDF in many serialization formats, i.e RDF/XML, Turtle, N3. etc. To activate uncomment the line `USE_RAPTOR=true` in the Makefile. If raptor is not used, the library will only be able to load RDF in NTriples format.
-- [libz](http://www.zlib.net/) (optional) Allows to load files in ntriples compressed with GZIP (i.e. file.nt.gz) and gzipped HDTs (file.hdt.gz). To activate uncomment the line `USE_LIBZ=true` in the Makefile.
-- [Kyoto Cabinet](http://fallabs.com/kyotocabinet/) (optional) Allows generating big RDF Datasets on machines without much RAM Memory, by creating a temporary Kyoto Cabinet Database. To activate uncomment the line `USE_KYOTO=true` in the Makefile and edit the includepath / librarypath.
+The implementation has the following optional dependencies:
+- [Raptor RDF Parser Library 2.x](http://librdf.org/raptor/) (optional) This enables importing RDF data in many serialization formats, e.g., RDF/XML, Turtle, N3, etc. The dependency is activated by default; to deactivate it, comment out the line `RAPTOR_SUPPORT=true` in the `Makefile`. If Raptor is not used, the library will only be able to load RDF data in N-Triples format.
+- [libz](http://www.zlib.net/) (optional) Enables loading N-Triples files compressed with GZIP (e.g., `file.nt.gz`) and gzipped HDTs (`file.hdt.gz`). The dependency is activated by default; to deactivate it, comment out the line `LIBZ_SUPPORT=true` in the `Makefile`.
+- [Kyoto Cabinet](http://fallabs.com/kyotocabinet/) (optional) Enables generating big RDF datasets on machines without much RAM memory, by creating a temporary Kyoto Cabinet database. The dependency is deactivated by default; to activate it, uncomment the line `KYOTO_SUPPORT=true` in the `Makefile` and edit the library include path (`INCLUDES=`) as needed.
 
-After compiling, these are the typical operations that you will perform:
-Create the HDT representation of your RDF Data:
+After building, these are the typical operations that you will perform:
+Create the HDT representation of your RDF data:
 
     $ tools/rdf2hdt data/test.nt data/test.hdt
 
-Convert an HDT to another serialization format, such as NTriples:
+Convert an HDT to another RDF serialization format, such as N-Triples:
 
     $ tools/hdt2rdf data/test.hdt data/test.hdtexport.nt
 
@@ -44,6 +44,6 @@ Extract the Header of an HDT file:
 
     $ tools/hdtInfo data/test.hdt > header.nt
 
-Replace the Header of an HDT file with a new one. For example by editing the existing one as extracted using `hdtInfo`
+Replace the Header of an HDT file with a new one. For example, by editing the existing one as extracted using `hdtInfo`:
 
     $ tools/replaceHeader data/test.hdt data/testOutput.hdt newHeader.nt
