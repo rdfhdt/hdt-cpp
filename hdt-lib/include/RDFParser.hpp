@@ -33,14 +33,13 @@
 #ifndef RDFPARSER_H_
 #define RDFPARSER_H_
 
+#include "SingleTriple.hpp"
+#include "Iterator.hpp"
+#include "HDTEnums.hpp"
+
 #include <string>
 #include <istream>
 #include <stdint.h>
-
-#include <SingleTriple.hpp>
-#include <Iterator.hpp>
-#include <HDTEnums.hpp>
-
 
 namespace hdt {
 

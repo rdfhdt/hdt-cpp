@@ -33,11 +33,12 @@
 #ifndef HEADER_
 #define HEADER_
 
-#include <RDF.hpp>
-#include <ControlInformation.hpp>
+#include "RDF.hpp"
+#include "ControlInformation.hpp"
+#include "HDTListener.hpp"
+
 #include <iostream>
 #include <sstream>
-#include <HDTListener.hpp>
 
 namespace hdt {
 

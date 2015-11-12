@@ -32,9 +32,10 @@
 #ifndef HDT_MANAGER_
 #define HDT_MANAGER_
 
-#include <HDTSpecification.hpp>
-#include <HDT.hpp>
-#include <HDTListener.hpp>
+#include "HDTSpecification.hpp"
+#include "HDT.hpp"
+#include "HDTListener.hpp"
+
 #include <string>
 
 namespace hdt {

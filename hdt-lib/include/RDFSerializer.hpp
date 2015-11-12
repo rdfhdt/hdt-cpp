@@ -32,11 +32,12 @@
 #ifndef RDFSERIALIZER_H_
 #define RDFSERIALIZER_H_
 
+#include "SingleTriple.hpp"
+#include "Iterator.hpp"
+#include "HDTEnums.hpp"
+#include "HDTListener.hpp"
+
 #include <iostream>
-#include <SingleTriple.hpp>
-#include <Iterator.hpp>
-#include <HDTEnums.hpp>
-#include <HDTListener.hpp>
 
 namespace hdt {
 

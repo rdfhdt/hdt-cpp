@@ -33,15 +33,15 @@
 #ifndef HDT_
 #define HDT_
 
-#include <RDF.hpp>
-#include <HDTSpecification.hpp>
-#include <HDTEnums.hpp>
-#include <HDTListener.hpp>
-#include <Header.hpp>
-#include <Dictionary.hpp>
-#include <Triples.hpp>
-#include <RDFParser.hpp>
-#include <RDFSerializer.hpp>
+#include "RDF.hpp"
+#include "HDTSpecification.hpp"
+#include "HDTEnums.hpp"
+#include "HDTListener.hpp"
+#include "Header.hpp"
+#include "Dictionary.hpp"
+#include "Triples.hpp"
+#include "RDFParser.hpp"
+#include "RDFSerializer.hpp"
 
 #include <iostream>
 #include <set>

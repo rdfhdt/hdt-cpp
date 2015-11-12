@@ -32,16 +32,16 @@
 #ifndef HDT_DICTIONARY_
 #define HDT_DICTIONARY_
 
+#include "HDTListener.hpp"
+#include "SingleTriple.hpp"
+#include "Iterator.hpp"
+#include "HDTEnums.hpp"
+#include "Header.hpp"
+#include "ControlInformation.hpp"
+#include "Triples.hpp"
+
 #include <string>
 #include <iostream>
-
-#include <HDTListener.hpp>
-#include <SingleTriple.hpp>
-#include <Iterator.hpp>
-#include <HDTEnums.hpp>
-#include <Header.hpp>
-#include <ControlInformation.hpp>
-#include <Triples.hpp>
 
 namespace hdt {
 

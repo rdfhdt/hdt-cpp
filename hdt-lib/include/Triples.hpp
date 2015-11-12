@@ -32,11 +32,11 @@
 #ifndef HDT_TRIPLES_
 #define HDT_TRIPLES_
 
-#include <HDTEnums.hpp>
-#include <SingleTriple.hpp>
-#include <Header.hpp>
-#include <ControlInformation.hpp>
-#include <HDTListener.hpp>
+#include "HDTEnums.hpp"
+#include "SingleTriple.hpp"
+#include "Header.hpp"
+#include "ControlInformation.hpp"
+#include "HDTListener.hpp"
 
 #include <iostream>
 #include <iterator>

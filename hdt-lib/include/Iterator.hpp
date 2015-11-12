@@ -32,11 +32,11 @@
 #ifndef ITERATOR_HPP_
 #define ITERATOR_HPP_
 
+#include "SingleTriple.hpp"
+
 #include <vector>
 #include <string>
 #include <fstream>
-
-#include <SingleTriple.hpp>
 
 namespace hdt {
 

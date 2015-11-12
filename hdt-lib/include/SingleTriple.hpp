@@ -32,11 +32,11 @@
 #ifndef SINGLETRIPLE_HPP_
 #define SINGLETRIPLE_HPP_
 
+#include "HDTEnums.hpp"
+
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <HDTEnums.hpp>
 
 using namespace std;
 
