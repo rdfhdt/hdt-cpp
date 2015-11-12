@@ -204,4 +204,3 @@ public:
 }
 
 #endif /* HDT_TRIPLES_ */
-

@@ -29,7 +29,6 @@
  *
  */
 
-
 #ifndef HDTLISTENER_HPP_
 #define HDTLISTENER_HPP_
 
@@ -79,7 +78,6 @@ public:
 	}
 };
 
-
 class StdoutProgressListener : public ProgressListener {
 private:
 public:
@@ -110,6 +108,5 @@ public:
     if((listener)!=NULL && total!=0 && ((counter)%(step)) == 0) (listener)->notifyProgress( ((counter)*100.0/(total)), (message));
 
 }
-
 
 #endif /* HDTLISTENER_HPP_ */

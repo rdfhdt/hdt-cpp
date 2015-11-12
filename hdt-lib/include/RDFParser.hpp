@@ -29,7 +29,6 @@
  *
  */
 
-
 #ifndef RDFPARSER_H_
 #define RDFPARSER_H_
 

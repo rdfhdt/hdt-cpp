@@ -29,7 +29,6 @@
  *
  */
 
-
 #ifndef HDTSPECIFICATION_
 #define HDTSPECIFICATION_
 

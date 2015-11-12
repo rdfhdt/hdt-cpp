@@ -29,7 +29,6 @@
  *
  */
 
-
 #ifndef HDT_
 #define HDT_
 
@@ -48,7 +47,6 @@
 
 namespace hdt {
 
-
 /**
  * Main HDT class. Represents an abstract access to a HDT object.
  * It provides methods to get the Dictionary, Header and Triples.
@@ -57,7 +55,6 @@ namespace hdt {
 class HDT : public RDFAccess
 {
 public:
-
 	virtual ~HDT() { };
 
 	/**
@@ -114,14 +111,12 @@ public:
     virtual bool isIndexed()=0;
 };
 
-
 /**
  * ModifiableHDT is a HDT that provides read/write operations. In addition to read operations,
  * it allows to insert and remove triples.
  */
 class ModifiableHDT : public HDT {
 public:
-
 	virtual ~ModifiableHDT(){ }
 
 	/**

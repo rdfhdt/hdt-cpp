@@ -42,7 +42,6 @@ using namespace std;
 
 namespace hdt {
 
-
 #define IS_VARIABLE(a) ( (a).size()>0 && (a).at(0)=='?')
 #define IS_URI(a) ( (a).size()>0 && (a).at(0)!='<' && (a).at(0)!='_')
 #define IS_LITERAL(a) ( (a).size()>0 && (a).at(0)=='"')
@@ -225,7 +224,7 @@ public:
 		unsigned int predicate = pattern.getPredicate();
                 unsigned int object = pattern.getObject();
 
-		if (subject == 0 || subject == this->subject) {                    
+		if (subject == 0 || subject == this->subject) {
                     if (predicate == 0 || predicate == this->predicate) {
                         if (object == 0 || object == this->object) {
                             return true;

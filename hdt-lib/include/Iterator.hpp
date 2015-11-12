@@ -101,9 +101,6 @@ public:
     }
 };
 
-
-
-
 class IteratorTripleID {
 public:
     virtual ~IteratorTripleID() { }

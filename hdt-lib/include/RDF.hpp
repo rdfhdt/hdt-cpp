@@ -29,7 +29,6 @@
  *
  */
 
-
 #ifndef RDF_HPP_
 #define RDF_HPP_
 
@@ -60,9 +59,7 @@ public:
  * Provides writable access to a RDF repository, search triples, insert, remove.
  */
 class RDFStorage : public RDFAccess {
-
 public:
-
 	virtual ~RDFStorage() { }
 
 	/**

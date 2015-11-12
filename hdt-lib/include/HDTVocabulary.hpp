@@ -29,7 +29,6 @@
  *
  */
 
-
 #ifndef HDTVOCABULARY_HPP_
 #define HDTVOCABULARY_HPP_
 
@@ -131,6 +130,5 @@ namespace HDTVocabulary {
 	const std::string HDT_SIZE = HDT_BASE+"hdtSize>";
 }
 }
-
 
 #endif /* HDTVOCABULARY_HPP_ */

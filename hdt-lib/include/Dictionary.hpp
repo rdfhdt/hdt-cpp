@@ -172,9 +172,7 @@ public:
 
 class ModifiableDictionary : public Dictionary {
 public:
-	virtual ~ModifiableDictionary(){
-
-	}
+	virtual ~ModifiableDictionary(){ }
 
     /**
     * Insert a new entry to the dictionary in the corresponding section according to the role (Subject, Predicate, Object).
@@ -196,6 +194,5 @@ public:
 };
 
 }
-
 
 #endif  /* HDT_DICTIONARY_ */
