@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef RDFPARSER_H_
-#define RDFPARSER_H_
+#ifndef HDT_RDFPARSER_HPP_
+#define HDT_RDFPARSER_HPP_
 
 #include "SingleTriple.hpp"
 #include "Iterator.hpp"
@@ -103,4 +103,4 @@ public:
 
 }
 
-#endif /* RDFPARSER_H_ */
+#endif /* HDT_RDFPARSER_HPP_ */

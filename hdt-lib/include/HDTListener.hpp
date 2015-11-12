@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef HDTLISTENER_HPP_
-#define HDTLISTENER_HPP_
+#ifndef HDT_HDTLISTENER_HPP_
+#define HDT_HDTLISTENER_HPP_
 
 #include <iostream>
 #include <iomanip>
@@ -109,4 +109,4 @@ public:
 
 }
 
-#endif /* HDTLISTENER_HPP_ */
+#endif /* HDT_HDTLISTENER_HPP_ */

@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef HDT_
-#define HDT_
+#ifndef HDT_HDT_HPP_
+#define HDT_HDT_HPP_
 
 #include "RDF.hpp"
 #include "HDTSpecification.hpp"
@@ -148,4 +148,4 @@ public:
 
 }
 
-#endif /* HDT_ */
+#endif /* HDT_HDT_HPP_ */

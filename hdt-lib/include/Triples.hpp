@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef HDT_TRIPLES_
-#define HDT_TRIPLES_
+#ifndef HDT_TRIPLES_HPP_
+#define HDT_TRIPLES_HPP_
 
 #include "HDTEnums.hpp"
 #include "SingleTriple.hpp"
@@ -203,4 +203,4 @@ public:
 
 }
 
-#endif /* HDT_TRIPLES_ */
+#endif /* HDT_TRIPLES_HPP_ */

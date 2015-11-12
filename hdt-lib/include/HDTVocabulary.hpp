@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef HDTVOCABULARY_HPP_
-#define HDTVOCABULARY_HPP_
+#ifndef HDT_HDTVOCABULARY_HPP_
+#define HDT_HDTVOCABULARY_HPP_
 
 #include <string>
 
@@ -131,4 +131,4 @@ namespace HDTVocabulary {
 }
 }
 
-#endif /* HDTVOCABULARY_HPP_ */
+#endif /* HDT_HDTVOCABULARY_HPP_ */

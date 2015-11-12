@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef SINGLETRIPLE_HPP_
-#define SINGLETRIPLE_HPP_
+#ifndef HDT_SINGLETRIPLE_HPP_
+#define HDT_SINGLETRIPLE_HPP_
 
 #include "HDTEnums.hpp"
 
@@ -533,4 +533,4 @@ public:
 
 }
 
-#endif /* SINGLETRIPLE_HPP_ */
+#endif /* HDT_SINGLETRIPLE_HPP_ */

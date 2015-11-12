@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef HDT_DICTIONARY_
-#define HDT_DICTIONARY_
+#ifndef HDT_DICTIONARY_HPP_
+#define HDT_DICTIONARY_HPP_
 
 #include "HDTListener.hpp"
 #include "SingleTriple.hpp"
@@ -195,4 +195,4 @@ public:
 
 }
 
-#endif  /* HDT_DICTIONARY_ */
+#endif /* HDT_DICTIONARY_HPP_ */

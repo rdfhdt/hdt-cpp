@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef RDF_HPP_
-#define RDF_HPP_
+#ifndef HDT_RDF_HPP_
+#define HDT_RDF_HPP_
 
 #include "SingleTriple.hpp"
 #include "Iterator.hpp"
@@ -89,4 +89,4 @@ public:
 
 }
 
-#endif /* RDF_HPP_ */
+#endif /* HDT_RDF_HPP_ */

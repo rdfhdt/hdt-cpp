@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef HEADER_
-#define HEADER_
+#ifndef HDT_HEADER_HPP_
+#define HDT_HEADER_HPP_
 
 #include "RDF.hpp"
 #include "ControlInformation.hpp"
@@ -179,4 +179,4 @@ public:
 
 }
 
-#endif /* HEADER_HPP_ */
+#endif /* HDT_HEADER_HPP_ */

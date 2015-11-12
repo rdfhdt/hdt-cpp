@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef ITERATOR_HPP_
-#define ITERATOR_HPP_
+#ifndef HDT_ITERATOR_HPP_
+#define HDT_ITERATOR_HPP_
 
 #include "SingleTriple.hpp"
 
@@ -169,4 +169,4 @@ public:
 
 }
 
-#endif /* ITERATOR_HPP_ */
+#endif /* HDT_ITERATOR_HPP_ */
