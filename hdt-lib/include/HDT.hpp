@@ -29,25 +29,23 @@
  *
  */
 
+#ifndef HDT_HDT_HPP_
+#define HDT_HDT_HPP_
 
-#ifndef HDT_
-#define HDT_
-
-#include <RDF.hpp>
-#include <HDTSpecification.hpp>
-#include <HDTEnums.hpp>
-#include <HDTListener.hpp>
-#include <Header.hpp>
-#include <Dictionary.hpp>
-#include <Triples.hpp>
-#include <RDFParser.hpp>
-#include <RDFSerializer.hpp>
+#include "RDF.hpp"
+#include "HDTSpecification.hpp"
+#include "HDTEnums.hpp"
+#include "HDTListener.hpp"
+#include "Header.hpp"
+#include "Dictionary.hpp"
+#include "Triples.hpp"
+#include "RDFParser.hpp"
+#include "RDFSerializer.hpp"
 
 #include <iostream>
 #include <set>
 
 namespace hdt {
-
 
 /**
  * Main HDT class. Represents an abstract access to a HDT object.
@@ -57,7 +55,6 @@ namespace hdt {
 class HDT : public RDFAccess
 {
 public:
-
 	virtual ~HDT() { };
 
 	/**
@@ -114,14 +111,12 @@ public:
     virtual bool isIndexed()=0;
 };
 
-
 /**
  * ModifiableHDT is a HDT that provides read/write operations. In addition to read operations,
  * it allows to insert and remove triples.
  */
 class ModifiableHDT : public HDT {
 public:
-
 	virtual ~ModifiableHDT(){ }
 
 	/**
@@ -153,4 +148,4 @@ public:
 
 }
 
-#endif /* HDT_ */
+#endif /* HDT_HDT_HPP_ */

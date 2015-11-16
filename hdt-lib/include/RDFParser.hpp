@@ -29,18 +29,16 @@
  *
  */
 
+#ifndef HDT_RDFPARSER_HPP_
+#define HDT_RDFPARSER_HPP_
 
-#ifndef RDFPARSER_H_
-#define RDFPARSER_H_
+#include "SingleTriple.hpp"
+#include "Iterator.hpp"
+#include "HDTEnums.hpp"
 
 #include <string>
 #include <istream>
 #include <stdint.h>
-
-#include <SingleTriple.hpp>
-#include <Iterator.hpp>
-#include <HDTEnums.hpp>
-
 
 namespace hdt {
 
@@ -105,4 +103,4 @@ public:
 
 }
 
-#endif /* RDFPARSER_H_ */
+#endif /* HDT_RDFPARSER_HPP_ */

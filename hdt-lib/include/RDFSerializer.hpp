@@ -29,14 +29,15 @@
  *
  */
 
-#ifndef RDFSERIALIZER_H_
-#define RDFSERIALIZER_H_
+#ifndef HDT_RDFSERIALIZER_HPP_
+#define HDT_RDFSERIALIZER_HPP_
+
+#include "SingleTriple.hpp"
+#include "Iterator.hpp"
+#include "HDTEnums.hpp"
+#include "HDTListener.hpp"
 
 #include <iostream>
-#include <SingleTriple.hpp>
-#include <Iterator.hpp>
-#include <HDTEnums.hpp>
-#include <HDTListener.hpp>
 
 namespace hdt {
 
@@ -55,4 +56,4 @@ public:
 
 }
 
-#endif /* RDFSERIALIZER_H_ */
+#endif /* HDT_RDFSERIALIZER_HPP_ */

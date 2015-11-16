@@ -29,19 +29,19 @@
  *
  */
 
-#ifndef HDT_DICTIONARY_
-#define HDT_DICTIONARY_
+#ifndef HDT_DICTIONARY_HPP_
+#define HDT_DICTIONARY_HPP_
+
+#include "HDTListener.hpp"
+#include "SingleTriple.hpp"
+#include "Iterator.hpp"
+#include "HDTEnums.hpp"
+#include "Header.hpp"
+#include "ControlInformation.hpp"
+#include "Triples.hpp"
 
 #include <string>
 #include <iostream>
-
-#include <HDTListener.hpp>
-#include <SingleTriple.hpp>
-#include <Iterator.hpp>
-#include <HDTEnums.hpp>
-#include <Header.hpp>
-#include <ControlInformation.hpp>
-#include <Triples.hpp>
 
 namespace hdt {
 
@@ -172,9 +172,7 @@ public:
 
 class ModifiableDictionary : public Dictionary {
 public:
-	virtual ~ModifiableDictionary(){
-
-	}
+	virtual ~ModifiableDictionary(){ }
 
     /**
     * Insert a new entry to the dictionary in the corresponding section according to the role (Subject, Predicate, Object).
@@ -197,5 +195,4 @@ public:
 
 }
 
-
-#endif  /* HDT_DICTIONARY_ */
+#endif /* HDT_DICTIONARY_HPP_ */

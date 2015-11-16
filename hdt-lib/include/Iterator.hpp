@@ -29,14 +29,14 @@
  *
  */
 
-#ifndef ITERATOR_HPP_
-#define ITERATOR_HPP_
+#ifndef HDT_ITERATOR_HPP_
+#define HDT_ITERATOR_HPP_
+
+#include "SingleTriple.hpp"
 
 #include <vector>
 #include <string>
 #include <fstream>
-
-#include <SingleTriple.hpp>
 
 namespace hdt {
 
@@ -100,9 +100,6 @@ public:
         return (unsigned char*)line.c_str();
     }
 };
-
-
-
 
 class IteratorTripleID {
 public:
@@ -172,4 +169,4 @@ public:
 
 }
 
-#endif /* ITERATOR_HPP_ */
+#endif /* HDT_ITERATOR_HPP_ */

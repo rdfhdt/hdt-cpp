@@ -29,14 +29,14 @@
  *
  */
 
-#ifndef HDT_TRIPLES_
-#define HDT_TRIPLES_
+#ifndef HDT_TRIPLES_HPP_
+#define HDT_TRIPLES_HPP_
 
-#include <HDTEnums.hpp>
-#include <SingleTriple.hpp>
-#include <Header.hpp>
-#include <ControlInformation.hpp>
-#include <HDTListener.hpp>
+#include "HDTEnums.hpp"
+#include "SingleTriple.hpp"
+#include "Header.hpp"
+#include "ControlInformation.hpp"
+#include "HDTListener.hpp"
 
 #include <iostream>
 #include <iterator>
@@ -203,5 +203,4 @@ public:
 
 }
 
-#endif /* HDT_TRIPLES_ */
-
+#endif /* HDT_TRIPLES_HPP_ */

@@ -29,12 +29,11 @@
  *
  */
 
+#ifndef HDT_RDF_HPP_
+#define HDT_RDF_HPP_
 
-#ifndef RDF_HPP_
-#define RDF_HPP_
-
-#include <SingleTriple.hpp>
-#include <Iterator.hpp>
+#include "SingleTriple.hpp"
+#include "Iterator.hpp"
 
 namespace hdt {
 
@@ -60,9 +59,7 @@ public:
  * Provides writable access to a RDF repository, search triples, insert, remove.
  */
 class RDFStorage : public RDFAccess {
-
 public:
-
 	virtual ~RDFStorage() { }
 
 	/**
@@ -92,4 +89,4 @@ public:
 
 }
 
-#endif /* RDF_HPP_ */
+#endif /* HDT_RDF_HPP_ */

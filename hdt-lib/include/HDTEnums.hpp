@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef HDT_ENUMS_
-#define HDT_ENUMS_
+#ifndef HDT_HDTENUMS_HPP_
+#define HDT_HDTENUMS_HPP_
 
 #include <string.h>
 
@@ -149,4 +149,4 @@ enum ResultEstimationType {
 
 }
 
-#endif
+#endif /* HDT_HDTENUMS_HPP_ */

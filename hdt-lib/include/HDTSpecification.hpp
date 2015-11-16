@@ -29,9 +29,8 @@
  *
  */
 
-
-#ifndef HDTSPECIFICATION_
-#define HDTSPECIFICATION_
+#ifndef HDT_HDTSPECIFICATION_HPP_
+#define HDT_HDTSPECIFICATION_HPP_
 
 #include <string>
 #include <map>
@@ -75,4 +74,4 @@ public:
 
 }
 
-#endif /* HDTSPECIFICATION_ */
+#endif /* HDT_HDTSPECIFICATION_HPP_ */

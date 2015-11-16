@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef CONTROLINFORMATION_H_
-#define CONTROLINFORMATION_H_
+#ifndef HDT_CONTROLINFORMATION_HPP_
+#define HDT_CONTROLINFORMATION_HPP_
 
 #include <stdint.h>
 #include <iostream>
@@ -126,4 +126,4 @@ public:
 
 }
 
-#endif /* CONTROLINFORMATION_H_ */
+#endif /* HDT_CONTROLINFORMATION_HPP_ */
