@@ -943,8 +943,8 @@ bool ObjectIndexIterator::isSorted(TripleComponentRole role) {
 BTInterleavedIterator::BTInterleavedIterator(BitmapTriples *triples, size_t skip) :
             triples(triples),
             adjY(triples->arrayY, triples->bitmapY),
-            posZ(0),
             adjZ(triples->arrayZ, triples->bitmapZ),
+            posZ(0),
             skip(skip)
 {
 }
