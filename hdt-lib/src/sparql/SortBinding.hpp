@@ -10,11 +10,11 @@ class SortBinding : public VarBindingInterface
 private:
     vector<string> varnames;
     unsigned int *table;
-    char *joinVar;
-    unsigned int joinVarPos;
+    //char *joinVar;
+    //unsigned int joinVarPos;
     unsigned int numRows;
     unsigned int numCols;
-    unsigned int currentRow;
+    //unsigned int currentRow;
 public:
     // Sort all of the child by var
     SortBinding(char *var, VarBindingInterface *child);

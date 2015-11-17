@@ -241,7 +241,7 @@ private:
 	AdjacencyList adjY, adjZ, adjIndex;
 	unsigned int patX, patY, patZ;
     size_t posIndex;
-    size_t predicateOcurrence, numOcurrences;
+    //size_t predicateOcurrence, numOcurrences;
 	long long minIndex, maxIndex;
 	unsigned int x, y, z;
 

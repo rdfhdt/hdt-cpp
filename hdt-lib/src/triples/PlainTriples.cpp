@@ -211,7 +211,7 @@ TripleComponentOrder PlainTriples::getOrder()
 }
 
 PlainTriplesIterator::PlainTriplesIterator(PlainTriples *triples, TripleID & pattern, TripleComponentOrder order) :
-		pattern(pattern), order(order), triples(triples), pos(0)
+		pattern(pattern),/* order(order),*/ triples(triples), pos(0)
 {
 }
 
