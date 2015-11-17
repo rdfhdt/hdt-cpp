@@ -143,7 +143,7 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 		throw "Trying to read PlainTriples but the data is not PlainTriples";
 	}
 
-	unsigned int numTriples = controlInformation.getUint("numTriples");
+	//unsigned int numTriples = controlInformation.getUint("numTriples");
 	order = (TripleComponentOrder) controlInformation.getUint("order");
 
 	IntermediateListener iListener(listener);

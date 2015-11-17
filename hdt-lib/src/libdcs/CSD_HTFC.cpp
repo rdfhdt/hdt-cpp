@@ -151,7 +151,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 
 	// Auxiliar variables for Hu-Tucker encoding
 	uint offset = 0, cblocks = 0;
-	uint64_t i = 0, slength=0;
+	uint64_t i = 0/*, slength=0*/;
 
 	while (i < bytesfc)
 	{

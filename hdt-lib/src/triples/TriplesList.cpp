@@ -137,7 +137,7 @@ size_t TriplesList::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
     }
 
     order = (TripleComponentOrder) controlInformation.getUint("order");
-    unsigned long long totalTriples = controlInformation.getUint("numTriples");
+    //unsigned long long totalTriples = controlInformation.getUint("numTriples");
     this->numValidTriples = 100000000;
 
     //CHECKPTR(&ptr[count],ptrMax,numValidTriples*12);
