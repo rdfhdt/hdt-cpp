@@ -517,10 +517,10 @@ public:
 	unsigned int getNumVars() {
 	    return 0;
 	}
-	string getVar(unsigned int numvar) {
+	string getVar(unsigned int /*numvar*/) {
 	    throw "No such variable";
 	}
-	const char *getVarName(unsigned int numvar) {
+	const char *getVarName(unsigned int /*numvar*/) {
 	    throw "No such variable";
 	}
 	unsigned int estimatedNumResults() {

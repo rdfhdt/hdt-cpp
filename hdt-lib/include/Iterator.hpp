@@ -59,7 +59,7 @@ public:
 		return 0;
 	}
 
-	virtual void freeStr(unsigned char *ptr) {
+	virtual void freeStr(unsigned char* /*ptr*/) {
 
 	}
 };
@@ -131,16 +131,16 @@ public:
 	virtual bool canGoTo() {
 		return false;
 	}
-	virtual void goTo(unsigned int pos) {
+	virtual void goTo(unsigned int /*pos*/) {
 	}
-	virtual bool findNextOccurrence(unsigned int value, unsigned char component) {
+	virtual bool findNextOccurrence(unsigned int /*value*/, unsigned char /*component*/) {
 		return false;
 	}
 	virtual TripleComponentOrder getOrder() {
 		return Unknown;
 	}
 
-    virtual bool isSorted(TripleComponentRole role) {
+    virtual bool isSorted(TripleComponentRole /*role*/) {
 	return false;
     }
 };
