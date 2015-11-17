@@ -58,7 +58,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 
 	vector<uint> xblocks; // Temporal storage for start positions
 
-	unsigned char *previousStr, *currentStr = NULL;
+	unsigned char *previousStr = NULL, *currentStr = NULL;
 	uint previousLength = 0, currentLength = 0;
 
 	while (it->hasNext())
