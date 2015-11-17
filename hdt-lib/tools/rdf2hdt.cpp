@@ -57,7 +57,7 @@ void help() {
 int main(int argc, char **argv) {
 	string inputFile;
 	string outputFile;
-	bool verbose=false;
+	bool verbose=false; // NOTE: generates -Wunused-but-set-variable warning.
 	bool generateIndex=false;
 	string configFile;
 	string options;

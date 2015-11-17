@@ -535,7 +535,7 @@ bool CSD_HTFC::locateBlock(const unsigned char *s, uint *block)
 	if (encoffset > 0) encpos++;
 
 	long long int l = 0, r = nblocks-1, c;
-	uint delta, cmplen;
+	uint delta, cmplen; // FIXME: cmplen is assigned, below, but never actually used?
 	int cmp;
 
 	while (l <= r)

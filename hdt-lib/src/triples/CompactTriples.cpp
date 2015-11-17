@@ -71,7 +71,7 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 	IteratorTripleID *it = triples.searchAll();
 
 	vector<unsigned int> vectorY, vectorZ;
-	unsigned int lastX, lastY, lastZ;
+	unsigned int lastX, lastY, lastZ; // FIXME: lastZ is assigned, below, but never actually used?
 	unsigned int x, y, z;
 
 	// First triple
