@@ -91,7 +91,7 @@ void LogSequence::load(std::istream & input)
     array = new cds_utils::Array(input);
 }
 
-size_t LogSequence::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+size_t LogSequence::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener)
 {
 	 std::stringstream localStream;
 	 localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);

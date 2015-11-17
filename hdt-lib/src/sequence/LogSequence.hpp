@@ -93,7 +93,7 @@ public:
     /**
      * Load a stream from a pointer. To be used with MMAP.
      */
-    size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+    size_t load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener=NULL);
 
 
 	std::string getType();
