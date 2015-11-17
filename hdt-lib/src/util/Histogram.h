@@ -168,7 +168,7 @@ public:
 	 * Get the sum of all counts in the histogram.
 	 * @return The expected result.
 	 */
-        const unsigned int getTotalCount() const {
+        unsigned int getTotalCount() const {
 		unsigned int c(0U);
 		for (unsigned int i(0); i < nBins; ++i)
 			c += freq[i];
