@@ -9,7 +9,13 @@ LIBZ_SUPPORT=true
 SERD_SUPPORT=true
 
 CPP=g++
-FLAGS=-O3 -Wno-deprecated
+
+ifeq ($(CPP), g++)
+FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-but-set-variable
+else
+FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare
+endif
+
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
 LDFLAGS=
 DOXYGEN=doxygen
