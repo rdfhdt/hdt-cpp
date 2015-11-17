@@ -269,6 +269,7 @@ unsigned int ComponentIterator::next()
 	case OBJECT:
 		return triple->getObject();
 	}
+	return 0;
 }
 
 bool ComponentIterator::hasNext()

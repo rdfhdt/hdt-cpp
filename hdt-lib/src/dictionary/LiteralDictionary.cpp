@@ -148,6 +148,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
       return 0;
 		}
 	}
+	return 0;
 }
 
 void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	ProgressListener *listener) {
