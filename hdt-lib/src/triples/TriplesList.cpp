@@ -41,11 +41,11 @@
 
 namespace hdt {
 
-TriplesList::TriplesList() : order(Unknown), numValidTriples(0), ptr(NULL)
+TriplesList::TriplesList() : ptr(NULL), order(Unknown), numValidTriples(0)
 {
 }
 
-TriplesList::TriplesList(HDTSpecification &specification) : spec(specification), order(Unknown), ptr(NULL), numValidTriples(0) {
+TriplesList::TriplesList(HDTSpecification &specification) : spec(specification), ptr(NULL), order(Unknown), numValidTriples(0) {
 }
 
 TriplesList::~TriplesList()

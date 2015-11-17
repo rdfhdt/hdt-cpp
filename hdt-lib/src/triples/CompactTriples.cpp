@@ -42,7 +42,7 @@ CompactTriples::CompactTriples() : numTriples(0), order(SPO) {
 	streamZ = IntSequence::getArray(spec.get("stream.z"));
 }
 
-CompactTriples::CompactTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
+CompactTriples::CompactTriples(HDTSpecification &specification) : spec(specification), numTriples(0) {
 	std::string orderStr = spec.get("triplesOrder");
 	order= parseOrder(orderStr.c_str());
 	if(order==Unknown)

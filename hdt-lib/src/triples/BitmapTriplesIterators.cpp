@@ -320,8 +320,8 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     pattern(pat),
     adjY(trip->arrayY, trip->bitmapY),
     adjZ(trip->arrayZ, trip->bitmapZ),
-    predicateOcurrence(1),
-    predicateIndex(trip->predicateIndex)
+    predicateIndex(trip->predicateIndex),
+    predicateOcurrence(1)
 {
     // Convert pattern to local order.
     swapComponentOrder(&pattern, SPO, triples->order);
@@ -942,10 +942,10 @@ bool ObjectIndexIterator::isSorted(TripleComponentRole role) {
 
 BTInterleavedIterator::BTInterleavedIterator(BitmapTriples *triples, size_t skip) :
             triples(triples),
-            skip(skip),
-            posZ(0),
             adjY(triples->arrayY, triples->bitmapY),
-            adjZ(triples->arrayZ, triples->bitmapZ)
+            posZ(0),
+            adjZ(triples->arrayZ, triples->bitmapZ),
+            skip(skip)
 {
 }
 

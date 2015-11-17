@@ -23,7 +23,7 @@ private:
 	unsigned int readPos;
 
 public:
-	CachedBinding(VarBindingInterface *child) : child(child), readPos(0), numRows(0) {
+	CachedBinding(VarBindingInterface *child) : child(child), numRows(0), readPos(0) {
 
 		for(unsigned int i=0;i<child->getNumVars();i++) {
 			varnames.push_back(child->getVarName(i));

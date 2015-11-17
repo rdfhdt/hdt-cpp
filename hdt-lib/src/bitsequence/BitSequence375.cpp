@@ -36,20 +36,20 @@ namespace hdt
 {
 
 
-BitSequence375::BitSequence375(): numbits(0), numones(0), numwords(0), indexReady(false), isMapped(false)
+BitSequence375::BitSequence375(): numbits(0), numwords(0), numones(0), isMapped(false), indexReady(false)
 {
     data.resize(1); //Ensure valid pointer.
     array = &data[0];
 }
 
-BitSequence375::BitSequence375(size_t capacity): numbits(0), numones(0), indexReady(false), isMapped(false)
+BitSequence375::BitSequence375(size_t capacity): numbits(0), numones(0), isMapped(false), indexReady(false)
 {
     numwords = numWords(numbits);
     data.resize(numwords);
     array = &data[0];
 }
 
-BitSequence375::BitSequence375(size_t *bitarray, size_t n) : numbits(n), indexReady(false), isMapped(false)
+BitSequence375::BitSequence375(size_t *bitarray, size_t n) : numbits(n), isMapped(false), indexReady(false)
 {
     numwords = numWords(numbits);
     data.resize(numwords);
