@@ -33,28 +33,23 @@
 #include "ControlInformation.hpp"
 #include "../util/crc16.h"
 
-
 using namespace std;
 
 namespace hdt {
 
-ControlInformation::ControlInformation() : type(UNKNOWN_CI) {
+ControlInformation::ControlInformation() : type(UNKNOWN_CI) {}
 
-}
-
-ControlInformation::~ControlInformation() {
-
-}
+ControlInformation::~ControlInformation() {}
 
 void ControlInformation::save(std::ostream &out) {
 	CRC16 crc;
-	unsigned char null='\0';
+	const unsigned char null='\0';
 
     // Write cookie
 	crc.writeData(out, (unsigned char*)"$HDT", 4);
 
     // Write type
-    uint8_t typeValue = (uint8_t) type;
+    const uint8_t typeValue = (uint8_t) type;
     crc.writeData(out, (unsigned char *)&typeValue, sizeof(uint8_t));
 
     // Write format
@@ -79,7 +74,7 @@ void ControlInformation::save(std::ostream &out) {
 
 void ControlInformation::load(std::istream &in) {
 	CRC16 crc;
-    unsigned char null='\0';
+    const unsigned char null='\0';
 
     this->clear();
 
@@ -119,7 +114,7 @@ void ControlInformation::load(std::istream &in) {
     crc.update((unsigned char *)line.c_str(), line.length());
     crc.update(&null, 1);
 
-    crc16_t filecrc = crc16_read(in);
+    const crc16_t filecrc = crc16_read(in);
 
     // CRC16
     if(filecrc!=crc.getValue()) {
@@ -181,7 +176,7 @@ size_t ControlInformation::load(const unsigned char *ptr, const unsigned char *m
 	CRC16 crc;
 	crc.update(&ptr[0], count);
 	CHECKPTR(ptr,maxPtr, sizeof(crc16_t));
-	crc16_t filecrc = *((crc16_t *)&ptr[count]);
+	const crc16_t filecrc = *((crc16_t *)&ptr[count]);
 	if(filecrc!=crc.getValue()) {
 		throw "CRC of control information does not match.";
 	}
@@ -197,28 +192,27 @@ void ControlInformation::clear() {
 }
 
 
-std::string ControlInformation::getFormat() {
+const std::string& ControlInformation::getFormat() const {
 	return format;
 }
 
-void ControlInformation::setFormat(std::string format) {
+void ControlInformation::setFormat(const std::string& format) {
 	this->format = format;
 }
 
-std::string ControlInformation::get(std::string key) {
-	return map[key];
+const std::string& ControlInformation::get(const std::string& key) const {
+	return map.at(key);
 }
 
-void ControlInformation::set(std::string key, std::string value) {
+void ControlInformation::set(const std::string& key, const std::string& value) {
 	map[key] = value;
 }
 
-uint64_t ControlInformation::getUint(std::string key) {
-	std::string str = map[key];
-    return strtoull(str.c_str(), NULL, 10);
+uint64_t ControlInformation::getUint(const std::string& key) const {
+    return strtoull(map.at(key).c_str(), NULL, 10);
 }
 
-void ControlInformation::setUint(std::string key, uint64_t value) {
+void ControlInformation::setUint(const std::string& key, uint64_t value) {
 	std::stringstream out;
 	out << value;
 	map[key] = out.str();
@@ -228,12 +222,11 @@ void ControlInformation::setType(ControlInformationType type) {
     this->type = type;
 }
 
-
-bool ControlInformation::isDefined(std::string key) {
-	return !map[key].empty();
+bool ControlInformation::isDefined(const std::string& key) const {
+	return map.count(key) && !(map.at(key).empty());
 }
 
-ControlInformationType ControlInformation::getType() {
+ControlInformationType ControlInformation::getType() const {
     return this->type;
 }
 
