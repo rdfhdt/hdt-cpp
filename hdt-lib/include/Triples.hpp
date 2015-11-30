@@ -53,8 +53,7 @@ class ModifiableTriples;
 class Triples {
 public:
 
-	virtual ~Triples() {
-	}
+	virtual ~Triples() {}
 
 	/**
 	 * Allows to search a pattern of triples.
@@ -77,19 +76,19 @@ public:
 	 * @param triple
 	 * @return
 	 */
-	virtual float cost(TripleID &triple)=0;
+	virtual float cost(TripleID &triple) const = 0;
 
 	/**
 	 * Returns the number of triples
 	 *
 	 * @return
 	 */
-    virtual size_t getNumberOfElements()=0;
+    virtual size_t getNumberOfElements() const = 0;
 
 	/**
 	 * Returns size in bytes of the overall structure.
 	 */
-    virtual size_t size()=0;
+    virtual size_t size() const = 0;
 
 	/**
 	 * Serialize the triples to a stream in implementation-specific format.
@@ -123,9 +122,9 @@ public:
 
     virtual size_t loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
 
-    virtual bool isIndexed()=0;
+    virtual bool isIndexed() const = 0;
 
-    virtual size_t getNumAppearances(size_t /*pred*/) {
+    virtual size_t getNumAppearances(size_t /*pred*/) const {
         return 0;
     }
 
@@ -137,9 +136,9 @@ public:
 	 */
 	virtual void populateHeader(Header &header, string rootNode)=0;
 
-	virtual string getType()=0;
+	virtual string getType() const = 0;
 
-	virtual TripleComponentOrder getOrder()=0;
+	virtual TripleComponentOrder getOrder() const = 0;
 }; // Triples{}
 
 /**
@@ -201,6 +200,6 @@ public:
 	virtual void stopProcessing(ProgressListener *listener = NULL)=0;
 };
 
-}
+} // namespace hdt
 
 #endif /* HDT_TRIPLES_HPP_ */

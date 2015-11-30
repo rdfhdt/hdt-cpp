@@ -62,11 +62,11 @@ public:
 	BitmapTriples(HDTSpecification &specification);
 	virtual ~BitmapTriples();
 
-    bool isIndexed() {
+    bool isIndexed() const {
         return arrayIndex && bitmapIndex && predicateIndex;
     }
 
-    size_t getNumAppearances(size_t pred) {
+    size_t getNumAppearances(size_t pred) const {
         if(predicateCount) {
             return predicateCount->get(pred-1);
         }
@@ -87,16 +87,16 @@ public:
 	 * @param triple
 	 * @return
 	 */
-	float cost(TripleID &triple);
+	float cost(TripleID &triple) const;
 
 	/**
 	 * Returns the number of triples
 	 *
 	 * @return
 	 */
-    size_t getNumberOfElements();
+    size_t getNumberOfElements() const;
 
-    size_t size();
+    size_t size() const;
 
 	/**
 	 * Saves the triples
@@ -128,8 +128,8 @@ public:
 
 	void populateHeader(Header &header, string rootNode);
 
-	string getType();
-	TripleComponentOrder getOrder();
+	string getType() const;
+	TripleComponentOrder getOrder() const;
 
 	friend class BitmapTriplesSearchIterator;
 	friend class MiddleWaveletIterator;
@@ -284,11 +284,6 @@ public:
     TripleID *next();
 };
 
-
-
-
-}
-
-
+} // namespace hdt
 
 #endif /* BITMAPTRIPLES_HPP_ */

@@ -239,12 +239,12 @@ void TripleListDisk::populateHeader(Header &header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, order );  // TODO: Convert to String
 }
 
-size_t TripleListDisk::getNumberOfElements()
+size_t TripleListDisk::getNumberOfElements() const
 {
 	return numValidTriples;
 }
 
-size_t TripleListDisk::size()
+size_t TripleListDisk::size() const
 {
 	return getNumberOfElements()*sizeof(TripleID);
 }
@@ -263,7 +263,7 @@ IteratorTripleID *TripleListDisk::searchJoin(TripleID &a, TripleID &b, unsigned 
 	throw "Not implemented";
 }
 
-float TripleListDisk::cost(TripleID & triple)
+float TripleListDisk::cost(TripleID & triple) const
 {
 	// TODO:
 	throw "Not implemented";
@@ -452,11 +452,11 @@ void TripleListDisk::setOrder(TripleComponentOrder order)
 }
 
 
-string TripleListDisk::getType() {
+string TripleListDisk::getType() const {
     return HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK;
 }
 
-TripleComponentOrder TripleListDisk::getOrder()
+TripleComponentOrder TripleListDisk::getOrder() const
 {
     return order;
 }

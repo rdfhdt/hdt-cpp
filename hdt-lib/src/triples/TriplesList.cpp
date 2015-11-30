@@ -67,18 +67,18 @@ IteratorTripleID *TriplesList::searchJoin(TripleID &a, TripleID &b, unsigned sho
 	throw "Not implemented";
 }
 
-float TriplesList::cost(TripleID &pattern)
+float TriplesList::cost(TripleID &pattern) const
 {
 	// TODO: Theoretically define this with the team
 	throw "Not implemented";
 }
 
-size_t TriplesList::getNumberOfElements()
+size_t TriplesList::getNumberOfElements() const
 {
 	return numValidTriples;
 }
 
-size_t TriplesList::size()
+size_t TriplesList::size() const
 {
 	return numValidTriples*sizeof(TripleID);
 }
@@ -193,11 +193,12 @@ void TriplesList::stopProcessing(ProgressListener *listener)
 {
 }
 
-string TriplesList::getType() {
+string TriplesList::getType() const
+{
     return HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST;
 }
 
-TripleComponentOrder TriplesList::getOrder()
+TripleComponentOrder TriplesList::getOrder() const
 {
     return order;
 }
@@ -535,18 +536,4 @@ void TriplesListIterator::goToStart()
 	pos=0;
 }
 
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
+} // namespace hdt

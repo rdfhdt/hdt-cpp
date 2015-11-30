@@ -92,7 +92,7 @@ BitmapTriples::~BitmapTriples() {
 	delete arrayZ;
 }
 
-float BitmapTriples::cost(TripleID & triple)
+float BitmapTriples::cost(TripleID & triple) const
 {
 	CHECK_BITMAPTRIPLES_INITIALIZED
 	return 0;
@@ -576,11 +576,12 @@ void BitmapTriples::populateHeader(Header &header, string rootNode) {
 #endif
 }
 
-string BitmapTriples::getType() {
+string BitmapTriples::getType() const
+{
     return HDTVocabulary::TRIPLES_TYPE_BITMAP;
 }
 
-TripleComponentOrder BitmapTriples::getOrder()
+TripleComponentOrder BitmapTriples::getOrder() const
 {
     return order;
 }
@@ -882,12 +883,12 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     return count;
 }
 
-size_t BitmapTriples::getNumberOfElements()
+size_t BitmapTriples::getNumberOfElements() const
 {
 	return arrayZ->getNumberOfElements();
 }
 
-size_t BitmapTriples::size()
+size_t BitmapTriples::size() const
 {
     if(bitmapY!=NULL && bitmapZ!=NULL) {
 		return bitmapY->getSizeBytes()
@@ -900,5 +901,4 @@ size_t BitmapTriples::size()
 	return arrayY->size()+arrayZ->size()+bitmapY->getSizeBytes()+bitmapZ->getSizeBytes();
 }
 
-
-}
+} // namespace hdt

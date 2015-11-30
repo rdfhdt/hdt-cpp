@@ -62,7 +62,7 @@ public:
     int32_t compare (const char *akbuf, size_t aksiz, const char *bkbuf, size_t bksiz);
 
 
-    bool isIndexed() {
+    bool isIndexed() const {
         return false;
     }
 
@@ -202,7 +202,7 @@ public:
     TripleID *next();
 };
 
-}
+} // namespace hdt
 
 #endif /* HAVE_KYOTO */
 

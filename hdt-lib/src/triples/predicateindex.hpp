@@ -140,6 +140,6 @@ public:
     void generate(ProgressListener *listener);
 };
 
-}
+} // namespace hdt
 
 #endif // PREDICATEINDEX_HPP

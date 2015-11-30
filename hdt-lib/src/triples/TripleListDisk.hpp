@@ -58,7 +58,7 @@ private:
 
 	TripleID *getTripleID(unsigned int num);
 
-    bool isIndexed() {
+    bool isIndexed() const {
         return false;
     }
 
@@ -85,19 +85,19 @@ public:
 	 * @param triple
 	 * @return
 	 */
-	float cost(TripleID &triple);
+	float cost(TripleID &triple) const;
 
 	/**
 	 * Returns the number of triples
 	 *
 	 * @return
 	 */
-    size_t getNumberOfElements();
+    size_t getNumberOfElements() const;
 
 	/**
 	 * Returns size in bytes
 	 */
-    size_t size();
+    size_t size() const;
 
 	/**
 	 * Saves the triples
@@ -133,10 +133,8 @@ public:
 
 	void stopProcessing(ProgressListener *listener=NULL);
 
-	string getType();
-	TripleComponentOrder getOrder();
-
-
+	string getType() const;
+	TripleComponentOrder getOrder() const;
 
 	// From ModifiableTriples
 
@@ -203,7 +201,6 @@ public:
 	void goToStart();
 };
 
-
-}
+} // namespace hdt
 
 #endif /* TRIPLELISTDISK_H_ */

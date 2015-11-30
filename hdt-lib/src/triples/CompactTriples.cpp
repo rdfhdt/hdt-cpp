@@ -57,13 +57,10 @@ CompactTriples::~CompactTriples() {
 	delete streamZ;
 }
 
-
-float CompactTriples::cost(TripleID & triple)
+float CompactTriples::cost(TripleID & triple) const
 {
 	return 0;
 }
-
-
 
 void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener) {
 	triples.sort(order);
@@ -236,21 +233,22 @@ size_t CompactTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Prog
 	return 0;
 }
 
-size_t CompactTriples::getNumberOfElements()
+size_t CompactTriples::getNumberOfElements() const
 {
 	return numTriples;
 }
 
-size_t CompactTriples::size()
+size_t CompactTriples::size() const
 {
 	return streamY->size()+streamZ->size();
 }
 
-string CompactTriples::getType() {
+string CompactTriples::getType() const
+{
     return HDTVocabulary::TRIPLES_TYPE_COMPACT;
 }
 
-TripleComponentOrder CompactTriples::getOrder()
+TripleComponentOrder CompactTriples::getOrder() const
 {
     return order;
 }
