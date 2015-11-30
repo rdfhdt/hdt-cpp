@@ -52,9 +52,9 @@ namespace hdt {
 
 TripleListDisk::TripleListDisk() :
 		capacity(0),
+		arrayTriples(NULL),
 		numValidTriples(0),
-		numTotalTriples(0),
-		arrayTriples(NULL)
+		numTotalTriples(0)
 {
 	std::string s("triplelistdiskXXXXXX");
 	std::vector<char> v(100);

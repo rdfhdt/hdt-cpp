@@ -82,9 +82,9 @@ int main(int argc, char **argv) {
 
 	try {
 #ifdef HAVE_LIBZ
-		igzstream *inGz;
+		igzstream *inGz=NULL;
 #endif
-		ifstream *inF;
+		ifstream *inF=NULL;
 		istream *in=NULL;
 
 		string inputFile = argv[optind];

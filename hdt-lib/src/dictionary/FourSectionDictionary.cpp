@@ -133,6 +133,7 @@ unsigned int FourSectionDictionary::stringToId(std::string &key, TripleComponent
 		}
         return 0;
 	}
+	return 0;
 }
 
 

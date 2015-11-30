@@ -59,12 +59,12 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence, 
 	size_t len = 0;
 	size_t reservedSize = 1024;
 	text = (unsigned char*) malloc(reservedSize * sizeof(unsigned char));
-	std:vector < size_t > samplingsPositions;
+	std::vector < size_t > samplingsPositions;
 
 	text[0] = '\1'; //We suppose that \1 is not part of the text
 	maxlength = 0;
 	numstrings = 0;
-	uint m_l = 0;
+	//uint m_l = 0;
 
 	size_t total = 1;
 
@@ -292,7 +292,7 @@ size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
     std::stringstream localStream;
     localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
 
-    unsigned char type = localStream.get(); // Load expects the type already read.
+    //unsigned char type = localStream.get(); // Load expects the type already read.
 
     this->type = FMINDEX;
     this->numstrings = loadValue<uint32_t>(localStream);
@@ -365,7 +365,7 @@ void csd::CSD_FMIndex::fillSuggestions(const char *base,
         vector<std::string> &out, int maxResults) {
     size_t len = strlen(base);
     unsigned char *n_s = new unsigned char[len + 1];
-    uint o;
+    //uint o;
     n_s[0] = '\1';
     for (uint32_t i = 1; i <= len; i++)
         n_s[i] = base[i - 1];

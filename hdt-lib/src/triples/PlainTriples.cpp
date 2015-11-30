@@ -143,7 +143,7 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 		throw "Trying to read PlainTriples but the data is not PlainTriples";
 	}
 
-	unsigned int numTriples = controlInformation.getUint("numTriples");
+	//unsigned int numTriples = controlInformation.getUint("numTriples");
 	order = (TripleComponentOrder) controlInformation.getUint("order");
 
 	IntermediateListener iListener(listener);
@@ -211,7 +211,7 @@ TripleComponentOrder PlainTriples::getOrder()
 }
 
 PlainTriplesIterator::PlainTriplesIterator(PlainTriples *triples, TripleID & pattern, TripleComponentOrder order) :
-		pattern(pattern), order(order), triples(triples), pos(0)
+		pattern(pattern),/* order(order),*/ triples(triples), pos(0)
 {
 }
 
@@ -269,6 +269,7 @@ unsigned int ComponentIterator::next()
 	case OBJECT:
 		return triple->getObject();
 	}
+	return 0;
 }
 
 bool ComponentIterator::hasNext()

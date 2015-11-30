@@ -41,7 +41,7 @@ using namespace std;
 
 namespace hdt {
 
-LogSequence2::LogSequence2() : numentries(0), numbits(32), IsMapped(false) {
+LogSequence2::LogSequence2() : numbits(32), numentries(0), IsMapped(false) {
 	maxval = maxVal(numbits);
 
     data.resize(1);
@@ -49,7 +49,7 @@ LogSequence2::LogSequence2() : numentries(0), numbits(32), IsMapped(false) {
     arraysize = 0;
 }
 
-LogSequence2::LogSequence2(unsigned int numbits) : numentries(0), numbits(numbits),  IsMapped(false) {
+LogSequence2::LogSequence2(unsigned int numbits) : numbits(numbits), numentries(0), IsMapped(false) {
 	maxval = maxVal(numbits);
 
     data.resize(1);
@@ -57,7 +57,7 @@ LogSequence2::LogSequence2(unsigned int numbits) : numentries(0), numbits(numbit
     arraysize = 0;
 }
 
-LogSequence2::LogSequence2(unsigned int numbits, size_t capacity) : numentries(0), numbits(numbits), IsMapped(false) {
+LogSequence2::LogSequence2(unsigned int numbits, size_t capacity) : numbits(numbits), numentries(0), IsMapped(false) {
 	maxval = maxVal(numbits);
 	size_t totalSize = numElementsFor(numbits, capacity);
     if(totalSize==0) data.reserve(1);

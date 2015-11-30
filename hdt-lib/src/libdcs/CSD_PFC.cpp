@@ -140,7 +140,7 @@ uint32_t CSD_PFC::locate(const unsigned char *s, uint32_t len)
 		return 0;
 
 	// Locating the candidate block for 's'
-    size_t block;
+    size_t block = 0;
 	bool cmp = locateBlock(s, &block);
 
 	//	dumpBlock(block);
@@ -485,7 +485,7 @@ hdt::IteratorUCharString *CSD_PFC::listAll() {
 
 void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
 {
-    size_t block;
+    size_t block = 0;
 	locateBlock((unsigned char *)base, &block);
 
 	if(!text || !blocks || block>=nblocks){

@@ -120,6 +120,7 @@ unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole p
 		ret = hashObject.find(key.c_str());
     return ret==hashObject.end()    ? 0 : ret->second->id;
 	}
+	return 0;
 }
 
 void PlainDictionary::startProcessing(ProgressListener *listener)

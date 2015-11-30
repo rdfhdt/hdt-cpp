@@ -125,7 +125,7 @@ public:
 class PlainTriplesIterator : public IteratorTripleID {
 private:
 	TripleID pattern, returnTriple;
-	TripleComponentOrder order;
+	//TripleComponentOrder order;
 	PlainTriples *triples;
 	uint64_t pos;
 

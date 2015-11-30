@@ -58,7 +58,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 
 	vector<uint> xblocks; // Temporal storage for start positions
 
-	unsigned char *previousStr, *currentStr = NULL;
+	unsigned char *previousStr = NULL, *currentStr = NULL;
 	uint previousLength = 0, currentLength = 0;
 
 	while (it->hasNext())
@@ -151,7 +151,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progre
 
 	// Auxiliar variables for Hu-Tucker encoding
 	uint offset = 0, cblocks = 0;
-	uint64_t i = 0, slength=0;
+	uint64_t i = 0/*, slength=0*/;
 
 	while (i < bytesfc)
 	{
@@ -535,7 +535,7 @@ bool CSD_HTFC::locateBlock(const unsigned char *s, uint *block)
 	if (encoffset > 0) encpos++;
 
 	long long int l = 0, r = nblocks-1, c;
-	uint delta, cmplen;
+	uint delta, cmplen; // FIXME: cmplen is assigned, below, but never actually used?
 	int cmp;
 
 	while (l <= r)

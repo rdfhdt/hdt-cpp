@@ -32,7 +32,7 @@ const string minusone="-1";
 const string zero="0";
 
 SparqlQuery parseJavi(string line) {
-	struct SparqlQuery output;
+	SparqlQuery output;
 	vector<string> pattern;
 
 	std::stringstream ss(line);
@@ -69,7 +69,7 @@ SparqlQuery parseJavi(string line) {
 #endif
 
 SparqlQuery parseSparql(string query) {
-        struct SparqlQuery output;
+        SparqlQuery output;
         string word;
         unsigned int phase = 0;
         vector<string> pattern;

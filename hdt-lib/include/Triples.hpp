@@ -125,7 +125,7 @@ public:
 
     virtual bool isIndexed()=0;
 
-    virtual size_t getNumAppearances(size_t pred) {
+    virtual size_t getNumAppearances(size_t /*pred*/) {
         return 0;
     }
 

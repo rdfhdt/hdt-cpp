@@ -15,8 +15,8 @@ namespace hdt {
 class IndexJoinBinding : public BaseJoinBinding {
 	unsigned int leftVarValue;
 	vector< vector<unsigned int> > leftOperands, rightOperands;
-	unsigned int leftCount, rightCount;
-	bool remainingRight;
+	//unsigned int leftCount, rightCount;
+	//bool remainingRight;
 public:
 	IndexJoinBinding(char *var, VarBindingInterface *left, VarBindingInterface *right);
 	virtual ~IndexJoinBinding();

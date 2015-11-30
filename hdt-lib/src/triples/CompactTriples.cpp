@@ -42,7 +42,7 @@ CompactTriples::CompactTriples() : numTriples(0), order(SPO) {
 	streamZ = IntSequence::getArray(spec.get("stream.z"));
 }
 
-CompactTriples::CompactTriples(HDTSpecification &specification) : numTriples(0), spec(specification) {
+CompactTriples::CompactTriples(HDTSpecification &specification) : spec(specification), numTriples(0) {
 	std::string orderStr = spec.get("triplesOrder");
 	order= parseOrder(orderStr.c_str());
 	if(order==Unknown)
@@ -71,7 +71,7 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 	IteratorTripleID *it = triples.searchAll();
 
 	vector<unsigned int> vectorY, vectorZ;
-	unsigned int lastX, lastY, lastZ;
+	unsigned int lastX=0, lastY=0, lastZ=0; // FIXME: lastZ is assigned, below, but never actually used?
 	unsigned int x, y, z;
 
 	// First triple

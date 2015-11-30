@@ -10,9 +10,9 @@
 namespace hdt {
 
 IndexJoinBinding::IndexJoinBinding(char *var, VarBindingInterface *left, VarBindingInterface *right) :
-	BaseJoinBinding(var, left, right),
-	leftCount(0),
-	rightCount(0)
+	BaseJoinBinding(var, left, right)
+	//leftCount(0),
+	//rightCount(0)
 {
     	cerr << "Index join of " << left->estimatedNumResults() << "x" << right->estimatedNumResults() << endl;
 	goToStart();

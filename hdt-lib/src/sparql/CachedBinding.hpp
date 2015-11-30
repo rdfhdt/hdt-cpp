@@ -15,15 +15,15 @@
 namespace hdt {
 class CachedBinding : public VarBindingInterface {
 private:
-	VarBindingInterface *child;
+	//VarBindingInterface *child;
 	vector<string> varnames;
 	vector<vector <unsigned int> > values;
 	vector<bool> varSorted;
-	unsigned int numRows;
+	//unsigned int numRows;
 	unsigned int readPos;
 
 public:
-	CachedBinding(VarBindingInterface *child) : child(child), readPos(0), numRows(0) {
+	CachedBinding(VarBindingInterface *child) : /*child(child), numRows(0),*/ readPos(0) {
 
 		for(unsigned int i=0;i<child->getNumVars();i++) {
 			varnames.push_back(child->getVarName(i));

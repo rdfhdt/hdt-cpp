@@ -89,7 +89,7 @@ class PredicateIndexArray : public PredicateIndex {
     //LogSequence2 *predCount;
     BitSequence375 *bitmap;
     size_t currpred,currpos;
-    size_t numPredicates;
+    //size_t numPredicates;
     BitmapTriples *bitmapTriples;
 
 public:

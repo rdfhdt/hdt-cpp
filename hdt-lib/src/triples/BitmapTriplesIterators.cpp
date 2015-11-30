@@ -320,8 +320,8 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     pattern(pat),
     adjY(trip->arrayY, trip->bitmapY),
     adjZ(trip->arrayZ, trip->bitmapZ),
-    predicateOcurrence(1),
-    predicateIndex(trip->predicateIndex)
+    predicateIndex(trip->predicateIndex),
+    predicateOcurrence(1)
 {
     // Convert pattern to local order.
     swapComponentOrder(&pattern, SPO, triples->order);
@@ -807,7 +807,7 @@ void ObjectIndexIterator::calculateRange() {
                 // Binary Search to find left boundary
                 long left=minIndex;
                 long right=mid;
-                long int pos;
+                long int pos=0;
 
                 while(left<=right) {
                     pos = (left+right)/2;
@@ -894,7 +894,7 @@ void ObjectIndexIterator::goTo(unsigned int pos)
 bool ObjectIndexIterator::findNextOccurrence(unsigned int value, unsigned char component) {
     if(component==1) {
         if(patY!=0) {
-            unsigned int posZ, posY;
+            unsigned int posZ=0, posY=0;
             while(x!=value) {
                 posZ = getPosZ(posIndex);
                 posY = adjZ.findListIndex(posZ);
@@ -942,10 +942,10 @@ bool ObjectIndexIterator::isSorted(TripleComponentRole role) {
 
 BTInterleavedIterator::BTInterleavedIterator(BitmapTriples *triples, size_t skip) :
             triples(triples),
-            skip(skip),
-            posZ(0),
             adjY(triples->arrayY, triples->bitmapY),
-            adjZ(triples->arrayZ, triples->bitmapZ)
+            adjZ(triples->arrayZ, triples->bitmapZ),
+            posZ(0),
+            skip(skip)
 {
 }
 
