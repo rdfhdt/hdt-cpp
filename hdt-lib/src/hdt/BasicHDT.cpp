@@ -366,6 +366,9 @@ void BasicHDT::fillHeader(string& baseUri) {
 	time(&now);
 	struct tm* today = localtime(&now);
 	strftime(date, 40, "%Y-%m-%dT%H:%M:%S%z", today);
+	char *tzm = date+strlen(date) - 2;
+	memmove(tzm+1, tzm, 3);
+	*tzm = ':';
 	header->insert(publicationInfoNode, HDTVocabulary::DUBLIN_CORE_ISSUED, date);
 }
 
