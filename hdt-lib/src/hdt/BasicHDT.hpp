@@ -54,6 +54,8 @@ private:
 
 	void loadDictionary(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
 	void loadTriples(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
+	void loadDictionary(IteratorTripleString* triples);
+	void loadTriples(IteratorTripleString* triples);
 
 	void addDictionaryFromHDT(const char *fileName, ModifiableDictionary *dict, ProgressListener *listener=NULL);
 	void loadDictionaryFromHDTs(const char** fileName, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
@@ -87,6 +89,8 @@ public:
 	Triples *getTriples();
 
 	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
+
+	void loadFromTriples(IteratorTripleString* triples, string baseUri);
 
 	/**
 	 * @param input

@@ -321,6 +321,77 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 	//cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
+void BasicHDT::loadDictionary(IteratorTripleString* triples) {
+	// Create temporary dictionary
+	ModifiableDictionary *dict = getLoadDictionary();
+	dict->startProcessing();
+
+	try {
+		// Load data by iterating over the triples iterator.
+		DictionaryLoader dictLoader(dict, NULL);
+		triples->goToStart();
+		while(triples->hasNext()) {
+			dictLoader.processTriple(*triples->next(), 0);
+		}
+		dict->stopProcessing();
+
+		// Convert to final format
+		if (dictionary->getType()!=HDTVocabulary::DICTIONARY_TYPE_PLAIN){
+			dictionary->import(dict);
+			delete dict;
+		}
+		else{
+			dictionary = dict;
+		}
+
+	} catch (const char *e) {
+		cout << "Catch exception dictionary: " << e << endl;
+		delete dict;
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception dictionary: " << e << endl;
+		delete dict;
+		throw e;
+	}
+}
+
+void BasicHDT::loadTriples(IteratorTripleString* triples) {
+	// Generate Triples
+	ModifiableTriples* triplesList = new TriplesList(spec);
+	//ModifiableTriples *triplesList = new TriplesKyoto(spec);
+	//ModifiableTriples *triplesList = new TripleListDisk();
+	try {
+		// Load data by iterating over the triples iterator.
+		triplesList->startProcessing();
+		TriplesLoader tripLoader(dictionary, triplesList, NULL);
+		triples->goToStart();
+		while(triples->hasNext()) {
+			tripLoader.processTriple(*triples->next(), 0);
+		}
+		triplesList->stopProcessing();
+
+		// SORT & Duplicates
+		TripleComponentOrder order = parseOrder(
+				spec.get("triplesOrder").c_str());
+		if (order == Unknown) {
+			order = SPO;
+		}
+
+		triplesList->sort(order);
+		triplesList->removeDuplicates();
+	} catch (const char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw e;
+	}
+	this->triples->load(*triplesList);
+	delete triplesList;
+}
+
 void BasicHDT::fillHeader(string& baseUri) {
 	string formatNode = "_:format";
 	string dictNode = "_:dictionary";
@@ -328,7 +399,14 @@ void BasicHDT::fillHeader(string& baseUri) {
 	string statisticsNode = "_:statistics";
 	string publicationInfoNode = "_:publicationInformation";
 
-	uint64_t origSize = header->getPropertyLong(statisticsNode.c_str(), HDTVocabulary::ORIGINAL_SIZE.c_str());
+	bool hasOrigSize;
+	uint64_t origSize;
+	try {
+		origSize = header->getPropertyLong(statisticsNode.c_str(), HDTVocabulary::ORIGINAL_SIZE.c_str());
+		hasOrigSize = true;
+	} catch (const char* e) {
+		hasOrigSize = false;
+	}
 
 	header->clear();
 
@@ -357,7 +435,7 @@ void BasicHDT::fillHeader(string& baseUri) {
 	triples->populateHeader(*header, triplesNode);
 
 	// Sizes
-	header->insert(statisticsNode, HDTVocabulary::ORIGINAL_SIZE, origSize);
+	if(hasOrigSize) header->insert(statisticsNode, HDTVocabulary::ORIGINAL_SIZE, origSize);
 	header->insert(statisticsNode, HDTVocabulary::HDT_SIZE, getDictionary()->size() + getTriples()->size());
 
 	// Current time
@@ -385,6 +463,32 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 
 		iListener.setRange(50,99);
 		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
+
+		fillHeader(baseUri);
+
+	}catch (const char *e) {
+		cout << "Catch exception load: " << e << endl;
+		deleteComponents();
+		createComponents();
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception load: " << e << endl;
+		deleteComponents();
+		createComponents();
+		throw e;
+	}
+}
+
+void BasicHDT::loadFromTriples(IteratorTripleString* triples, string baseUri) {
+	try {
+		// Make sure that URI starts and ends with <>
+		if(baseUri.at(0)!='<')
+			baseUri = '<'+baseUri;
+		if(baseUri.at(baseUri.length()-1)!='>')
+			baseUri.append(">");
+
+		loadDictionary(triples);
+		loadTriples(triples);
 
 		fillHeader(baseUri);
 
