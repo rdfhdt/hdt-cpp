@@ -35,7 +35,6 @@
 
 namespace hdt {
 
-
 class BasicHDT : public HDT {
 private:
 	Header *header;
@@ -52,10 +51,12 @@ private:
 	ModifiableDictionary *getLoadDictionary();
 	ModifiableTriples *getLoadTriples();
 
+	void loadDictionary(std::function<void(RDFCallback&)> tripleLoader, ProgressListener *listener);
 	void loadDictionary(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
+	void loadDictionary(IteratorTripleString* triples, ProgressListener *listener=NULL);
+	void loadTriples(std::function<void(RDFCallback&)> tripleLoader, ProgressListener *listener);
 	void loadTriples(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
-	void loadDictionary(IteratorTripleString* triples);
-	void loadTriples(IteratorTripleString* triples);
+	void loadTriples(IteratorTripleString* triples, ProgressListener *listener=NULL);
 
 	void addDictionaryFromHDT(const char *fileName, ModifiableDictionary *dict, ProgressListener *listener=NULL);
 	void loadDictionaryFromHDTs(const char** fileName, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
