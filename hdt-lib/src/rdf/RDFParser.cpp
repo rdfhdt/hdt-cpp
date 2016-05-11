@@ -17,6 +17,10 @@
 
 namespace hdt {
 
+void RDFParserPull::goToStart() {
+    this->reset();
+}
+
 RDFParserPull *RDFParserPull::getParserPull(std::istream &stream, RDFNotation notation) {
 	if(notation==NTRIPLES) {
 		return new RDFParserNtriples(stream,notation);
