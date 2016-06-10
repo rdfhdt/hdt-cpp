@@ -292,7 +292,7 @@ size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
     std::stringstream localStream;
     localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
 
-    //unsigned char type = localStream.get(); // Load expects the type already read.
+    localStream.get(); // Load expects the type already read.
 
     this->type = FMINDEX;
     this->numstrings = loadValue<uint32_t>(localStream);
