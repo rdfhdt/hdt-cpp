@@ -427,12 +427,15 @@ void MiddleWaveletIterator::goToStart()
 
 size_t MiddleWaveletIterator::estimatedNumResults()
 {
+	if (triples->predicateCount!=NULL){
+		return triples->predicateCount->get(patY-1);
+	}
     return predicateIndex->getNumAppearances(patY);
 }
 
 ResultEstimationType MiddleWaveletIterator::numResultEstimation()
 {
-    if(triples->predicateIndex!=NULL) {
+    if(triples->predicateIndex!=NULL && triples->predicateCount!=NULL) {
 	return EXACT;
     }
     return APPROXIMATE;

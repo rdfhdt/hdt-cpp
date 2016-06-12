@@ -334,7 +334,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
             size_t yval = arrayY->get(posY)-1;
             if(yval>=maxpred) {
             	predCount->resize(yval+1);
-            	maxpred = yval;
+            	maxpred = yval+1;
             	predCount->set(yval, 1);
             } else {
             	predCount->set(yval, predCount->get(yval)+1);
