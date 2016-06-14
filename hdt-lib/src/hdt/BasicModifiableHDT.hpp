@@ -104,7 +104,7 @@ public:
 
 	void remove(IteratorTripleString *triples);
 
-    bool isIndexed() {
+    bool isIndexed() const {
         return false;
     }
 };

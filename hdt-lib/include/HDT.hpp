@@ -108,7 +108,7 @@ public:
         return search(pattern.getSubject().c_str(), pattern.getPredicate().c_str(), pattern.getObject().c_str());
     }
 
-    virtual bool isIndexed()=0;
+    virtual bool isIndexed() const = 0;
 };
 
 /**
@@ -146,6 +146,6 @@ public:
 
 };
 
-}
+} // namespace hdt
 
 #endif /* HDT_HDT_HPP_ */

@@ -85,6 +85,6 @@ void swapComponentOrder(TripleID *triple, TripleComponentOrder parsing, TripleCo
 
 TripleComponentOrder invertOrder(TripleComponentOrder src);
 
-}
+} // namespace hdt
 
 #endif /* TRIPLEORDERCONVERT_HPP_ */

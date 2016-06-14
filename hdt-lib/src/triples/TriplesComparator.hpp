@@ -50,6 +50,6 @@ class TriplesComparator {
 
 }; //TriplesComparator{}
 
-} // hdt{}
+} // namespace hdt
 
 #endif /* TRIPLESCOMPARATOR_HPP_ */

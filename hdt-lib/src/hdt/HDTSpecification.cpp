@@ -32,13 +32,10 @@
 
 namespace hdt {
 
+HDTSpecification::HDTSpecification() {}
 
-HDTSpecification::HDTSpecification() {
-
-}
-
-HDTSpecification::HDTSpecification(std::string &filename) {
-	if(filename!=""){
+HDTSpecification::HDTSpecification(const std::string& filename) {
+	if(!filename.empty()){
 		try {
 			PropertyUtil::read(filename.c_str(), map);
 		} catch (char *except) {
@@ -47,7 +44,7 @@ HDTSpecification::HDTSpecification(std::string &filename) {
 	}
 }
 
-void HDTSpecification::setOptions(std::string options) {
+void HDTSpecification::setOptions(const std::string& options) {
 	std::istringstream strm(options);
 	std::string singleOption;
 	while(getline(strm, singleOption, ';') ){
@@ -62,13 +59,12 @@ void HDTSpecification::setOptions(std::string options) {
 	}
 }
 
-std::string HDTSpecification::get(std::string key) {
-	return map[key];
+const std::string& HDTSpecification::get(const std::string& key) {
+	return map.at(key);
 }
 
-void HDTSpecification::set(std::string key, std::string value) {
+void HDTSpecification::set(const std::string& key, const std::string& value) {
 	map[key] = value;
 }
 
-
-}
+} // namespace hdt

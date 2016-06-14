@@ -60,16 +60,20 @@ public:
 	 * @param filename
 	 * @return
 	 */
-	HDTSpecification(std::string &filename);
+	HDTSpecification(const std::string& filename);
 
 	/** Add a set of options using the syntax property1:value1;property2:value2 */
-	void setOptions(std::string options);
+	void setOptions(const std::string& options);
 
-	/** Get the value of a property */
-	std::string get(std::string key);
+	/**
+	  * Get the value of a property.
+	  *
+	  * @throws std::out_of_range if the key is not found
+	  */
+	const std::string& get(const std::string& key);
 
 	/** Set the value of a property */
-	void set(std::string key, std::string value);
+	void set(const std::string& key, const std::string& value);
 };
 
 }
