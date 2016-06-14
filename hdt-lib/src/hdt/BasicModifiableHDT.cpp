@@ -27,8 +27,13 @@ BasicModifiableHDT::~BasicModifiableHDT() {
 }
 
 void BasicModifiableHDT::createComponents() {
-	std::string dictType = spec.get("dictionary.type");
-	std::string triplesType = spec.get("triples.type");
+	try{
+		std::string dictType = spec.get("dictionary.type");
+		std::string triplesType = spec.get("triples.type");
+	}
+	 catch (exception& e)
+	  {
+	  }
 
 	// FIXME: SELECT
 	header = new PlainHeader();

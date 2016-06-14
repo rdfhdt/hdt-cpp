@@ -47,7 +47,11 @@ KyotoDictionary::KyotoDictionary() {
 }
 
 KyotoDictionary::KyotoDictionary(HDTSpecification &specification) : spec(specification) {
-	if(spec.get("dictionary.mapping")=="mapping1") {
+	string map = ""
+	try{
+		map = spec.get("dictionary.mapping");
+	}catch(exception& e){}
+	if(map=="mapping1") {
 		this->mapping = MAPPING1;
 	} else {
 		this->mapping = MAPPING2;

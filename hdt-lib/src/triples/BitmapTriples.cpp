@@ -44,8 +44,14 @@ namespace hdt {
 #define CHECK_BITMAPTRIPLES_INITIALIZED if(bitmapY==NULL || bitmapZ==NULL){	throw "Accessing uninitialized BitmapTriples"; }
 
 BitmapTriples::BitmapTriples() : order(SPO) {
-	arrayY = IntSequence::getArray(spec.get("stream.y"));
-	arrayZ = IntSequence::getArray(spec.get("stream.z"));
+	string typey="";
+	string typez="";
+	try{
+		typey = spec.get("stream.y");
+		typez = spec.get("stream.z");
+	}catch (exception& e){}
+	arrayY = IntSequence::getArray(typey);
+	arrayZ = IntSequence::getArray(typez);
 	arrayIndex = NULL;
 	bitmapY = NULL;
 	bitmapZ = NULL;
@@ -55,12 +61,22 @@ BitmapTriples::BitmapTriples() : order(SPO) {
 }
 
 BitmapTriples::BitmapTriples(HDTSpecification &specification) : spec(specification) {
-	std::string orderStr = spec.get("triplesOrder");
+	std::string orderStr = "";
+	try{
+		orderStr = spec.get("triplesOrder");
+	}catch (exception& e){}
+
 	order= parseOrder(orderStr.c_str());
 	if(order==Unknown)
 		order = SPO;
-	arrayY = IntSequence::getArray(spec.get("stream.y"));
-	arrayZ = IntSequence::getArray(spec.get("stream.z"));
+	string typey="";
+	string typez="";
+	try{
+		typey = spec.get("stream.y");
+		typez = spec.get("stream.z");
+	}catch (exception& e){}
+	arrayY = IntSequence::getArray(typey);
+	arrayZ = IntSequence::getArray(typez);
 	arrayIndex = NULL;
 	bitmapY = NULL;
 	bitmapZ = NULL;

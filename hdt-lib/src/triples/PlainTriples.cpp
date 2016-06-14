@@ -37,20 +37,39 @@
 namespace hdt {
 
 PlainTriples::PlainTriples() : order(SPO) {
-	streamX = IntSequence::getArray(spec.get("stream.x"));
-	streamY = IntSequence::getArray(spec.get("stream.y"));
-	streamZ = IntSequence::getArray(spec.get("stream.z"));
+	string typex="";
+	string typey="";
+	string typez="";
+	try{
+		typex = spec.get("stream.x");
+		typey = spec.get("stream.y");
+		typez = spec.get("stream.z");
+	}catch (exception& e){}
+	streamX = IntSequence::getArray(typex);
+	streamY = IntSequence::getArray(typey);
+	streamZ = IntSequence::getArray(typez);
 }
 
 PlainTriples::PlainTriples(HDTSpecification &specification) : spec(specification) {
-	std::string orderStr = spec.get("triplesOrder");
+	std::string orderStr = "";
+	try{
+		orderStr= spec.get("triplesOrder");
+	}catch(exception& e){}
 	order = parseOrder(orderStr.c_str());
 	if(order==Unknown) {
 			order = SPO;
 	}
-	streamX = IntSequence::getArray(spec.get("stream.x"));
-	streamY = IntSequence::getArray(spec.get("stream.y"));
-	streamZ = IntSequence::getArray(spec.get("stream.z"));
+	string typex="";
+	string typey="";
+	string typez="";
+	try{
+		typex = spec.get("stream.x");
+		typey = spec.get("stream.y");
+		typez = spec.get("stream.z");
+	}catch (exception& e){}
+	streamX = IntSequence::getArray(typex);
+	streamY = IntSequence::getArray(typey);
+	streamZ = IntSequence::getArray(typez);
 }
 
 PlainTriples::~PlainTriples() {

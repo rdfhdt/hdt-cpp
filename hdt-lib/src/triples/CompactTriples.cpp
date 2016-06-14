@@ -38,18 +38,32 @@ namespace hdt {
 
 
 CompactTriples::CompactTriples() : numTriples(0), order(SPO) {
-	streamY = IntSequence::getArray(spec.get("stream.y"));
-	streamZ = IntSequence::getArray(spec.get("stream.z"));
+	string typey="";
+	string typez="";
+	try{
+		typey = spec.get("stream.y");
+		typez = spec.get("stream.z");
+	}catch (exception& e){}
+	streamY = IntSequence::getArray(typey);
+	streamZ = IntSequence::getArray(typez);
 }
 
 CompactTriples::CompactTriples(HDTSpecification &specification) : spec(specification), numTriples(0) {
-	std::string orderStr = spec.get("triplesOrder");
+	std::string orderStr = "";
+	try{
+		orderStr = spec.get("triplesOrder");
+	}catch(exception& e){}
 	order= parseOrder(orderStr.c_str());
 	if(order==Unknown)
 		order = SPO;
-
-	streamY = IntSequence::getArray(spec.get("stream.y"));
-	streamZ = IntSequence::getArray(spec.get("stream.z"));
+	string typey="";
+	string typez="";
+	try{
+		typey = spec.get("stream.y");
+		typez = spec.get("stream.z");
+	}catch (exception& e){}
+	streamY = IntSequence::getArray(typey);
+	streamZ = IntSequence::getArray(typez);
 }
 
 CompactTriples::~CompactTriples() {

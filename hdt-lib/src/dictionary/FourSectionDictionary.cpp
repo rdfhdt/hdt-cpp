@@ -56,7 +56,11 @@ FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksiz
 	objects = new csd::CSD_PFC();
 	shared = new csd::CSD_PFC();
 
-	string blockSizeStr = spec.get("dict.block.size");
+	string blockSizeStr = "";
+	try{
+		spec.get("dict.block.size");
+	}catch(exception& e){}
+
 	if(blockSizeStr!=""){
 		//blocksize = atoi((const char*)blockSizeStr.c_str());
 	}

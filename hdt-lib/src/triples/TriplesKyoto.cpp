@@ -62,8 +62,11 @@ int32_t TriplesKyoto::compare (const char *akbuf, size_t aksiz, const char *bkbu
 
 TriplesKyoto::TriplesKyoto(HDTSpecification &specification) : spec(specification) {
 	unlink("triples.kct");
-
-    order = parseOrder(spec.get("triplesOrder").c_str());
+	string ord = "";
+	try{
+		ord = spec.get("triplesOrder");
+	}catch(exception& e){}
+    order = parseOrder(ord.c_str());
     if(order==Unknown){
         order = SPO;
     }
