@@ -83,35 +83,37 @@ public:
 
     size_t load(const unsigned char *ptr, const unsigned char *maxPtr);
 
-    std::string getFormat();
+    const std::string& getFormat() const;
 
-    void setFormat(std::string format);
+    void setFormat(const std::string& format);
 
 	/** Get a property of the ControlInformation
 	 * @param key
 	 * @return
+	 * @throws std::out_of_range if the key is not found
 	 */
-	std::string get(std::string key);
+	const std::string& get(const std::string& key) const;
 
 	/** Get a property of the ControlInformation as unsigned int
 	 * @param key
 	 * @return
+	 * @throws std::out_of_range if the key is not found
 	 */
-    uint64_t getUint(std::string key);
+    uint64_t getUint(const std::string& key) const;
 
 	/**
 	 * Set a property of the ControlInformation
 	 * @param key
 	 * @param value
 	 */
-	void set(std::string key, std::string value);
+	void set(const std::string& key, const std::string& value);
 
 	/**
 	 * Set a property of the ControlInformation as unsigned int
 	 * @param key
 	 * @param value
 	 */
-    void setUint(std::string key, uint64_t value);
+    void setUint(const std::string& key, uint64_t value);
 
 	/** Clear the ControlInformation, removing all properties.
 	 */
@@ -119,9 +121,9 @@ public:
 
     void setType(ControlInformationType type);
 
-    bool isDefined(std::string key);
+    bool isDefined(const std::string& key) const;
 
-    ControlInformationType getType();
+    ControlInformationType getType() const;
 };
 
 }

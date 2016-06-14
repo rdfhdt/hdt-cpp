@@ -92,7 +92,6 @@ public:
 	unsigned int getNumElements();
 };
 
-}
-
+} // namespace hdt
 
 #endif /* TRIPLEITERATORS_HPP_ */

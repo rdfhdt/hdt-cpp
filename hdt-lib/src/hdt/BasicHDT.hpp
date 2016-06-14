@@ -134,7 +134,7 @@ public:
 	 */
 	IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
 
-    bool isIndexed() {
+    bool isIndexed() const {
         return triples->isIndexed();
     }
 };

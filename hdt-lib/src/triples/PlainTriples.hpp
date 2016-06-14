@@ -54,8 +54,7 @@ public:
 	PlainTriples(HDTSpecification &spec);
 	~PlainTriples();
 
-
-    bool isIndexed() {
+    bool isIndexed() const {
         return false;
     }
 
@@ -75,16 +74,16 @@ public:
 	 * @param triple
 	 * @return
 	 */
-	float cost(TripleID &triple);
+	float cost(TripleID &triple) const;
 
 	/**
 	 * Returns the number of triples
 	 *
 	 * @return
 	 */
-    size_t getNumberOfElements();
+    size_t getNumberOfElements() const;
 
-    size_t size();
+    size_t size() const;
 
 	/**
 	 * Saves the triples
@@ -115,9 +114,9 @@ public:
 
 	void populateHeader(Header &header, string rootNode);
 
-	string getType();
+	string getType() const;
 
-	TripleComponentOrder getOrder();
+	TripleComponentOrder getOrder() const;
 
 	friend class PlainTriplesIterator;
 };
@@ -139,7 +138,6 @@ public:
 	void goToStart();
 };
 
-
 class ComponentIterator : public IteratorUInt {
 private:
 	TripleComponentRole role;
@@ -153,6 +151,6 @@ public:
 	void goToStart();
 };
 
-}
+} // namespace hdt
 
 #endif /* PLAINTRIPLES_ */

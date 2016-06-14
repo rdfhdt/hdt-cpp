@@ -59,7 +59,7 @@ PlainTriples::~PlainTriples() {
 	delete streamZ;
 }
 
-float PlainTriples::cost(TripleID & triple)
+float PlainTriples::cost(TripleID & triple) const
 {
 	return 0;
 }
@@ -189,23 +189,22 @@ size_t PlainTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progre
 	return 0;
 }
 
-
-
-size_t PlainTriples::getNumberOfElements()
+size_t PlainTriples::getNumberOfElements() const
 {
 	return streamX->getNumberOfElements();
 }
 
-size_t PlainTriples::size()
+size_t PlainTriples::size() const
 {
 	return streamX->size()+streamY->size()+streamZ->size();
 }
 
-string PlainTriples::getType() {
+string PlainTriples::getType() const
+{
     return HDTVocabulary::TRIPLES_TYPE_PLAIN;
 }
 
-TripleComponentOrder PlainTriples::getOrder()
+TripleComponentOrder PlainTriples::getOrder() const
 {
     return order;
 }
