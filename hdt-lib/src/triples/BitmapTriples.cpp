@@ -852,7 +852,11 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     }
 
     size_t numTriples = controlInformation.getUint("numTriples");
-    std::string typeIndex = controlInformation.get("stream.index");
+    std::string typeIndex ="";
+    try{
+    	typeIndex = controlInformation.get("stream.index");
+    }
+    catch(exception &e){}
 
     if(this->getNumberOfElements()!=numTriples) {
     	// FIXME: Force index regeneration instead of error.
