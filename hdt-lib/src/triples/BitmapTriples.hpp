@@ -165,6 +165,7 @@ public:
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
+	void goToY();
     size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();

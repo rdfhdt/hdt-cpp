@@ -213,16 +213,21 @@ TripleID *BitmapTriplesSearchIterator::previous()
 void BitmapTriplesSearchIterator::goToStart()
 {
     posZ = minZ;
-    if(posZ<maxZ) {
-    	posY = adjZ.findListIndex(posZ);
+    goToY();
+}
 
-    	z = adjZ.get(posZ);
-    	y = adjY.get(posY);
-    	x = adjY.findListIndex(posY)+1;
+void BitmapTriplesSearchIterator::goToY(){
+	//we assume posZ is positioned
+	if(posZ<maxZ) {
+	    	posY = adjZ.findListIndex(posZ);
 
-    	nextY = adjY.last(x-1)+1;
-    	nextZ = adjZ.last(posY)+1;
-    }
+	    	z = adjZ.get(posZ);
+	    	y = adjY.get(posY);
+	    	x = adjY.findListIndex(posY)+1;
+
+	    	nextY = adjY.last(x-1)+1;
+	    	nextZ = adjZ.last(posY)+1;
+	    }
 }
 
 size_t BitmapTriplesSearchIterator::estimatedNumResults()
@@ -239,27 +244,15 @@ ResultEstimationType BitmapTriplesSearchIterator::numResultEstimation()
 }
 
 bool BitmapTriplesSearchIterator::canGoTo() {
-    return pattern.isEmpty();
+    return true;
 }
 
 void BitmapTriplesSearchIterator::goTo(unsigned int pos) {
-    if(!pattern.isEmpty()) {
-        throw "Cannot goTo on this pattern.";
-    }
-
-    if(pos>=adjZ.getSize()) {
-        throw "Cannot goTo beyond last triple";
-    }
-
-    posZ = pos;
-    posY = adjZ.findListIndex(posZ);
-
-    z = adjZ.get(posZ);
-    y = adjY.get(posY);
-    x = adjY.findListIndex(posY)+1;
-
-    nextY = adjY.last(x-1)+1;
-    nextZ = adjZ.last(posY)+1;
+	if ((posZ + pos) >= maxZ) {
+			throw "Cannot goTo on this pattern.";
+	}
+	posZ += pos; // move the position of Z
+	goToY(); // go to the correct Y
 }
 
 TripleComponentOrder BitmapTriplesSearchIterator::getOrder() {
