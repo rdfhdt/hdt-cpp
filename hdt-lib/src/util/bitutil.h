@@ -29,6 +29,7 @@ inline uint32_t bits(uint64_t n) {
 	return b;
 }
 
+#if 0
 inline uint32_t wordSelect1(uint32_t value, uint32_t rank) {
 	uint32_t bitpos=0;
 	while(rank && value) {
@@ -38,6 +39,7 @@ inline uint32_t wordSelect1(uint32_t value, uint32_t rank) {
 	}
 	return bitpos;
 }
+#endif
 
 inline size_t wordSelect1(size_t value, uint32_t rank) {
 	size_t bitpos=0;
@@ -49,6 +51,7 @@ inline size_t wordSelect1(size_t value, uint32_t rank) {
 	return bitpos;
 }
 
+#if 0
 inline uint32_t wordSelect1(uint64_t value, uint64_t rank) {
 	uint32_t bitpos=0;
 	while(rank && value) {
@@ -58,6 +61,7 @@ inline uint32_t wordSelect1(uint64_t value, uint64_t rank) {
 	}
 	return bitpos;
 }
+#endif
 
 #define SIZET_SIZE (sizeof(size_t)*8)
 
