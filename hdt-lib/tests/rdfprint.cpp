@@ -1,18 +1,25 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+#ifdef HAVE_RAPTOR
 #include <raptor2/raptor2.h>
+#endif
 
 /* rdfprint.c: print triples from parsing RDF/XML */
 
+#ifdef HAVE_RAPTOR
 static void
-print_triple(void* user_data, raptor_statement* triple) 
+print_triple(void* user_data, raptor_statement* triple)
 {
   raptor_statement_print_as_ntriples(triple, stdout);
   fputc('\n', stdout);
 }
+#endif
 
 int
 main(int argc, char *argv[])
 {
+#ifdef HAVE_RAPTOR
   raptor_world *world = NULL;
   raptor_parser* rdf_parser = NULL;
   unsigned char *uri_string;
@@ -37,6 +44,7 @@ main(int argc, char *argv[])
   raptor_free_memory(uri_string);
 
   raptor_free_world(world);
+#endif
 
-  return 0;
+  return EXIT_SUCCESS;
 }

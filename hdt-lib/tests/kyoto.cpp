@@ -1,11 +1,16 @@
+#ifdef HAVE_KYOTO
 #include <kcpolydb.h>
+#endif
 
 using namespace std;
+
+#ifdef HAVE_KYOTO
 using namespace kyotocabinet;
+#endif
 
 // main routine
 int main(int argc, char** argv) {
-
+#ifdef HAVE_KYOTO
 	// create the database object
 	TreeDB db;
 
@@ -42,6 +47,7 @@ int main(int argc, char** argv) {
 	if (!db.close()) {
 		cerr << "close error: " << db.error().name() << endl;
 	}
+#endif
 
 	return 0;
 }
