@@ -41,7 +41,7 @@ inline uint32_t wordSelect1(uint32_t value, uint32_t rank) {
 }
 #endif
 
-inline size_t wordSelect1(size_t value, uint32_t rank) {
+inline size_t wordSelect1(size_t value, size_t rank) {
 	size_t bitpos=0;
 	while(rank && value) {
 		rank -= value & 1;
