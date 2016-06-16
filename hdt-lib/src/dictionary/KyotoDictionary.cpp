@@ -47,7 +47,7 @@ KyotoDictionary::KyotoDictionary() {
 }
 
 KyotoDictionary::KyotoDictionary(HDTSpecification &specification) : spec(specification) {
-	string map = ""
+	string map = "";
 	try{
 		map = spec.get("dictionary.mapping");
 	}catch(exception& e){}
