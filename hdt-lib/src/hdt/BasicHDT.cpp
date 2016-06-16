@@ -209,7 +209,27 @@ void DictionaryLoader::processTriple(hdt::TripleString& triple,	unsigned long lo
 	count++;
 }
 
-void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNotation notation, ProgressListener* listener) {
+void TriplesLoader::processTriple(hdt::TripleString& triple, unsigned long long pos) {
+	TripleID ti;
+	dictionary->tripleStringtoTripleID(triple, ti);
+	if (ti.isValid()) {
+		triples->insert(ti);
+	} else {
+		cerr << "ERROR: Could not convert triple to IDS! " << endl << triple << endl << ti << endl;
+	}
+	//cout << "TripleID: " << ti << endl;
+	char str[100];
+	if ((listener != NULL) && (count % 100000) == 0) {
+		sprintf(str, "Generating Triples: %lld K triples processed.", count / 1000);
+		listener->notifyProgress(0, str);
+	}
+	count++;
+	if(pos>sizeBytes) {
+		sizeBytes = pos;
+	}
+}
+
+void BasicHDT::loadDictionary(std::function<void(RDFCallback&)> tripleLoader, ProgressListener* listener) {
 
 	StopWatch st;
 	IntermediateListener iListener(listener);
@@ -225,9 +245,7 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		// Load data
 		DictionaryLoader dictLoader(dict, &iListener);
 
-		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation);
-        parser->doParse(fileName, baseUri, notation, true, &dictLoader);
-		delete parser;
+		tripleLoader(dictLoader);
 
 		iListener.setRange(80, 90);
 		dict->stopProcessing(&iListener);
@@ -252,27 +270,33 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 	}
 }
 
-void TriplesLoader::processTriple(hdt::TripleString& triple, unsigned long long pos) {
-	TripleID ti;
-	dictionary->tripleStringtoTripleID(triple, ti);
-	if (ti.isValid()) {
-		triples->insert(ti);
-	} else {
-		cerr << "ERROR: Could not convert triple to IDS! " << endl << triple << endl << ti << endl;
-	}
-	//cout << "TripleID: " << ti << endl;
-	char str[100];
-	if ((listener != NULL) && (count % 100000) == 0) {
-		sprintf(str, "Generating Triples: %lld K triples processed.", count / 1000);
-		listener->notifyProgress(0, str);
-	}
-	count++;
-	if(pos>sizeBytes) {
-		sizeBytes = pos;
-	}
+inline std::function<void(RDFCallback&)> constructFileTripleLoader(const char* fileName, const char* baseUri, RDFNotation notation) {
+	return [fileName, baseUri, notation](RDFCallback& loader) {
+		RDFParserCallback *pars = RDFParserCallback::getParserCallback(
+				notation);
+		pars->doParse(fileName, baseUri, notation, true, &loader);
+		delete pars;
+	};
 }
 
-void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotation notation, ProgressListener* listener) {
+inline std::function<void(RDFCallback&)> constructIteratorTripleLoader(IteratorTripleString* triples) {
+	return [triples](RDFCallback& loader) {
+		triples->goToStart();
+		while(triples->hasNext()) {
+			loader.processTriple(*triples->next(), 0);
+		}
+	};
+}
+
+void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNotation notation, ProgressListener* listener) {
+	this->loadDictionary(constructFileTripleLoader(fileName, baseUri, notation), listener);
+}
+
+void BasicHDT::loadDictionary(IteratorTripleString* triples, ProgressListener* listener) {
+	this->loadDictionary(constructIteratorTripleLoader(triples), listener);
+}
+
+void BasicHDT::loadTriples(std::function<void(RDFCallback&)> tripleLoader, ProgressListener* listener) {
 	// Generate Triples
 	ModifiableTriples* triplesList = new TriplesList(spec);
 	//ModifiableTriples *triplesList = new TriplesKyoto(spec);
@@ -283,14 +307,12 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		NOTIFY(listener, "Loading Triples", 0, 100);
 		iListener.setRange(0, 60);
 
+		// Load data by iterating over the triples iterator.
 		triplesList->startProcessing(&iListener);
-
 		TriplesLoader tripLoader(dictionary, triplesList, &iListener);
 
-		RDFParserCallback *pars = RDFParserCallback::getParserCallback(
-				notation);
-		pars->doParse(fileName, baseUri, notation, true, &tripLoader);
-		delete pars;
+		tripleLoader(tripLoader);
+
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, tripLoader.getSize());
 		triplesList->stopProcessing(&iListener);
 
@@ -320,13 +342,13 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		delete triplesList;
 		throw e;
 	}
-	if (triples->getType() == triplesList->getType()) {
+	if (this->triples->getType() == triplesList->getType()) {
 		delete triples;
-		triples = triplesList;
+		this->triples = triplesList;
 	} else {
 		iListener.setRange(90, 100);
 		try {
-			triples->load(*triplesList, &iListener);
+			this->triples->load(*triplesList, &iListener);
 		} catch (const char* e) {
 			delete triplesList;
 			throw e;
@@ -337,6 +359,14 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 	//cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
+void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotation notation, ProgressListener* listener) {
+	this->loadTriples(constructFileTripleLoader(fileName, baseUri, notation), listener);
+}
+
+void BasicHDT::loadTriples(IteratorTripleString* triples, ProgressListener* listener) {
+	this->loadTriples(constructIteratorTripleLoader(triples), listener);
+}
+
 void BasicHDT::fillHeader(string& baseUri) {
 	string formatNode = "_:format";
 	string dictNode = "_:dictionary";
@@ -344,7 +374,14 @@ void BasicHDT::fillHeader(string& baseUri) {
 	string statisticsNode = "_:statistics";
 	string publicationInfoNode = "_:publicationInformation";
 
-	uint64_t origSize = header->getPropertyLong(statisticsNode.c_str(), HDTVocabulary::ORIGINAL_SIZE.c_str());
+	bool hasOrigSize;
+	uint64_t origSize;
+	try {
+		origSize = header->getPropertyLong(statisticsNode.c_str(), HDTVocabulary::ORIGINAL_SIZE.c_str());
+		hasOrigSize = true;
+	} catch (const char* e) {
+		hasOrigSize = false;
+	}
 
 	header->clear();
 
@@ -373,7 +410,7 @@ void BasicHDT::fillHeader(string& baseUri) {
 	triples->populateHeader(*header, triplesNode);
 
 	// Sizes
-	header->insert(statisticsNode, HDTVocabulary::ORIGINAL_SIZE, origSize);
+	if(hasOrigSize) header->insert(statisticsNode, HDTVocabulary::ORIGINAL_SIZE, origSize);
 	header->insert(statisticsNode, HDTVocabulary::HDT_SIZE, getDictionary()->size() + getTriples()->size());
 
 	// Current time
@@ -401,6 +438,32 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 
 		iListener.setRange(50,99);
 		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
+
+		fillHeader(baseUri);
+
+	}catch (const char *e) {
+		cout << "Catch exception load: " << e << endl;
+		deleteComponents();
+		createComponents();
+		throw e;
+	} catch (char *e) {
+		cout << "Catch exception load: " << e << endl;
+		deleteComponents();
+		createComponents();
+		throw e;
+	}
+}
+
+void BasicHDT::loadFromTriples(IteratorTripleString* triples, string baseUri) {
+	try {
+		// Make sure that URI starts and ends with <>
+		if(baseUri.at(0)!='<')
+			baseUri = '<'+baseUri;
+		if(baseUri.at(baseUri.length()-1)!='>')
+			baseUri.append(">");
+
+		loadDictionary(triples);
+		loadTriples(triples);
 
 		fillHeader(baseUri);
 
