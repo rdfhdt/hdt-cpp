@@ -54,7 +54,6 @@ int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
 	string headerFile, dictionaryFile, triplesFile;
-	bool measure = false;
 
 	while( (c = getopt(argc,argv,"hH:D:T:"))!=-1) {
 		switch(c) {

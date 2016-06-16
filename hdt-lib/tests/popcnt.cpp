@@ -32,7 +32,7 @@ inline unsigned int popCountParallel(unsigned int v) {
 
 	v = v - ((v >> 1) & 0x55555555);                    // reuse input as temporary
 	v = (v & 0x33333333) + ((v >> 2) & 0x33333333);     // temp
-	c = ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
+	c = (((v + (v >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24; // count
 
 	return c;
 }
@@ -275,7 +275,7 @@ static inline int popcount_sse2_16bit(unsigned* buf,int n) {
 int popcount_sse2_32bit(unsigned* buf, int n) {
   __m128i* vbuf = (__m128i*)buf;
   int N = n/4;
-  __m128i total,count0,count1,count2,count3;
+  __m128i total, count0, count1, count2, count3;
   int i;
   unsigned tmp[4];
   unsigned magic[] = {0x55555555, 0x55555555, 0x55555555, 0x55555555,
@@ -288,7 +288,8 @@ int popcount_sse2_32bit(unsigned* buf, int n) {
   __m128i B2 = _mm_load_si128((__m128i*)(magic+8));
   __m128i B3 = _mm_load_si128((__m128i*)(magic+12));
   __m128i B4 = _mm_load_si128((__m128i*)(magic+16));
-  total = _mm_xor_si128(total,total);
+  total = _mm_set1_epi32(0);
+  total = _mm_xor_si128(total, total);
   for (i = 0; i < N; i+=4) {
     __m128i v0 = _mm_load_si128(vbuf+i+0);
     __m128i v1 = _mm_load_si128(vbuf+i+1);

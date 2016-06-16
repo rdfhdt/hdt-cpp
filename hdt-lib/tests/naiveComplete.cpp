@@ -35,7 +35,6 @@ void help() {
 int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile, filter1, filter2;
-	bool measure = false;
     uint offset = 0, limit = 0;
 
 	while ((c = getopt(argc, argv, "h:o:f:F:s:l:")) != -1) {
@@ -126,7 +125,7 @@ int main(int argc, char **argv) {
 
 				uint32_t *results = NULL;
                 uint32_t resultCount = 0;
-				size_t numResults = dict->substringToId((unsigned char *) value.c_str(), value.length(), offset, limit, false, &results, &resultCount);
+				(void)dict->substringToId((unsigned char *) value.c_str(), value.length(), offset, limit, false, &results, &resultCount);
 
 				TripleID pattern(0, dict->stringToId(property, PREDICATE), 0);
 
@@ -137,8 +136,6 @@ int main(int argc, char **argv) {
 					string objStr = dict->idToString(results[i], OBJECT);
 
 					IteratorTripleID *it = triples->search(pattern);
-
-					unsigned int numTriples = 0;
 
 					//iterate over the first pattern
 					while (it->hasNext()) {

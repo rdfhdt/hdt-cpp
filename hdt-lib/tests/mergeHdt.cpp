@@ -63,8 +63,6 @@ int main(int argc, char **argv) {
 	string options;
 	string baseUri;
 
-	RDFNotation notation = NTRIPLES;
-
 	int c;
 	while( (c = getopt(argc,argv,"c:o:vB:i"))!=-1) {
 		switch(c) {
@@ -151,7 +149,7 @@ int main(int argc, char **argv) {
 		cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
 
 		if(generateIndex) {
-			HDT *indexedHDT = HDTManager::indexedHDT(&hdt, &progress);
+			(void)HDTManager::indexedHDT(&hdt, &progress);
 		}
 	} catch (char *exception) {
 		cerr << "ERROR: " << exception << endl;

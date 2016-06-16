@@ -149,8 +149,6 @@ int main(int argc, char **argv) {
 
 						IteratorTripleID *it = triples->search(pattern);
 
-						unsigned int numTriples = 0;
-
 						//iterate over the first pattern
 						while (it->hasNext()) {
 							TripleID *ts = it->next();

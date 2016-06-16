@@ -30,7 +30,7 @@ public:
 	}
 
 	unsigned char *next() {
-		sprintf((char*)buffer, "AAA %015lld FINNN", (uint64_t) count++);
+		sprintf((char*)buffer, "AAA %015zd FINNN", count++);
 		return buffer;
 	}
 
