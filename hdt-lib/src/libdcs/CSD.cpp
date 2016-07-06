@@ -6,7 +6,7 @@
  *
  *   ==========================================================================
  *     "Compressed String Dictionaries"
- *     Nieves R. Brisaboa, Rodrigo Canovas, Francisco Claude, 
+ *     Nieves R. Brisaboa, Rodrigo Canovas, Francisco Claude,
  *     Miguel A. Martinez-Prieto and Gonzalo Navarro.
  *     10th Symposium on Experimental Algorithms (SEA'2011), p.136-147, 2011.
  *   ==========================================================================
@@ -55,20 +55,20 @@ CSD * CSD::load(istream & fp)
 {
     int type = fp.get();
     if(!fp.good()) {
-	throw "Error reading stream";
+	throw std::runtime_error("Error reading stream");
     }
     switch(type)
     {
-    case PFC: 
+    case PFC:
 	return CSD_PFC::load(fp);
 #ifdef HAVE_CDS
-    case FMINDEX: 
+    case FMINDEX:
 	return CSD_FMIndex::load(fp);
-    case HTFC: 
+    case HTFC:
 	return CSD_HTFC::load(fp);
 #endif
     default:
-	throw "No implementation for CSD";
+	throw std::logic_error("No implementation for CSD");
     }
     return NULL;
 }
@@ -82,7 +82,7 @@ CSD *CSD::create(unsigned char type)
     case HTFC: return new CSD_HTFC();
     case FMINDEX: return new CSD_FMIndex();
 #endif
-    default: throw "No implementation for CSD";
+    default: throw std::logic_error("No implementation for CSD");
     }
 
     return NULL;
@@ -94,5 +94,3 @@ uint32_t CSD::getLength()
 }
 
 }
-
-

@@ -95,7 +95,7 @@ SparqlQuery parseSparql(string query) {
                                         pattern[pattern.size()-1].append(last);
                                 }
                                 if(pattern.size()!=3) {
-                                        throw "Pattern should have 3 components";
+                                        throw std::runtime_error("Pattern should have 3 components");
                                 }
                                 hdt::TripleString trip(pattern[0], pattern[1], pattern[2]);
                                 output.patterns.push_back(trip);
@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
 					while(binding->findNext()) {
 						for(unsigned int i=0;i<binding->getNumVars();i++) {
 							//cout << binding->getVarName(i) << "=" << binding->getVar(i) << endl;
-							cout << binding->getVar(i) << " "; 
+							cout << binding->getVar(i) << " ";
 						}
 						cout << endl;
 						count++;
@@ -219,9 +219,7 @@ int main(int argc, char **argv) {
 
 					delete binding;
 					numqueries++;
-				} catch (const char *e) {
-					cerr << "Error in query: " << line << endl;
-				} catch (char *e) {
+				} catch (std::exception& e) {
 					cerr << "Error in query: " << line << endl;
 				}
 			}
@@ -233,12 +231,7 @@ int main(int argc, char **argv) {
 		cerr << "Average time real: " << ((double)global.getReal())/numqueries << endl;
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

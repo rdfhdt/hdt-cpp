@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
 			Header *header = hdt->getHeader();
 			out.open(headerFile.c_str());
 			if(!out.good()){
-				throw "Could not open Header file.";
+				throw std::runtime_error("Could not open Header file.");
 			}
 			header->save(out, controlInformation);
 			out.close();
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
 			Dictionary *dictionary = hdt->getDictionary();
 			out.open(dictionaryFile.c_str());
 			if(!out.good()){
-				throw "Could not open Dictionary file.";
+				throw std::runtime_error("Could not open Dictionary file.");
 			}
 			dictionary->save(out, controlInformation);
 			out.close();
@@ -122,17 +122,14 @@ int main(int argc, char **argv) {
 			Triples *triples = hdt->getTriples();
 			out.open(triplesFile.c_str());
 			if(!out.good()){
-				throw "Could not open Triples file.";
+				throw std::runtime_error("Could not open Triples file.");
 			}
 			triples->save(out, controlInformation);
 			out.close();
 		}
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }
-

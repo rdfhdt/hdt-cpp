@@ -97,7 +97,7 @@ public:
 
 #ifdef WIN32
 		// Write by 1Mb blocks
-		const size_t BLOCK_SIZE = 8192; 
+		const size_t BLOCK_SIZE = 8192;
 		size_t counter=0;
 		char *ptr = (char *)buf;
 		while(counter<len && out.good()) {
@@ -106,7 +106,7 @@ public:
 		    counter += currByt;
 		}
 		if(counter!=len) {
-		    throw "Could not write full buffer";
+		    throw std::runtime_error("Could not write full buffer");
 		}
 #else
 		out.write((char*)buf, len);

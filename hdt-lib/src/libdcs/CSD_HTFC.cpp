@@ -428,7 +428,7 @@ void CSD_HTFC::save(ostream & fp)
 
 size_t CSD_HTFC::load(unsigned char *ptr, unsigned char *ptrMax)
 {
-    throw "Not implemented";
+    throw std::logic_error("Not Implemented");
 }
 
 CSD* CSD_HTFC::load(istream &fp)

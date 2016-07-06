@@ -44,7 +44,7 @@ PlainTriples::PlainTriples() : order(SPO) {
 		typex = spec.get("stream.x");
 		typey = spec.get("stream.y");
 		typez = spec.get("stream.z");
-	}catch (exception& e){}
+	}catch (std::exception& e){}
 	streamX = IntSequence::getArray(typex);
 	streamY = IntSequence::getArray(typey);
 	streamZ = IntSequence::getArray(typez);
@@ -66,7 +66,7 @@ PlainTriples::PlainTriples(HDTSpecification &specification) : spec(specification
 		typex = spec.get("stream.x");
 		typey = spec.get("stream.y");
 		typez = spec.get("stream.z");
-	}catch (exception& e){}
+	}catch (std::exception& e){}
 	streamX = IntSequence::getArray(typex);
 	streamY = IntSequence::getArray(typey);
 	streamZ = IntSequence::getArray(typez);
@@ -129,7 +129,7 @@ IteratorTripleID *PlainTriples::search(TripleID & pattern)
 }
 
 IteratorTripleID *PlainTriples::searchJoin(TripleID &a, TripleID &b, unsigned short conditions) {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 void PlainTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
@@ -159,7 +159,7 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 {
 	std::string format = controlInformation.getFormat();
 	if(format!=getType()) {
-		throw "Trying to read PlainTriples but the data is not PlainTriples";
+		throw std::runtime_error("Trying to read PlainTriples but the data is not PlainTriples");
 	}
 
 	//unsigned int numTriples = controlInformation.getUint("numTriples");
@@ -188,7 +188,7 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 
 size_t PlainTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+    throw std::logic_error("Not Implemented");
 }
 
 void PlainTriples::generateIndex(ProgressListener *listener) {
@@ -301,6 +301,3 @@ void ComponentIterator::goToStart()
 }
 
 }
-
-
-

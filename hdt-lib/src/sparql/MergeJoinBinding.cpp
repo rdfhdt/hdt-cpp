@@ -18,7 +18,7 @@ MergeJoinBinding::MergeJoinBinding(char *var, VarBindingInterface *left, VarBind
     goToStart();
 
     if(!left->isOrdered(left->getVarIndex(var))||!right->isOrdered(right->getVarIndex(var))) {
-	throw "Cannot merge join if the variables are not sorted!";
+	throw std::runtime_error("Cannot merge join if the variables are not sorted!");
     }
 
     cerr << "Merge join of " << left->estimatedNumResults() << " against " << right->estimatedNumResults() << endl;
@@ -44,7 +44,7 @@ ResultEstimationType MergeJoinBinding::estimationAccuracy() {
 }
 
 bool MergeJoinBinding::findNext(const char *varName, unsigned int value) {
-    throw "Unsupported";
+    throw std::logic_error("Unsupported");
 }
 
 bool MergeJoinBinding::findNext() {
@@ -161,7 +161,7 @@ void MergeJoinBinding::goToStart() {
 
 unsigned int MergeJoinBinding::getVarValue(unsigned int numvar) {
     if(numvar>=getNumVars()) {
-	throw "Accessing out of bound variable";
+	throw std::out_of_range("Accessing out of bound variable");
     }
 
     if(!varOperand[numvar]) {
@@ -180,7 +180,7 @@ unsigned int MergeJoinBinding::getVarValue(unsigned int numvar) {
 }
 
 void MergeJoinBinding::searchVar(unsigned int numvar, unsigned int value) {
-    throw "Unsupported";
+    throw std::logic_error("Unsupported");
 }
 
 }

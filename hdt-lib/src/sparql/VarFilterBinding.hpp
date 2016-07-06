@@ -58,14 +58,14 @@ public:
 
     unsigned int getVarValue(unsigned int numvar) {
 	if(numvar>varIds.size()) {
-	    throw "No such variable";
+	    throw std::runtime_error("No such variable");
 	}
 	return child->getVarValue(varIds[numvar]);
     }
 
     const char *getVarName(unsigned int numvar) {
 	if(numvar>varIds.size()) {
-	    throw "No such variable";
+	    throw std::runtime_error("No such variable");
 	}
 	return varNames[numvar].c_str();
     }
@@ -82,4 +82,3 @@ public:
 }
 
 #endif // VARFILTERBINDING_HPP
-

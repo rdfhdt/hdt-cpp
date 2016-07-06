@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
 			#ifdef HAVE_LIBZ
 				in = inGz = new igzstream(inputFile.c_str());
 			#else
-				throw "Support for GZIP was not compiled in this version. Please Decompress the file before importing it.";
+				throw std::runtime_error("Support for GZIP was not compiled in this version. Please Decompress the file before importing it.");
 			#endif
 		} else {
 			in = inF = new ifstream(inputFile.c_str(), ios::binary);
@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
 		if (!in->good())
 		{
 			cerr << "Error opening file " << inputFile << endl;
-			throw "Error opening file for reading";
+			throw std::runtime_error("Error opening file for reading");
 		}
 
 		ControlInformation controlInformation;
@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
 		if(outputFile!="") {
 			ofstream out(outputFile.c_str());
 			if(!out.good()){
-				throw "Could not open output file.";
+				throw std::runtime_error("Could not open output file.");
 			}
 			RDFSerializerNTriples serializer(out, NTRIPLES);
 			serializer.serialize(it);
@@ -149,12 +149,7 @@ int main(int argc, char **argv) {
 
 		delete header;
 
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

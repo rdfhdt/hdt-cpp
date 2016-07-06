@@ -64,13 +64,13 @@ IteratorTripleID *TriplesList::search(TripleID &pattern)
 }
 
 IteratorTripleID *TriplesList::searchJoin(TripleID &a, TripleID &b, unsigned short conditions) {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 float TriplesList::cost(TripleID &pattern) const
 {
 	// TODO: Theoretically define this with the team
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 size_t TriplesList::getNumberOfElements() const
@@ -103,7 +103,7 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 {
 	std::string format = controlInformation.getFormat();
 	if(format!=getType()) {
-		throw "Trying to read a TriplesList but the data is not TriplesList";
+		throw std::runtime_error("Trying to read a TriplesList but the data is not TriplesList");
 	}
 
 	order = (TripleComponentOrder) controlInformation.getUint("order");
@@ -122,10 +122,10 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
     }
 }
 
-#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw "Could not read completely the HDT from the file.";
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw std::runtime_error("Could not read completely the HDT from the file.");
 
 size_t TriplesList::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
-{    
+{
     size_t count=0;
 
     ControlInformation controlInformation;
@@ -133,7 +133,7 @@ size_t TriplesList::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 
     std::string format = controlInformation.getFormat();
     if(format!=getType()) {
-        throw "Trying to read a TriplesList but the data is not TriplesList";
+        throw std::runtime_error("Trying to read a TriplesList but the data is not TriplesList");
     }
 
     order = (TripleComponentOrder) controlInformation.getUint("order");
@@ -296,7 +296,7 @@ void TriplesList::removeDuplicates(ProgressListener *listener) {
 		return;
 
 	if(order==Unknown){
-		throw "Cannot remove duplicates on unordered triples";
+		throw std::runtime_error("Cannot remove duplicates on unordered triples");
 	}
 
 	unsigned int j = 0;

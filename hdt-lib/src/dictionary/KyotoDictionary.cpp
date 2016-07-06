@@ -92,7 +92,7 @@ KyotoDictionary::~KyotoDictionary() {
 
 std::string KyotoDictionary::idToString(unsigned int id, TripleComponentRole position)
 {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 unsigned int KyotoDictionary::stringToId(std::string &key, TripleComponentRole position)
@@ -250,7 +250,7 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 	}
 	delete curSubj;
 	delete curObj;
-#else 
+#else
 	// For each Subject, check object.
 	DB::Cursor* cur = subjects.cursor();
 	cur->jump();
@@ -307,22 +307,22 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 void KyotoDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 size_t KyotoDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener) {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 void KyotoDictionary::load(std::istream & input, ControlInformation &ci, ProgressListener *listener)
 {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 
 }
 
 void KyotoDictionary::import(Dictionary *other, ProgressListener *listener) {
 
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 IteratorUCharString *KyotoDictionary::getSubjects() {
@@ -390,7 +390,7 @@ unsigned int KyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id,
 			return id+1;
 		}
 
-		throw "Item not found";
+		throw std::runtime_error("Item not found");
 }
 
 
@@ -422,7 +422,7 @@ unsigned int KyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, 
 			return id-1;
 		}
 
-		throw "Item not found";
+		throw std::runtime_error("Item not found");
 }
 
 unsigned int KyotoDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
@@ -514,11 +514,10 @@ unsigned int KyotoDictionary::getMapping() {
 
 void KyotoDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
-    throw "getSuggestions not implemented";
+    throw std::logic_error("getSuggestions not implemented");
 }
 
 
 }
 
 #endif
-

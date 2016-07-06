@@ -211,7 +211,7 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 
 	std::string format = ci.getFormat();
 	if(format!=getType()) {
-		throw "Trying to read a PlainDictionary but the data is not PlainDictionary";
+		throw std::runtime_error("Trying to read a PlainDictionary but the data is not PlainDictionary");
 	}
 
 	this->mapping = ci.getUint("mapping");
@@ -250,11 +250,11 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 
 size_t PlainDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented load";
+    throw std::logic_error("Not implemented load");
 }
 
 void PlainDictionary::import(Dictionary *other, ProgressListener *listener) {
-	throw "Not implemented import";
+	throw std::logic_error("Not implemented import");
 }
 
 IteratorUCharString *PlainDictionary::getSubjects() {
@@ -549,7 +549,7 @@ vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int
 		}
 	}
 
-	throw "Item not found";
+	throw std::runtime_error("Item not found");
 }
 
 unsigned int PlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
@@ -572,7 +572,7 @@ unsigned int PlainDictionary::getGlobalId(unsigned int mapping, unsigned int id,
 			return id+1;
 		}
 
-		throw "Item not found";
+		throw std::runtime_error("Item not found");
 }
 
 
@@ -604,7 +604,7 @@ unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, 
 			return id-1;
 		}
 
-		throw "Item not found";
+		throw std::runtime_error("Item not found");
 }
 
 unsigned int PlainDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
@@ -712,7 +712,7 @@ unsigned int PlainDictionary::getMapping() {
 
 void PlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
-    throw "getSuggestions not implemented";
+    throw std::logic_error("getSuggestions not implemented");
 }
 
 }

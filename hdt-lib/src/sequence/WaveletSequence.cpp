@@ -81,7 +81,7 @@ void WaveletSequence::add(IteratorUInt &elements)
 		size_t element = elements.next();
 
 		if(element>((size_t)-1)) {
-			throw "Trying to insert a value bigger than the permitted for the architecture";
+			throw std::runtime_error("Trying to insert a value bigger than the permitted for the architecture");
 		}
 
 		vector.push_back(element);

@@ -117,7 +117,7 @@ namespace csd{
 
 			void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 
-		    hdt::IteratorUCharString *listAll() { throw "Not implemented"; }
+		    hdt::IteratorUCharString *listAll() { throw std::logic_error("Not Implemented"); }
 
 			/** General destructor. */
 			~CSD_FMIndex();

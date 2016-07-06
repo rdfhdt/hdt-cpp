@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
 
 			std::ifstream file(infile.c_str());
 			if (!file.good())
-				throw "unable to open filter file";
+				throw std::runtime_error("unable to open filter file");
 
 			string linea = "";
 			string property = "";
@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
 
 			while (!file.eof()) {
 				getline(file, linea);
-				if(linea.length()==0) 
+				if(linea.length()==0)
 					continue;
 				size_t pos = linea.find(';');
 
@@ -182,7 +182,7 @@ int main(int argc, char **argv) {
 						}
 						delete it;
 					}
-					
+
 					cout << ">>> Results: " << totalQueryResults << endl;
 					cerr << "Query " << numQuery << " Results: " << totalQueryResults << " in " << st << endl << endl;
 					numQuery++;
@@ -199,11 +199,7 @@ int main(int argc, char **argv) {
 		}
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }
-
-

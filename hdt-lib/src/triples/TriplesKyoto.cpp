@@ -57,7 +57,7 @@ int32_t TriplesKyoto::compare (const char *akbuf, size_t aksiz, const char *bkbu
         cout << endl << " compare " << *a << " = " << *b << "    = " << result << endl;
         return result;
     }
-    throw "TripleKyoto: Error comparing buffers";
+    throw std::runtime_error("TripleKyoto: Error comparing buffers");
 }
 
 TriplesKyoto::TriplesKyoto(HDTSpecification &specification) : spec(specification) {
@@ -128,13 +128,13 @@ IteratorTripleID *TriplesKyoto::search(TripleID &pattern)
 }
 
 IteratorTripleID *TriplesKyoto::searchJoin(TripleID &a, TripleID &b, unsigned short conditions) {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 float TriplesKyoto::cost(TripleID &pattern)
 {
 	// TODO: Theoretically define this with the team
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 size_t TriplesKyoto::getNumberOfElements()
@@ -159,7 +159,7 @@ void TriplesKyoto::load(std::istream &input, ControlInformation &controlInformat
 
 size_t TriplesKyoto::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+    throw std::logic_error("Not Implemented");
 }
 
 void TriplesKyoto::load(ModifiableTriples &input, ProgressListener *listener)
@@ -238,12 +238,12 @@ void TriplesKyoto::insert(IteratorTripleID *triples)
 
 bool TriplesKyoto::remove(TripleID &pattern)
 {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 bool TriplesKyoto::remove(IteratorTripleID *pattern)
 {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 void TriplesKyoto::sort(TripleComponentOrder order, ProgressListener *listener)

@@ -73,12 +73,12 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 
 	ifstream inFile(input, ios::binary);
 	if(!inFile.good()) {
-		throw "Could not open input file for decompression";
+		throw std::runtime_error("Could not open input file for decompression");
 	}
 
 	ofstream outFile(output, ios::binary);
 	if(!outFile.good()) {
-		throw "Could not open output file to save decompressed data";
+		throw std::runtime_error("Could not open output file to save decompressed data");
 	}
 
 	z_stream strm;
@@ -93,7 +93,7 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 	if (ret != Z_OK) {
 		inFile.close();
 		outFile.close();
-		throw "Error initializing libz stream";
+		throw std::runtime_error("Error initializing libz stream");
 	}
 
 	unsigned char *inBuffer = new unsigned char[CHUNK];
@@ -109,7 +109,7 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 			inFile.close();	outFile.close();
 			delete[] inBuffer; delete[] outBuffer;
 			(void)inflateEnd(&strm);
-			throw "Cannot read file and GZIP data hasn't finished.";
+			throw std::runtime_error("Cannot read file and GZIP data hasn't finished.");
 		}
 		inFile.read((char*)inBuffer, CHUNK);
 		strm.avail_in = inFile.gcount();
@@ -134,7 +134,7 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 
 				cerr << "zlib error code: " << ret << " => "<< strm.msg << endl;
 				(void)inflateEnd(&strm);
-				throw "Error decompressing gzip file";
+				throw std::runtime_error("Error decompressing gzip file");
 			}
 
 			unsigned int have = CHUNK - strm.avail_out;
@@ -150,10 +150,10 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 	(void)inflateEnd(&strm);
 
 	if(ret!=Z_STREAM_END) {
-		throw "The file is damaged or truncated. Could not decompress the expected bytes. ";
+		throw std::runtime_error("The file is damaged or truncated. Could not decompress the expected bytes. ");
 	}
 #else
-	throw "Compiled without GZIP Support, please decompress the file and try again.";
+	throw std::runtime_error("Compiled without GZIP Support, please decompress the file and try again.");
 #endif
 }
 
@@ -171,7 +171,7 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 		#ifdef HAVE_LIBZ
 			in = gzStream = new igzstream(fileName);
 		#else
-			throw "Support for GZIP was not compiled in this version. Please Decompress the file before importing it.";
+			throw std::runtime_error("Support for GZIP was not compiled in this version. Please Decompress the file before importing it.");
 		#endif
 	}
 #else
@@ -190,7 +190,7 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 		pipeCommand.append(fileName);
 		if ((filePipe=popen(pipeCommand.c_str(),"r")) == NULL) {
 			cerr << "Error creating pipe for command " << pipeCommand << endl;
-			throw "popen() failed to create pipe";
+			throw std::runtime_error("popen() failed to create pipe");
 		}
 
 		in = new boost::fdistream(fileno(filePipe));
@@ -201,7 +201,7 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 	if (!in->good())
 	{
 		cerr << "Error opening file " << fileName << " for parsing " << endl;
-		throw "Error opening file for parsing";
+		throw std::runtime_error("Error opening file for parsing");
 	}
 }
 

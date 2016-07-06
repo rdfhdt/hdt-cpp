@@ -106,7 +106,7 @@ void BitmapTriplesSearchIterator::findRange()
                     maxZ = adjZ.last(minY)+1;
                     //maxZ = adjZ.findNext(minZ);
                 }
-            } catch (const char *ex) {
+            } catch (std::exception& e) {
                 // Item not found in list, no results.
                 minY = minZ = maxY = maxZ = 0;
             }
@@ -249,7 +249,7 @@ bool BitmapTriplesSearchIterator::canGoTo() {
 
 void BitmapTriplesSearchIterator::goTo(unsigned int pos) {
 	if ((posZ + pos) >= maxZ) {
-			throw "Cannot goTo on this pattern.";
+			throw std::runtime_error("Cannot goTo on this pattern.");
 	}
 	posZ += pos; // move the position of Z
 	goToY(); // go to the correct Y
@@ -303,7 +303,7 @@ bool BitmapTriplesSearchIterator::isSorted(TripleComponentRole role) {
     }
 
 
-    throw "Order not supported";
+    throw std::runtime_error("Order not supported");
 }
 
 
@@ -323,7 +323,7 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     patZ = pattern.getObject();
 
     if(patY==0) {
-        throw "This iterator is not suitable for this pattern";
+        throw std::runtime_error("This iterator is not suitable for this pattern");
     }
 
 #if 0
@@ -475,12 +475,12 @@ bool MiddleWaveletIterator::findNextOccurrence(unsigned int value, unsigned char
                 y = adjY.get(posY);
                 x = adjY.findListIndex(posY)+1;
                 return true;
-            } catch (const char *ex) {
+            } catch (std::exception& e) {
                 // Not found
             }
         }
     }
-    throw "Cannot search component";
+    throw std::runtime_error("Cannot search component");
 }
 
 bool MiddleWaveletIterator::isSorted(TripleComponentRole role) {
@@ -502,7 +502,7 @@ bool MiddleWaveletIterator::isSorted(TripleComponentRole role) {
 	}
     }
 
-    throw "Order not supported";
+    throw std::runtime_error("Order not supported");
 }
 
 
@@ -524,7 +524,7 @@ IteratorY::IteratorY(BitmapTriples *trip, TripleID &pat) :
     patZ = pattern.getObject();
 
     if(patY==0) {
-        throw "This iterator is not suitable for this pattern";
+        throw std::runtime_error("This iterator is not suitable for this pattern");
     }
 
 #if 0
@@ -630,11 +630,11 @@ TripleComponentOrder IteratorY::getOrder() {
 }
 
 bool IteratorY::findNextOccurrence(unsigned int value, unsigned char component) {
-    throw "Not implemented";
+    throw std::logic_error("Not Implemented");
 }
 
 bool IteratorY::isSorted(TripleComponentRole role) {
-    throw "Not implemented";
+    throw std::logic_error("Not Implemented");
 }
 
 
@@ -657,7 +657,7 @@ ObjectIndexIterator::ObjectIndexIterator(BitmapTriples *trip, TripleID &pat) :
     patZ = pattern.getObject();
 
     if(patZ==0) {
-    	throw "This iterator is not suitable for this pattern";
+    	throw std::runtime_error("This iterator is not suitable for this pattern");
     }
 
 #if 0
@@ -682,7 +682,7 @@ unsigned int ObjectIndexIterator::getPosZ(unsigned int indexObjectPos) {
     try {
         posZ = adjZ.find(posAdjList, patZ);
 //        z = adjZ.get(posZ);
-    } catch (const char *ex) {
+    } catch (std::exception& e) {
 	cerr << "posZ not found in Index!!!!" << endl;
         posZ = adjZ.find(posAdjList);
     }
@@ -769,7 +769,7 @@ void ObjectIndexIterator::calculateRange() {
         while (minIndex <= maxIndex) {
             //cout << "binSearch range: " << minIndex << ", " << maxIndex << endl;
             int mid = (minIndex + maxIndex) / 2;
-            unsigned int predicate=getY(mid);        
+            unsigned int predicate=getY(mid);
 
             if (patY > predicate) {
                 minIndex = mid + 1;
@@ -882,7 +882,7 @@ bool ObjectIndexIterator::canGoTo()
 void ObjectIndexIterator::goTo(unsigned int pos)
 {
     if(minIndex+pos>maxIndex) {
-	throw "Cannot goto beyond last element";
+	throw std::runtime_error("Cannot goto beyond last element");
     }
     posIndex = minIndex+pos;
 }
@@ -932,7 +932,7 @@ bool ObjectIndexIterator::isSorted(TripleComponentRole role) {
 	}
     }
 
-    throw "Order not supported";
+    throw std::runtime_error("Order not supported");
 }
 
 

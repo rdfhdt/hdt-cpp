@@ -145,7 +145,7 @@ size_t BitSequence375::rank1(const size_t pos) const
 
 void BitSequence375::set(const size_t i, bool val) {
 	if(isMapped) {
-		throw "This data structure is readonly when mapped.";
+		throw std::runtime_error("This data structure is readonly when mapped.");
 	}
 
 	size_t requiredCapacity = 1+(i/WORDSIZE);
@@ -200,7 +200,7 @@ void BitSequence375::save(ostream & out) const
 }
 
 
-#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw "Could not read completely the HDT from the file.";
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw std::runtime_error("Could not read completely the HDT from the file.");
 
 size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPtr, ProgressListener *listener){
 	size_t count=0;
@@ -208,14 +208,14 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
     // Check type
 	CHECKPTR(&ptr[count], maxPtr, 1);
     if(ptr[count++]!=TYPE_BITMAP_PLAIN) {
-        throw "Trying to read a BitSequence375 but the type does not match";
+        throw std::runtime_error("Trying to read a BitSequence375 but the type does not match");
     }
 
     // Read numbits
     uint64_t totalBits;
 	count += csd::VByte::decode(&ptr[count], maxPtr, &totalBits);
 	if(sizeof(size_t)==4 && totalBits>0xFFFFFFFF) {
-		throw "This File is too big to be processed using 32Bit version. Please compile with 64bit support";
+		throw std::runtime_error("This File is too big to be processed using 32Bit version. Please compile with 64bit support");
 	}
 	this->numbits = (size_t) totalBits;
 
@@ -224,14 +224,14 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
     crch.update(&ptr[0], count);
     CHECKPTR(&ptr[count], maxPtr, 1);
     if(ptr[count++]!=crch.getValue()) {
-        throw "Wrong checksum in BitSequence375 Header.";
+        throw std::runtime_error("Wrong checksum in BitSequence375 Header.");
     }
 
     // Read buffer
     this->numwords = numWords(numbits);
     size_t sizeBytes = numBytes(numbits);
     if(&ptr[count+sizeBytes]>=maxPtr) {
-        throw "BitSequence375 tries to read beyond the end of the file";
+        throw std::runtime_error("BitSequence375 tries to read beyond the end of the file");
     }
 
     array = (size_t *) &ptr[count];
@@ -258,7 +258,7 @@ BitSequence375 * BitSequence375::load(istream & in)
 	unsigned char type;
 	in.read((char*)&type, sizeof(type));
 	if(type!=TYPE_BITMAP_PLAIN) {    // throw exception
-        throw "Trying to read a BitmapPlain but the type does not match";
+        throw std::runtime_error("Trying to read a BitmapPlain but the type does not match");
 	}
 	crch.update(&type, sizeof(type));
 
@@ -267,7 +267,7 @@ BitSequence375 * BitSequence375::load(istream & in)
 	// Load number of total bits
 	uint64_t totalBits = csd::VByte::decode(in);
 	if(sizeof(size_t)==4 && totalBits>0xFFFFFFFF) {
-		throw "This File is too big to be processed using 32Bit version. Please compile with 64bit support";
+		throw std::runtime_error("This File is too big to be processed using 32Bit version. Please compile with 64bit support");
 	}
 	ret->numbits = (size_t) totalBits;
 
@@ -276,7 +276,7 @@ BitSequence375 * BitSequence375::load(istream & in)
 	crch.update(arr,len);
 	crc8_t filecrch = crc8_read(in);
 	if(filecrch!=crch.getValue()) {
-		throw "Wrong checksum in BitSequence375 Header.";
+		throw std::runtime_error("Wrong checksum in BitSequence375 Header.");
 	}
 
 	// Calculate numWords and create array
@@ -288,13 +288,13 @@ BitSequence375 * BitSequence375::load(istream & in)
 	size_t bytes = ret->numBytes(ret->numbits);
 	in.read((char*)&ret->data[0], bytes);
 	if(in.gcount()!=bytes) {
-		throw "BitSequence375 error reading array of bits.";
+		throw std::runtime_error("BitSequence375 error reading array of bits.");
 	}
 
 	crcd.update((unsigned char*)&ret->data[0], bytes);
 	crc32_t filecrcd = crc32_read(in);
 	if(filecrcd!=crcd.getValue()) {
-		throw "Wrong checksum in BitSequence375 Data.";
+		throw std::runtime_error("Wrong checksum in BitSequence375 Data.");
 	}
 
 	ret->buildIndex();
@@ -309,7 +309,7 @@ size_t BitSequence375::getSizeBytes() const
 
 size_t BitSequence375::selectPrev1(const size_t start) const
 {
-	throw "BitSequence375 selectPrev1 Not implemented";
+	throw std::runtime_error("BitSequence375 selectPrev1 Not implemented");
 	return 0;
 }
 
@@ -384,7 +384,7 @@ size_t BitSequence375::select1(const size_t x) const
 
 size_t BitSequence375::select0(const size_t x1) const
 {
-	throw "Not implemented";
+	throw std::runtime_error("Not implemented");
 	// FIXME Try on 64Bit.
 //	if(!indexReady) {
 //		(const_cast<BitSequence375 *>(this))->buildIndex();

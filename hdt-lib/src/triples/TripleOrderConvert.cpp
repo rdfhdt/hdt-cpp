@@ -149,7 +149,7 @@ The order of swaps is important, there are five different:
             return;
 
         if(from==Unknown || to==Unknown){
-        	throw "Cannot swap Unknown orders";
+        	throw std::runtime_error("Cannot swap Unknown orders");
         }
 
         bool swap1 = swap1tab[from - 1][to - 1];
@@ -178,7 +178,7 @@ void swapComponentOrder(TripleID *triple, TripleComponentOrder from, TripleCompo
         return;
 
     if(from==Unknown || to==Unknown){
-    	throw "Cannot swap Unknown orders";
+    	throw std::runtime_error("Cannot swap Unknown orders");
     }
 
     bool swap1 = swap1tab[from - 1][to - 1];
@@ -223,7 +223,7 @@ UnorderedTriple *getUnorderedTriple(TripleComponentOrder type)
 	case OPS:
 		return new UnorderedTripleOPS();
 	}
-	throw "Invalid TripleComponentOrder type";
+	throw std::runtime_error("Invalid TripleComponentOrder type");
 }
 
 TripleComponentOrder invertOrder(TripleComponentOrder src) {

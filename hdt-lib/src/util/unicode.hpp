@@ -26,7 +26,7 @@ void appendUnicodeUTF8(std::string &str, unsigned int c) {
 	 */
 	if((c > 0xD7FF && c < 0xE000) || c == 0xFFFE || c == 0xFFFF) {
 		cerr << "Ignoring character, Unicode Range ERROR: " << hex << c << dec << endl;
-		//throw "Unicode Range ERROR";
+		//throw std::runtime_error("Unicode Range ERROR");
 	}
 
 	if      (c < 0x00000080)
@@ -42,7 +42,7 @@ void appendUnicodeUTF8(std::string &str, unsigned int c) {
 	else if(c < 0x80000000)
 		size = 6;
 	else
-		throw "Unicode ERROR";
+		throw std::runtime_error("Unicode ERROR");
 
 	switch(size) {
 	case 6:

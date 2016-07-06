@@ -110,7 +110,7 @@ void CSD_Cache::save(ostream &fp)
 
 CSD* CSD_Cache::load(istream &fp)
 {
-	throw "Not imlemented";
+	throw std::logic_error("Not imlemented");
 }
 
 }

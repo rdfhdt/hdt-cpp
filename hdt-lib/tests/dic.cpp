@@ -32,10 +32,8 @@ int main(int argc, char **argv) {
 
 		delete it;
 		delete hdt;
-	 } catch(const char *str) {
-		cerr << str << endl;
-	 } catch(char *str) {
-		cerr << str << endl;
+	 } catch(std::exception& e) {
+		cerr << e.what() << endl;
 	 }
 
 }

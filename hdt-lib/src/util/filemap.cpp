@@ -66,7 +66,7 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
     // Open file
     fd = CreateFile( (WCHAR*)fileNameString.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,NULL);
     if (fd==INVALID_HANDLE_VALUE) {
-        throw "Error creating file for mapping.";
+        throw std::runtime_error("Error creating file for mapping.");
     }
 
     // Guess size
@@ -78,7 +78,7 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
     h = CreateFileMapping (fd, NULL, PAGE_READONLY, upper, lower, NULL);
     if (h==NULL) {
         CloseHandle(fd);
-        throw "Error creating mapping on file";
+        throw std::runtime_error("Error creating mapping on file");
     }
 
     // Get pointer
@@ -88,7 +88,7 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
         CloseHandle(h);
         DWORD err = GetLastError();
         cerr << "Error getting pointer: " << err << endl;
-        throw "Error getting pointer of the mapped file";
+        throw std::runtime_error("Error getting pointer of the mapped file");
     }
 #else
     // Linux and OSX
@@ -96,20 +96,20 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
 	// Open file
 	fd = open(fileName, O_RDONLY);
 	if(fd<=0) {
-		throw "Error opening HDT file for mapping.";
+		throw std::runtime_error("Error opening HDT file for mapping.");
 	}
 
 	// Guess size
 	struct stat statbuf;
 	if(stat(fileName,&statbuf)!=0) {
-		throw "Error trying to guess the file size";
+		throw std::runtime_error("Error trying to guess the file size");
 	}
 	mappedSize = statbuf.st_size;
 
 	// Do mmap
 	ptr = (unsigned char *) mmap(0, mappedSize, PROT_READ, MAP_PRIVATE, fd, 0);
 	if(ptr==MAP_FAILED) {
-		throw "Error trying to mmap HDT file";
+		throw std::runtime_error("Error trying to mmap HDT file");
 	}
 
 	// Mark as needed so the OS keeps as much as possible in memory

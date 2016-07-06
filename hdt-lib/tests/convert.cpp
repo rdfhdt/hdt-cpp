@@ -66,12 +66,7 @@ int main(int argc, char **argv) {
 		hdt->saveToHDT(outputFile.c_str());
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cout << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

@@ -45,7 +45,7 @@ set<string> getCommonVars(VarBindingInterface& a, VarBindingInterface& b) {
 
 
 VarBindingString* QueryProcessor::searchJoin(vector<TripleString>& patterns, set<string>& vars) {
-	try {
+	// try {
 		if (patterns.size() == 0) {
 			return new EmptyVarBingingString();
 		}
@@ -163,12 +163,12 @@ VarBindingString* QueryProcessor::searchJoin(vector<TripleString>& patterns, set
 		}
 
 		return new BasicVarBindingString(varRole, new VarFilterBinding(root, vars), hdt->getDictionary());
-	} catch (char *e) {
-		cout << "Exception: " << e << endl;
-		throw "Exception";
-	}
+	// } catch (char *e) {
+	// 	cout << "Exception: " << e << endl;
+	// 	throw std::runtime_error("Exception");
+	// }
 
-	throw "Could not find query tree";
+	throw std::runtime_error("Could not find query tree");
 }
 
 }

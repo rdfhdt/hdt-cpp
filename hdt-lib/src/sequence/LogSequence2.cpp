@@ -83,7 +83,7 @@ LogSequence2::~LogSequence2() {
 size_t LogSequence2::get(size_t position)
 {
 	if(position>=numentries) {
-		throw "Trying to get an element bigger than the array.";
+		throw std::runtime_error("Trying to get an element bigger than the array.");
 	}
 
 	return get_field(&array[0], numbits, position);
@@ -92,7 +92,7 @@ size_t LogSequence2::get(size_t position)
 void LogSequence2::add(IteratorUInt &elements)
 {
 	if(IsMapped) {
-		throw "Data structure read-only when mapped.";
+		throw std::runtime_error("Data structure read-only when mapped.");
 	}
 
 	size_t max = 0;
@@ -125,20 +125,20 @@ void LogSequence2::add(IteratorUInt &elements)
 
 void LogSequence2::set(size_t position, size_t value) {
 	if(IsMapped) {
-		throw "Data structure read-only when mapped.";
+		throw std::runtime_error("Data structure read-only when mapped.");
 	}
 	if(position>numentries) {
-		throw "Trying to modify a position out of the structure capacity. Use push_back() instead";
+		throw std::runtime_error("Trying to modify a position out of the structure capacity. Use push_back() instead");
 	}
 	if(value>maxval) {
-		throw "Trying to insert a value bigger that expected. Please increase numbits when creating the data structure.";
+		throw std::runtime_error("Trying to insert a value bigger that expected. Please increase numbits when creating the data structure.");
 	}
     set_field(array, numbits, position, value);
 }
 
 void LogSequence2::push_back(size_t value) {
 	if(IsMapped) {
-		throw "Data structure read-only when mapped.";
+		throw std::runtime_error("Data structure read-only when mapped.");
 	}
 	size_t neededSize = numElementsFor(numbits, numentries+1);
 	if(data.size()<neededSize) {
@@ -147,7 +147,7 @@ void LogSequence2::push_back(size_t value) {
         array = &data[0];
 	}
 	if(value>maxval) {
-		throw "Trying to insert a value bigger that expected. Please increase numbits when creating the data structure.";
+		throw std::runtime_error("Trying to insert a value bigger that expected. Please increase numbits when creating the data structure.");
 	}
 	set(numentries, value);
 	numentries++;
@@ -155,7 +155,7 @@ void LogSequence2::push_back(size_t value) {
 
 void LogSequence2::resize(size_t newNumEntries) {
 	if(IsMapped) {
-		throw "Data structure read-only when mapped.";
+		throw std::runtime_error("Data structure read-only when mapped.");
 	}
 	size_t neededSize = numElementsFor(numbits, newNumEntries);
 	if(data.size()<neededSize) {
@@ -200,7 +200,7 @@ void LogSequence2::load(std::istream & input)
 	uint8_t type;
 	crch.readData(input, (unsigned char*)&type, sizeof(type));
 	if(type!=TYPE_SEQLOG) {
-		//throw "Trying to read a LOGArray but data is not LogArray";
+		//throw std::runtime_error("Trying to read a LOGArray but data is not LogArray");
 	}
 
 	// Read numbits
@@ -214,14 +214,14 @@ void LogSequence2::load(std::istream & input)
 	// Validate Checksum Header
 	crc8_t filecrch = crc8_read(input);
 	if(crch.getValue()!=filecrch) {
-		throw "Checksum error while reading LogSequence2 header.";
+		throw std::runtime_error("Checksum error while reading LogSequence2 header.");
 	}
 
 	// Update local variables and validate
 	maxval = maxVal(numbits);
 	numentries = (size_t) numentries64;
 	if(numbits>sizeof(size_t)*8 || numentries64>std::numeric_limits<size_t>::max()) {
-		throw "This data structure is too big for this machine";
+		throw std::out_of_range("This data structure is too big for this machine");
 	}
 
 	// Calculate data size, reserve buffer.
@@ -236,13 +236,13 @@ void LogSequence2::load(std::istream & input)
 	// Validate checksum data
 	crc32_t filecrcd = crc32_read(input);
 	if(crcd.getValue()!=filecrcd) {
-		throw "Checksum error while reading LogSequence2 Data";
+		throw std::runtime_error("Checksum error while reading LogSequence2 Data");
 	}
 
 	IsMapped = false;
 }
 
-#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw "Could not read completely the HDT from the file.";
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw std::runtime_error("Could not read completely the HDT from the file.");
 
 size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener) {
 	size_t count = 0;
@@ -250,7 +250,7 @@ size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax,
 	// Read type
 	CHECKPTR(&ptr[count], ptrMax, 1);
 	if(ptr[count]!=TYPE_SEQLOG) {
-		throw "Trying to read a LOGArray but data is not LogArray";
+		throw std::runtime_error("Trying to read a LOGArray but data is not LogArray");
 	}
 	count++;
 
@@ -267,13 +267,13 @@ size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax,
     crch.update(&ptr[0], count);
     CHECKPTR(&ptr[count], ptrMax, 1);
     if(crch.getValue()!=ptr[count++])
-        throw "Checksum error while reading LogSequence2 header.";
+        throw std::runtime_error("Checksum error while reading LogSequence2 header.");
 
     // Update local variables and validate
     maxval = maxVal(numbits);
     numentries = (size_t) numentries64;
     if(numbits>sizeof(size_t)*8 || numentries64>std::numeric_limits<size_t>::max()) {
-        throw "This data structure is too big for this machine";
+        throw std::runtime_error("This data structure is too big for this machine");
     }
 
     // Setup array of data
@@ -283,7 +283,7 @@ size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax,
     IsMapped = true;
 
     if(&ptr[count]>=ptrMax)
-        throw "LogSequence2 tries to read beyond the end of the file";
+        throw std::runtime_error("LogSequence2 tries to read beyond the end of the file");
 
     CHECKPTR(&ptr[count], ptrMax, 4);
     count+=4; // CRC of data

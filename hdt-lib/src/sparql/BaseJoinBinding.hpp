@@ -83,7 +83,7 @@ public:
 
 	unsigned int getVarValue(unsigned int numvar) {
 		if(numvar>vars.size()) {
-			throw "Accessing out of bound variable";
+			throw std::out_of_range("Accessing out of bound variable");
 		}
 		if(!varOperand[numvar]) {
 			// Left operand
@@ -95,7 +95,7 @@ public:
 	}
 	const char *getVarName(unsigned int numvar) {
 		if(numvar>vars.size()){
-			throw "Variable not available";
+			throw std::runtime_error("Variable not available");
 		}
 		return varnames[numvar].c_str();
 	}

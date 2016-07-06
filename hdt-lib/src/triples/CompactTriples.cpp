@@ -43,7 +43,7 @@ CompactTriples::CompactTriples() : numTriples(0), order(SPO) {
 	try{
 		typey = spec.get("stream.y");
 		typez = spec.get("stream.z");
-	}catch (exception& e){}
+	}catch (std::exception& e){}
 	streamY = IntSequence::getArray(typey);
 	streamZ = IntSequence::getArray(typez);
 }
@@ -61,7 +61,7 @@ CompactTriples::CompactTriples(HDTSpecification &specification) : spec(specifica
 	try{
 		typey = spec.get("stream.y");
 		typez = spec.get("stream.z");
-	}catch (exception& e){}
+	}catch (std::exception& e){}
 	streamY = IntSequence::getArray(typey);
 	streamZ = IntSequence::getArray(typez);
 }
@@ -178,7 +178,7 @@ IteratorTripleID *CompactTriples::search(TripleID & pattern)
 }
 
 IteratorTripleID *CompactTriples::searchJoin(TripleID &a, TripleID &b, unsigned short conditions) {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 void CompactTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
@@ -204,7 +204,7 @@ void CompactTriples::load(std::istream &input, ControlInformation &controlInform
 {
 	std::string format = controlInformation.getFormat();
 	if(format != HDTVocabulary::TRIPLES_TYPE_COMPACT) {
-		throw "Trying to read CompactTriples but data is not CompactTriples";
+		throw std::runtime_error("Trying to read CompactTriples but data is not CompactTriples");
 	}
 
 	numTriples = controlInformation.getUint("numTriples");
@@ -227,7 +227,7 @@ void CompactTriples::load(std::istream &input, ControlInformation &controlInform
 
 size_t CompactTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+    throw std::logic_error("Not Implemented");
 }
 
 void CompactTriples::generateIndex(ProgressListener *listener) {

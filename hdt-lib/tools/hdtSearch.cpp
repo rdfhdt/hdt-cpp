@@ -99,8 +99,8 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 		delete it;
 
 		interruptSignal=0;	// Interrupt caught, enable again.
-	} catch (char *e) {
-		cerr << e << endl;
+	} catch (std::exception& e) {
+		cerr << e.what() << endl;
 	}
 
 }
@@ -186,12 +186,7 @@ int main(int argc, char **argv) {
 		}
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

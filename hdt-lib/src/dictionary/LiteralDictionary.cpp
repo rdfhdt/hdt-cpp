@@ -157,7 +157,7 @@ unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole
 void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	ProgressListener *listener) {
 	std::string format = ci.getFormat();
 	if(format!=getType()) {
-		throw "Trying to read a LiteralDictionary but the data is not LiteralDictionary";
+		throw std::runtime_error("Trying to read a LiteralDictionary but the data is not LiteralDictionary");
 	}
 	this->mapping = ci.getUint("mapping");
 	this->sizeStrings = ci.getUint("sizeStrings");
@@ -170,7 +170,7 @@ void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	Prog
 	shared = csd::CSD::load(input);
 	if (shared == NULL) {
 		shared = new csd::CSD_PFC();
-		throw "Could not read shared sectionsss.";
+		throw std::runtime_error("Could not read shared sectionsss.");
 	}
 
 	iListener.setRange(25, 50);
@@ -179,7 +179,7 @@ void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	Prog
 	subjects = csd::CSD::load(input);
 	if (subjects == NULL) {
 		subjects = new csd::CSD_PFC();
-		throw "Could not read subjects.";
+		throw std::runtime_error("Could not read subjects.");
 	}
 	subjects = new csd::CSD_Cache(subjects);
 
@@ -190,7 +190,7 @@ void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	Prog
 	predicates = csd::CSD::load(input);
 	if (predicates == NULL) {
 		predicates = new csd::CSD_PFC();
-		throw "Could not read predicates.";
+		throw std::runtime_error("Could not read predicates.");
 	}
 	predicates = new csd::CSD_Cache2(predicates);
 
@@ -201,7 +201,7 @@ void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	Prog
 	objectsLiterals = csd::CSD::load(input);
 	if (objectsLiterals == NULL) {
 		objectsLiterals = new csd::CSD_FMIndex();
-		throw "Could not read objects Literals.";
+		throw std::runtime_error("Could not read objects Literals.");
 	}
 	objectsLiterals = new csd::CSD_Cache(objectsLiterals);
 
@@ -209,7 +209,7 @@ void LiteralDictionary::load(std::istream & input, ControlInformation & ci,	Prog
 	objectsNotLiterals = csd::CSD::load(input);
 	if (objectsNotLiterals == NULL) {
 		objectsNotLiterals = new csd::CSD_PFC();
-		throw "Could not read objects not Literals.";
+		throw std::runtime_error("Could not read objects not Literals.");
 	}
     objectsNotLiterals = new csd::CSD_Cache(objectsNotLiterals);
 }
@@ -231,7 +231,7 @@ size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Progre
     shared = csd::CSD::create(ptr[count]);
     if(shared==NULL){
         shared = new csd::CSD_PFC();
-        throw "Could not read shared.";
+        throw std::runtime_error("Could not read shared.");
     }
     count += shared->load(&ptr[count], ptrMax);
     shared = new csd::CSD_Cache(shared);
@@ -242,7 +242,7 @@ size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Progre
     subjects = csd::CSD::create(ptr[count]);
     if(subjects==NULL){
         subjects = new csd::CSD_PFC();
-        throw "Could not read subjects.";
+        throw std::runtime_error("Could not read subjects.");
     }
     count += subjects->load(&ptr[count], ptrMax);
     subjects = new csd::CSD_Cache(subjects);
@@ -253,7 +253,7 @@ size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Progre
     predicates = csd::CSD::create(ptr[count]);
     if(predicates==NULL){
         predicates = new csd::CSD_PFC();
-        throw "Could not read predicates.";
+        throw std::runtime_error("Could not read predicates.");
     }
     count += predicates->load(&ptr[count], ptrMax);
     predicates = new csd::CSD_Cache(predicates);
@@ -264,7 +264,7 @@ size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Progre
     objectsLiterals = csd::CSD::create(ptr[count]);
     if(objectsLiterals==NULL){
         objectsLiterals = new csd::CSD_PFC();
-        throw "Could not read object Literals.";
+        throw std::runtime_error("Could not read object Literals.");
     }
     count += objectsLiterals->load(&ptr[count], ptrMax);
     objectsLiterals = new csd::CSD_Cache(objectsLiterals);
@@ -275,7 +275,7 @@ size_t LiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Progre
     objectsNotLiterals = csd::CSD::create(ptr[count]);
     if(objectsNotLiterals==NULL){
         objectsNotLiterals = new csd::CSD_PFC();
-        throw "Could not read objects Not Literals.";
+        throw std::runtime_error("Could not read objects Not Literals.");
     }
     count += objectsNotLiterals->load(&ptr[count], ptrMax);
     objectsNotLiterals = new csd::CSD_Cache(objectsNotLiterals);
@@ -376,7 +376,7 @@ void LiteralDictionary::import(	Dictionary *other, ProgressListener *listener) {
 
 		this->sizeStrings = other->size();
 		this->mapping = other->getMapping();
-	} catch (const char *e) {
+	} catch (std::exception& e) {
 		delete subjects;
 		delete predicates;
 		delete objectsLiterals;
@@ -387,24 +387,24 @@ void LiteralDictionary::import(	Dictionary *other, ProgressListener *listener) {
 		objectsNotLiterals = new csd::CSD_PFC();
 		objectsLiterals = new csd::CSD_FMIndex();
 		shared = new csd::CSD_PFC();
-		throw e;
+		throw;
 	}
 }
 
 IteratorUCharString *LiteralDictionary::getSubjects() {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 IteratorUCharString *LiteralDictionary::getPredicates() {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 IteratorUCharString *LiteralDictionary::getObjects() {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 IteratorUCharString *LiteralDictionary::getShared() {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32_t **occs){
@@ -557,7 +557,7 @@ void LiteralDictionary::stopProcessing(ProgressListener *listener) {
 
 unsigned int LiteralDictionary::insert(std::string & str,
 		TripleComponentRole position) {
-	throw "This dictionary does not support insertions.";
+	throw std::runtime_error("This dictionary does not support insertions.");
 }
 
 string LiteralDictionary::getType() {
@@ -603,7 +603,7 @@ csd::CSD *LiteralDictionary::getDictionarySection(unsigned int id, TripleCompone
 		}
 	}
 
-	throw "Item not found";
+	throw std::runtime_error("Item not found");
 }
 
 unsigned int LiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
@@ -626,7 +626,7 @@ unsigned int LiteralDictionary::getGlobalId(unsigned int mapping, unsigned int i
 		return id;
 	}
 
-	throw "Item not found";
+	throw std::runtime_error("Item not found");
 }
 
 unsigned int LiteralDictionary::getGlobalId(unsigned int id, DictionarySection position) {
@@ -666,7 +666,7 @@ unsigned int LiteralDictionary::getLocalId(unsigned int mapping, unsigned int id
 		return id;
 	}
 
-	throw "Item not found";
+	throw std::runtime_error("Item not found");
 }
 
 unsigned int LiteralDictionary::getLocalId(unsigned int id, TripleComponentRole position) {

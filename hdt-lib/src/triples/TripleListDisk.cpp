@@ -70,7 +70,7 @@ TripleListDisk::TripleListDisk() :
 
 	if (fd == -1) {
 		perror("Error open");
-		throw "Error open";
+		throw std::runtime_error("Error open");
 	}
 
 	fileName.assign( &v[0] );
@@ -105,7 +105,7 @@ void TripleListDisk::mapFile() {
 	arrayTriples = (TripleID *) mmap(0, mappedSize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
 #endif
 	if(arrayTriples==(TripleID *)-1) {
-		throw "Could not mmap";
+		throw std::runtime_error("Could not mmap");
 	}
 }
 
@@ -126,7 +126,7 @@ void TripleListDisk::getFileSize() {
 	int ret = fstat(fd, &st);
 	if(ret==-1) {
 		perror("Error fstat");
-		throw "Error fstat";
+		throw std::runtime_error("Error fstat");
 	}
 	mappedSize = st.st_size;
 }
@@ -145,14 +145,14 @@ void TripleListDisk::ensureSize(unsigned int newsize) {
 	int pos = lseek(fd, newsize*sizeof(TripleID)-1, SEEK_SET);
 	if(pos==-1) {
 		perror("Error lseek");
-		throw "Error lseek";
+		throw std::runtime_error("Error lseek");
 	}
 
 	char c = 0;
 	int wr = write(fd, &c, 1);
 	if(wr==-1) {
 		perror("Error write");
-		throw "Error write";
+		throw std::runtime_error("Error write");
 	}
 
 #ifndef WIN32
@@ -188,7 +188,7 @@ void TripleListDisk::load(std::istream & input, ControlInformation &controlInfor
 	// FIXME: Read controlInformation
 	std::string format = controlInformation.getFormat();
 	if(format!=getType()) {
-		throw "Trying to read a FourSectionDictionary but the data is not FourSectionDictionary";
+		throw std::runtime_error("Trying to read a FourSectionDictionary but the data is not FourSectionDictionary");
 	}
 	this->ensureSize(numTotalTriples);
 
@@ -202,7 +202,7 @@ void TripleListDisk::load(std::istream & input, ControlInformation &controlInfor
 
 size_t TripleListDisk::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
-    throw "Not implemented";
+    throw std::logic_error("Not Implemented");
 }
 
 
@@ -260,13 +260,13 @@ IteratorTripleID *TripleListDisk::search(TripleID &pattern)
 }
 
 IteratorTripleID *TripleListDisk::searchJoin(TripleID &a, TripleID &b, unsigned short conditions) {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 float TripleListDisk::cost(TripleID & triple) const
 {
 	// TODO:
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 void TripleListDisk::generateIndex(ProgressListener *listener) {
@@ -292,7 +292,7 @@ size_t TripleListDisk::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Prog
 void TripleListDisk::insert(TripleID &triple)
 {
 	if(arrayTriples==NULL) {
-		throw "Invalid pointer";
+		throw std::runtime_error("Invalid pointer");
 	}
 
 	if(numTotalTriples>=capacity) {
@@ -429,7 +429,7 @@ void TripleListDisk::removeDuplicates(ProgressListener *listener) {
 	    return;
 
     if(order==Unknown){
-	    throw "Cannot remove duplicates on unordered triples";
+	    throw std::runtime_error("Cannot remove duplicates on unordered triples");
     }
 
     unsigned int j = 0;

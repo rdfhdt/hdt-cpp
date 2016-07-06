@@ -145,7 +145,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 {
 	std::string format = ci.getFormat();
 	if(format!=getType()) {
-		throw "Trying to read a FourSectionDictionary but the data is not FourSectionDictionary";
+		throw std::runtime_error("Trying to read a FourSectionDictionary but the data is not FourSectionDictionary");
 	}
 	//this->mapping = ci.getUint("mapping");
 	this->mapping = MAPPING2;
@@ -159,7 +159,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 	shared = csd::CSD::load(input);
 	if(shared==NULL){
 		shared = new csd::CSD_PFC();
-		throw "Could not read shared.";
+		throw std::runtime_error("Could not read shared.");
 	}
 	//shared = new csd::CSD_Cache(shared);
 
@@ -169,7 +169,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 	subjects = csd::CSD::load(input);
 	if(subjects==NULL){
 		subjects = new csd::CSD_PFC();
-		throw "Could not read subjects.";
+		throw std::runtime_error("Could not read subjects.");
 	}
 	//subjects = new csd::CSD_Cache(subjects);
 
@@ -179,7 +179,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 	predicates = csd::CSD::load(input);
 	if(predicates==NULL){
 		predicates = new csd::CSD_PFC();
-		throw "Could not read predicates.";
+		throw std::runtime_error("Could not read predicates.");
 	}
 	predicates = new csd::CSD_Cache2(predicates);
 
@@ -189,7 +189,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 	objects = csd::CSD::load(input);
 	if(objects==NULL){
 		objects = new csd::CSD_PFC();
-		throw "Could not read objects.";
+		throw std::runtime_error("Could not read objects.");
 	}
 	//objects = new csd::CSD_Cache(objects);
 }
@@ -212,7 +212,7 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
     shared = csd::CSD::create(ptr[count]);
     if(shared==NULL){
         shared = new csd::CSD_PFC();
-        throw "Could not read shared.";
+        throw std::runtime_error("Could not read shared.");
     }
     count += shared->load(&ptr[count], ptrMax);
     //shared = new csd::CSD_Cache(shared);
@@ -223,7 +223,7 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
     subjects = csd::CSD::create(ptr[count]);
     if(subjects==NULL){
         subjects = new csd::CSD_PFC();
-        throw "Could not read subjects.";
+        throw std::runtime_error("Could not read subjects.");
     }
     count += subjects->load(&ptr[count], ptrMax);
     //subjects = new csd::CSD_Cache(subjects);
@@ -234,7 +234,7 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
     predicates = csd::CSD::create(ptr[count]);
     if(predicates==NULL){
         predicates = new csd::CSD_PFC();
-        throw "Could not read predicates.";
+        throw std::runtime_error("Could not read predicates.");
     }
     count += predicates->load(&ptr[count], ptrMax);
     predicates = new csd::CSD_Cache2(predicates);
@@ -245,7 +245,7 @@ size_t FourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
     objects = csd::CSD::create(ptr[count]);
     if(objects==NULL){
         objects = new csd::CSD_PFC();
-        throw "Could not read objects.";
+        throw std::runtime_error("Could not read objects.");
     }
     count += objects->load(&ptr[count], ptrMax);
     //objects = new csd::CSD_Cache(objects);
@@ -289,7 +289,7 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 
 		this->sizeStrings = other->size();
 		this->mapping = other->getMapping();
-	} catch (const char *e) {
+	} catch (std::exception& e) {
 		delete subjects;
 		delete predicates;
 		delete objects;
@@ -298,7 +298,7 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		predicates = new csd::CSD_PFC();
 		objects = new csd::CSD_PFC();
 		shared = new csd::CSD_PFC();
-		throw e;
+		throw;
 	}
 }
 
@@ -455,7 +455,7 @@ csd::CSD *FourSectionDictionary::getDictionarySection(unsigned int id, TripleCom
 		}
 	}
 
-	throw "Item not found";
+	throw std::runtime_error("Item not found");
 }
 
 unsigned int FourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
@@ -478,7 +478,7 @@ unsigned int FourSectionDictionary::getGlobalId(unsigned int mapping, unsigned i
 		return id;
 	}
 
-	throw "Item not found";
+	throw std::runtime_error("Item not found");
 }
 
 
@@ -510,7 +510,7 @@ unsigned int FourSectionDictionary::getLocalId(unsigned int mapping, unsigned in
 		return id;
 	}
 
-	throw "Item not found";
+	throw std::runtime_error("Item not found");
 }
 
 unsigned int FourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
@@ -542,6 +542,3 @@ void FourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponen
 }
 
 }
-
-
-

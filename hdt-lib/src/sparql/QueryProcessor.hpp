@@ -37,7 +37,7 @@ private:
 			}
 		}
 		cout << "Var name: " << varName << " not found" << endl;
-		throw "Var name does not exist";
+		throw std::runtime_error("Var name does not exist");
 	}
 public:
 	BasicVarBindingString(map<string, TripleComponentRole> &varRole, VarBindingID *varID, Dictionary *dict) :

@@ -94,7 +94,7 @@ void CSD_Cache2::save(ostream &fp)
 
 CSD* CSD_Cache2::load(istream &fp)
 {
-	throw "Not imlemented";
+	throw std::logic_error("Not imlemented");
 }
 
 }
