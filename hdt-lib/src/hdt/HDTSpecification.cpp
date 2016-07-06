@@ -38,7 +38,7 @@ HDTSpecification::HDTSpecification(const std::string& filename) {
 	if(!filename.empty()){
 		try {
 			PropertyUtil::read(filename.c_str(), map);
-		} catch (char *except) {
+		} catch (std::exception& e) {
 			std::cerr << "WARNING: Could not read config file, using default options." << std::endl;
 		}
 	}

@@ -31,7 +31,7 @@ RDFSerializerNTriples::~RDFSerializerNTriples() {
 
 void serializeTerm(std::string str, ostream &output) {
 	if(str=="") {
-		throw "Empty Value on triple!";
+		throw std::runtime_error("Empty Value on triple!");
 	}
 
 	// FIXME: Escape non-ascii.

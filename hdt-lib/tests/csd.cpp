@@ -71,12 +71,7 @@ int main(int argc, char **argv) {
 
 		delete csd;
 
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cout << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

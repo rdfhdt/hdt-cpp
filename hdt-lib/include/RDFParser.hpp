@@ -88,9 +88,22 @@ public:
         byte(byte),
         line(line),
         column(column),
-        reason(reason) {
-
-    }
+        reason(reason) {  }
+    ParseException(uint64_t line, uint32_t column, string reason) :
+        // byte(byte),
+        line(line),
+        column(column),
+        reason(reason) {  }
+    ParseException(uint64_t line, string reason) :
+        // byte(byte),
+        line(line),
+        // column(column),
+        reason(reason) {  }
+    ParseException(string reason) :
+        // byte(byte),
+        // line(line),
+        // column(column),
+        reason(reason) {  }
 
     /** Returns a C-style character string describing the general cause
      *  of the current error.  */

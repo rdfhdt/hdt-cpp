@@ -41,7 +41,7 @@ unsigned int TriplePatternBinding::isOrdered(unsigned int numvar) {
     case 3:
 	return iterator->isSorted(OBJECT);
     }
-    throw "Wrong numvar";
+    throw std::runtime_error("Wrong numvar");
 }
 
 unsigned int TriplePatternBinding::estimatedNumResults() {
@@ -71,7 +71,7 @@ bool TriplePatternBinding::findNext(const char *varName, unsigned int value=0) {
 		currentTriple = iterator->next();
 
 		if(getVar(varName)!=value) {
-			throw "Found value is not what we were searching!";
+			throw std::runtime_error("Found value is not what we were searching!");
 		}
 		return true;
 	}
@@ -89,7 +89,7 @@ unsigned int TriplePatternBinding::getNumVars() {
 }
 unsigned int TriplePatternBinding::getVarValue(unsigned int numvar) {
 	if(numvar>vars.size()){
-		throw "Variable not available";
+		throw std::runtime_error("Variable not available");
 	}
 	switch(vars[numvar]) {
 	case 1:
@@ -99,7 +99,7 @@ unsigned int TriplePatternBinding::getVarValue(unsigned int numvar) {
 	case 3:
 		return currentTriple->getObject();
 	default:
-		throw "Wrong numvar";
+		throw std::runtime_error("Wrong numvar");
 	}
 }
 unsigned int TriplePatternBinding::getVarValue(const char *varname) {
@@ -108,7 +108,7 @@ unsigned int TriplePatternBinding::getVarValue(const char *varname) {
 
 const char *TriplePatternBinding::getVarName(unsigned int numvar) {
 	if(numvar>vars.size()){
-		throw "Variable not available";
+		throw std::runtime_error("Variable not available");
 	}
 	return varnames[numvar].c_str();
 }

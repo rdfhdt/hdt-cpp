@@ -14,7 +14,7 @@ void PropertyUtil::read(const char *filename, PropertyMapT &map)
 {
     std::ifstream file(filename);
     if (!file)
-        throw "unable to open properties file";
+        throw std::runtime_error("unable to open properties file");
     read(file, map);
     file.close();
 }
@@ -22,8 +22,8 @@ void PropertyUtil::read(const char *filename, PropertyMapT &map)
 void PropertyUtil::read(std::istream &is, PropertyMapT &map)
 {
     if (!is)
-        throw "unable to read from stream";
-    
+        throw std::runtime_error("unable to read from stream");
+
     char ch = 0;
 
     ch = is.get();
@@ -33,9 +33,9 @@ void PropertyUtil::read(std::istream &is, PropertyMapT &map)
         switch (ch)
         {
         case '#' :
-        case '!' : 
+        case '!' :
             do ch = is.get();
-            while (!is.eof() && ch >= 0 && ch != '\n' && ch != '\r');               
+            while (!is.eof() && ch >= 0 && ch != '\n' && ch != '\r');
             continue;
         case '\n':
         case '\r':

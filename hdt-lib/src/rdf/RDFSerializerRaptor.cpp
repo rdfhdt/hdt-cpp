@@ -96,7 +96,7 @@ RDFSerializerRaptor::~RDFSerializerRaptor() {
 raptor_term *getTerm(string &str, raptor_world *world) {
 
 	if(str=="") {
-		throw "Empty Value on triple!";
+		throw std::runtime_error("Empty Value on triple!");
 	}
 
 	if(str.at(0)=='"') {

@@ -56,12 +56,7 @@ int main(int argc, char **argv) {
 		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &progress);
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

@@ -6,9 +6,9 @@
  */
 
 #include "RDFParserNtriplesCallback.hpp"
+#include "RDFParser.hpp"
 #include "../util/fileUtil.hpp"
 #include "../util/unicode.hpp"
-
 #include <fstream>
 #include <stdexcept>
 #include <stdlib.h>
@@ -249,8 +249,8 @@ void RDFParserNtriplesCallback::doParse(const char *fileName, const char *baseUr
 		}
 
 		if (errorParsing == true || (pos != 0 && pos != 3)) {
-			cerr << endl << "Error parsing file at line " << numline << "|" << origLine << "|" << endl << endl;
-			//throw "Error parsing ntriples file.";
+			// cerr << endl << "Error parsing file at line " << numline << "|" << origLine << "|" << endl << endl;
+			throw ParseException(numline, "Error parsing file: |" + origLine + "|");
 		}
 
 		if(pos==3) {

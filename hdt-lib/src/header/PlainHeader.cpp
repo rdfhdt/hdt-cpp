@@ -54,14 +54,14 @@ void PlainHeader::load(std::istream & input, ControlInformation &controlInformat
 
 	// FIXME: Use format to create custom parser.
 	if(format!=HDTVocabulary::HEADER_NTRIPLES) {
-		throw "This Header format is not supported";
+		throw std::runtime_error("This Header format is not supported");
 	}
-	
+
 	// Read all header into a string
 	string str(headerSize,'\0');
 	input.read(&str[0], headerSize);
 	if(input.gcount()!=headerSize) {
-	    throw "Error reading header";
+	    throw std::runtime_error("Error reading header");
 	}
 
 	// Convert into a stringstream
@@ -89,7 +89,7 @@ size_t PlainHeader::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 
 	// FIXME: Use format to create custom parser.
 	if(format!=HDTVocabulary::HEADER_NTRIPLES) {
-		throw "This Header format is not supported";
+		throw std::runtime_error("This Header format is not supported");
 	}
 
     string str(&ptr[count], &ptr[count+headerSize]);

@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
 			if(line[0]=='\0'||strcmp(line, "exit")==0|| strcmp(line,"quit")==0) {
 				break;
 			}
-			
+
 			uint32_t *results = NULL;
 			hdt::LiteralDictionary *dict = dynamic_cast<hdt::LiteralDictionary *>(hdt->getDictionary());
 			if(dict!=NULL) {
@@ -94,9 +94,7 @@ int main(int argc, char **argv) {
 		}
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }

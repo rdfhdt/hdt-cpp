@@ -21,7 +21,7 @@ RDFSerializer *RDFSerializer::getSerializer(std::ostream &out, RDFNotation notat
 	if(notation==NTRIPLES) {
 		return new RDFSerializerNTriples(out,notation);
 	} else {
-		throw "RDFSerialization not available";
+		throw std::runtime_error("RDFSerialization not available");
 	}
 #endif
 }
@@ -34,7 +34,7 @@ RDFSerializer *RDFSerializer::getSerializer(const char *fileName, RDFNotation no
 	if(notation==NTRIPLES) {
 		return new RDFSerializerNTriples(fileName,notation);
 	} else {
-		throw "RDFSerialization not available";
+		throw std::runtime_error("RDFSerialization not available");
 	}
 #endif
 }

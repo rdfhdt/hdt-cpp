@@ -103,7 +103,7 @@ size_t HuffmanSequence::load(const unsigned char *ptr, const unsigned char *ptrM
 void HuffmanSequence::save(std::ostream & output)
 {
 	if(huffman==NULL) {
-		throw "Must add elements to stream before saving";
+		throw std::runtime_error("Must add elements to stream before saving");
 	}
 
 	// Create encoded vector

@@ -4,7 +4,7 @@
 
 #include "../util/fileUtil.hpp"
 #include "RDFParserSerd.hpp"
-
+#include "RDFParser.hpp"
 
 namespace hdt {
 
@@ -133,7 +133,7 @@ const SerdSyntax RDFParserSerd::getParserType(RDFNotation notation){
     case TURTLE:
         return SERD_TURTLE;
     default:
-        throw "Serd parser only supports ntriples and turtle.";
+        throw ParseException("Serd parser only supports ntriples and turtle.");
     }
 }
 
@@ -161,7 +161,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
     FILE *in_fd = fopen((const char*)input, "r");
     // TODO: fadvise sequential
     if(in_fd==NULL) {
-        throw "Could not open input file for parsing";
+        throw ParseException("Could not open input file for parsing");
     }
     SerdStatus status = serd_reader_read_file_handle(reader, in_fd, (const uint8_t *)fileName);
 

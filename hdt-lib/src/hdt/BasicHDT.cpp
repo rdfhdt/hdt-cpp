@@ -99,7 +99,7 @@ void BasicHDT::createComponents() {
 	try{
 		spec.get("dictionary.type");
 	}
-	catch (exception& e){
+	catch (std::exception& e){
 	}
 
 	if(dictType==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
@@ -110,7 +110,7 @@ void BasicHDT::createComponents() {
 #ifdef HAVE_CDS
 		dictionary = new LiteralDictionary(spec);
 #else
-		throw "This version has been compiled without support for this dictionary";
+		throw std::runtime_error("This version has been compiled without support for this dictionary");
 #endif
 	} else {
 		dictionary = new FourSectionDictionary(spec);
@@ -120,7 +120,7 @@ void BasicHDT::createComponents() {
 	std::string triplesType = "";
 	try{
 		triplesType = spec.get("triples.type");
-	}catch (exception& e) {
+	}catch (std::exception& e) {
 	}
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		triples = new BitmapTriples(spec);
@@ -178,8 +178,8 @@ IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicat
 		IteratorTripleID* iterID = triples->search(tid);
 		TripleIDStringIterator* iterator = new TripleIDStringIterator(dictionary, iterID);
 		return iterator;
-	} catch (char* e) {
-		cout << "Exception: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "Exception: " << e.what() << endl;
 	}
 	return new IteratorTripleString();
 }
@@ -240,15 +240,10 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		else{
 			dictionary = dict;
 		}
-
-	} catch (const char *e) {
-		cout << "Catch exception dictionary: " << e << endl;
+	} catch(exception& e) {
+		cerr << "caught here??" << endl;
 		delete dict;
-		throw e;
-	} catch (char *e) {
-		cout << "Catch exception dictionary: " << e << endl;
-		delete dict;
-		throw e;
+		throw;
 	}
 }
 
@@ -258,7 +253,9 @@ void TriplesLoader::processTriple(hdt::TripleString& triple, unsigned long long 
 	if (ti.isValid()) {
 		triples->insert(ti);
 	} else {
-		cerr << "ERROR: Could not convert triple to IDS! " << endl << triple << endl << ti << endl;
+		stringstream msg;
+		msg << "ERROR: Could not convert triple to IDS! " << endl << triple << endl << ti;
+		throw ParseException(msg.str());
 	}
 	//cout << "TripleID: " << ti << endl;
 	char str[100];
@@ -298,7 +295,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		string ord = "";
 		try{
 			ord = spec.get("triplesOrder");
-		}catch (exception& e){
+		}catch (std::exception& e){
 		}
 		TripleComponentOrder order = parseOrder(
 				ord.c_str());
@@ -311,14 +308,10 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 
 		iListener.setRange(85, 90);
 		triplesList->removeDuplicates(&iListener);
-	} catch (const char *e) {
-		cout << "Catch exception triples" << e << endl;
+	} catch (std::exception& e) {
+		// cout << "Catch exception triples" << e << endl;
 		delete triplesList;
-		throw e;
-	} catch (char *e) {
-		cout << "Catch exception triples" << e << endl;
-		delete triplesList;
-		throw e;
+		throw;
 	}
 	if (triples->getType() == triplesList->getType()) {
 		delete triples;
@@ -327,9 +320,9 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		iListener.setRange(90, 100);
 		try {
 			triples->load(*triplesList, &iListener);
-		} catch (const char* e) {
+		} catch (std::exception& e) {
 			delete triplesList;
-			throw e;
+			throw;
 		}
 		delete triplesList;
 	}
@@ -404,16 +397,11 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 
 		fillHeader(baseUri);
 
-	}catch (const char *e) {
-		cout << "Catch exception load: " << e << endl;
+	}catch (std::exception& e) {
+		cout << "Catch exception load: " << e.what() << endl;
 		deleteComponents();
 		createComponents();
-		throw e;
-	} catch (char *e) {
-		cout << "Catch exception load: " << e << endl;
-		deleteComponents();
-		createComponents();
-		throw e;
+		throw;
 	}
 }
 
@@ -477,14 +465,10 @@ void BasicHDT::loadDictionaryFromHDTs(const char** fileName, size_t numFiles, co
         	dictionary->import(dict);
 
         	delete dict;
-        } catch (const char *e) {
-        	cout << "Catch exception dictionary: " << e << endl;
+        } catch (std::exception& e) {
+        	cerr << "Catch exception dictionary: " << e.what() << endl;
         	delete dict;
-        	throw e;
-        } catch (char *e) {
-        	cout << "Catch exception dictionary: " << e << endl;
-        	delete dict;
-        	throw e;
+        	throw;
         }
 }
 
@@ -577,7 +561,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 		try{
 			ord = spec.get("triplesOrder");
 		}
-		catch (exception& e){
+		catch (std::exception& e){
 		}
 		TripleComponentOrder order = parseOrder(ord.c_str());
 		if (order == Unknown) {
@@ -591,14 +575,10 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 		triplesList->removeDuplicates(&iListener);
 
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, totalOriginalSize);
-	} catch (const char *e) {
-		cout << "Catch exception triples" << e << endl;
+	} catch (std::exception& e) {
+		// cout << "Catch exception triples" << e << endl;
 		delete triplesList;
-		throw e;
-	} catch (char *e) {
-		cout << "Catch exception triples" << e << endl;
-		delete triplesList;
-		throw e;
+		throw;
 	}
 	if (triples->getType() == triplesList->getType()) {
 		delete triples;
@@ -607,9 +587,9 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 		iListener.setRange(90, 100);
 		try {
 			triples->load(*triplesList, &iListener);
-		} catch (const char* e) {
+		} catch (std::exception& e) {
 			delete triplesList;
-			throw e;
+			throw;
 		}
 		delete triplesList;
 	}
@@ -637,16 +617,11 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 
 		fillHeader(baseUri);
 
-	}catch (const char *e) {
-		cout << "Catch exception load: " << e << endl;
+	}catch (std::exception& e) {
+		// cout << "Catch exception load: " << e << endl;
 		deleteComponents();
 		createComponents();
-		throw e;
-	} catch (char *e) {
-		cout << "Catch exception load: " << e << endl;
-		deleteComponents();
-		createComponents();
-		throw e;
+		throw;
 	}
 }
 
@@ -655,13 +630,7 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 {
 	IteratorTripleString *it = search("", "", "");
-        try {
-            serializer.serialize(it, listener, getTriples()->getNumberOfElements());
-        } catch (const char *e) {
-            throw e;
-        } catch (char *e) {
-            throw e;
-        }
+  serializer.serialize(it, listener, getTriples()->getNumberOfElements());
 	delete it;
 }
 
@@ -671,7 +640,7 @@ void BasicHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
 	DecompressStream stream(fileName);
 	istream *in = stream.getStream();
 	if(!in->good()){
-		throw "Error opening file to load HDT.";
+		throw std::runtime_error("Error opening file to load HDT.");
 	}
 	this->loadFromHDT(*in, listener);
 	stream.close();
@@ -687,7 +656,7 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	controlInformation.load(input);
 	std::string hdtFormat = controlInformation.getFormat();
 	if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
-		throw "This software cannot open this version of HDT File.";
+		throw std::runtime_error("This software cannot open this version of HDT File.");
 	}
 
 	// Load header
@@ -710,16 +679,11 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	delete triples;
 	triples = HDTFactory::readTriples(controlInformation);
 	triples->load(input, controlInformation, &iListener);
-    } catch (const char *ex) {
-        cout << "Exception loading HDT: " << ex;
+    } catch (std::exception& e) {
+        // cout << "Exception loading HDT: " << ex;
         deleteComponents();
         createComponents();
-        throw ex;
-    } catch (char *ex) {
-    	cout << "Exception loading HDT: " << ex;
-    	deleteComponents();
-        createComponents();
-        throw ex;
+        throw;
     }
 }
 
@@ -749,7 +713,7 @@ void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
                 iListener.setRange(80,100);
             }
         #else
-            throw "Support for GZIP was not compiled in this version. Please decompress the file before opening it.";
+            throw std::runtime_error("Support for GZIP was not compiled in this version. Please decompress the file before opening it.");
         #endif
     } else {
         this->fileName.assign(fileNameChar);
@@ -778,7 +742,7 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     count+=controlInformation.load(&ptr[count], ptrMax);
     std::string hdtFormat = controlInformation.getFormat();
     if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
-    	throw "This software cannot open this version of HDT File.";
+    	throw std::runtime_error("This software cannot open this version of HDT File.");
     }
 
     // Load Header
@@ -829,15 +793,15 @@ void BasicHDT::saveToHDT(const char *fileName, ProgressListener *listener)
     try {
         ofstream out(fileName, ios::binary | ios::out | ios::trunc);
         if(!out.good()){
-            throw "Error opening file to save HDT.";
+            throw std::runtime_error("Error opening file to save HDT.");
         }
         this->fileName = fileName;
         this->saveToHDT(out, listener);
         this->saveIndex(listener);
         out.close();
-    } catch (const char *ex) {
+    } catch (std::exception& e) {
         // Fixme: delete file if exists.
-        throw ex;
+        throw;
     }
 
     this->fileName = fileName;

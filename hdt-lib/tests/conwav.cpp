@@ -78,12 +78,7 @@ int main(int argc, char **argv) {
 		cout << "IN: " << inputFile << " Out: " << outputFile << endl;
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cout << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

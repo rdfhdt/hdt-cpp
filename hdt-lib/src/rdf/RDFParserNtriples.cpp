@@ -151,7 +151,7 @@ TripleString *RDFParserNtriples::next() {
 
 	if (errorParsing == true || (pos != 0 && pos != 3)) {
 		cout << line << endl;
-		throw " :*********** FORMAT ERROR (NOT N3?) ***********";
+		throw std::runtime_error(" :*********** FORMAT ERROR (NOT N3?) ***********");
 	}
 
 	ts.setSubject(node[0]);

@@ -54,23 +54,23 @@ SortBinding::~SortBinding(){
 }
 
 unsigned int SortBinding::isOrdered(unsigned int numvar) {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 unsigned int SortBinding::estimatedNumResults() {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 ResultEstimationType SortBinding::estimationAccuracy() {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 bool SortBinding::findNext(const char *varName, unsigned int value) {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 bool SortBinding::findNext() {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 //virtual void findNext(unsigned int numvar, unsigned int value=0);
@@ -79,7 +79,7 @@ void SortBinding::goToStart() {
 }
 
 unsigned int SortBinding::getVarValue(unsigned int numvar) {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 void SortBinding::searchVar(unsigned int numvar, unsigned int value){

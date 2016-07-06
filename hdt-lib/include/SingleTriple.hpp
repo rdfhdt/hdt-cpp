@@ -220,7 +220,7 @@ public:
 	 * @return boolean
 	 */
 	inline bool match(TripleID &pattern) {
-		unsigned int subject = pattern.getSubject();		
+		unsigned int subject = pattern.getSubject();
 		unsigned int predicate = pattern.getPredicate();
                 unsigned int object = pattern.getObject();
 
@@ -518,10 +518,10 @@ public:
 	    return 0;
 	}
 	string getVar(unsigned int /*numvar*/) {
-	    throw "No such variable";
+	    throw std::runtime_error("No such variable");
 	}
 	const char *getVarName(unsigned int /*numvar*/) {
-	    throw "No such variable";
+	    throw std::runtime_error("No such variable");
 	}
 	unsigned int estimatedNumResults() {
 	    return 0;

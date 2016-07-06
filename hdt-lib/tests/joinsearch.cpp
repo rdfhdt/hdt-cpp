@@ -62,7 +62,7 @@ SparqlQuery parseFile(string fileName) {
 				}
 				if(pattern.size()!=3) {
 					cout << "Pattern size: " << pattern.size() << endl;
-					throw "Pattern should have 3 components";
+					throw std::runtime_error("Pattern should have 3 components");
 				}
 				TripleString trip(pattern[0], pattern[1], pattern[2]);
 				output.patterns.push_back(trip);
@@ -140,12 +140,7 @@ int main(int argc, char **argv) {
 		delete binding;
 
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

@@ -157,7 +157,7 @@ int main(int argc, char **argv) {
 		// Save HDT
 		out.open(outputFile.c_str(), ios::out | ios::binary | ios::trunc);
 		if(!out.good()){
-			throw "Could not open output file.";
+			throw std::runtime_error("Could not open output file.");
 		}
 		hdt->saveToHDT(out, &progress);
 		out.close();
@@ -174,10 +174,8 @@ int main(int argc, char **argv) {
 		}
 
 		delete hdt;
-	} catch (char *exception) {
-		cerr << "ERROR: " << exception << endl;
-	} catch (const char *exception) {
-		cerr << "ERROR: " << exception << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 
 }

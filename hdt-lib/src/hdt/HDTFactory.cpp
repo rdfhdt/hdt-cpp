@@ -96,7 +96,7 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 #endif
 	}
 
-	throw "Triples Implementation not available";
+	throw std::runtime_error("Triples Implementation not available");
 }
 
 Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
@@ -111,16 +111,16 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 #ifdef HAVE_CDS
 		return new LiteralDictionary();
 #else
-		throw "This version has been compiled without support for this dictionary";
+		throw std::runtime_error("This version has been compiled without support for this dictionary");
 #endif
 	}
 
-	throw "Dictionary Implementation not available";
+	throw std::runtime_error("Dictionary Implementation not available");
 }
 
 Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
     if(controlInformation.getType()!=HEADER)
-		throw "Trying to get Header from Non-Header section";
+		throw std::runtime_error("Trying to get Header from Non-Header section");
 
 	return new PlainHeader();
 }

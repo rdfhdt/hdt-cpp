@@ -126,7 +126,7 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 			z2 = b.getSubject();
 			break;
 		default:
-			throw "Invalid TripleComponentOrder";
+			throw std::runtime_error("Invalid TripleComponentOrder");
 	}
 
 	// Might as well use TripleID::compare()... right?

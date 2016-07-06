@@ -67,7 +67,7 @@ void LogSequence::add(IteratorUInt &elements)
 	while(elements.hasNext()) {
 		size_t element = elements.next();
 		if(element>((size_t)-1)) {
-			throw "Error, saving a value out of range";
+			throw std::out_of_range("Error, saving a value out of range");
 		}
 		vector.push_back((unsigned int)element);
 		max = element > max ? element : max;

@@ -142,6 +142,8 @@ void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri,
 	raptor_free_world(world);
 
 	if(error) {
+		//TODO: should probably remove this. Error is not set anywhere. Is this intended?
+		//And, if we keep this, make sure that error is an std:exception
 		throw error;
 	}
 }
@@ -149,4 +151,4 @@ void RDFParserRaptorCallback::doParse(const char *fileName, const char *baseUri,
 }
 #else
 int RaptorParserSupportDummySymbol;
-#endif 
+#endif

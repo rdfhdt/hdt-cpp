@@ -117,13 +117,8 @@ int main(int argc, char **argv) {
 			delete serializer;
 		}
 		delete hdt;
-	} catch (char *exception) {
-		cerr << "ERROR: " << exception << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 
 }
-
-
-

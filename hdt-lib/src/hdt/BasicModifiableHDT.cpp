@@ -31,7 +31,7 @@ void BasicModifiableHDT::createComponents() {
 		std::string dictType = spec.get("dictionary.type");
 		std::string triplesType = spec.get("triples.type");
 	}
-	 catch (exception& e)
+	 catch (std::exception& e)
 	  {
 	  }
 
@@ -76,7 +76,7 @@ IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char
 
 VarBindingString *BasicModifiableHDT::searchJoin(vector<TripleString> &patterns, set<string> &vars)
 {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 void BasicModifiableHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener)
@@ -94,7 +94,7 @@ void BasicModifiableHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *
 void BasicModifiableHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
 	ifstream input(fileName, ios::binary | ios::in);
 	if(!input.good()){
-		throw "Error opening file to save HDT.";
+		throw std::runtime_error("Error opening file to save HDT.");
 	}
 	this->loadFromHDT(input, listener);
     input.close();
@@ -102,7 +102,7 @@ void BasicModifiableHDT::loadFromHDT(const char *fileName, ProgressListener *lis
 
 void BasicModifiableHDT::mapHDT(const char *fileName, ProgressListener *listener)
 {
-    throw "Not implemented";
+    throw std::logic_error("Not Implemented");
 }
 
 void BasicModifiableHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
@@ -129,7 +129,7 @@ void BasicModifiableHDT::saveToHDT(const char *fileName, ProgressListener *liste
 {
 	ofstream out(fileName, ios::binary | ios::out);
 	if(!out.good()){
-		throw "Error opening file to save HDT.";
+		throw std::runtime_error("Error opening file to save HDT.");
 	}
 	this->saveToHDT(out, listener);
 	out.close();
@@ -166,7 +166,7 @@ void BasicModifiableHDT::insert(TripleString & triple)
 
 void BasicModifiableHDT::insert(IteratorTripleString *triples)
 {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 void BasicModifiableHDT::remove(TripleString & triple)
@@ -180,7 +180,7 @@ void BasicModifiableHDT::remove(TripleString & triple)
 
 void BasicModifiableHDT::remove(IteratorTripleString *triples)
 {
-	throw "Not implemented";
+	throw std::logic_error("Not Implemented");
 }
 
 }

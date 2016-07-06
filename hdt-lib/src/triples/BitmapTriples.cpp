@@ -41,7 +41,7 @@
 
 namespace hdt {
 
-#define CHECK_BITMAPTRIPLES_INITIALIZED if(bitmapY==NULL || bitmapZ==NULL){	throw "Accessing uninitialized BitmapTriples"; }
+#define CHECK_BITMAPTRIPLES_INITIALIZED if(bitmapY==NULL || bitmapZ==NULL){	throw std::runtime_error("Accessing uninitialized BitmapTriples"); }
 
 BitmapTriples::BitmapTriples() : order(SPO) {
 	string typey="";
@@ -49,7 +49,7 @@ BitmapTriples::BitmapTriples() : order(SPO) {
 	try{
 		typey = spec.get("stream.y");
 		typez = spec.get("stream.z");
-	}catch (exception& e){}
+	}catch (std::exception& e){}
 	arrayY = IntSequence::getArray(typey);
 	arrayZ = IntSequence::getArray(typez);
 	arrayIndex = NULL;
@@ -64,7 +64,7 @@ BitmapTriples::BitmapTriples(HDTSpecification &specification) : spec(specificati
 	std::string orderStr = "";
 	try{
 		orderStr = spec.get("triplesOrder");
-	}catch (exception& e){}
+	}catch (std::exception& e){}
 
 	order= parseOrder(orderStr.c_str());
 	if(order==Unknown)
@@ -74,7 +74,7 @@ BitmapTriples::BitmapTriples(HDTSpecification &specification) : spec(specificati
 	try{
 		typey = spec.get("stream.y");
 		typez = spec.get("stream.z");
-	}catch (exception& e){}
+	}catch (std::exception& e){}
 	arrayY = IntSequence::getArray(typey);
 	arrayZ = IntSequence::getArray(typez);
 	arrayIndex = NULL;
@@ -149,7 +149,7 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 			vectorZ->push_back(z);
 		} else if(x!=lastX) {
             if(x!=lastX+1) {
-                throw "Error: The subjects must be correlative.";
+                throw std::runtime_error("Error: The subjects must be correlative.");
             }
 			bitmapY->append(true);
 			vectorY->push_back(y);
@@ -158,7 +158,7 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 			vectorZ->push_back(z);
 		} else if(y!=lastY) {
             if(y<lastY) {
-                throw "Error: The predicates must be in increasing order.";
+                throw std::runtime_error("Error: The predicates must be in increasing order.");
             }
             bitmapY->append(false);
 			vectorY->push_back(y);
@@ -167,7 +167,7 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 			vectorZ->push_back(z);
 		} else {
             if(z<=lastZ) {
-                throw "Error, The objects must be in increasing order.";
+                throw std::runtime_error("Error, The objects must be in increasing order.");
             }
             bitmapZ->append(false);
 			vectorZ->push_back(z);
@@ -518,7 +518,7 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 	for(unsigned int i=0;i<index.size();i++){
 		if(index[i].size()<=0) {
 			cerr << "Error, object "<< i << " never appears" << endl;
-			throw "Error generating index: Object should appear at least once";
+			throw std::runtime_error("Error generating index: Object should appear at least once");
 		}
 
 		// Sort by predicate of this object
@@ -669,7 +669,7 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 {
 	std::string format = controlInformation.getFormat();
 	if(format!=getType()) {
-		throw "Trying to read a BitmapTriples but the data is not BitmapTriples";
+		throw std::runtime_error("Trying to read a BitmapTriples but the data is not BitmapTriples");
 	}
 
 	order = (TripleComponentOrder) controlInformation.getUint("order");
@@ -680,14 +680,14 @@ void BitmapTriples::load(std::istream &input, ControlInformation &controlInforma
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Y");
 	bitmapY = BitSequence375::load(input);
 	if(bitmapY==NULL){
-		throw "Could not read bitmapY.";
+		throw std::runtime_error("Could not read bitmapY.");
 	}
 
 	iListener.setRange(5,10);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Z");
 	bitmapZ = BitSequence375::load(input);
 	if(bitmapZ==NULL){
-		throw "Could not read bitmapZ.";
+		throw std::runtime_error("Could not read bitmapZ.");
 	}
 
 	iListener.setRange(10,20);
@@ -712,7 +712,7 @@ size_t BitmapTriples::load(unsigned char *ptr, unsigned char *ptrMax, ProgressLi
 
 	std::string format = controlInformation.getFormat();
 	if(format!=getType()) {
-		throw "Trying to read a FourSectionDictionary but the data is not FourSectionDictionary";
+		throw std::runtime_error("Trying to read a FourSectionDictionary but the data is not FourSectionDictionary");
 	}
 
     order = (TripleComponentOrder) controlInformation.getUint("order");
@@ -788,20 +788,20 @@ void BitmapTriples::loadIndex(std::istream &input, ControlInformation &controlIn
     size_t numTriples = controlInformation.getUint("numTriples");
 
 	if(controlInformation.getType()!=INDEX) {
-		throw "Trying to read Index but data is not index.";
+		throw std::runtime_error("Trying to read Index but data is not index.");
 	}
 
 	if(controlInformation.getFormat()!=HDTVocabulary::INDEX_TYPE_FOQ) {
-		throw "Error reading index. Please delete .hdt.index and let application generate it again.";
+		throw std::runtime_error("Error reading index. Please delete .hdt.index and let application generate it again.");
 	}
 
 	if(this->getNumberOfElements()!=numTriples) {
 		// FIXME: Force index regeneration instead of error.
-		throw "The supplied index does not have the same number of triples as the dataset";
+		throw std::runtime_error("The supplied index does not have the same number of triples as the dataset");
 	}
 
 	if(this->getOrder()!=controlInformation.getUint("order")) {
-		throw "The order of the triples is different than the index.";
+		throw std::runtime_error("The order of the triples is different than the index.");
 	}
 
 	IntermediateListener iListener(listener);
@@ -848,7 +848,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     count += controlInformation.load(&ptr[count], ptrMax);
 
     if(controlInformation.getType()!=INDEX) {
-        throw "Trying to load an HDT Index, but the ControlInformation states that it's not an index.";
+        throw std::runtime_error("Trying to load an HDT Index, but the ControlInformation states that it's not an index.");
     }
 
     size_t numTriples = controlInformation.getUint("numTriples");
@@ -860,7 +860,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
 
     if(this->getNumberOfElements()!=numTriples) {
     	// FIXME: Force index regeneration instead of error.
-        throw "The supplied index does not have the same number of triples as the dataset";
+        throw std::runtime_error("The supplied index does not have the same number of triples as the dataset");
     }
 
     // Load Bitmap

@@ -35,7 +35,7 @@ ResultEstimationType IndexJoinBinding::estimationAccuracy() {
 }
 
 bool IndexJoinBinding::findNext(const char *varName, unsigned int value) {
-	throw "Unsupported";
+	throw std::logic_error("Unsupported");
 }
 
 bool IndexJoinBinding::findNext() {
@@ -74,7 +74,7 @@ void IndexJoinBinding::goToStart() {
 }
 
 void IndexJoinBinding::searchVar(unsigned int numvar, unsigned int value) {
-	throw "Unsupported";
+	throw std::logic_error("Unsupported");
 }
 
 

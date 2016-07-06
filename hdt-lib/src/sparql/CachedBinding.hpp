@@ -90,7 +90,7 @@ public:
 		return varnames[numvar].c_str();
 	}
 	void searchVar(unsigned int numvar, unsigned int value) {
-		throw "Unsupported";
+		throw std::logic_error("Unsupported");
 	}
 
 	void goToStart() {

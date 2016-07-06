@@ -2,7 +2,7 @@
  * Copyright (C) 2011, Rodrigo Canovas & Miguel A. Martinez-Prieto
  * all rights reserved.
  *
- * This class implements a VByte-oriented Front Coding technique for 
+ * This class implements a VByte-oriented Front Coding technique for
  * compression of string dictionaries.
  *
  * This library is free software; you can redistribute it and/or
@@ -61,8 +61,8 @@ typedef struct
 static const size_t DELTA = 5;        // Maxixum possible length for a VByte encoding delta.
 
 class CSD_HTFC : public CSD
-{		
-  public:		
+{
+  public:
     /** General constructor **/
     CSD_HTFC();
 
@@ -70,9 +70,9 @@ class CSD_HTFC : public CSD
 
     /** General destructor. */
     ~CSD_HTFC();
-    
-    /** Returns the ID that identify s[1..length]. If it does not exist, 
-	returns 0. 
+
+    /** Returns the ID that identify s[1..length]. If it does not exist,
+	returns 0.
 	@s: the string to be located.
 	@len: the length (in characters) of the string s.
     */
@@ -110,8 +110,8 @@ class CSD_HTFC : public CSD
     static CSD * load(istream & fp);
 
     void fillSuggestions(const char *base, vector<string> &out, int maxResults);
-		
-    hdt::IteratorUCharString *listAll() { throw "Not implemented"; }
+
+    hdt::IteratorUCharString *listAll() { throw std::logic_error("Not Implemented"); }
 
   protected:
     uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
@@ -138,8 +138,8 @@ class CSD_HTFC : public CSD
     */
     bool locateBlock(const uchar *s, uint *block);
 
-    /** Locates the offset for 's' in 'block' (returning its global ID) or 
-	return 0 if it is  not exist 
+    /** Locates the offset for 's' in 'block' (returning its global ID) or
+	return 0 if it is  not exist
 	@block: block to be queried.
 	@s: the required string.
 	@len: the length (in characters) of the string s.
@@ -208,4 +208,4 @@ class CSD_HTFC : public CSD
 };
 
 #endif
-#endif  
+#endif

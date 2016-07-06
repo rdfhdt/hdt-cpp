@@ -149,12 +149,7 @@ int main(int argc, char **argv) {
 
 #endif
 		delete hdt;
-	} catch (char *e) {
-		cout << "ERROR: " << e << endl;
-	} catch (const char *e) {
-		cout << "ERROR: " << e << endl;
+	} catch (std::exception& e) {
+		cerr << "ERROR: " << e.what() << endl;
 	}
 }
-
-
-

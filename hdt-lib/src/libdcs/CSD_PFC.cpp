@@ -2,7 +2,7 @@
  * Copyright (C) 2011, Rodrigo Canovas & Miguel A. Martinez-Prieto
  * all rights reserved.
  *
- * This class implements a VByte-oriented Front Coding technique for 
+ * This class implements a VByte-oriented Front Coding technique for
  * compression of string dictionaries.
  *
  * This library is free software; you can redistribute it and/or
@@ -255,7 +255,7 @@ CSD* CSD_PFC::load(istream & fp)
 
 	crc8_t filecrc = crc8_read(fp);
 	if(crch.getValue()!=filecrc) {
-		throw "Checksum error while reading Plain Front Coding Header.";
+		throw std::runtime_error("Checksum error while reading Plain Front Coding Header.");
 	}
 
 	// Load blocks
@@ -276,7 +276,7 @@ CSD* CSD_PFC::load(istream & fp)
 			counter += fp.gcount();
 		}
 		if(counter!=dicc->bytes) {
-			throw "Could not read all the data section of the Plain Front Coding.";
+			throw std::runtime_error("Could not read all the data section of the Plain Front Coding.");
 		}
 	} else {
 		// Make sure that all is zero.
@@ -289,7 +289,7 @@ CSD* CSD_PFC::load(istream & fp)
 
 	crc32_t filecrcd = crc32_read(fp);
 	if(filecrcd!=crcd.getValue()) {
-		throw "Checksum error in the data section of the Plain Front Coding.";
+		throw std::runtime_error("Checksum error in the data section of the Plain Front Coding.");
 	}
 
 	return dicc;
@@ -300,7 +300,7 @@ size_t CSD_PFC::load(unsigned char *ptr, unsigned char *ptrMax) {
 
 	// Type
 	if(ptr[count++] != PFC)
-		throw "Trying to read a CSD_PFC but type does not match";
+		throw std::runtime_error("Trying to read a CSD_PFC but type does not match");
 
 	count += VByte::decode(&ptr[count], ptrMax, &numstrings);
 	count += VByte::decode(&ptr[count], ptrMax, &bytes);
@@ -310,7 +310,7 @@ size_t CSD_PFC::load(unsigned char *ptr, unsigned char *ptrMax) {
 	CRC8 crch;
 	crch.update(&ptr[0], count);
 	if(crch.getValue()!=ptr[count++])
-		throw "CRC Error while reading CSD_PFC Header.";
+		throw std::runtime_error("CRC Error while reading CSD_PFC Header.");
 
 	// Blocks
     if(blocks) delete blocks;
