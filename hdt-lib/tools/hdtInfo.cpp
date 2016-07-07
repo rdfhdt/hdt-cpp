@@ -29,7 +29,7 @@
  *
  */
 
-
+#include <HDTVersion.hpp>
 #include <HDT.hpp>
 
 #include "../src/hdt/HDTFactory.hpp"
@@ -51,6 +51,7 @@ void help() {
 	cout << "$ hdtInfo [options] <hdtfile> " << endl;
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
+	cout << "\t-V\tPrints the HDT version number." << endl;
 }
 
 
@@ -65,6 +66,10 @@ int main(int argc, char **argv) {
 			break;
 		case 'o':
 			outputFile = optarg;
+			break;
+		case 'V':
+			cout << "v" << HDT_VERSION << "." << INDEX_VERSION << "." << RELEASE_VERSION << endl;
+			return 1;
 			break;
 		default:
 			cout << "ERROR: Unknown option" << endl;

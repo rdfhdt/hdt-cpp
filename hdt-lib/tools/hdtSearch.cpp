@@ -30,6 +30,7 @@
  */
 #include <iomanip>
 
+#include <HDTVersion.hpp>
 #include <HDT.hpp>
 #include <HDTManager.hpp>
 #include <signal.h>
@@ -57,7 +58,7 @@ void help() {
 	cout << "\t-q\t<query>\t\tLaunch query and exit." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
 	cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
-
+	cout << "\t-V\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
@@ -110,7 +111,7 @@ int main(int argc, char **argv) {
 	string query, inputFile, outputFile;
 	bool measure = false;
 
-	while( (c = getopt(argc,argv,"hq:o:m"))!=-1) {
+	while( (c = getopt(argc,argv,"hq:o:m:V"))!=-1) {
 		switch(c) {
 		case 'h':
 			help();
@@ -123,6 +124,10 @@ int main(int argc, char **argv) {
 			break;
 		case 'm':
 			measure = true;
+			break;
+		case 'V':
+			cout << "v" << HDT_VERSION << "." << INDEX_VERSION << "." << RELEASE_VERSION << endl;
+			return 1;
 			break;
 		default:
 			cout << "ERROR: Unknown option" << endl;

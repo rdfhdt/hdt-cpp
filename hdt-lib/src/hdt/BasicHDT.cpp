@@ -30,6 +30,7 @@
 #include <string>
 #include <time.h>
 
+#include <HDTVersion.hpp>
 #include <HDTVocabulary.hpp>
 #include <RDFParser.hpp>
 
@@ -656,7 +657,7 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	controlInformation.load(input);
 	std::string hdtFormat = controlInformation.getFormat();
 	if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
-		throw std::runtime_error("This software cannot open this version of HDT File.");
+		throw std::runtime_error("This software cannot open this version of HDT File (" + hdtFormat + " =/= " + HDTVocabulary::HDT_CONTAINER + ")");
 	}
 
 	// Load header
@@ -742,7 +743,7 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     count+=controlInformation.load(&ptr[count], ptrMax);
     std::string hdtFormat = controlInformation.getFormat();
     if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
-    	throw std::runtime_error("This software cannot open this version of HDT File.");
+    	throw std::runtime_error("This software cannot open this version of HDT File (" + hdtFormat + " =/= " + HDTVocabulary::HDT_CONTAINER + ")");
     }
 
     // Load Header
@@ -777,7 +778,9 @@ size_t BasicHDT::loadMMapIndex(ProgressListener *listener) {
 
     // Get path
     string indexFile(fileName);
-    indexFile.append(".index");
+    indexFile.append(".index.v");
+		indexFile.append(HDT_VERSION);
+		indexFile.append(INDEX_VERSION);
 
     mappedIndex = new FileMap(indexFile.c_str());
 
@@ -835,7 +838,7 @@ void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 
 void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
 
-	string indexname = this->fileName + ".index";
+	string indexname = this->fileName + ".index.v" + HDT_VERSION + INDEX_VERSION;
 
 	ifstream in(indexname.c_str(), ios::binary);
 
@@ -866,7 +869,7 @@ void BasicHDT::saveIndex(ProgressListener *listener) {
 		return;
 	}
 
-	string indexname = this->fileName + ".index";
+	string indexname = this->fileName + ".index.v" + HDT_VERSION + INDEX_VERSION;
 	ofstream out(indexname.c_str(), ios::binary);
 	ControlInformation ci;
 	triples->saveIndex(out, ci, listener);
