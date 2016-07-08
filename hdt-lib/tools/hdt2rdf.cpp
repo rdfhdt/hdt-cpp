@@ -63,8 +63,7 @@ int main(int argc, char **argv) {
 			break;
 		case 'V':
 			cout << "v" << HDT_VERSION << "." << INDEX_VERSION << "." << RELEASE_VERSION << endl;
-			return 1;
-			break;
+			return 0;
 		default:
 			cout << "ERROR: Unknown option" << endl;
 			help();

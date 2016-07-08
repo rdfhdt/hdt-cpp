@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 	int c;
 	string outputFile;
 
-	while( (c = getopt(argc,argv,"ho:"))!=-1) {
+	while( (c = getopt(argc,argv,"ho:V"))!=-1) {
 		switch(c) {
 		case 'h':
 			help();
@@ -69,8 +69,7 @@ int main(int argc, char **argv) {
 			break;
 		case 'V':
 			cout << "v" << HDT_VERSION << "." << INDEX_VERSION << "." << RELEASE_VERSION << endl;
-			return 1;
-			break;
+			return 0;
 		default:
 			cout << "ERROR: Unknown option" << endl;
 			help();

@@ -777,10 +777,7 @@ size_t BasicHDT::loadMMapIndex(ProgressListener *listener) {
     }
 
     // Get path
-    string indexFile(fileName);
-    indexFile.append(".index.v");
-		indexFile.append(HDT_VERSION);
-		indexFile.append(INDEX_VERSION);
+    string indexFile(fileName + ".index.v" + HDT_VERSION + INDEX_VERSION);
 
     mappedIndex = new FileMap(indexFile.c_str());
 
