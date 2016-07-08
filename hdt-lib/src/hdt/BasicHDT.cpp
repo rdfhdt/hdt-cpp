@@ -779,7 +779,7 @@ size_t BasicHDT::loadMMapIndex(ProgressListener *listener) {
     }
 
     // Get path
-    string indexFile(fileName + ".index.v" + HDT_VERSION + INDEX_VERSION);
+    string indexFile(fileName + HDTVersion::get_index_suffix());
 
     mappedIndex = new FileMap(indexFile.c_str());
 
@@ -837,7 +837,7 @@ void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 
 void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
 
-	string indexname = this->fileName + ".index.v" + HDT_VERSION + INDEX_VERSION;
+	string indexname = this->fileName + HDTVersion::get_index_suffix();
 
 	ifstream in(indexname.c_str(), ios::binary);
 
@@ -868,7 +868,7 @@ void BasicHDT::saveIndex(ProgressListener *listener) {
 		return;
 	}
 
-	string indexname = this->fileName + ".index.v" + HDT_VERSION + INDEX_VERSION;
+	string indexname = this->fileName + HDTVersion::get_index_suffix();
 	ofstream out(indexname.c_str(), ios::binary);
 	ControlInformation ci;
 	triples->saveIndex(out, ci, listener);
