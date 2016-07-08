@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 			generateIndex=true;
 			break;
 		case 'V':
-			cout << "v" << HDT_VERSION << "." << INDEX_VERSION << "." << RELEASE_VERSION << endl;
+			cout << HDTVersion::get_version_string(".") << endl;
 			return 0;
 		default:
 			cout << "ERROR: Unknown option" << endl;

@@ -27,6 +27,9 @@
  * The total version number is: v<HDT_version>.<INDEX_VERSION>.<RELEASE_VERSION>
  */
 
+ #ifndef HDT_HDTVERSION_HPP_
+ #define HDT_HDTVERSION_HPP_
+
 // Version of the actual HDT file that is generated or read.
 // Software must be backwards compatible with all HDT files with the same number.
 #define HDT_VERSION "1"
@@ -37,3 +40,14 @@
 
 // Subreleases that are backwards compatible with both HDT and index file
 #define RELEASE_VERSION "1"
+
+#include <string>
+
+namespace hdt {
+namespace HDTVersion {
+    inline std::string get_version_string(std::string delimiter) {
+      return std::string("v") + HDT_VERSION + delimiter + INDEX_VERSION + delimiter + RELEASE_VERSION;
+    };
+}
+}
+#endif /* HDT_HDTVERSION_HPP_ */

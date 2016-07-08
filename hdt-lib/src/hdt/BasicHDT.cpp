@@ -656,8 +656,9 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	// Load Global ControlInformation.
 	controlInformation.load(input);
 	std::string hdtFormat = controlInformation.getFormat();
-	if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
-		throw std::runtime_error("This software cannot open this version of HDT File (" + hdtFormat + " =/= " + HDTVocabulary::HDT_CONTAINER + ")");
+	//if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
+	if (hdtFormat.find(HDTVocabulary::HDT_CONTAINER_BASE) == std::string::npos) {
+		throw std::runtime_error("This software (v" + std::string(HDT_VERSION) + ".x.x) cannot open this version of HDT File (" + hdtFormat + ")");
 	}
 
 	// Load header
@@ -742,8 +743,9 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     // Load Global ControlInformation
     count+=controlInformation.load(&ptr[count], ptrMax);
     std::string hdtFormat = controlInformation.getFormat();
-    if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
-    	throw std::runtime_error("This software cannot open this version of HDT File (" + hdtFormat + " =/= " + HDTVocabulary::HDT_CONTAINER + ")");
+		//if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
+		if (hdtFormat.find(HDTVocabulary::HDT_CONTAINER_BASE) == std::string::npos) {
+    	throw std::runtime_error("This software (v" + std::string(HDT_VERSION) + ".x.x) cannot open this version of HDT File (" + hdtFormat + ")");
     }
 
     // Load Header

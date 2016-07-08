@@ -39,7 +39,8 @@ namespace hdt {
 namespace HDTVocabulary {
 	// Base
 	const std::string HDT_BASE = "<http://purl.org/HDT/hdt#";
-	const std::string HDT_CONTAINER = HDT_BASE+"HDTv"+HDT_VERSION+">";
+	const std::string HDT_CONTAINER = HDT_BASE+"HDTv" + HDTVersion::get_version_string("-") + ">";
+	const std::string HDT_CONTAINER_BASE = HDT_BASE+"HDTv" + HDT_VERSION;
 	const std::string HDT_HEADER = HDT_BASE+"header";
 	const std::string HDT_DICTIONARY_BASE = HDT_BASE+"dictionary";
 	const std::string HDT_DICTIONARY = HDT_DICTIONARY_BASE+">";
