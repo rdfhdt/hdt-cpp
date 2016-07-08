@@ -31,7 +31,7 @@
 
 #include <sstream>
 #include <unistd.h>
-
+#include <stdexcept>
 #include "KyotoDictionary.hpp"
 
 #include <HDTVocabulary.hpp>

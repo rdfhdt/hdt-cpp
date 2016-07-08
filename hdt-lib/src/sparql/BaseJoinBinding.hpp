@@ -4,7 +4,7 @@
  *  Created on: 24/09/2011
  *      Author: mck
  */
-
+#include <stdexcept>
 #ifndef BASEJOINBINDING_HPP_
 #define BASEJOINBINDING_HPP_
 

@@ -28,7 +28,7 @@
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
  *
  */
-
+#include <stdexcept>
 #ifdef HAVE_CDS
 
 #include <HDTVocabulary.hpp>

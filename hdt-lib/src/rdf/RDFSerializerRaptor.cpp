@@ -4,7 +4,7 @@
  *  Created on: 05/03/2011
  *      Author: mck
  */
-
+#include <stdexcept>
 #ifdef HAVE_RAPTOR
 #include "RDFSerializerRaptor.hpp"
 

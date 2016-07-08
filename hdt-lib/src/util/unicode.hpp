@@ -4,7 +4,7 @@
  *  Created on: 17/07/2012
  *      Author: mck
  */
-
+#include <stdexcept>
 #ifndef UNICODE_HPP_
 #define UNICODE_HPP_
 

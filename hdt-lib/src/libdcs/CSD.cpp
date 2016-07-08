@@ -30,7 +30,7 @@
  *   Rodrigo Canovas:  rcanovas@dcc.uchile.cl
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
-
+#include <stdexcept>
 #include "CSD.h"
 #include "CSD_PFC.h"
 

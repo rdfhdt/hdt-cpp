@@ -31,6 +31,7 @@
 
 #if HAVE_CDS
 
+#include <stdexcept>
 #include "LiteralDictionary.hpp"
 #include <HDTVocabulary.hpp>
 #include "../libdcs/CSD_PFC.h"
