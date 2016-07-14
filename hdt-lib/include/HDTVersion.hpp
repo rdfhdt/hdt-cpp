@@ -39,7 +39,7 @@
 #define INDEX_VERSION "1"
 
 // Subreleases that are backwards compatible with both HDT and index file
-#define RELEASE_VERSION "1"
+#define RELEASE_VERSION "2"
 
 #include <string>
 
