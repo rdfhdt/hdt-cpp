@@ -4,7 +4,7 @@
  *  Created on: 05/03/2011
  *      Author: mck
  */
-
+#include <stdexcept>
 #include "RDFSerializerNTriples.hpp"
 
 using namespace std;

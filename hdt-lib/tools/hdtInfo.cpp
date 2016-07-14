@@ -35,7 +35,7 @@
 #include "../src/hdt/HDTFactory.hpp"
 
 #include "../src/rdf/RDFSerializerNTriples.hpp"
-
+#include <stdexcept>
 #include <getopt.h>
 #include <string>
 #include <iostream>

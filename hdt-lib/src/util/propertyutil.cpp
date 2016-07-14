@@ -3,7 +3,7 @@
 // (c) Paul D. Senzee
 // Senzee 5
 // http://senzee.blogspot.com
-
+#include <stdexcept>
 #include "propertyutil.h"
 
 #include <sstream>

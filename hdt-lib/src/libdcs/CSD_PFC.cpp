@@ -24,7 +24,7 @@
  *   Rodrigo Canovas:  rcanovas@dcc.uchile.cl
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
-
+#include <stdexcept>
 #include <stdlib.h>
 
 #include "../util/crc8.h"

@@ -33,7 +33,7 @@
 #define HDT_SINGLETRIPLE_HPP_
 
 #include "HDTEnums.hpp"
-
+#include <stdexcept>
 #include <iostream>
 #include <string>
 #include <vector>

@@ -28,7 +28,7 @@
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
  *
  */
-
+#include <stdexcept>
 #include <HDTVocabulary.hpp>
 
 #include "TriplesList.hpp"
