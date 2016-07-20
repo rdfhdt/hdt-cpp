@@ -30,7 +30,7 @@
  */
 
 #include <sstream>
-
+#include <stdexcept>
 #include "PlainDictionary.hpp"
 #include "../util/Histogram.h"
 

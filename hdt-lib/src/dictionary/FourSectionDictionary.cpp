@@ -33,7 +33,7 @@
 
 #include "FourSectionDictionary.hpp"
 #include <HDTVocabulary.hpp>
-
+#include <stdexcept>
 #include "../libdcs/CSD_PFC.h"
 #include "../libdcs/CSD_HTFC.h"
 #include "../libdcs/CSD_Cache.h"

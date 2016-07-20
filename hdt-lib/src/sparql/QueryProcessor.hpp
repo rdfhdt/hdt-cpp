@@ -4,7 +4,7 @@
  *  Created on: 11/08/2012
  *      Author: mck
  */
-
+#include <stdexcept>
 #ifndef QUERYPROCESSOR_HPP_
 #define QUERYPROCESSOR_HPP_
 

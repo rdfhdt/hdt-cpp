@@ -32,7 +32,7 @@
 #include <HDTVersion.hpp>
 #include <HDT.hpp>
 #include <HDTManager.hpp>
-
+#include <stdexcept>
 #include <string>
 #include <iostream>
 #include <fstream>

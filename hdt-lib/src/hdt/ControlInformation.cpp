@@ -24,7 +24,7 @@
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
  *
  */
-
+#include <stdexcept>
 #include <stdlib.h>
 #include <string.h>
 #include <string>

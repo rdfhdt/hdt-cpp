@@ -29,7 +29,7 @@
  *
  */
 
-
+#include <stdexcept>
 #include "BitmapTriples.hpp"
 
 #include "TripleIterators.hpp"

@@ -15,7 +15,7 @@
  *****************************************************************************/
 #ifndef __CRC32___H__
 #define __CRC32___H__
-
+#include <stdexcept>
 #include <iostream>
 #include <stdlib.h>
 #include <stdint.h>

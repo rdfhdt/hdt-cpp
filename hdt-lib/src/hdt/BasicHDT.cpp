@@ -27,6 +27,7 @@
 
 #include <iomanip>
 #include <algorithm>
+#include <stdexcept>
 #include <string>
 #include <time.h>
 

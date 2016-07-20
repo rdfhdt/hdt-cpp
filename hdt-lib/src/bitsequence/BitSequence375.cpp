@@ -21,6 +21,7 @@
  */
 
 #include <cassert>
+#include <stdexcept>
 #include <cmath>
 #include <string.h>
 

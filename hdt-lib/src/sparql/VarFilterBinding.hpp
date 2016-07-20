@@ -1,3 +1,4 @@
+#include <stdexcept>
 #ifndef VARFILTERBINDING_HPP
 #define VARFILTERBINDING_HPP
 
