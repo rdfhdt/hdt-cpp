@@ -797,7 +797,8 @@ void BasicHDT::saveToHDT(const char *fileName, ProgressListener *listener)
         }
         this->fileName = fileName;
         this->saveToHDT(out, listener);
-        this->saveIndex(listener);
+        // Do not create index by default
+	// this->saveIndex(listener);
         out.close();
     } catch (std::exception& e) {
         // Fixme: delete file if exists.
