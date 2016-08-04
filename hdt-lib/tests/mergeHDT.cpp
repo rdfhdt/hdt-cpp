@@ -1,10 +1,8 @@
 /*
- * File: rdf2hdt.cpp
- * Last modified: $Date: 2012-08-13 23:00:07 +0100 (lun, 13 ago 2012) $
- * Revision: $Revision: 222 $
- * Last modified by: $Author: mario.arias $
+ * File: mergeHDT.cpp
+ * Last modified by: $Author: javier.fernandez $
  *
- * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * Copyright (C) 2016, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -45,11 +43,15 @@ using namespace hdt;
 using namespace std;
 
 void help() {
-	cout << "$ mergeHDT [options] <hdt output file> [<hdt intput file>]+ " << endl;
+	cout << "$ mergeHDT [options] <hdt output file> [<hdt intput file>]+ "
+			<< endl;
 	cout << "\t-h\t\t\tThis help" << endl;
-	cout << "\t-i\t\tAlso generate index to solve all triple patterns." << endl;
+	cout << "\t-i\t\t\tAlso generate index to solve all triple patterns."
+			<< endl;
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
-	cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
+	cout
+			<< "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)"
+			<< endl;
 	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
@@ -57,15 +59,15 @@ void help() {
 int main(int argc, char **argv) {
 	string inputFile;
 	string outputFile;
-	bool verbose=false;
-	bool generateIndex=false;
+	bool verbose = false;
+	bool generateIndex = false;
 	string configFile;
 	string options;
 	string baseUri;
 
 	int c;
-	while( (c = getopt(argc,argv,"c:o:vB:i"))!=-1) {
-		switch(c) {
+	while ((c = getopt(argc, argv, "c:o:vB:i")) != -1) {
+		switch (c) {
 		case 'c':
 			configFile = optarg;
 			cout << "Configfile: " << configFile << endl;
@@ -81,7 +83,7 @@ int main(int argc, char **argv) {
 			baseUri = optarg;
 			break;
 		case 'i':
-			generateIndex=true;
+			generateIndex = true;
 			break;
 		default:
 			cout << "ERROR: Unknown option" << endl;
@@ -90,22 +92,25 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if(argc-optind<3) {
-		cout << "ERROR: You must supply an output and two or more inputs" << endl << endl;
+	if (argc - optind < 3) {
+		cout << "ERROR: You must supply an output and two or more inputs"
+				<< endl << endl;
 		help();
 		return 1;
 	}
 
-	outputFile = argv[argc-1];
+	outputFile = argv[optind];
+	cout << "outputFile:" << outputFile << endl;
 
-	if(outputFile=="") {
-		cout << "ERROR: You must supply two or more HDT input files" << endl << endl;
+	if (outputFile == "") {
+		cout << "ERROR: You must supply two or more HDT input files" << endl
+				<< endl;
 		help();
 		return 1;
 	}
 
-	if(baseUri=="") {
-		baseUri="<file://"+outputFile+">";
+	if (baseUri == "") {
+		baseUri = "<file://" + outputFile + ">";
 	}
 
 #if 0
@@ -130,29 +135,27 @@ int main(int argc, char **argv) {
 	try {
 		// Read Input Files
 		BasicHDT hdt(spec);
-		hdt.loadFromSeveralHDT((const char **)&argv[optind], argc-optind-1, baseUri, &progress);
+		hdt.loadFromSeveralHDT((const char **) &argv[optind + 1],
+				argc - optind - 1, baseUri, &progress);
 
-		// Save HDT
-		ofstream out;
-		out.open(outputFile.c_str(), ios::out | ios::binary | ios::trunc);
-		if(!out.good()){
-			throw std::runtime_error("Could not open output file.");
-		}
-		hdt.saveToHDT(out, &progress);
-		out.close();
+		hdt.saveToHDT(outputFile.c_str(), &progress);
+
 
 		globalTimer.stop();
-		cout << "HDT Successfully generated.                                 " << endl;
+		cout << "HDT Successfully generated.                                 "
+				<< endl;
 		cout << "Total processing time: ";
 		cout << "Clock(" << globalTimer.getRealStr();
 		cout << ")  User(" << globalTimer.getUserStr();
 		cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
 
-		if(generateIndex) {
-			(void)HDTManager::indexedHDT(&hdt, &progress);
+		if (generateIndex) {
+			HDTManager::indexedHDT(&hdt, &progress);
 		}
-	} catch (std::exception& e) {
-		cerr << "ERROR: " << e.what() << endl;
+	} catch (char *exception) {
+		cerr << "ERROR: " << exception << endl;
+	} catch (const char *exception) {
+		cerr << "ERROR: " << exception << endl;
 	}
 
 }
