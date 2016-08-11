@@ -91,7 +91,7 @@ public:
 
 	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
 
-	void loadFromTriples(IteratorTripleString* triples, string baseUri);
+	void loadFromTriples(IteratorTripleString* triples, string baseUri, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input

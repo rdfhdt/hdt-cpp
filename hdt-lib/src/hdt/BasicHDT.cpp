@@ -438,7 +438,7 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 	}
 }
 
-void BasicHDT::loadFromTriples(IteratorTripleString* triples, string baseUri) {
+void BasicHDT::loadFromTriples(IteratorTripleString* triples, string baseUri, ProgressListener *listener) {
 	try {
 		// Make sure that URI starts and ends with <>
 		if(baseUri.at(0)!='<')
@@ -446,8 +446,13 @@ void BasicHDT::loadFromTriples(IteratorTripleString* triples, string baseUri) {
 		if(baseUri.at(baseUri.length()-1)!='>')
 			baseUri.append(">");
 
-		loadDictionary(triples);
-		loadTriples(triples);
+		IntermediateListener iListener(listener);
+
+		iListener.setRange(0,50);
+		loadDictionary(triples, &iListener);
+
+		iListener.setRange(50,99);
+		loadTriples(triples, &iListener);
 
 		fillHeader(baseUri);
 
