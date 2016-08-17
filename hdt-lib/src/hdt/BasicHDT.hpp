@@ -28,6 +28,7 @@
 #ifndef BASICHDT_HPP_
 #define BASICHDT_HPP_
 
+#include <functional>
 #include <HDTSpecification.hpp>
 #include <HDT.hpp>
 
