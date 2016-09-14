@@ -23,7 +23,7 @@ private:
 
     string getString(const SerdNode *term);
     string getStringObject(const SerdNode *term, const SerdNode *dataType, const SerdNode *lang);
-    const SerdSyntax getParserType(RDFNotation notation);
+    SerdSyntax getParserType(RDFNotation notation);
 public:
     RDFParserSerd();
     virtual ~RDFParserSerd();

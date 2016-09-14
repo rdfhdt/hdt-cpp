@@ -126,7 +126,7 @@ RDFParserSerd::~RDFParserSerd() {
 
 }
 
-const SerdSyntax RDFParserSerd::getParserType(RDFNotation notation){
+SerdSyntax RDFParserSerd::getParserType(RDFNotation notation){
     switch(notation){
     case NTRIPLES:
         return SERD_NTRIPLES;
