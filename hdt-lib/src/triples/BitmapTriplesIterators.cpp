@@ -768,7 +768,7 @@ void ObjectIndexIterator::calculateRange() {
         //cout << endl << endl << "binsearch " << patY <<  endl;
         while (minIndex <= maxIndex) {
             //cout << "binSearch range: " << minIndex << ", " << maxIndex << endl;
-            int mid = (minIndex + maxIndex) / 2;
+            long long mid = (minIndex + maxIndex) >> 1;
             unsigned int predicate=getY(mid);
 
             if (patY > predicate) {
@@ -801,12 +801,12 @@ void ObjectIndexIterator::calculateRange() {
 
 #else
                 // Binary Search to find left boundary
-                long left=minIndex;
-                long right=mid;
-                long int pos=0;
+                long long left=minIndex;
+                long long right=mid;
+                long long pos=0;
 
                 while(left<=right) {
-                    pos = (left+right)/2;
+                    pos = (left+right) >> 1;
 
                     predicate = getY(pos);
 
@@ -823,7 +823,7 @@ void ObjectIndexIterator::calculateRange() {
                 right= maxIndex;
 
                 while(left<=right) {
-                    pos = (left+right)/2;
+                    pos = (left+right) >> 1;
                     predicate = getY(pos);
 
                     if(predicate!=patY) {
