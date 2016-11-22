@@ -320,151 +320,618 @@ void TriplesList::removeDuplicates(ProgressListener *listener) {
 }
 
 
-
 /** Calculate Degree
  * @param path Description of the param.
+ * @param maxSO Maximum SO in the dictionary.
  * @return void
  */
-void TriplesList::calculateDegree(string path) {
-        const int maxval = 50000;
-        const int nbins = 50000;
+void TriplesList::calculateDegree(string path, unsigned int maxSO) {
+	const int maxval = 1000000;
+	const int nbins = 1000000;
 
-        Histogram hDegree(0, maxval, nbins);
-        Histogram hDegreePartial(0, maxval, nbins);
-        Histogram hDegreeLabeled(0, maxval, nbins);
+	map<string, int> listsofPredicates; //compute the different lists of Predicates;
+	map<int, int> predicateinlists; //compute the number of lists per predicate;
+	string listPredicates = ""; //currentlist;
+	size_t numberofYs = 0;
 
-        int xcount = 1, ycount = 1, ychanged = 1;
+	Histogram hDegree(0, maxval, nbins);
+	Histogram hDegreePartial(0, maxval, nbins);
+	Histogram hDegreeLabeled(0, maxval, nbins);
 
-        TripleID currentTriple;
+	size_t xcount = 1, ycount = 1, ychanged = 1;
 
-        currentTriple = arrayOfTriples[0];
-        swapComponentOrder(&currentTriple, SPO, order);
+	TripleID currentTriple;
 
-        unsigned int x = currentTriple.getSubject();
-        unsigned int y = currentTriple.getPredicate();
-        unsigned int z = currentTriple.getObject();
+	currentTriple = arrayOfTriples[0];
+	swapComponentOrder(&currentTriple, SPO, order);
 
-        //cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
-        for (unsigned int i = 1; i < getNumberOfElements(); i++) {
-            currentTriple = arrayOfTriples[i];
-            swapComponentOrder(&currentTriple, SPO, order);
-                //cout<<currentTriple.getSubject()<< " " << currentTriple.getPredicate() << " " << currentTriple.getObject()<<"\n";
-                // Ignore duplicate triples
-                if ((x == currentTriple.getSubject()) && (y == currentTriple.getPredicate()) && (z == currentTriple.getObject())) {
-                        continue;
-                }
+	size_t x = currentTriple.getSubject();
+	size_t y = currentTriple.getPredicate();
+	size_t z = currentTriple.getObject();
 
-                if (x != currentTriple.getSubject()) {
-                        //cout << "\tdegree: " << xcount <<endl;
-                        hDegree.add(xcount);
+	string prefixSO = "";
+	if (maxSO != 0) {
+		//numiterations=maxSO+1;
+		prefixSO = "_SO";
+	}
 
-                        //cout << "\tpartial degree: " << ycount << endl;
-                        hDegreePartial.add(ycount);
+	std::stringstream ss;
+	ss << (unsigned int) (currentTriple.getPredicate());
+	listPredicates = ss.str(); // The resulting string
+	numberofYs++;
 
-                        //cout << "\tlabeled degree: " << ychanged << endl;
-                        hDegreeLabeled.add(ychanged);
+	//cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
+	cout << "Numberof Elements:" << getNumberOfElements() << endl;
+	fflush(stdout);
+	unsigned long numiterations = getNumberOfElements();
+	//size_t numiterations = 4953033043;
+	bool stopSO = false;
+	for (size_t i = 1; i < numiterations; i++) {
+		if (i % 1000000 == 0) {
+			cout << i << " triples" << endl;
+		}
+		if (!stopSO) {
 
-                        xcount = ycount = 1;
-                        ychanged = 1;
-                } else {
-                        xcount++;
+			currentTriple = arrayOfTriples[i];
+			swapComponentOrder(&currentTriple, SPO, order);
+			//cout<<currentTriple.getSubject()<< " " << currentTriple.getPredicate() << " " << currentTriple.getObject()<<"\n";
+			// Ignore duplicate triples
+			if ((x == currentTriple.getSubject())
+					&& (y == currentTriple.getPredicate())
+					&& (z == currentTriple.getObject())) {
+				continue;
+			}
 
-                        if (y != currentTriple.getPredicate()) {
-                                ychanged++;
+			if (x != currentTriple.getSubject()) {
+				//cout << "\tdegree: " << xcount <<endl;
+				hDegree.add(xcount);
 
-                                //cout << "\tpartial degree: " << ycount << endl;
-                                hDegreePartial.add(ycount);
-                                ;
+				//cout << "\tpartial degree: " << ycount << endl;
+				hDegreePartial.add(ycount);
 
-                                ycount = 1;
-                        } else {
-                                ycount++;
-                        }
-                }
+				//cout << "\tlabeled degree: " << ychanged << endl;
+				hDegreeLabeled.add(ychanged);
 
+				xcount = ycount = 1;
+				ychanged = 1;
+				if (order == SPO) { //save list of Predicates
 
+					//register the number of lists per predicate
+					if (listsofPredicates[listPredicates] == 0) {
+						char copylist[listPredicates.size()+1];
+						//listPredicates.copy((char*) copylist.c_str(),
+						listPredicates.copy(copylist,
+								listPredicates.size(), 0);
+						copylist[listPredicates.size()]='\0';
+						//char *part = strtok((char*) copylist.c_str(), "+"); // passing a string starts a new iteration
+						char *part = strtok(copylist, "+"); // passing a string starts a new iteration
+						while (part) {
+							predicateinlists[atoi(part)] =
+									predicateinlists[atoi(part)] + 1;
+							part = strtok(NULL, "+");
+						}
 
-                //cout << currentTriple.getSubject() << " " << currentTriple.getPredicate() << " " << currentTriple.getObject() << endl;
+					}
+					// register the number of repetitions per lists
+					listsofPredicates[listPredicates] =
+							listsofPredicates[listPredicates] + 1;
 
-                x = currentTriple.getSubject();
-                y = currentTriple.getPredicate();
-                z = currentTriple.getObject();
-        }
+				}
+				if (maxSO == 0 || currentTriple.getSubject() <= maxSO) {
+					std::stringstream ss;
+					ss << (unsigned int) (currentTriple.getPredicate());
+					listPredicates = ss.str(); // The resulting string
+					numberofYs++;
+				} else {
+					stopSO = true;
+				}
+			} else {
+				xcount++;
 
-                //cout << "\tdegree: " << xcount <<endl;
-                hDegree.add(xcount);
+				if (y != currentTriple.getPredicate()) {
 
-                //cout << "\tpartial degree: " << ycount << endl;
-                hDegreePartial.add(ycount);
+					if (order == SPO) { //save list of Predicates
+						std::stringstream ss;
+						ss << (unsigned int) (currentTriple.getPredicate());
+						listPredicates = listPredicates + "+" + ss.str(); // The resulting string
+					}
+					numberofYs++;
 
-                //cout << "\tlabeled degree: " << ychanged << endl;
-                hDegreeLabeled.add(ychanged);
+					ychanged++;
 
-        hDegree.end();
-        hDegreePartial.end();
-        hDegreeLabeled.end();
+					//cout << "\tpartial degree: " << ycount << endl;
+					hDegreePartial.add(ycount);
+					;
 
-#if 0
-        ofstream out;
+					ycount = 1;
+				} else {
+					ycount++;
+				}
+			}
 
-        string direcc=""; //predicate total degree is neither in nor out
-        if (parsing == SPO) direcc="out";
-        else if (parsing == OPS) direcc="in";
-        else direcc="predicate";
+			//cout << currentTriple.getSubject() << " " << currentTriple.getPredicate() << " " << currentTriple.getObject() << endl;
 
+			x = currentTriple.getSubject();
+			y = currentTriple.getPredicate();
+			z = currentTriple.getObject();
+		}
+	}
 
+	//cout << "Fin listPredicates:" << listPredicates << endl;
+	fflush(stdout);
 
-        //cout << endl << "Partial degree" << endl;
+	if (maxSO == 0 || currentTriple.getSubject() <= maxSO) {
+		// save list of predicates
+		if (order == SPO) {
+			//register the number of lists per predicate
+			if (listsofPredicates[listPredicates] == 0) {
+				char copylist[listPredicates.size()+1];
+                                //listPredicates.copy((char*) copylist.c_str(),
+                                 listPredicates.copy(copylist,listPredicates.size(), 0);
+                                 copylist[listPredicates.size()]='\0';
 
-        if (parsing==PSO){
-                out.open((path + "_Predicate").c_str(), ios::out);
-                out << "# Predicate degree" << endl;
-                hDegree.dumpStr(out);
-                out.close();
+				char *part = strtok(copylist, "+"); // passing a string starts a new iteration
+				while (part) {
+					predicateinlists[atoi(part)] = predicateinlists[atoi(part)]
+							+ 1;
+					part = strtok(NULL, "+");
+				}
 
-                out.open((path + "_inPredicate").c_str(), ios::out);
-                out << "# Predicate_in degree" << endl;
-                hDegreeLabeled.dumpStr(out);
-                out.close();
+			}
+			// register the number of repetitions per lists
+			listsofPredicates[listPredicates] =
+					listsofPredicates[listPredicates] + 1;
+		}
+	}
 
-        }
-        else if (parsing==POS){
-                out.open((path + "_outPredicate").c_str(), ios::out);
-                out << "# Predicate_out degree" << endl;
-                hDegreeLabeled.dumpStr(out);
-                out.close();
-        }
-        else if (parsing==SOP){
-                out.open((path + "_DirectOut").c_str(), ios::out);
-                out << "# Direct_out degree" << endl;
-                hDegreeLabeled.dumpStr(out);
-                out.close();
-        }
-        else if (parsing==OSP){
-                out.open((path + "_DirectIn").c_str(), ios::out);
-                out << "# Direct_in degree" << endl;
-                hDegreeLabeled.dumpStr(out);
-                out.close();
-        }
-        else{
-                string direcc = (parsing == SPO) ? "out" : "in";
-                //	cout << endl << "Degree" << endl;
-                out.open((path + "_" + direcc).c_str(), ios::out);
-                out << "# " << direcc << " degree" << endl;
-                hDegree.dumpStr(out);
-                out.close();
+	if (maxSO == 0 || currentTriple.getSubject() <= maxSO) {
 
-                out.open((path + "_p" + direcc).c_str(), ios::out);
-                out << "# Partial " << direcc << " degree" << endl;
-                hDegreePartial.dumpStr(out);
-                out.close();
-                //cout << endl << "Labeled degree" << endl;
-                out.open((path + "_l" + direcc).c_str(), ios::out);
-                out << "# Labeled" << direcc << " degree" << endl;
-                hDegreeLabeled.dumpStr(out);
-                out.close();
-        }
-#endif
+		//cout << "\tdegree: " << xcount <<endl;
+		hDegree.add(xcount);
+
+		//cout << "\tpartial degree: " << ycount << endl;
+		hDegreePartial.add(ycount);
+
+		//cout << "\tlabeled degree: " << ychanged << endl;
+		hDegreeLabeled.add(ychanged);
+	}
+	hDegree.end();
+	hDegreePartial.end();
+	hDegreeLabeled.end();
+
+//#if 0
+	ofstream out;
+	ofstream out_summary;
+
+	out_summary.open((path + prefixSO + "_Summary").c_str(), ios::app); //append to the end
+
+	string direcc = ""; //predicate total degree is neither in nor out
+	if (order == SPO)
+		direcc = "out";
+	else if (order == OPS)
+		direcc = "in";
+	else
+		direcc = "predicate";
+
+//cout << endl << "Partial degree" << endl;
+
+	if (order == PSO) {
+		out.open((path + prefixSO + "_Predicate").c_str(), ios::out);
+		out << "# Predicate degree" << endl;
+		out_summary << "* Predicate degree" << endl;
+		hDegree.dumpStr(out);
+		hDegree.dumpStr(out_summary, false);
+		out.close();
+
+		out.open((path + prefixSO + "_inPredicate").c_str(), ios::out);
+		out << "# Predicate_in degree" << endl;
+		out_summary << "* Predicate_in degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		hDegreeLabeled.dumpStr(out_summary, false);
+		out.close();
+
+	} else if (order == POS) {
+		out.open((path + prefixSO + "_outPredicate").c_str(), ios::out);
+		out << "# Predicate_out degree" << endl;
+		out_summary << "* Predicate_out degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		hDegreeLabeled.dumpStr(out_summary, false);
+		out.close();
+	} else if (order == SOP) {
+		out.open((path + prefixSO + "_DirectOut").c_str(), ios::out);
+		out << "# Direct_out degree" << endl;
+		out_summary << "* Direct_out degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		hDegreeLabeled.dumpStr(out_summary, false);
+		out.close();
+	} else if (order == OSP) {
+		out.open((path + prefixSO + "_DirectIn").c_str(), ios::out);
+		out << "# Direct_in degree" << endl;
+		out_summary << "* Direct_in degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		hDegreeLabeled.dumpStr(out_summary, false);
+		out.close();
+	} else {
+		string direcc = (order == SPO) ? "out" : "in";
+		//	cout << endl << "Degree" << endl;
+		out.open((path + prefixSO + "_" + direcc).c_str(), ios::out);
+		out << "# " << direcc << " degree" << endl;
+		out_summary << "* " << direcc << " degree" << endl;
+		hDegree.dumpStr(out);
+		hDegree.dumpStr(out_summary, false);
+		out.close();
+
+		out.open((path + prefixSO + "_p" + direcc).c_str(), ios::out);
+		out << "# Partial " << direcc << " degree" << endl;
+		out_summary << "* Partial " << direcc << " degree" << endl;
+		hDegreePartial.dumpStr(out);
+		hDegreePartial.dumpStr(out_summary, false);
+		out.close();
+		//cout << endl << "Labeled degree" << endl;
+		out.open((path + prefixSO + "_l" + direcc).c_str(), ios::out);
+		out << "# Labeled" << direcc << " degree" << endl;
+		out_summary << "* Labeled" << direcc << " degree" << endl;
+		hDegreeLabeled.dumpStr(out);
+		hDegreeLabeled.dumpStr(out_summary, false);
+		out.close();
+
+		if (direcc == "out") { //Calculate listsofPredicates values:
+
+			Histogram predicateFreqs(0, maxval, nbins);
+			for (std::map<string, int>::iterator it = listsofPredicates.begin();
+					it != listsofPredicates.end(); ++it) {
+				//std::cout << it->first << " => " << it->second << '\n';
+				predicateFreqs.add(it->second);
+				//print lists:
+				//cout<<"it->second:"<<it->second<<endl;
+			}
+			predicateFreqs.end();
+			out.open((path + prefixSO + "_ListPredicates").c_str(), ios::out);
+			out << "# Predicate list degree" << endl;
+			out_summary << "* Predicate Lists" << endl;
+			predicateFreqs.dumpStr(out);
+			predicateFreqs.dumpStr(out_summary, false);
+			out.close();
+			out_summary << "* Number of Predicates in P List" << endl;
+			out_summary << "# Total: " << numberofYs << endl;
+
+			Histogram predicateHist(0, maxval, nbins);
+			for (std::map<int, int>::iterator it = predicateinlists.begin();
+					it != predicateinlists.end(); ++it) {
+				//std::cout << it->first << " => " << it->second << '\n';
+				predicateHist.add(it->second);
+				//print lists:
+				//cout<<"it->second:"<<it->second<<endl;
+			}
+			predicateHist.end();
+			out_summary << "* Lists per Predicate" << endl;
+			predicateHist.dumpStr(out_summary, false);
+
+		}
+
+	}
+	out_summary.close();
+//#endif
+
+}
+
+/** Calculate Degree only for typed subjects
+ * @param path Description of the param.
+ * @rdftypeID The ID of the rdf:type predicate
+ * @return void
+ */
+void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
+	const int maxval = 1000000;
+	const int nbins = 1000000;
+
+	map<string, int> listsofPredicates; //compute the different lists of Predicates;
+	map<int, int> predicateinlists; //compute the number of lists per predicate;
+	map<string, int> listofClassesPredicates; //compute the number of repetitions per each concatenation 0IdObject+predicateList
+	map<int, int> classesinlists; //compute the number of lists per classs
+
+	string listPredicates = ""; //currentlist of Predicates;
+	vector<int> listClasses; //currentlist of Classes;
+	int numberofYs = 0;
+
+	Histogram hDegree(0, maxval, nbins);
+	Histogram hDegreePartial(0, maxval, nbins);
+	Histogram hDegreeLabeled(0, maxval, nbins);
+
+	int xcount = 1, ycount = 1, ychanged = 1;
+
+	TripleID currentTriple;
+	bool istypedSubject = false;
+
+	currentTriple = arrayOfTriples[0];
+	swapComponentOrder(&currentTriple, SPO, order);
+
+	unsigned int x = currentTriple.getSubject();
+	unsigned int y = currentTriple.getPredicate();
+	unsigned int z = currentTriple.getObject();
+
+	vector<int> pendingpartialycounts;
+	pendingpartialycounts.clear();
+
+	if (y == rdftypeID) {
+		istypedSubject = true;
+		listClasses.push_back(z);
+	}
+	std::stringstream ss;
+	ss << (unsigned int) (currentTriple.getPredicate());
+	listPredicates = ss.str(); // The resulting string
+	numberofYs++;
+
+	//cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
+	cout << "Number of Elements:" << getNumberOfElements() << endl;
+//	cout << "Predicate rdf:type ID:" << rdftypeID << endl;
+	fflush(stdout);
+	for (unsigned int i = 1; i < getNumberOfElements(); i++) {
+		if (i % 1000000 == 0) {
+			cout << i << " triples" << endl;
+		}
+		currentTriple = arrayOfTriples[i];
+		swapComponentOrder(&currentTriple, SPO, order);
+		//cout<<currentTriple.getSubject()<< " " << currentTriple.getPredicate() << " " << currentTriple.getObject()<<"\n";
+		// Ignore duplicate triples
+		if ((x == currentTriple.getSubject())
+				&& (y == currentTriple.getPredicate())
+				&& (z == currentTriple.getObject())) {
+			continue;
+		}
+
+		if (x != currentTriple.getSubject()) {
+			if (istypedSubject) {
+				//cout << "\tdegree: " << xcount <<endl;
+				hDegree.add(xcount);
+
+				//cout << "\tpartial degree: " << ycount << endl;
+				hDegreePartial.add(ycount);
+
+				//cout << "\tlabeled degree: " << ychanged << endl;
+				hDegreeLabeled.add(ychanged);
+				//save list of Predicates
+
+				//register the number of lists per predicate
+				if (listsofPredicates[listPredicates] == 0) {
+					char copylist[listPredicates.size()+1];
+                                        listPredicates.copy(copylist,listPredicates.size(), 0);
+                                        copylist[listPredicates.size()]='\0';
+
+					char *part = strtok(copylist, "+"); // passing a string starts a new iteration
+
+					while (part) {
+						predicateinlists[atoi(part)] = predicateinlists[atoi(
+								part)] + 1;
+						part = strtok(NULL, "+");
+					}
+
+				}
+				// register the number of repetitions per lists
+				listsofPredicates[listPredicates] =
+						listsofPredicates[listPredicates] + 1;
+
+				//register the number of lists per class
+				for (int k = 0; k < listClasses.size(); k++) {
+					string concatenationClassPred = "c"; //to concanetate something different from an ID
+					std::stringstream ss;
+					ss << (unsigned int) (listClasses[k]);
+					concatenationClassPred = concatenationClassPred + ss.str()
+							+ "+" + listPredicates;
+					if (listofClassesPredicates[concatenationClassPred] == 0) {
+						classesinlists[listClasses[k]] =
+								classesinlists[listClasses[k]] + 1;
+					}
+
+					// register the number of repetitions per lists
+					listofClassesPredicates[concatenationClassPred] =
+							listofClassesPredicates[concatenationClassPred] + 1;
+				}
+				for (int k = 0; k < pendingpartialycounts.size(); k++) {
+					hDegreePartial.add(pendingpartialycounts[k]);
+				}
+			}
+			pendingpartialycounts.clear();
+
+			//check the current one
+			istypedSubject = false;
+			listClasses.clear();
+			if (currentTriple.getPredicate() == rdftypeID) {
+				istypedSubject = true;
+				listClasses.push_back(currentTriple.getObject());
+			}
+
+			xcount = ycount = 1;
+			ychanged = 1;
+			//cout << "listPredicates:" << listPredicates << endl;
+
+			std::stringstream ss;
+			ss << (unsigned int) (currentTriple.getPredicate());
+			listPredicates = ss.str(); // The resulting string
+			numberofYs++;
+		} else {
+			xcount++;
+
+			if (y != currentTriple.getPredicate()) {
+
+				std::stringstream ss;
+				ss << (unsigned int) (currentTriple.getPredicate());
+				listPredicates = listPredicates + "+" + ss.str(); // The resulting string
+
+				numberofYs++;
+
+				ychanged++;
+				if (currentTriple.getPredicate() == rdftypeID) {
+					istypedSubject = true;
+					listClasses.push_back(currentTriple.getObject());
+				}
+				//save all partial to give them finally is they are typed subjects
+				pendingpartialycounts.push_back(ycount);
+				//cout << "\tpartial degree: " << ycount << endl;
+				//hDegreePartial.add(ycount);
+				;
+
+				ycount = 1;
+			} else {
+				ycount++;
+				if (currentTriple.getPredicate() == rdftypeID) {
+					listClasses.push_back(currentTriple.getObject());
+				}
+
+			}
+		}
+
+		//cout << currentTriple.getSubject() << " " << currentTriple.getPredicate() << " " << currentTriple.getObject() << endl;
+
+		x = currentTriple.getSubject();
+		y = currentTriple.getPredicate();
+		z = currentTriple.getObject();
+	}
+
+//cout << "Fin listPredicates:" << listPredicates << endl;
+	fflush(stdout);
+
+// save list of predicates
+
+	if (istypedSubject) {
+		//register the number of lists per predicate
+		if (listsofPredicates[listPredicates] == 0) {
+			char copylist[listPredicates.size()+1];
+                        listPredicates.copy(copylist,listPredicates.size(), 0);
+                        copylist[listPredicates.size()]='\0';
+
+			char *part = strtok(copylist, "+"); // passing a string starts a new iteration
+
+			while (part) {
+				predicateinlists[atoi(part)] = predicateinlists[atoi(part)] + 1;
+				part = strtok(NULL, "+");
+			}
+
+		}
+		// register the number of repetitions per lists
+		listsofPredicates[listPredicates] = listsofPredicates[listPredicates]
+				+ 1;
+
+		//register the number of lists per class
+		for (int k = 0; k < listClasses.size(); k++) {
+			string concatenationClassPred = "c"; //to concanetate something different from an ID
+			std::stringstream ss;
+			ss << (unsigned int) (listClasses[k]);
+			concatenationClassPred = concatenationClassPred + ss.str() + "+"
+					+ listPredicates;
+			if (listofClassesPredicates[concatenationClassPred] == 0) {
+				classesinlists[listClasses[k]] = classesinlists[listClasses[k]]
+						+ 1;
+			}
+
+			// register the number of repetitions per lists
+			listofClassesPredicates[concatenationClassPred] =
+					listofClassesPredicates[concatenationClassPred] + 1;
+		}
+
+		//cout << "\tdegree: " << xcount <<endl;
+		hDegree.add(xcount);
+
+		//cout << "\tpartial degree: " << ycount << endl;
+		hDegreePartial.add(ycount);
+
+		for (int k = 0; k < pendingpartialycounts.size(); k++) {
+			hDegreePartial.add(pendingpartialycounts[k]);
+		}
+
+		//cout << "\tlabeled degree: " << ychanged << endl;
+		hDegreeLabeled.add(ychanged);
+	}
+	hDegree.end();
+	hDegreePartial.end();
+	hDegreeLabeled.end();
+
+	//************ TEST */
+	/*
+	 cout << "Classes and #different lists:" << endl;
+	 for (std::map<int, int>::iterator it = classesinlists.begin();
+	 it != classesinlists.end(); ++it) {
+	 std::cout << it->first << " => " << it->second << '\n';
+	 }
+
+	 cout << "different class-predicate lists:" << endl;
+	 for (std::map<string, int>::iterator it = listofClassesPredicates.begin();
+	 it != listofClassesPredicates.end(); ++it) {
+	 std::cout << it->first << " => " << it->second << '\n';
+	 }
+	 */
+//#if 0
+	ofstream out;
+	ofstream out_summary;
+
+	out_summary.open((path + "_Typed_Summary").c_str(), ios::out); //append to the end
+
+	string direcc = ""; //predicate total degree is neither in nor out
+
+	direcc = "out";
+
+	out.open((path + "_Typed_" + direcc).c_str(), ios::out);
+	out << "# " << direcc << " degree" << endl;
+	out_summary << "* " << direcc << " degree" << endl;
+	hDegree.dumpStr(out);
+	hDegree.dumpStr(out_summary, false);
+	out.close();
+
+	out.open((path + "_Typed_p" + direcc).c_str(), ios::out);
+	out << "# Partial " << direcc << " degree" << endl;
+	out_summary << "* Partial " << direcc << " degree" << endl;
+	hDegreePartial.dumpStr(out);
+	hDegreePartial.dumpStr(out_summary, false);
+	out.close();
+//cout << endl << "Labeled degree" << endl;
+	out.open((path + "_Typed_l" + direcc).c_str(), ios::out);
+	out << "# Labeled" << direcc << " degree" << endl;
+	out_summary << "* Labeled" << direcc << " degree" << endl;
+	hDegreeLabeled.dumpStr(out);
+	hDegreeLabeled.dumpStr(out_summary, false);
+	out.close();
+
+	Histogram predicateFreqs(0, maxval, nbins);
+	for (std::map<string, int>::iterator it = listsofPredicates.begin();
+			it != listsofPredicates.end(); ++it) {
+		//	std::cout << it->first << " => " << it->second << '\n';
+		predicateFreqs.add(it->second);
+		//print lists:
+		//cout<<"it->second:"<<it->second<<endl;
+	}
+	predicateFreqs.end();
+	out_summary << "* Predicate Lists" << endl;
+	predicateFreqs.dumpStr(out_summary, false);
+
+// this has no sense now
+//	out_summary << "* Number of Predicates in P List" << endl;
+//	out_summary << "# Total: " << numberofYs << endl;
+
+	Histogram ListClassesHist(0, maxval, nbins);
+	for (std::map<int, int>::iterator it = classesinlists.begin();
+			it != classesinlists.end(); ++it) {
+		//std::cout << it->first << " => " << it->second << '\n';
+		ListClassesHist.add(it->second);
+		//print lists:
+		//cout<<"it->second:"<<it->second<<endl;
+	}
+	ListClassesHist.end();
+	out_summary << "* Lists per Class" << endl;
+	ListClassesHist.dumpStr(out_summary, false);
+
+	Histogram predicateHist(0, maxval, nbins);
+	for (std::map<int, int>::iterator it = predicateinlists.begin();
+			it != predicateinlists.end(); ++it) {
+		//std::cout << it->first << " => " << it->second << '\n';
+		predicateHist.add(it->second);
+		//print lists:
+		//cout<<"it->second:"<<it->second<<endl;
+	}
+	predicateHist.end();
+	out_summary << "* Lists per Predicate" << endl;
+	predicateHist.dumpStr(out_summary, false);
+
+	out_summary.close();
+//#endif
 
 }
 
@@ -472,33 +939,71 @@ void TriplesList::calculateDegree(string path) {
  * @param path Description of the param.
  * @return void
  */
-void TriplesList::calculateDegrees(string path) {
+void TriplesList::calculateDegrees(string path, unsigned int maxSO,
+		unsigned int rdftypeID) {
 
-    StopWatch st;
-        cout << "Calculate OUT Degree" << endl;
-        sort(SPO);
-        calculateDegree(path);
+	StopWatch st;
 
-        cout << "Calculate IN Degree" << endl;
-        sort(OPS);
-        calculateDegree(path);
+	cout << "Calculate OUT Degree" << endl;
+	sort(SPO);
+	calculateDegree(path);
 
-        cout << "Calculate Direct OUT Degree" << endl;
-        sort(SOP);
-        calculateDegree(path);
+	if (maxSO > 0) {
+		cout << "Calculate OUT Degree for SO (max:" << maxSO << ") " << endl;
+		calculateDegree(path, maxSO);
+	}
+	if (rdftypeID > 0) {
+		cout << "Calculate OUT Degree for Subjects with rdftype " << endl;
+		calculateDegreeType(path, rdftypeID);
+	}
 
-        cout << "Calculate Direct IN Degree" << endl;
-        sort(OSP);
-        calculateDegree(path);
+	cout << "Calculate IN Degree" << endl;
+	cout << "..... sorting OPS" << endl;
+	sort(OPS);
+	cout << "......sort done" << endl;
+	calculateDegree(path);
+	if (maxSO > 0) {
+		cout << "Calculate IN Degree for SO (max:" << maxSO << ") " << endl;
+		calculateDegree(path, maxSO);
+	}
 
-        cout << "Calculate Predicate IN Degree" << endl;
-        sort(PSO);
-        calculateDegree(path);
+	cout << "Calculate Direct OUT Degree" << endl;
+	cout << "..... sorting SOP" << endl;
+	sort(SOP);
+	cout << "......sort done" << endl;
+	calculateDegree(path);
 
-        cout << "Calculate Predicate OUT Degree" << endl;
-        sort(POS);
-        calculateDegree(path);
-        cout << "Degrees calculated in " << st << endl;
+	if (maxSO > 0) {
+		cout << "Calculate Direct OUT Degree for SO (max:" << maxSO << ") "
+				<< endl;
+		calculateDegree(path, maxSO);
+	}
+
+	cout << "Calculate Direct IN Degree" << endl;
+	fflush(stdout);
+	cout << "..... sorting OSP" << endl;
+	sort(OSP);
+	cout << "......sort done" << endl;
+	fflush(stdout);
+	calculateDegree(path);
+	if (maxSO > 0) {
+			cout << "Calculate Direct IN Degree for SO (max:" << maxSO << ") "
+					<< endl;
+			calculateDegree(path, maxSO);
+		}
+
+	cout << "Calculate Predicate IN Degree" << endl;
+	cout << "..... sorting PSO" << endl;
+	sort(PSO);
+	cout << "......sort done" << endl;
+	calculateDegree(path);
+
+	cout << "Calculate Predicate OUT Degree" << endl;
+	cout << "..... sorting POS" << endl;
+	sort(POS);
+	cout << "......sort done" << endl;
+	calculateDegree(path);
+	cout << "Degrees calculated in " << st << endl;
 }
 
 

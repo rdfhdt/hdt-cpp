@@ -172,8 +172,9 @@ public:
 	 */
 	void setOrder(TripleComponentOrder order);
 
-        void calculateDegree(string path);
-        void calculateDegrees(string path);
+	 void calculateDegree(string path,unsigned int maxID=0);
+	 void calculateDegreeType(string path, unsigned int rdftypeID);
+     void calculateDegrees(string path,unsigned int maxID=0,unsigned int rdftypeID=0);
 
 	// Others
 

@@ -122,10 +122,11 @@ public:
 	 * @param outfile Description of the param.
 	 * @return void
 	 */
-	void dumpStr(ostream &outfile) {
+	void dumpStr(ostream &outfile, bool fullStats=true) {
         unsigned int maxfreq = 0;
 		for (unsigned int i = 0; i < nBins && i <= maxValue; i++) {
-			outfile << i << "  " << freq[i] << endl;
+			if (fullStats)
+				outfile << i << "  " << freq[i] << endl;
 			maxfreq = freq[i] > maxfreq ? freq[i] : maxfreq;
 		}
 
@@ -168,7 +169,7 @@ public:
 	 * Get the sum of all counts in the histogram.
 	 * @return The expected result.
 	 */
-        unsigned int getTotalCount() const {
+        unsigned int getTotalCount() {
 		unsigned int c(0U);
 		for (unsigned int i(0); i < nBins; ++i)
 			c += freq[i];
