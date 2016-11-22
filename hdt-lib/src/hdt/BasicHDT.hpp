@@ -98,6 +98,8 @@ public:
 	 */
 	void loadFromHDT(const char *fileName, ProgressListener *listener = NULL);
 
+	void loadHeader(const char *fileName, ProgressListener *listener);
+
 	void loadFromSeveralHDT(const char **fileNames, size_t numFiles, string baseUri, ProgressListener *listener=NULL);
 
     /**

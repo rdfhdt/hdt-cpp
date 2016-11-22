@@ -646,6 +646,41 @@ void BasicHDT::loadFromHDT(const char *fileName, ProgressListener *listener) {
 	stream.close();
 }
 
+void BasicHDT::loadHeader(const char *fileName, ProgressListener *listener)
+{
+	this->fileName = fileName;
+
+		DecompressStream stream(fileName);
+		istream *input = stream.getStream();
+		if(!input->good()){
+			throw std::runtime_error("Error opening file to load HDT.");
+		}
+    try {
+	ControlInformation controlInformation;
+	IntermediateListener iListener(listener);
+
+	// Load Global ControlInformation.
+	controlInformation.load(*input);
+	std::string hdtFormat = controlInformation.getFormat();
+	if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
+		throw std::runtime_error("This software cannot open this version of HDT File.");
+	}
+
+	// Load header
+	iListener.setRange(0,5);
+	controlInformation.load(*input);
+	delete header;
+	header = HDTFactory::readHeader(controlInformation);
+	header->load(*input, controlInformation, &iListener);
+    } catch (std::exception& e) {
+        // cout << "Exception loading HDT: " << ex;
+        deleteComponents();
+        createComponents();
+        throw;
+    }
+    stream.close();
+}
+
 void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 {
     try {
