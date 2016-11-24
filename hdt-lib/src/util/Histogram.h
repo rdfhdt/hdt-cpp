@@ -175,4 +175,44 @@ public:
 			c += freq[i];
 		return c;
 	}
+
+	double getDeviation() const {
+		return deviation;
+	}
+
+	void setDeviation(double deviation) {
+		this->deviation = deviation;
+	}
+
+	double getMaxValue() const {
+		return maxValue;
+	}
+
+	void setMaxValue(double maxValue) {
+		this->maxValue = maxValue;
+	}
+
+	double getMean() const {
+		return mean;
+	}
+
+	void setMean(double mean) {
+		this->mean = mean;
+	}
+
+	double getMinValue() const {
+		return minValue;
+	}
+
+	void setMinValue(double minValue) {
+		this->minValue = minValue;
+	}
+
+	unsigned int getNumber() const {
+		return number;
+	}
+
+	void setNumber(unsigned int number) {
+		this->number = number;
+	}
 };

@@ -29,6 +29,8 @@ void help() {
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
+const string vocabSubject = "_:statistics";
+const string vocabPredicate = "http://purl.org/HDT/hdt#";
 int main(int argc, char *argv[]) {
 	int c;
 	string inputFile;
@@ -52,7 +54,7 @@ int main(int argc, char *argv[]) {
 
 
 
-	if (argc < 2 || inputFile == "") {
+	if (argc < 2) {
 		cout << "ERROR: You must supply an input HDT File" << endl << endl;
 		help();
 		return 1;
@@ -83,6 +85,9 @@ int main(int argc, char *argv[]) {
 	ofstream out_summary;
 	out_summary.open((outputFile + "_Summary").c_str(), ios::trunc);
 
+	ofstream out_header_stats;
+	out_header_stats.open((outputFile + "_HeaderStats").c_str(), ios::trunc);
+
 	out_summary << "* General statistics" << endl;
 	out_summary << "# Number of Triples: "
 			<< hdt->getTriples()->getNumberOfElements() << endl;
@@ -95,11 +100,14 @@ int main(int argc, char *argv[]) {
 	out_summary << "# Number of Shared Subject-Objects: "
 			<< hdt->getDictionary()->getNshared() << endl;
 
+	double ratioSO = (double) hdt->getDictionary()->getNshared()
+							/ (hdt->getDictionary()->getNsubjects()
+									+ hdt->getDictionary()->getNobjects()
+									- hdt->getDictionary()->getNshared());
 	out_summary << "# Ratio Shared Subject-Objects => SO / (S U O) : "
-			<< (double) hdt->getDictionary()->getNshared()
-					/ (hdt->getDictionary()->getNsubjects()
-							+ hdt->getDictionary()->getNobjects()
-							- hdt->getDictionary()->getNshared()) << endl;
+			<< ratioSO << endl;
+
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"ratioSharedSO> "<<ratioSO;
 	/*
 	 * Compute over the dictionary to get shared subject-predicate and predicate-object
 	 */
@@ -123,19 +131,26 @@ int main(int argc, char *argv[]) {
 	}
 	delete itPred; // Remember to delete iterator to avoid memory leaks!
 
+	double ratioSP = (double) numSubjectPredicates
+			/ (hdt->getDictionary()->getNsubjects()
+					+ hdt->getDictionary()->getNpredicates()
+					- numSubjectPredicates);
 	out_summary << "# Ratio Shared Subject-Predicate => SP / (S U P) : "
-			<< (double) numSubjectPredicates
-					/ (hdt->getDictionary()->getNsubjects()
-							+ hdt->getDictionary()->getNpredicates()
-							- numSubjectPredicates) << endl;
+			<< ratioSP << endl;
 
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"ratioSharedSP> "<<ratioSP;
+
+	double ratioPO =(double) numPredicatesObjects
+			/ (hdt->getDictionary()->getNobjects()
+					+ hdt->getDictionary()->getNpredicates()
+					- numPredicatesObjects);
 	out_summary << "# Ratio Shared Predicate-Object => PO / (P U O) : "
-			<< (double) numPredicatesObjects
-					/ (hdt->getDictionary()->getNobjects()
-							+ hdt->getDictionary()->getNpredicates()
-							- numPredicatesObjects) << endl;
+			<< ratioPO << endl;
+
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"ratioSharedPO> "<<ratioPO;
 
 	out_summary.close();
+	out_header_stats.close();
 
 	//erase summary file SO and Type content
 	ofstream out_summarySO;

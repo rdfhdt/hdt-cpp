@@ -320,6 +320,9 @@ void TriplesList::removeDuplicates(ProgressListener *listener) {
 }
 
 
+const string vocabSubject = "_:statistics";
+const string vocabPredicate = "http://purl.org/HDT/hdt#";
+
 /** Calculate Degree
  * @param path Description of the param.
  * @param maxSO Maximum SO in the dictionary.
@@ -502,8 +505,10 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 //#if 0
 	ofstream out;
 	ofstream out_summary;
+	ofstream out_header_stats;
 
 	out_summary.open((path + prefixSO + "_Summary").c_str(), ios::app); //append to the end
+	out_header_stats.open((path + prefixSO + "_HeaderStats").c_str(), ios::app); //append to the end
 
 	string direcc = ""; //predicate total degree is neither in nor out
 	if (order == SPO)
@@ -522,6 +527,10 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 		hDegree.dumpStr(out);
 		hDegree.dumpStr(out_summary, false);
 		out.close();
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateDegree_min> "<<hDegree.getMinValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateDegree_max> "<<hDegree.getMaxValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateDegree_average> "<<hDegree.getMean()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateDegree_deviation> "<<hDegree.getDeviation()<< endl;
 
 		out.open((path + prefixSO + "_inPredicate").c_str(), ios::out);
 		out << "# Predicate_in degree" << endl;
@@ -529,6 +538,10 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 		hDegreeLabeled.dumpStr(out);
 		hDegreeLabeled.dumpStr(out_summary, false);
 		out.close();
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateInDegree_min> "<<hDegreeLabeled.getMinValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateInDegree_max> "<<hDegreeLabeled.getMaxValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateInDegree_average> "<<hDegreeLabeled.getMean()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateInDegree_deviation> "<<hDegreeLabeled.getDeviation()<< endl;
 
 	} else if (order == POS) {
 		out.open((path + prefixSO + "_outPredicate").c_str(), ios::out);
@@ -537,6 +550,10 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 		hDegreeLabeled.dumpStr(out);
 		hDegreeLabeled.dumpStr(out_summary, false);
 		out.close();
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateOutDegree_min> "<<hDegreeLabeled.getMinValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateOutDegree_max> "<<hDegreeLabeled.getMaxValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateOutDegree_average> "<<hDegreeLabeled.getMean()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateOutDegree_deviation> "<<hDegreeLabeled.getDeviation()<< endl;
 	} else if (order == SOP) {
 		out.open((path + prefixSO + "_DirectOut").c_str(), ios::out);
 		out << "# Direct_out degree" << endl;
@@ -544,6 +561,10 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 		hDegreeLabeled.dumpStr(out);
 		hDegreeLabeled.dumpStr(out_summary, false);
 		out.close();
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"DirectOutDegree_min> "<<hDegreeLabeled.getMinValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"DirectOutDegree_max> "<<hDegreeLabeled.getMaxValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"DirectOutDegree_average> "<<hDegreeLabeled.getMean()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"DirectOutDegree_deviation> "<<hDegreeLabeled.getDeviation()<< endl;
 	} else if (order == OSP) {
 		out.open((path + prefixSO + "_DirectIn").c_str(), ios::out);
 		out << "# Direct_in degree" << endl;
@@ -551,6 +572,10 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 		hDegreeLabeled.dumpStr(out);
 		hDegreeLabeled.dumpStr(out_summary, false);
 		out.close();
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"DirectInDegree_min> "<<hDegreeLabeled.getMinValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"DirectInDegree_max> "<<hDegreeLabeled.getMaxValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"DirectInDegree_average> "<<hDegreeLabeled.getMean()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"DirectInDegree_deviation> "<<hDegreeLabeled.getDeviation()<< endl;
 	} else {
 		string direcc = (order == SPO) ? "out" : "in";
 		//	cout << endl << "Degree" << endl;
@@ -560,6 +585,10 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 		hDegree.dumpStr(out);
 		hDegree.dumpStr(out_summary, false);
 		out.close();
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< direcc <<"Degree_min> "<<hDegree.getMinValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< direcc <<"Degree_max> "<<hDegree.getMaxValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< direcc <<"Degree_average> "<<hDegree.getMean()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< direcc <<"Degree_deviation> "<<hDegree.getDeviation()<< endl;
 
 		out.open((path + prefixSO + "_p" + direcc).c_str(), ios::out);
 		out << "# Partial " << direcc << " degree" << endl;
@@ -567,6 +596,11 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 		hDegreePartial.dumpStr(out);
 		hDegreePartial.dumpStr(out_summary, false);
 		out.close();
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Partial"<< direcc <<"Degree_min> "<<hDegreePartial.getMinValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Partial"<<direcc <<"Degree_max> "<<hDegreePartial.getMaxValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Partial"<<direcc <<"Degree_average> "<<hDegreePartial.getMean()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Partial"<<direcc <<"Degree_deviation> "<<hDegreePartial.getDeviation()<< endl;
+
 		//cout << endl << "Labeled degree" << endl;
 		out.open((path + prefixSO + "_l" + direcc).c_str(), ios::out);
 		out << "# Labeled" << direcc << " degree" << endl;
@@ -574,6 +608,10 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 		hDegreeLabeled.dumpStr(out);
 		hDegreeLabeled.dumpStr(out_summary, false);
 		out.close();
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Labeled"<< direcc <<"Degree_min> "<<hDegreeLabeled.getMinValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Labeled"<<direcc <<"Degree_max> "<<hDegreeLabeled.getMaxValue()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Labeled"<<direcc <<"Degree_average> "<<hDegreeLabeled.getMean()<< endl;
+		out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Labeled"<<direcc <<"Degree_deviation> "<<hDegreeLabeled.getDeviation()<< endl;
 
 		if (direcc == "out") { //Calculate listsofPredicates values:
 
@@ -592,8 +630,14 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 			predicateFreqs.dumpStr(out);
 			predicateFreqs.dumpStr(out_summary, false);
 			out.close();
+			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateLists> "<<predicateFreqs.getNumber()<< endl;
+			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateLists_max> "<<predicateFreqs.getMaxValue()<< endl;
+			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateLists_average> "<<predicateFreqs.getMean()<< endl;
+			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"PredicateLists_deviation> "<<predicateFreqs.getDeviation()<< endl;
+
 			out_summary << "* Number of Predicates in P List" << endl;
 			out_summary << "# Total: " << numberofYs << endl;
+
 
 			Histogram predicateHist(0, maxval, nbins);
 			for (std::map<int, int>::iterator it = predicateinlists.begin();
@@ -606,11 +650,15 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 			predicateHist.end();
 			out_summary << "* Lists per Predicate" << endl;
 			predicateHist.dumpStr(out_summary, false);
+			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"ListsperPredicate_max> "<<predicateHist.getMaxValue()<< endl;
+			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"ListsperPredicate_average> "<<predicateHist.getMean()<< endl;
+			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"ListsperPredicate_deviation> "<<predicateHist.getDeviation()<< endl;
 
 		}
 
 	}
 	out_summary.close();
+	out_header_stats.close();
 //#endif
 
 }
