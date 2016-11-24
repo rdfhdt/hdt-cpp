@@ -149,7 +149,7 @@ void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, 
 	}
 	//this->mapping = ci.getUint("mapping");
 	this->mapping = MAPPING2;
-	this->sizeStrings = ci.getUint("sizeStrings");
+	//this->sizeStrings = ci.getUint("sizeStrings");
 
 	IntermediateListener iListener(listener);
 
