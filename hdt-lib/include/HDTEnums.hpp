@@ -138,6 +138,7 @@ enum RDFNotation {
 	 * @see <a href="http://sw.deri.org/2008/07/n-quads/">Wikipedia</a>
 	 */
 	NQUAD,
+	JSON,
 };
 
 enum ResultEstimationType {
