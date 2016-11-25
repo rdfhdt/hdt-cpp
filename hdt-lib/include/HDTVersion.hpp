@@ -49,8 +49,8 @@ namespace HDTVersion {
       return std::string("v") + HDT_VERSION + delimiter + INDEX_VERSION + delimiter + RELEASE_VERSION;
     };
 
-    inline std::string get_index_suffix() {
-      return std::string(".index.v") + HDT_VERSION + INDEX_VERSION;
+    inline std::string get_index_suffix(std::string delimiter) {
+      return std::string(".index.v") + HDT_VERSION + delimiter+INDEX_VERSION;
     };
 }
 }

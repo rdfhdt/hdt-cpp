@@ -745,6 +745,7 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     count+=controlInformation.load(&ptr[count], ptrMax);
     std::string hdtFormat = controlInformation.getFormat();
     //if(hdtFormat!=HDTVocabulary::HDT_CONTAINER) {
+    cout<<HDTVocabulary::HDT_CONTAINER_BASE<<endl;
     if (hdtFormat.find(HDTVocabulary::HDT_CONTAINER_BASE) == std::string::npos) {
     	throw std::runtime_error("This software (v" + std::string(HDT_VERSION) + ".x.x) cannot open this version of HDT File (" + hdtFormat + ")");
     }
@@ -780,7 +781,7 @@ size_t BasicHDT::loadMMapIndex(ProgressListener *listener) {
     }
 
     // Get path
-    string indexFile(fileName + HDTVersion::get_index_suffix());
+    string indexFile(fileName + HDTVersion::get_index_suffix("-"));
 
     mappedIndex = new FileMap(indexFile.c_str());
 
@@ -838,10 +839,14 @@ void BasicHDT::saveToHDT(std::ostream & output, ProgressListener *listener)
 
 void BasicHDT::loadOrCreateIndex(ProgressListener *listener) {
 
-	string indexname = this->fileName + HDTVersion::get_index_suffix();
+	string indexname = this->fileName + HDTVersion::get_index_suffix("-");
 
 	ifstream in(indexname.c_str(), ios::binary);
-
+	// backward compatibility
+	if(!in.good()) {
+		 indexname = this->fileName+".index";
+		 in.open(indexname.c_str(), ios::binary);
+	}
 	if(in.good()) {
         if(mappedHDT) {
             // Map
@@ -869,7 +874,7 @@ void BasicHDT::saveIndex(ProgressListener *listener) {
 		return;
 	}
 
-	string indexname = this->fileName + HDTVersion::get_index_suffix();
+	string indexname = this->fileName + HDTVersion::get_index_suffix("-");
 	ofstream out(indexname.c_str(), ios::binary);
 	ControlInformation ci;
 	triples->saveIndex(out, ci, listener);
