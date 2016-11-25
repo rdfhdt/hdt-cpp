@@ -29,6 +29,7 @@
  *
  */
 
+#include <HDTVersion.hpp>
 #include <HDT.hpp>
 #include <HDTManager.hpp>
 #include <stdexcept>
@@ -51,6 +52,7 @@ void help() {
 	cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
 	cout << "\t-f\t<format>\tFormat of the RDF input (ntriples, nquad, n3, turtle, rdfxml)" << endl;
 	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
+	cout << "\t-V\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
@@ -67,7 +69,7 @@ int main(int argc, char **argv) {
 	RDFNotation notation = NTRIPLES;
 
 	int c;
-	while( (c = getopt(argc,argv,"c:o:vf:B:i"))!=-1) {
+	while( (c = getopt(argc,argv,"c:o:vf:B:i:V"))!=-1) {
 		switch(c) {
 		case 'c':
 			configFile = optarg;
@@ -90,6 +92,9 @@ int main(int argc, char **argv) {
 		case 'i':
 			generateIndex=true;
 			break;
+		case 'V':
+			cout << HDTVersion::get_version_string(".") << endl;
+			return 0;
 		default:
 			cout << "ERROR: Unknown option" << endl;
 			help();

@@ -29,6 +29,7 @@
  *
  */
 
+#include <HDTVersion.hpp>
 #include <HDT.hpp>
 #include <HDTManager.hpp>
 
@@ -44,6 +45,7 @@ void help() {
 	cout << "$ hdt2rdf [options] <HDT input file> <RDF output file> " << endl;
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-f\t<format>\tRDF Format of the output" << endl;
+	cout << "\t-V\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 
 }
@@ -53,12 +55,15 @@ int main(int argc, char **argv) {
 	string rdfFormat, inputFile, outputFile;
 	RDFNotation notation = NTRIPLES;
 
-	while( (c = getopt(argc,argv,"f:"))!=-1) {
+	while( (c = getopt(argc,argv,"f:V:"))!=-1) {
 		switch(c) {
 		case 'f':
 			rdfFormat = optarg;
 			cout << "Format: " << rdfFormat << endl;
 			break;
+		case 'V':
+			cout << HDTVersion::get_version_string(".") << endl;
+			return 0;
 		default:
 			cout << "ERROR: Unknown option" << endl;
 			help();
