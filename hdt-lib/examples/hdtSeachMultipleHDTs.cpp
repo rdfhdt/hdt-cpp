@@ -59,17 +59,19 @@ bool hasEnding(std::string fullString, std::string ending) {
 int getdir(std::string dir, std::vector<std::string> &files) {
 	DIR *dp;
 	struct dirent *dirp;
-	if ((dp = opendir(dir.c_str())) == NULL) {
-		std::cerr << "Error opening " << dir << std::endl;
-	}
+	if ((dp = opendir(dir.c_str())) != NULL) {
 
-	while ((dirp = readdir(dp)) != NULL) {
-		string fileName(dirp->d_name);
-		if (hasEnding(fileName, ".hdt")) {
+		while ((dirp = readdir(dp)) != NULL) {
+			string fileName(dirp->d_name);
 			if (dir.substr(dir.length() - 1) != "/")
 				dir = dir + "/";
-			files.push_back(dir + fileName);
-			cout << dir + std::string(dirp->d_name) << endl;
+			fileName = dir + fileName;
+			if (hasEnding(fileName, ".hdt")) {
+				files.push_back(fileName);
+				cout << dir + std::string(dirp->d_name) << endl;
+			} else if (string(dirp->d_name)!="."&&string(dirp->d_name)!="..") {
+				getdir(fileName, files);
+			}
 		}
 	}
 	closedir(dp);
@@ -114,7 +116,7 @@ void warmupQueries() {
 
 	cout << "WARMUP all... " << endl;
 
-	// Enumerate all triples matching a pattern ("" means any)
+// Enumerate all triples matching a pattern ("" means any)
 	IteratorTripleString *it = multipleHDT->search("", "", "");
 	int count = 0;
 	while (it->hasNext() && count < 10000) {
