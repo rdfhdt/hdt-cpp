@@ -76,6 +76,7 @@ public:
 	std::string stopRealStr();
 
 	static std::string toHuman(unsigned long long time);
+	double toMillis();
 
 	friend std::ostream &operator<<(std::ostream &stream, StopWatch &sw);
 };

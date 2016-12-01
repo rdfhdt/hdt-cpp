@@ -189,3 +189,12 @@ std::string StopWatch::toHuman(unsigned long long time) {
 	}
 	return out.str();
 }
+
+double StopWatch::toMillis() {
+	stop();
+
+	unsigned long long time = getReal();
+
+	double ms = ((double)time)/1000;
+	return ms;
+}
