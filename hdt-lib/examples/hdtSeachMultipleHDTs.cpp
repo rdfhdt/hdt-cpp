@@ -46,6 +46,16 @@ void help() {
 	cout << "\t-d\t\t\tDebug" << endl;
 }
 
+bool hasEnding(std::string fullString, std::string ending) {
+	if (fullString.length() >= ending.length()) {
+		return (0
+				== fullString.compare(fullString.length() - ending.length(),
+						ending.length(), ending));
+	} else {
+		return false;
+	}
+}
+
 int getdir(std::string dir, std::vector<std::string> &files) {
 	DIR *dp;
 	struct dirent *dirp;
@@ -54,7 +64,13 @@ int getdir(std::string dir, std::vector<std::string> &files) {
 	}
 
 	while ((dirp = readdir(dp)) != NULL) {
-		files.push_back(dir + std::string(dirp->d_name));
+		string fileName(dirp->d_name);
+		if (hasEnding(fileName, ".hdt")) {
+			if (dir.substr(dir.length() - 1) != "/")
+				dir = dir + "/";
+			files.push_back(dir + fileName);
+			cout << dir + std::string(dirp->d_name) << endl;
+		}
 	}
 	closedir(dp);
 	return 0;
@@ -120,30 +136,27 @@ void iterate(MultipleHDT *hdt, char *query, ostream &out, bool measure) {
 	const char *subj = tripleString.getSubject().c_str();
 	const char *pred = tripleString.getPredicate().c_str();
 	const char *obj = tripleString.getObject().c_str();
-	if (subj[0]== '?') {
+	if (subj[0] == '?') {
 		subj = "";
-	}
-	else if (subj[0]== '<' && subj[strlen(subj)-1]=='>') {
+	} else if (subj[0] == '<' && subj[strlen(subj) - 1] == '>') {
 		string subjTemp(subj);
-		subjTemp = subjTemp.substr(1,subjTemp.size()-2);
+		subjTemp = subjTemp.substr(1, subjTemp.size() - 2);
 		subj = subjTemp.c_str();
 	}
-	if (pred[0]== '?') {
+	if (pred[0] == '?') {
 		pred = "";
-	}
-	else if (pred[0]== '<' && pred[strlen(pred)-1]=='>') {
+	} else if (pred[0] == '<' && pred[strlen(pred) - 1] == '>') {
 		string predTemp(pred);
-		predTemp = predTemp.substr(1,predTemp.size()-2);
+		predTemp = predTemp.substr(1, predTemp.size() - 2);
 		pred = predTemp.c_str();
 	}
-	if (obj[0]=='?') {
+	if (obj[0] == '?') {
 		obj = "";
+	} else if (obj[0] == '<' && obj[strlen(obj) - 1] == '>') {
+		string objTemp(obj);
+		objTemp = objTemp.substr(1, objTemp.size() - 2);
+		obj = objTemp.c_str();
 	}
-	else if (obj[0]== '<' && obj[strlen(obj)-1]=='>') {
-			string objTemp(obj);
-			objTemp = objTemp.substr(1,objTemp.size()-2);
-			obj = objTemp.c_str();
-		}
 
 #if 0
 	cout << "Subject: |" << subj <<"|"<< endl;
@@ -153,7 +166,7 @@ void iterate(MultipleHDT *hdt, char *query, ostream &out, bool measure) {
 
 	try {
 		TripleString ts;
-		IteratorTripleString *it = hdt->search(subj, pred, obj,NULL);
+		IteratorTripleString *it = hdt->search(subj, pred, obj, NULL);
 
 		StopWatch st;
 		unsigned int numTriples = 0;
@@ -209,6 +222,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	listFile = argv[optind];
+	cout << listFile << endl;
 
 	ostream *out;
 	ofstream outF;
@@ -224,7 +238,7 @@ int main(int argc, char *argv[]) {
 	if (stat(listFile.c_str(), &s) == 0) {
 		if (s.st_mode & S_IFDIR) {
 			//it's a directory
-			getdir(folder, files);
+			getdir(listFile, files);
 		} else if (s.st_mode & S_IFREG) {
 			string line;
 			std::ifstream infile(listFile.c_str());
