@@ -17,23 +17,6 @@
 
 namespace hdt {
 
-RDFParserPull *RDFParserPull::getParserPull(std::istream &stream, RDFNotation notation) {
-	if(notation==NTRIPLES) {
-		return new RDFParserNtriples(stream,notation);
-	} else {
-		throw ParseException("No Parser available for input RDF Format N-Triples");
-	}
-}
-
-RDFParserPull *RDFParserPull::getParserPull(const char *fileName, RDFNotation notation) {
-	if(notation==NTRIPLES) {
-		return new RDFParserNtriples(fileName,notation);
-	} else {
-		throw ParseException("No Parser available for input RDF Format N-Triples");
-	}
-}
-
-
 RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
 #ifdef HAVE_SERD
     if(notation==TURTLE || notation==NTRIPLES) {
