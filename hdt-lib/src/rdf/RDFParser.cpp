@@ -11,7 +11,6 @@
 #endif
 #include "RDFParser.hpp"
 #include "RDFParserNtriples.hpp"
-#include "RDFParserNtriplesCallback.hpp"
 #ifdef HAVE_SERD
 #include "RDFParserSerd.hpp"
 #endif
@@ -37,19 +36,15 @@ RDFParserPull *RDFParserPull::getParserPull(const char *fileName, RDFNotation no
 
 RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
 #ifdef HAVE_SERD
-    if(notation==TURTLE) {
+    if(notation==TURTLE || notation==NTRIPLES) {
         return new RDFParserSerd();
     }
 #endif
-	if(notation==NTRIPLES) {
-		return new RDFParserNtriplesCallback();
-	} else {
 #ifdef HAVE_RAPTOR
 		return new RDFParserRaptorCallback();
 #else
 		throw ParseException("No Parser available for input RDF Format");
 #endif
-	}
 }
 
 }
