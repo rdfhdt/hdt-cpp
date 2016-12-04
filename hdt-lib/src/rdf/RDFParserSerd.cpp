@@ -57,7 +57,8 @@ SerdStatus hdtserd_error(void* handle, const SerdError* error) {
     //RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
     //raptorParser->error.append("File: "+e->filename+" Line "+e->line+" Col "+e->col+" Parsing Error: "+e->fmt);
     fprintf(stderr, error->fmt, error->args);
-    return SERD_SUCCESS;
+    throw std::runtime_error("Error parsing input.");
+    return SERD_ERR_BAD_SYNTAX;
 }
 
 /**
