@@ -35,8 +35,10 @@ before_install:
   # Download and install Raptor
   - curl -s http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar -xz
   - pushd raptor2-* && ./configure && make -j2 && sudo make install && popd
-  # Test build environment
+  # Set up build environment
   - $HDT_CPP --version
+  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
 script:
   - cd hdt-lib
   - make -j2 CPP=$HDT_CPP
+  - tools/hdtSearch -q 0 data/literals.hdt
