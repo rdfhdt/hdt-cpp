@@ -6,6 +6,8 @@ os:
 compiler:
   - clang
   - gcc
+env:
+  - LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
 before_install:
   # SERD
   - wget http://download.drobilla.net/serd-0.24.0.tar.bz2
@@ -18,3 +20,4 @@ before_install:
 script:
   - cd hdt-lib
   - make -j2
+  - tools/hdtSearch -q 0 data/literals.hdt
