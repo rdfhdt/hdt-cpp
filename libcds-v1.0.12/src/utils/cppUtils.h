@@ -23,10 +23,15 @@ namespace cds_utils
 	}
 
 	template <typename T> T loadValue(istream & in) {
-        //assert(in.good());
-	if(!in.good()) {
+    std::cerr << "\nloadValue\n";
+    std::cerr << " good()=" << in.good();
+    if(!in.good()) {
+      std::cerr << " eof()="  << in.eof()
+                << " fail()=" << in.fail()
+                << " bad()="  << in.bad();
 		throw "Input not ready";
-	}	
+    }
+    std::cerr << '\n';
 		T ret;
 		in.read((char*)&ret,sizeof(T));
         //cout << "loadValue: " << in.tellg() << " " << sizeof(T) << " " << ret << endl;

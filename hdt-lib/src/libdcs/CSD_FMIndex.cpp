@@ -287,20 +287,83 @@ void CSD_FMIndex::save(ostream &fp) {
 
 }
 
-size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
-{   
-    std::stringstream localStream;
-    localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
+struct membuf: std::streambuf {
+    membuf(char const* base, size_t size) {
+        char* p(const_cast<char*>(base));
+        this->setg(p, p, p + size);
+    }
+};
+struct imemstream: virtual membuf, std::istream {
+    imemstream(char const* base, size_t size)
+        : membuf(base, size)
+        , std::istream(static_cast<std::streambuf*>(this)) {
+    }
+};
 
-    localStream.get(); // Load expects the type already read.
+size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
+{
+    #if 0 // Alternative implementation without pubsetbuf
+      imemstream localStream((char*)ptr, ptrMax-ptr);
+    #else
+      std::stringstream localStream;
+      localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
+    #endif
+    localStream.exceptions( std::ifstream::failbit | std::ifstream::badbit );
+
+    std::cerr << "SD_FMIndex::load initialized stream "
+              << static_cast<const void*>(ptr) << " " << (ptrMax-ptr) << "\n"
+              << " width()="     << localStream.width()
+              << " precision()=" << localStream.precision()
+              << " tellg()="     << localStream.tellg()
+              << '\n';
+
+    std::cerr << " good()=" << localStream.good();
+    if(!localStream.good()) {
+      std::cerr << " eof()="  << localStream.eof()
+                << " fail()=" << localStream.fail()
+                << " bad()="  << localStream.bad();
+    }
+    std::cerr << '\n';
+
+    try {
+      std::cerr << "get " << localStream.get() << "\n";
+    }
+    catch (std::ifstream::failure e) {
+      std::cerr << "failed with exception: " << e.what() << "\n";
+    }
+
+    std::cerr << " good()=" << localStream.good();
+    if(!localStream.good()) {
+      std::cerr << " eof()="  << localStream.eof()
+                << " fail()=" << localStream.fail()
+                << " bad()="  << localStream.bad();
+    }
+    std::cerr << '\n';
 
     this->type = FMINDEX;
+    std::cerr << "loading numstrings ";
     this->numstrings = loadValue<uint32_t>(localStream);
+    std::cerr << " value: " << this->numstrings << "\n";
+    std::cerr << "loading tlength ";
     this->tlength = loadValue<uint32_t>(localStream);
+    std::cerr << " value: " << this->tlength << "\n";
+    std::cerr << "loading maxlength ";
     this->maxlength = loadValue<uint32_t>(localStream);
+    std::cerr << " value: " << this->maxlength << "\n";
+    std::cerr << "loading use_sampling ";
     this->use_sampling = loadValue<bool>(localStream);
-    if (this->use_sampling)
-        this->separators = BitSequence::load(localStream);
+    std::cerr << " value: " << this->use_sampling << "\n";
+    if (this->use_sampling) {
+        std::cerr << "loading separators ";
+        try {
+          this->separators = BitSequence::load(localStream);
+          std::cerr << " value: " << this->separators << "\n";
+        }
+        catch (std::ifstream::failure e) {
+          std::cerr << "Exception:" << e.what() << "\n";
+        }
+    }
+    std::cerr << "loading fm_index ";
     this->fm_index = SSA::load(localStream);
 
     return localStream.tellg();
