@@ -3,13 +3,31 @@ language: cpp
 matrix:
   include:
     - os: osx
-      compiler: clang
+      env: export HDT_CPP=clang++
     - os: osx
-      compiler: gcc
+      env: export HDT_CPP=g++
     - os: linux
-      compiler: clang
+      env: export HDT_CPP=clang++
     - os: linux
-      compiler: gcc
+      env: export HDT_CPP=g++
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8']
+      env: export HDT_CPP=g++-4.8
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5']
+      env: export HDT_CPP=g++-5
+    - os: linux
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6']
+      env: export HDT_CPP=g++-6
 before_install:
   # SERD
   - wget http://download.drobilla.net/serd-0.24.0.tar.bz2
@@ -19,6 +37,8 @@ before_install:
   - wget http://download.librdf.org/source/raptor2-2.0.15.tar.gz
   - tar -xzvf raptor2-2.0.15.tar.gz
   - pushd raptor2-2.0.15 && ./configure && make -j2 && sudo make install && popd
+  # Test build environment
+  - $HDT_CPP --version
 script:
   - cd hdt-lib
-  - make -j2
+  - make -j2 CPP=$HDT_CPP
