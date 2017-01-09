@@ -1,11 +1,15 @@
 sudo: true
 language: cpp
-os:
-  - linux
-  - osx
-compiler:
-  - clang
-  - gcc
+matrix:
+  include:
+    - os: osx
+      compiler: clang
+    - os: osx
+      compiler: gcc
+    - os: linux
+      compiler: clang
+    - os: linux
+      compiler: gcc
 before_install:
   # SERD
   - wget http://download.drobilla.net/serd-0.24.0.tar.bz2
