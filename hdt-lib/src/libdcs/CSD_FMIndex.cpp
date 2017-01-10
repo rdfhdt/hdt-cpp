@@ -304,6 +304,9 @@ size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
 {
     #if 0 // Alternative implementation without pubsetbuf
       imemstream localStream((char*)ptr, ptrMax-ptr);
+    #elif 1 // Alternative 2
+      membuf sbuf((char*)ptr, ptrMax-ptr);
+      std::istream localStream(&sbuf);
     #else
       std::stringstream localStream;
       localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
