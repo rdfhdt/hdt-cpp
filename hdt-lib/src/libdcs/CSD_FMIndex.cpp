@@ -287,11 +287,9 @@ void CSD_FMIndex::save(ostream &fp) {
 
 }
 
-size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
-{   
-    std::stringstream localStream;
-    localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
-
+size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax) {
+    membuf sbuf((char*)ptr, ptrMax-ptr);
+    std::istream localStream(&sbuf);
     localStream.get(); // Load expects the type already read.
 
     this->type = FMINDEX;
