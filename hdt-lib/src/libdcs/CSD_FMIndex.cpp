@@ -287,11 +287,72 @@ void CSD_FMIndex::save(ostream &fp) {
 
 }
 
-size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax)
-{   
-    std::stringstream localStream;
-    localStream.rdbuf()->pubsetbuf((char*)ptr, ptrMax-ptr);
+struct char_array_buffer : public std::streambuf {
+public:
+	char_array_buffer(const char *begin, const char *end) :
+		begin_(begin), end_(end), current_(begin_) {
+		assert(std::less_equal<const char *>()(begin_, end_));
+	};
 
+private:
+	streampos seekoff(streamoff off, ios_base::seekdir way, ios_base::openmode which) {
+		assert(which == ios_base::in);
+		const char* new_pos = 0;
+		if (way == ios_base::beg)
+			new_pos = begin_ + off;
+		else if (way == ios_base::cur)
+			new_pos = current_ + off;
+		else if (way == ios_base::end)
+			new_pos = end_ + off;
+		if (new_pos < begin_ || new_pos > end_)
+			return -1;
+		current_ = new_pos;
+		return current_ - begin_;
+	};
+
+	streampos seekpos(streampos sp, ios_base::openmode which) {
+		return seekoff(sp, ios_base::beg, which);
+	};
+
+	int_type underflow() {
+		if (current_ == end_)
+			return traits_type::eof();
+
+		return traits_type::to_int_type(*current_);
+	};
+
+	int_type uflow() {
+		if (current_ == end_)
+			return traits_type::eof();
+
+		return traits_type::to_int_type(*current_++);
+	};
+
+	int_type pbackfail(int_type ch) {
+		if (current_ == begin_ || (ch != traits_type::eof() && ch != current_[-1]))
+			return traits_type::eof();
+
+		return traits_type::to_int_type(*--current_);
+	};
+
+	std::streamsize showmanyc() {
+		assert(std::less_equal<const char *>()(current_, end_));
+		return end_ - current_;
+	}
+
+	// copying not allowed
+	char_array_buffer(const char_array_buffer &);
+	char_array_buffer &operator= (const char_array_buffer &);
+
+private:
+	const char * const begin_;
+	const char * const end_;
+	const char * current_;
+};
+
+size_t CSD_FMIndex::load(unsigned char *ptr, unsigned char *ptrMax) {
+    char_array_buffer sbuf((char*)ptr, (char*)ptrMax);
+    std::istream localStream(&sbuf);
     localStream.get(); // Load expects the type already read.
 
     this->type = FMINDEX;
