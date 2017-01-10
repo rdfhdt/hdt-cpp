@@ -29,14 +29,12 @@ matrix:
           packages: ['g++-6']
       env: export HDT_CPP=g++-6
 before_install:
-  # SERD
-  - wget http://download.drobilla.net/serd-0.24.0.tar.bz2
-  - tar -xjvf serd-0.24.0.tar.bz2
-  - pushd serd-0.24.0 && ./waf configure && ./waf && sudo ./waf install && popd
-  # Raptor
-  - wget http://download.librdf.org/source/raptor2-2.0.15.tar.gz
-  - tar -xzvf raptor2-2.0.15.tar.gz
-  - pushd raptor2-2.0.15 && ./configure && make -j2 && sudo make install && popd
+  # Download and install SERD
+  - curl -s http://download.drobilla.net/serd-0.24.0.tar.bz2 | tar -xj
+  - pushd serd-* && ./waf configure && ./waf && sudo ./waf install && popd
+  # Download and install Raptor
+  - curl -s http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar -xz
+  - pushd raptor2-* && ./configure && make -j2 && sudo make install && popd
   # Test build environment
   - $HDT_CPP --version
 script:
