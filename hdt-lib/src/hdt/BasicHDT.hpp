@@ -28,13 +28,13 @@
 #ifndef BASICHDT_HPP_
 #define BASICHDT_HPP_
 
+#include <functional>
 #include <HDTSpecification.hpp>
 #include <HDT.hpp>
 
 #include "../util/filemap.h"
 
 namespace hdt {
-
 
 class BasicHDT : public HDT {
 private:
@@ -52,8 +52,12 @@ private:
 	ModifiableDictionary *getLoadDictionary();
 	ModifiableTriples *getLoadTriples();
 
+	void loadDictionary(std::function<void(RDFCallback&)> tripleLoader, ProgressListener *listener);
 	void loadDictionary(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
+	void loadDictionary(IteratorTripleString* triples, ProgressListener *listener=NULL);
+	void loadTriples(std::function<void(RDFCallback&)> tripleLoader, ProgressListener *listener);
 	void loadTriples(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
+	void loadTriples(IteratorTripleString* triples, ProgressListener *listener=NULL);
 
 	void addDictionaryFromHDT(const char *fileName, ModifiableDictionary *dict, ProgressListener *listener=NULL);
 	void loadDictionaryFromHDTs(const char** fileName, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
@@ -87,6 +91,8 @@ public:
 	Triples *getTriples();
 
 	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
+
+	void loadFromTriples(IteratorTripleString* triples, string baseUri, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
