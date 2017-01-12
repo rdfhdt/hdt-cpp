@@ -39,7 +39,15 @@ before_install:
   - $HDT_CPP --version
   - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
 script:
+  # Build standalone binaries
   - cd hdt-lib
   - make -j2 CPP=$HDT_CPP
+  # Make and run selected tests
   - make -j2 tests CPP=$HDT_CPP
+  - tests/bit375 > /dev/null
+  - tests/bitutiltest > /dev/null
+  - tests/listener > /dev/null
+  - tests/logarr > /dev/null
+  - tests/streamtest > /dev/null
+  - tests/testmax > /dev/null
   - tools/hdtSearch -q 0 data/literals.hdt
