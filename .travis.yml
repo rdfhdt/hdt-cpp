@@ -41,4 +41,5 @@ before_install:
 script:
   - cd hdt-lib
   - make -j2 CPP=$HDT_CPP
+  - make -j2 tests CPP=$HDT_CPP
   - tools/hdtSearch -q 0 data/literals.hdt
