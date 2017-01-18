@@ -1,4 +1,3 @@
-sudo: true
 language: cpp
 matrix:
   include:
@@ -29,16 +28,18 @@ matrix:
           packages: ['g++-6']
       env: export HDT_CPP=g++-6
 before_install:
+  - pushd $HOME
   # Download and install SERD
   - curl -s http://download.drobilla.net/serd-0.24.0.tar.bz2 | tar -xj
-  - pushd serd-* && ./waf configure && ./waf && sudo ./waf install && popd
+  - pushd serd-* && ./waf configure --prefix=$HOME/local && ./waf && ./waf install && popd
   # Download and install Raptor
   - curl -s http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar -xz
-  - pushd raptor2-* && ./configure && make -j2 && sudo make install && popd
+  - pushd raptor2-* && ./configure --prefix=$HOME/local && make -j2 && make install && popd
   # Set up build environment
   - $HDT_CPP --version
-  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
+  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/local/lib"
+  - popd
 script:
   - cd hdt-lib
-  - make -j2 CPP=$HDT_CPP
+  - make -j2 CPP=$HDT_CPP LDFLAGS="-I$HOME/local/include -L$HOME/local/lib"
   - tools/hdtSearch -q 0 data/literals.hdt
