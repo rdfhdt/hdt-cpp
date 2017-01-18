@@ -98,7 +98,7 @@ tests: libhdt.a $(TESTS)
 
 %.o: %.cpp $(HEADERS) Makefile
 	@echo " [HDT] Compiling $<"
-	@$(CPP) $(INCLUDES) $(FLAGS) $(DEFINES) -c $< -o $@
+	@$(CPP) $(INCLUDES) $(FLAGS) $(DEFINES) $(LDFLAGS) -c $< -o $@
 
 libhdt.a: $(OBJECTS) $(HEADERS)
 	@echo " [HDT] Linking libhdt.a"
