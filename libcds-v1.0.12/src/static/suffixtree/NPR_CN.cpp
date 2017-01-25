@@ -356,7 +356,7 @@ namespace cds_static
 			return next_ret*b + get_field_64(min_pos[0], bits_b, next_ret);
 
 		/*this never happen*/
-		cout << "Error" << endl;
+		cerr << "Error" << endl;
 		return 0;
 	}
 
@@ -418,7 +418,7 @@ namespace cds_static
 			return next_ret*b + get_field_64(min_pos[r+1], bits_b, next_ret);
 		}
 		/*Error if the code reach this return*/
-		//cout << "Error" << endl;
+		//cerr << "Error" << endl;
 		return (size_t)-1;
 	}
 

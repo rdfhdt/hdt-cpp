@@ -59,7 +59,7 @@ void HDTOperation::execute() {
             // TODO: Detect whether .hdtcache and .hdt.index exist to be more accurate with the progress
 #if 1
             hdt = hdt::HDTManager::mapIndexedHDT(fileName.toAscii(), &iListener);
-#else            
+#else
             hdt = hdt::HDTManager::loadIndexedHDT(fileName.toAscii(), &iListener);
 #endif
             iListener.setRange(70, 100);
@@ -107,11 +107,11 @@ void HDTOperation::execute() {
         }
         emit processFinished(0);
     } catch (char* err) {
-        cout << "Error caught: " << err << endl;
+        cerr << "Error caught: " << err << endl;
         errorMessage = err;
         emit processFinished(1);
     } catch (const char* err) {
-        cout << "Error caught: " << err << endl;
+        cerr << "Error caught: " << err << endl;
         errorMessage = (char *)err;
         emit processFinished(1);
     }
@@ -122,7 +122,7 @@ void HDTOperation::execute() {
 void HDTOperation::notifyProgress(float level, const char *section) {
 #ifdef OPERATION_CANCELABLE
     if(isCancelled) {
-        cout << "Throwing exception to cancel" << endl;
+        cerr << "Throwing exception to cancel" << endl;
         throw (char *)"Cancelled by user";
     }
 #endif
@@ -136,7 +136,7 @@ void HDTOperation::notifyProgress(float task, float level, const char *section)
 {
 #ifdef OPERATION_CANCELABLE
     if(isCancelled) {
-        cout << "Throwing exception to cancel" << endl;
+        cerr << "Throwing exception to cancel" << endl;
         throw (char *)"Cancelled by user";
     }
 #endif
@@ -270,15 +270,12 @@ int HDTOperation::exec()
 
 void HDTOperation::cancel()
 {
-    //cout << "Operation cancelled" << endl;
+    //cerr << "Operation cancelled" << endl;
     isCancelled = true;
 }
 
 void HDTOperation::finished()
 {
-    cout << "Finished! :)" << endl;
+    cerr << "Finished! :)" << endl;
     emit processFinished(0);
 }
-
-
-
