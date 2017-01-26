@@ -59,20 +59,20 @@ int main(int argc, char **argv) {
 		switch(c) {
 		case 'f':
 			rdfFormat = optarg;
-			cout << "Format: " << rdfFormat << endl;
+			cerr << "Format: " << rdfFormat << endl;
 			break;
 		case 'V':
-			cout << HDTVersion::get_version_string(".") << endl;
+			cerr << HDTVersion::get_version_string(".") << endl;
 			return 0;
 		default:
-			cout << "ERROR: Unknown option" << endl;
+			cerr << "ERROR: Unknown option" << endl;
 			help();
 			return 1;
 		}
 	}
 
 	if(argc-optind<2) {
-		cout << "ERROR: You must supply an input and output" << endl << endl;
+		cerr << "ERROR: You must supply an input and output" << endl << endl;
 		help();
 		return 1;
 	}
@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 		} else if(rdfFormat=="rdfxml") {
 			notation = XML;
 		} else {
-			cout << "ERROR: The RDF output format must be one of: (ntriples, n3, turtle, rdfxml, json)" << endl;
+			cerr << "ERROR: The RDF output format must be one of: (ntriples, n3, turtle, rdfxml, json)" << endl;
 			help();
 			return 1;
 		}
@@ -100,13 +100,13 @@ int main(int argc, char **argv) {
 	outputFile = argv[optind+1];
 
 	if(inputFile=="") {
-		cout << "ERROR: You must supply an HDT input file" << endl << endl;
+		cerr << "ERROR: You must supply an HDT input file" << endl << endl;
 		help();
 		return 1;
 	}
 
 	if(outputFile=="") {
-		cout << "ERROR: You must supply an RDF output file" << endl << endl;
+		cerr << "ERROR: You must supply an RDF output file" << endl << endl;
 		help();
 		return 1;
 	}

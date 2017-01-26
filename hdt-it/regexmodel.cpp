@@ -79,9 +79,9 @@ QVariant RegexModel::data(const QModelIndex &index, int role) const
             }
 
         } catch (char *e) {
-            cout << "Error accesing dictionary: " << e << endl;
+            cerr << "Error accesing dictionary: " << e << endl;
         } catch (const char *e) {
-            cout << "Error accesing dictionary: " << e << endl;
+            cerr << "Error accesing dictionary: " << e << endl;
         }
         return QVariant();
 

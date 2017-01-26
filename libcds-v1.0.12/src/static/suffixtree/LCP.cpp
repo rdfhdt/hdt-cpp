@@ -35,7 +35,7 @@ namespace cds_static
 			m = 1+(n-1)/q;
 			plcp = new int[m];	 //space for sampled lcps
 			if(plcp==NULL) {
-				cout << "Failed to allocate memory for plcp." << endl;
+				cerr << "Failed to allocate memory for plcp." << endl;
 				return NULL;
 			}
 			/*initialize samples to -1*/
