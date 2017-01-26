@@ -96,7 +96,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 				out << *ts << endl;
 			numTriples++;
 		}
-		cout << numTriples << " results in " << st << endl;
+		cerr << numTriples << " results in " << st << endl;
 		delete it;
 
 		interruptSignal=0;	// Interrupt caught, enable again.
@@ -129,14 +129,14 @@ int main(int argc, char **argv) {
 			cout << HDTVersion::get_version_string(".") << endl;
 			return 0;
 		default:
-			cout << "ERROR: Unknown option" << endl;
+			cerr << "ERROR: Unknown option" << endl;
 			help();
 			return 1;
 		}
 	}
 
 	if(argc-optind<1) {
-		cout << "ERROR: You must supply an HDT File" << endl << endl;
+		cerr << "ERROR: You must supply an HDT File" << endl << endl;
 		help();
 		return 1;
 	}
@@ -166,22 +166,22 @@ int main(int argc, char **argv) {
 			char line[1024*10];
 
 			signal(SIGINT, &signalHandler);
-			cout << "                                                 \r>> ";
+			cerr << "                                                 \r>> ";
 			while(cin.getline(line, 1024*10)) {
 				if(strcmp(line, "exit")==0|| strcmp(line,"quit")==0) {
 					break;
 				}
 				if(strlen(line)==0 || strcmp(line, "help")==0) {
-					cout << "Please type Triple Search Pattern, using '?' for wildcards. e.g " << endl;
-					cout << "   http://www.somewhere.com/mysubject ? ?" << endl;
-					cout << "Interrupt with Control+C. Type 'exit', 'quit' or Control+D to exit the shell." << endl;
-					cout << ">> ";
+					cerr << "Please type Triple Search Pattern, using '?' for wildcards. e.g " << endl;
+					cerr << "   http://www.somewhere.com/mysubject ? ?" << endl;
+					cerr << "Interrupt with Control+C. Type 'exit', 'quit' or Control+D to exit the shell." << endl;
+					cerr << ">> ";
 					continue;
 				}
 
 				iterate(hdt, line, *out, measure);
 
-				cout << ">> ";
+				cerr << ">> ";
 			}
 		}
 

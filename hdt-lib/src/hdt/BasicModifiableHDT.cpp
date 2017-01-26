@@ -66,7 +66,7 @@ IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char
 	TripleID tid;
 	dictionary->tripleStringtoTripleID(ts, tid);
 
-//	cout << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
+//	cerr << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
 
 	IteratorTripleID *iterID = triples->search(tid);
 
@@ -143,15 +143,15 @@ void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *list
 
 	//header->save(output);
 
-	cout << "Saving dictionary" << endl;
+	cerr << "Saving dictionary" << endl;
 	StopWatch st;
 	dictionary->save(output, controlInformation);
-	cout << "Dictionary saved in " << st << endl;
+	cerr << "Dictionary saved in " << st << endl;
 
-	cout << "Saving triples" << endl;
+	cerr << "Saving triples" << endl;
 	st.reset();
 	triples->save(output, controlInformation);
-	cout << "Triples saved in " << st << endl;
+	cerr << "Triples saved in " << st << endl;
 
 	this->fileName = fileName;
 }

@@ -36,7 +36,7 @@ private:
 				return i;
 			}
 		}
-		cout << "Var name: " << varName << " not found" << endl;
+		cerr << "Var name: " << varName << " not found" << endl;
 		throw std::runtime_error("Var name does not exist");
 	}
 public:

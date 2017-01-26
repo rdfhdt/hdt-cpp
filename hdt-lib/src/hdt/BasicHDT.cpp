@@ -199,7 +199,7 @@ ModifiableTriples* BasicHDT::getLoadTriples() {
 
 
 void DictionaryLoader::processTriple(hdt::TripleString& triple,	unsigned long long pos) {
-	//cout << "Triple String: " << triple << endl;
+	//cerr << "Triple String: " << triple << endl;
 	dictionary->insert(triple.getSubject(), SUBJECT);
 	dictionary->insert(triple.getPredicate(), PREDICATE);
 	dictionary->insert(triple.getObject(), OBJECT);
@@ -259,7 +259,7 @@ void TriplesLoader::processTriple(hdt::TripleString& triple, unsigned long long 
 		msg << "ERROR: Could not convert triple to IDS! " << endl << triple << endl << ti;
 		throw ParseException(msg.str());
 	}
-	//cout << "TripleID: " << ti << endl;
+	//cerr << "TripleID: " << ti << endl;
 	char str[100];
 	if ((listener != NULL) && (count % 100000) == 0) {
 		sprintf(str, "Generating Triples: %lld K triples processed.", count / 1000);
@@ -311,7 +311,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		iListener.setRange(85, 90);
 		triplesList->removeDuplicates(&iListener);
 	} catch (std::exception& e) {
-		// cout << "Catch exception triples" << e << endl;
+		// cerr << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw;
 	}
@@ -329,7 +329,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		delete triplesList;
 	}
 
-	//cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
+	//cerr << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
 void BasicHDT::fillHeader(string& baseUri) {
@@ -400,7 +400,7 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 		fillHeader(baseUri);
 
 	}catch (std::exception& e) {
-		cout << "Catch exception load: " << e.what() << endl;
+		cerr << "Catch exception load: " << e.what() << endl;
 		deleteComponents();
 		createComponents();
 		throw;
@@ -408,7 +408,7 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 }
 
 void BasicHDT::addDictionaryFromHDT(const char *fileName, ModifiableDictionary *dict, ProgressListener *listener) {
-        cout << fileName << endl;
+        cerr << fileName << endl;
         BasicHDT hdt;
         hdt.mapHDT(fileName, listener);
 
@@ -416,7 +416,7 @@ void BasicHDT::addDictionaryFromHDT(const char *fileName, ModifiableDictionary *
 
         char str[100];
 
-        cout << endl << "Load dictionary from " << fileName << endl;
+        cerr << endl << "Load dictionary from " << fileName << endl;
         for(long long int i=0;i<otherDict->getNsubjects();i++) {
                 string a = otherDict->idToString(i+1, SUBJECT);
                 dict->insert(a, SUBJECT);
@@ -496,7 +496,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 
 		for(size_t i=0;i<numFiles;i++) {
 			const char *fileName = fileNames[i];
-	        cout << endl << "Load triples from " << fileName << endl;
+	        cerr << endl << "Load triples from " << fileName << endl;
 	        hdt.mapHDT(fileName);
 	        Dictionary *dict = hdt.getDictionary();
 
@@ -578,7 +578,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, totalOriginalSize);
 	} catch (std::exception& e) {
-		// cout << "Catch exception triples" << e << endl;
+		// cerr << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw;
 	}
@@ -596,7 +596,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 		delete triplesList;
 	}
 
-	//cout << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
+	//cerr << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 
 }
 
@@ -620,7 +620,7 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 		fillHeader(baseUri);
 
 	}catch (std::exception& e) {
-		// cout << "Catch exception load: " << e << endl;
+		// cerr << "Catch exception load: " << e << endl;
 		deleteComponents();
 		createComponents();
 		throw;
@@ -675,7 +675,7 @@ void BasicHDT::loadHeader(const char *fileName, ProgressListener *listener)
 	header = HDTFactory::readHeader(controlInformation);
 	header->load(*input, controlInformation, &iListener);
     } catch (std::exception& e) {
-        // cout << "Exception loading HDT: " << ex;
+        // cerr << "Exception loading HDT: " << ex;
         deleteComponents();
         createComponents();
         throw;
@@ -717,7 +717,7 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	triples = HDTFactory::readTriples(controlInformation);
 	triples->load(input, controlInformation, &iListener);
     } catch (std::exception& e) {
-        // cout << "Exception loading HDT: " << ex;
+        // cerr << "Exception loading HDT: " << ex;
         deleteComponents();
         createComponents();
         throw;

@@ -156,7 +156,7 @@ public:
 		fileName.append(suffix);
 		ofstream outfile;
 
-		cout << "Writing histogram to: " << fileName << endl;
+		cerr << "Writing histogram to: " << fileName << endl;
 
 		outfile.open(fileName.c_str());
 

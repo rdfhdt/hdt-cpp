@@ -32,14 +32,14 @@ bool MyApplication::notify(QObject *o, QEvent *e)
     try {
         return QApplication::notify(o, e);
     } catch (char *err) {
-        std::cout << "Exception caugth in notify (char *): " << err << endl;
+        std::cerr << "Exception caugth in notify (char *): " << err << endl;
     } catch (const char *err) {
-        std::cout << "Exception caugth in notify (const char *): " << err << endl;
+        std::cerr << "Exception caugth in notify (const char *): " << err << endl;
     } catch (const std::exception& ex) {
-        std::cout << "Exception caugth in notify (std::exception &): " << ex.what() << endl;
+        std::cerr << "Exception caugth in notify (std::exception &): " << ex.what() << endl;
     } catch (const std::string& ex) {
-        std::cout << "Exception caugth in notify (std::string &): " << ex << endl;
+        std::cerr << "Exception caugth in notify (std::string &): " << ex << endl;
     } catch (...) {
-        std::cout << "Unknown Exception caugth in notify: " << endl;
+        std::cerr << "Unknown Exception caugth in notify: " << endl;
     }
 }

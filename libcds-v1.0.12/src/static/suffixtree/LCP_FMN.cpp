@@ -36,7 +36,7 @@ namespace cds_static
 		long long nb = 1;
 		nb = (nb*length+W-1)/W;
 		if(nb > MAXINT) {
-			cout << "Memory limit excess (in LCP)" << endl;
+			cerr << "Memory limit excess (in LCP)" << endl;
 			exit(1);
 		}
 		o = new uint[(uint)nb];
@@ -77,7 +77,7 @@ namespace cds_static
 
 	LCP_FMN::LCP_FMN(TextIndex *csa, char *text, size_t n, size_t op_rs) {
 		if(op_rs!=RRR02_HDR && op_rs!=SDARRAY_HDR) {
-			cout << "Error: op_rs must be RRR02_HDR or SDARRAY_HDR\n" << endl;
+			cerr << "Error: op_rs must be RRR02_HDR or SDARRAY_HDR\n" << endl;
 			exit(1);
 		}
 		lcp_type = FMN_RRR_OS;
@@ -102,7 +102,7 @@ namespace cds_static
 	LCP_FMN::LCP_FMN(LCP *lcp, TextIndex *csa, size_t n, size_t op_rs) {
 		uint *O_aux, *Z_aux;
 		if(op_rs!=RRR02_HDR && op_rs!=SDARRAY_HDR) {
-			cout << "Error: op_rs must be RRR02_HDR or SDARRAY_HDR\n" << endl;
+			cerr << "Error: op_rs must be RRR02_HDR or SDARRAY_HDR\n" << endl;
 			exit(1);
 		}
 		lcp_type = FMN_RRR_OS;
