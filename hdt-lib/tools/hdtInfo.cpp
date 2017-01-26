@@ -155,5 +155,6 @@ int main(int argc, char **argv) {
 
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
+		return 1;
 	}
 }

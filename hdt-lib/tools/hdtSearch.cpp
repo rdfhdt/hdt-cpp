@@ -192,5 +192,6 @@ int main(int argc, char **argv) {
 		delete hdt;
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
+		return 1;
 	}
 }
