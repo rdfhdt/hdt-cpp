@@ -263,6 +263,8 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		iListener.setRange(0, 20);
 		IteratorUCharString *itSubj = other->getSubjects();
 		delete subjects;
+		subjects=NULL;
+		delete subjects;
 		subjects = loadSection(itSubj, blocksize, &iListener);
 		delete itSubj;
 
@@ -270,6 +272,7 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		iListener.setRange(20, 21);
 		IteratorUCharString *itPred = other->getPredicates();
 		delete predicates;
+		predicates=NULL;
 		predicates = loadSection(itPred, blocksize, &iListener);
 		delete itPred;
 
@@ -277,6 +280,7 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		iListener.setRange(21, 90);
 		IteratorUCharString *itObj = other->getObjects();
 		delete objects;
+		objects=NULL;
 		objects = loadSection(itObj, blocksize, &iListener);
 		delete itObj;
 
@@ -284,6 +288,7 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		iListener.setRange(90, 100);
 		IteratorUCharString *itShared = other->getShared();
 		delete shared;
+		shared=NULL;
 		shared = loadSection(itShared, blocksize, &iListener);
 		delete itShared;
 
