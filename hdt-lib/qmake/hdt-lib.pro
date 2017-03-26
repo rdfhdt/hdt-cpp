@@ -22,7 +22,7 @@ TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += HAVE_LIBZ HAVE_SERD
+DEFINES += HAVE_LIBZ HAVE_SERD HAVE_CDS
 #HAVE_RAPTOR RAPTOR_STATIC
 
 win32:OutputDir = 'win32'
@@ -206,7 +206,7 @@ INCLUDEPATH += $${LIBCDSBASE}/utils \
 
 
 #For raptor
-INCLUDEPATH += /usr/local/include
+INCLUDEPATH += /usr/local/include /usr/local/include/serd-0/serd
 
 #Windows
 win32-g++:contains(QMAKE_HOST.arch, x86_64):{

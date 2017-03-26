@@ -88,7 +88,7 @@ typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
 
-#ifndef WIN32
+#ifdef WIN32
 typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
 typedef std::hash_map<const char *, DictionaryEntry *, __gnu_cxx::hash<const char *>, str_cmp> DictEntryHash;

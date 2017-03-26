@@ -93,7 +93,7 @@ LIBCDS = ../libcds-v1.0.12
 
 # Using Hard-coded Makefile
 INCLUDEPATH += $${LIBCDS}/includes ../hdt-lib/include/ .
-LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
+#LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
 
 # Using autotools
 #LIBS += $${LIBCDS}/src/.libs/libcds.a ../hdt-lib/.libs/libhdt.a
@@ -105,7 +105,7 @@ win32:LIBS += ../hdt-lib/qmake/win32/hdt.lib $${LIBCDS}/qmake/win32/cds.lib ../.
 
 unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a $${LIBCDS}/qmake/unix/libcds.a -lGLU
 macx:LIBS += $${LIBCDS}/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
-PRE_TARGETDEPS += $$LIBS
+#PRE_TARGETDEPS += $$LIBS
 
 # Installed in the system
 #LIBS += -lcds -lhdt
@@ -123,7 +123,8 @@ win32-g++:contains(QMAKE_HOST.arch, x86_64):{
 win32:LIBS += -L"C:/msys/local/lib/" -L"/usr/local/lib" -L"C:/MinGW/msys/1.0/local/lib/" -lraptor2 -lxml2 -lws2_32 -lz
 
 #Unix (Linux & Mac)
-unix:LIBS += -lraptor2 -lz -lserd-0
+unix:LIBS += -L"/usr/local/lib" -lz -lserd-0
+#-lraptor2
 
 RESOURCES += \
     hdtresources.qrc
