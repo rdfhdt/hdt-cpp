@@ -1,3 +1,8 @@
+
+#include <QHeaderView>
+#include <QTreeWidget>
+#include <QLineEdit>
+
 #include "dictionarysuggestions.hpp"
 
 #include "stringutils.hpp"
@@ -159,7 +164,9 @@ void DictionarySuggestions::autoSuggest()
         // show
         showCompletion(choices);
     } catch (const char *ex) {
+#ifndef WIN32
     } catch (char *ex) {
+#endif
     }
 }
 

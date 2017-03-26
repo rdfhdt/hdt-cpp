@@ -7,6 +7,8 @@
 #include <HDTVocabulary.hpp>
 #include <QAbstractItemModel>
 #include <QDir>
+#include <QMainWindow>
+#include <QTableView>
 
 #include "hdtcontroller.hpp"
 

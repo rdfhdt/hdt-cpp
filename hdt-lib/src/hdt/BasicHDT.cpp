@@ -242,10 +242,18 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		else{
 			dictionary = dict;
 		}
+
+#ifndef WIN32
+	} catch (char *e) {
+		cout << "Catch exception dictionary: " << e << endl;
+		delete dict;
+		throw e;
+#else
 	} catch(exception& e) {
 		cerr << "caught here??" << endl;
 		delete dict;
 		throw;
+#endif
 	}
 }
 
@@ -310,10 +318,21 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 
 		iListener.setRange(85, 90);
 		triplesList->removeDuplicates(&iListener);
+	} catch (const char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw e;
+#ifndef WIN32
+	} catch (char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw e;
+#else
 	} catch (std::exception& e) {
 		// cerr << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw;
+#endif
 	}
 	if (triples->getType() == triplesList->getType()) {
 		delete triples;
@@ -404,6 +423,13 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 		deleteComponents();
 		createComponents();
 		throw;
+#ifndef WIN32
+    } catch (char *e) {
+		cout << "Catch exception load: " << e << endl;
+		deleteComponents();
+		createComponents();
+		throw e;
+#endif
 	}
 }
 
@@ -471,6 +497,12 @@ void BasicHDT::loadDictionaryFromHDTs(const char** fileName, size_t numFiles, co
         	cerr << "Catch exception dictionary: " << e.what() << endl;
         	delete dict;
         	throw;
+#ifndef WIN32
+        } catch (char *e) {
+        	cout << "Catch exception dictionary: " << e << endl;
+        	delete dict;
+        	throw e;
+#endif
         }
 }
 
@@ -577,10 +609,18 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 		triplesList->removeDuplicates(&iListener);
 
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, totalOriginalSize);
+
+#ifndef WIN32
+	} catch (char *e) {
+		cout << "Catch exception triples" << e << endl;
+		delete triplesList;
+		throw;
+#else
 	} catch (std::exception& e) {
 		// cerr << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw;
+#endif
 	}
 	if (triples->getType() == triplesList->getType()) {
 		delete triples;
@@ -624,6 +664,13 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 		deleteComponents();
 		createComponents();
 		throw;
+#ifndef WIN32
+    } catch (char *e) {
+		cout << "Catch exception load: " << e << endl;
+		deleteComponents();
+		createComponents();
+		throw e;
+#endif
 	}
 }
 
@@ -721,6 +768,13 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
         deleteComponents();
         createComponents();
         throw;
+#ifndef WIN32
+    } catch (char *ex) {
+    	cout << "Exception loading HDT: " << ex;
+    	deleteComponents();
+        createComponents();
+        throw ex;
+#endif
     }
 }
 

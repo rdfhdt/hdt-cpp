@@ -99,7 +99,10 @@ LIBS += $${LIBCDS}/lib/libcds.a ../hdt-lib/libhdt.a
 #LIBS += $${LIBCDS}/src/.libs/libcds.a ../hdt-lib/.libs/libhdt.a
 
 # Using Qt Projects
-win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a $${LIBCDS}/qmake/win32/libcds.a
+#win32:LIBS += ../hdt-lib/qmake/win32/libhdt.a $${LIBCDS}/qmake/win32/libcds.a
+
+win32:LIBS += ../hdt-lib/qmake/win32/hdt.lib $${LIBCDS}/qmake/win32/cds.lib ../../zlib/bin/zlib.lib "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10586.0\um\x64\opengl32.lib" "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10586.0\um\x64\glu32.lib" "F:\serd-0.26.0\bin\serd.lib"
+
 unix:!macx:LIBS += ../hdt-lib/qmake/unix/libhdt.a $${LIBCDS}/qmake/unix/libcds.a -lGLU
 macx:LIBS += $${LIBCDS}/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
 PRE_TARGETDEPS += $$LIBS
@@ -112,9 +115,9 @@ PRE_TARGETDEPS += $$LIBS
 
 #Windows
 win32-g++:contains(QMAKE_HOST.arch, x86_64):{
-#win32:LIBS += -L"C:/msys/local/lib/" -L"/usr/local/lib" -lraptor2 -lxml2 -lws2_32 -lz
+    #win32:LIBS += -L"C:/msys/local/lib/" -lraptor2 -lxml2 -lws2_32
 } else {
-
+   # win32:LIBS += -L"C:/MinGW/msys/1.0/local/lib/" -lraptor2 -lxml2 -lws2_32
 }
 
 win32:LIBS += -L"C:/msys/local/lib/" -L"/usr/local/lib" -L"C:/MinGW/msys/1.0/local/lib/" -lraptor2 -lxml2 -lws2_32 -lz

@@ -69,29 +69,24 @@ uint32_t CSD_Cache::locate(const unsigned char *s, uint32_t len)
 unsigned char* CSD_Cache::extract(uint32_t id)
 {
 	return child->extract(id);
-#if 0
-	LRU_Int::const_iterator it = cacheint.find(id);
+/*
+    try {
+        const string &value = cacheint.get(id);
+        size_t len = value.length();
+        unsigned char *ptr = (unsigned char *)malloc((1+len)*sizeof(unsigned char));
+        strncpy((char *)ptr, (const char *)value.c_str(), len);
+        ptr[len]='\0';
+        return ptr;
+    }catch(std::range_error& e) {
+        // Key not found: compute and insert the value
+        char *value = (char *) child->extract(id);
 
-	if (it != cacheint.end()) {
-		// Key found: retrieve its associated value
-		//cout << "2retrieving: " << it.key() << " -> " << it.value() << endl;
-		size_t len = it.value().length();
-		unsigned char *ptr = (unsigned char *)malloc((1+len)*sizeof(unsigned char));
-		strncpy((char *)ptr, (const char *)it.value().c_str(), len);
-		ptr[len]='\0';
-		return ptr;
-	} else {
-		// Key not found: compute and insert the value
-		//cout << "2not found: " << id << endl;
-		char *value = (char *) child->extract(id);
+        string str(value);
+        cacheint.put(id,str);
 
-		string str(value);
-
-		cacheint[id] = str;
-
-		return (unsigned char *)value;
-	}
-#endif
+        return (unsigned char *)value;
+    }
+*/
 }
 
 void CSD_Cache::freeString(const unsigned char *str) {

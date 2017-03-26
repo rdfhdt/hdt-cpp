@@ -30,6 +30,7 @@
 
 using namespace std;
 
+
 namespace cds_utils
 {
 	/** Class for arrays with variable bit-width
@@ -159,8 +160,10 @@ namespace cds_utils
 			inline uint getMax() const
 			{
 				uint maxV = 0;	 // default max
-				for(size_t i=0; i<length; i++)
-					maxV = max(maxV,getField(i));
+                for(size_t i=0; i<length; i++){
+                    uint value = getField(i);
+                    maxV = value>maxV ? value : maxV;
+                }
 				return maxV;
 			}
 

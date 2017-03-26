@@ -1,5 +1,8 @@
+#include <QApplication>
+#include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
 #include <QtGui>
+#include <QPushButton>
 
 #include <HDTManager.hpp>
 
@@ -58,9 +61,9 @@ void HDTOperation::execute() {
             // TODO: Decompress GZIP here using progress bar.
             // TODO: Detect whether .hdtcache and .hdt.index exist to be more accurate with the progress
 #if 1
-            hdt = hdt::HDTManager::mapIndexedHDT(fileName.toAscii(), &iListener);
-#else
-            hdt = hdt::HDTManager::loadIndexedHDT(fileName.toAscii(), &iListener);
+            hdt = hdt::HDTManager::mapIndexedHDT(fileName.toLatin1(), &iListener);
+#else            
+            hdt = hdt::HDTManager::loadIndexedHDT(fileName.toLatin1(), &iListener);
 #endif
             iListener.setRange(70, 100);
             hdtInfo = new HDTCachedInfo(hdt);
@@ -76,7 +79,7 @@ void HDTOperation::execute() {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
 
             iListener.setRange(0,80);
-            hdt = hdt::HDTManager::generateHDT(fileName.toAscii(), baseUri.c_str(), notation, spec, &iListener);
+            hdt = hdt::HDTManager::generateHDT(fileName.toLatin1(), baseUri.c_str(), notation, spec, &iListener);
 
             iListener.setRange(80, 90);
             hdt = hdt::HDTManager::indexedHDT(hdt);
@@ -89,16 +92,16 @@ void HDTOperation::execute() {
             break;
             }
         case HDT_WRITE:
-            hdt->saveToHDT(fileName.toAscii(), dynamic_cast<ProgressListener *>(this));
+            hdt->saveToHDT(fileName.toLatin1(), dynamic_cast<ProgressListener *>(this));
             break;
         case RDF_WRITE:{
-            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toAscii(), notation);
+            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toLatin1(), notation);
             hdt->saveToRDF(*serializer, dynamic_cast<ProgressListener *>(this));
             delete serializer;
             break;
             }
         case RESULT_EXPORT: {
-            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toAscii(), notation);
+            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toLatin1(), notation);
             serializer->serialize(iterator, dynamic_cast<ProgressListener *>(this), numResults );
             delete serializer;
             delete iterator;

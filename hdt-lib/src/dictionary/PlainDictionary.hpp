@@ -42,7 +42,11 @@
 #include <fstream>
 #include <iostream>
 
+#ifndef WIN32
 #include <ext/hash_map>
+#else
+#include <unordered_map>
+#endif
 
 //#define GOOGLE_HASH
 
@@ -54,7 +58,9 @@ using __gnu_cxx::hash;  // or __gnu_cxx::hash, or maybe tr1::hash, depending on 
 
 #else
 
+#ifndef WIN32
 namespace std { using namespace __gnu_cxx; }
+#endif
 
 #endif
 
@@ -81,7 +87,13 @@ typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 #ifdef GOOGLE_HASH 
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
+
+#ifndef WIN32
+typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
+#else
 typedef std::hash_map<const char *, DictionaryEntry *, __gnu_cxx::hash<const char *>, str_cmp> DictEntryHash;
+//typedef unordered_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
+#endif
 #endif
 
 typedef DictEntryHash::const_iterator DictEntryIt;
