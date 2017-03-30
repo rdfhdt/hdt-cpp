@@ -11,7 +11,7 @@
 #define USE_DIALOG
 //#define OPERATION_CANCELABLE
 
-#ifdef __WIN32__
+#ifdef WIN32
 #include <windows.h>
 #define sleep(a) Sleep((a)*1000)
 #else
