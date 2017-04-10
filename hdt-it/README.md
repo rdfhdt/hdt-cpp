@@ -67,13 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Visit our Web Page: www.rdfhdt.org
 
 Contacting the authors:
- Mario Arias:               mario.arias@deri.org
- Javier D. Fernandez:       jfergar@infor.uva.es
- Miguel A. Martinez-Prieto: migumar2@infor.uva.es
+ - Mario Arias:               mario.arias@deri.org
+ - Javier D. Fernandez:       jfergar@infor.uva.es
+ - Miguel A. Martinez-Prieto: migumar2@infor.uva.es
  
-
-    $ tools/hdtInfo data/test.hdt > header.nt
-
-Replace the Header of an HDT file with a new one. For example, by editing the existing one as extracted using `hdtInfo`:
-
-    $ tools/replaceHeader data/test.hdt data/testOutput.hdt newHeader.nt
