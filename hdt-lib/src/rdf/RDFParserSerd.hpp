@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-#include <serd.h>
+#include <serd-0/serd/serd.h>
 
 #include <HDTEnums.hpp>
 
