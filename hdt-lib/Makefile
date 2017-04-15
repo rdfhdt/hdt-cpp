@@ -11,7 +11,7 @@ SERD_SUPPORT=true
 CPP=g++
 
 ifeq ($(CPP), g++)
-FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unknown-warning-option
+FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unknown-warning-option -std=gnu++11
 else
 FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option
 endif
