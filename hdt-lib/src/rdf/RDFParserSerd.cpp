@@ -117,6 +117,103 @@ SerdStatus hdtserd_end(void* handle, const SerdNode* node) {
     return SERD_SUCCESS;
 }
 
+#ifdef HAVE_LIBZ
+
+#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#  include <fcntl.h>
+#  include <io.h>
+#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+#else
+#  define SET_BINARY_MODE(file)
+#endif
+
+const size_t CHUNK=64*1024; 
+
+typedef struct {
+	z_stream strm;
+	FILE *file;
+	uint8_t *inBuffer;
+        uint64_t totalRead;
+} LibzSerdData;
+
+void libz_init(LibzSerdData *d){
+       d->inBuffer = new unsigned char[CHUNK];
+
+        d->strm.zalloc = Z_NULL;
+        d->strm.zfree = Z_NULL;
+        d->strm.opaque = Z_NULL;
+        d->strm.avail_in = 0;
+        d->strm.next_in = d->inBuffer;
+
+        d->totalRead = 0;
+	int ret = inflateInit2(&d->strm, 16+MAX_WBITS);
+        if (ret != Z_OK) {
+		// FIXME: Error
+		return;
+        }
+}
+
+void libz_destroy(LibzSerdData *d){
+        (void)inflateEnd(&d->strm);
+
+        delete[] d->inBuffer;
+}
+
+int libz_serd_error(void *stream) {
+	// Fixme: Notify Error
+	return SERD_SUCCESS;
+}
+
+size_t libz_serd_read(void *buf, size_t size, size_t nmemb, void *stream){
+	const size_t bufSize = (nmemb*size);
+	uint8_t *buffer = reinterpret_cast<uint8_t *>(buf);
+	LibzSerdData *d = reinterpret_cast<LibzSerdData *>(stream);
+
+	d->strm.next_out = buffer;
+	d->strm.avail_out = bufSize;
+
+	do {
+		// Fill in buffer from file if empty
+		if(d->strm.avail_in == 0) {
+			size_t readCount = fread(d->inBuffer, 1, CHUNK, d->file);
+
+			if(readCount == 0){
+				// FIXME: Could not read, manage error
+				return 0;
+			}
+			d->strm.avail_in = readCount;
+			d->strm.next_in = d->inBuffer;
+			d->totalRead += readCount;
+		}
+
+		// Call inflate to consume in and fill out
+		int ret = inflate(&d->strm, Z_NO_FLUSH);
+
+		size_t have;
+		switch (ret) {
+		case Z_NEED_DICT:
+		case Z_DATA_ERROR:
+		case Z_MEM_ERROR:
+			cerr << "zlib error code: " << ret << " => "<< d->strm.msg << endl;
+			// FIXME: Handle error
+			return 0;
+		case Z_STREAM_END:
+			// Finished reading stream.
+			have = bufSize-d->strm.avail_out;
+			return have;
+		case Z_OK:
+			have = bufSize-d->strm.avail_out;
+			break;
+		default:
+			return 0;
+		}
+	} while (d->strm.avail_out>0);
+
+	size_t numRead = bufSize-d->strm.avail_out;
+	return numRead;
+}
+
+#endif
 
 
 RDFParserSerd::RDFParserSerd() : numByte(0)
@@ -157,18 +254,35 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 
     serd_reader_set_error_sink(reader, hdtserd_error, NULL);
 
-
     const uint8_t* input=serd_uri_to_path((const uint8_t *)fileName);
     FILE *in_fd = fopen((const char*)input, "r");
     // TODO: fadvise sequential
     if(in_fd==NULL) {
         throw ParseException("Could not open input file for parsing");
     }
-    serd_reader_read_file_handle(reader, in_fd, (const uint8_t *)fileName);
 
-    serd_reader_free(reader);
+    if(fileUtil::str_ends_with(fileName,".gz")){
+
+// NOTE: Requires serd 0.27.0
+#ifdef HAVE_LIBZ
+	LibzSerdData libzSerdData;
+	libzSerdData.file = in_fd;
+	libz_init(&libzSerdData);
+
+	serd_reader_read_source(reader, libz_serd_read, libz_serd_error, &libzSerdData, input); 
+
+	libz_destroy(&libzSerdData);
+#else
+	cerr << "HDT Library has not been compiled with gzip support." << end;
+#endif
+
+    } else {
+	serd_reader_read_file_handle(reader, in_fd, (const uint8_t *)fileName);
+    }
+
 
     fclose(in_fd);
+    serd_reader_free(reader);
 
     serd_env_free(env);
     serd_node_free(&base);
