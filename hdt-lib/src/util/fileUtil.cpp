@@ -29,6 +29,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <sys/stat.h>
+#include <string.h>
 #include "fileUtil.hpp"
 
 #ifdef HAVE_LIBZ
@@ -155,6 +156,21 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 #else
 	throw std::runtime_error("Compiled without GZIP Support, please decompress the file and try again.");
 #endif
+}
+
+/*  returns 1 iff str ends with suffix  */
+int fileUtil::str_ends_with(const char * str, const char * suffix) {
+
+  if( str == NULL || suffix == NULL )
+    return 0;
+
+  size_t str_len = strlen(str);
+  size_t suffix_len = strlen(suffix);
+
+  if(suffix_len > str_len)
+    return 0;
+
+  return 0 == strncmp( str + str_len - suffix_len, suffix, suffix_len );
 }
 
 DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NULL), fileStream(NULL) {
