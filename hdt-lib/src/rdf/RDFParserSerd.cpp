@@ -263,13 +263,13 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 
     if(fileUtil::str_ends_with(fileName,".gz")){
 
-// NOTE: Requires serd 0.27.0
+// NOTE: Requires serd 0.27.1
 #ifdef HAVE_LIBZ
 	LibzSerdData libzSerdData;
 	libzSerdData.file = in_fd;
 	libz_init(&libzSerdData);
 
-	serd_reader_read_source(reader, libz_serd_read, libz_serd_error, &libzSerdData, input); 
+	serd_reader_read_source(reader, libz_serd_read, libz_serd_error, &libzSerdData, input, 4096); 
 
 	libz_destroy(&libzSerdData);
 #else
