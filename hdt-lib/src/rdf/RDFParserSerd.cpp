@@ -65,9 +65,9 @@ SerdStatus hdtserd_error(void* handle, const SerdError* error) {
    Called whenever the base URI of the serialisation changes.
 */
 SerdStatus hdtserd_basechanged(void* handle, const SerdNode* uri) {
-	RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
+	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
-	return serd_env_set_base_uri(raptorParser->env, uri);
+	return serd_env_set_base_uri(serdParser->env, uri);
 }
 
 /**
@@ -76,9 +76,9 @@ SerdStatus hdtserd_basechanged(void* handle, const SerdNode* uri) {
    Called whenever a prefix is defined in the serialisation.
 */
 SerdStatus hdtserd_prefixchanged(void* handle,const SerdNode* name, const SerdNode* uri) {
-	RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
+	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
-	return serd_env_set_prefix(raptorParser->env, name, uri);
+	return serd_env_set_prefix(serdParser->env, name, uri);
 }
 
 /**
@@ -95,10 +95,10 @@ SerdStatus hdtserd_process_triple(void*              handle,
                                   const SerdNode*    object_datatype,
                                   const SerdNode*    object_lang) {
 
-	RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
+	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
-	TripleString ts( raptorParser->getString(subject), raptorParser->getString(predicate), raptorParser->getStringObject(object, object_datatype, object_lang));
-	raptorParser->callback->processTriple(ts, raptorParser->numByte);
+	TripleString ts(serdParser->getString(subject), serdParser->getString(predicate), serdParser->getStringObject(object, object_datatype, object_lang));
+	serdParser->callback->processTriple(ts, serdParser->numByte);
 
 	return SERD_SUCCESS;
 }
