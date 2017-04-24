@@ -54,7 +54,7 @@ string RDFParserSerd::getStringObject(const SerdNode *term,
 	return out;
 }
 
-SerdStatus hdtserd_error(void* handle, const SerdError* error) {
+SerdStatus hdtserd_on_error(void *handle, const SerdError *error) {
 	fprintf(stderr, "error: %s:%u:%u: ",
 	        error->filename, error->line, error->col);
 	vfprintf(stderr, error->fmt, *error->args);
@@ -62,48 +62,37 @@ SerdStatus hdtserd_error(void* handle, const SerdError* error) {
 	return error->status;
 }
 
-/**
-   Sink (callback) for base URI changes.
-
-   Called whenever the base URI of the serialisation changes.
-*/
-SerdStatus hdtserd_basechanged(void* handle, const SerdNode* uri) {
+// Callback for base URI changes (@base directives)
+SerdStatus hdtserd_on_base(void *handle, const SerdNode *uri) {
 	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
 	return serd_env_set_base_uri(serdParser->env, uri);
 }
 
-/**
-   Sink (callback) for namespace definitions.
-
-   Called whenever a prefix is defined in the serialisation.
-*/
-SerdStatus hdtserd_prefixchanged(void* handle,const SerdNode* name, const SerdNode* uri) {
+// Callback for namespace definitions (@prefix directives)
+SerdStatus hdtserd_on_prefix(void           *handle,
+                             const SerdNode *name,
+                             const SerdNode *uri) {
 	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
 	return serd_env_set_prefix(serdParser->env, name, uri);
 }
 
-/**
-   Sink (callback) for statements.
-
-   Called for every RDF statement in the serialisation.
-*/
-SerdStatus hdtserd_process_triple(void*              handle,
-                                  SerdStatementFlags flags,
-                                  const SerdNode*    graph,
-                                  const SerdNode*    subject,
-                                  const SerdNode*    predicate,
-                                  const SerdNode*    object,
-                                  const SerdNode*    object_datatype,
-                                  const SerdNode*    object_lang) {
-
+// Callback for statements
+SerdStatus hdtserd_on_statement(void               *handle,
+                                SerdStatementFlags  flags,
+                                const SerdNode     *graph,
+                                const SerdNode     *subject,
+                                const SerdNode     *predicate,
+                                const SerdNode     *object,
+                                const SerdNode     *datatype,
+                                const SerdNode     *lang) {
 	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
 	serdParser->callback->processTriple(
 		TripleString(serdParser->getString(subject),
 		             serdParser->getString(predicate),
-		             serdParser->getStringObject(object, object_datatype, object_lang)),
+		             serdParser->getStringObject(object, datatype, lang)),
 		serdParser->numByte);
 
 	return SERD_SUCCESS;
@@ -181,12 +170,12 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 
 	SerdReader* reader = serd_reader_new(
 		getParserType(notation), this, NULL,
-		(SerdBaseSink)hdtserd_basechanged,
-		(SerdPrefixSink)hdtserd_prefixchanged,
-		(SerdStatementSink)hdtserd_process_triple,
+		(SerdBaseSink)hdtserd_on_base,
+		(SerdPrefixSink)hdtserd_on_prefix,
+		(SerdStatementSink)hdtserd_on_statement,
 		NULL);
 
-	serd_reader_set_error_sink(reader, hdtserd_error, NULL);
+	serd_reader_set_error_sink(reader, hdtserd_on_error, NULL);
 
 	const uint8_t* input=serd_uri_to_path((const uint8_t *)fileName);
 
