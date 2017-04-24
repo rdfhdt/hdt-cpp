@@ -103,17 +103,6 @@ SerdStatus hdtserd_process_triple(void*              handle,
 	return SERD_SUCCESS;
 }
 
-/**
-   Sink (callback) for anonymous node end markers.
-
-   This is called to indicate that the anonymous node with the given
-   @c value will no longer be referred to by any future statements
-   (i.e. the anonymous serialisation of the node is finished).
-*/
-SerdStatus hdtserd_end(void* handle, const SerdNode* node) {
-	return SERD_SUCCESS;
-}
-
 #ifdef HAVE_LIBZ
 
 static const size_t SERD_PAGE_SIZE = 4096;
@@ -174,7 +163,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 		(SerdBaseSink)hdtserd_basechanged,
 		(SerdPrefixSink)hdtserd_prefixchanged,
 		(SerdStatementSink)hdtserd_process_triple,
-		(SerdEndSink)hdtserd_end);
+		NULL);
 
 	serd_reader_set_error_sink(reader, hdtserd_error, NULL);
 
