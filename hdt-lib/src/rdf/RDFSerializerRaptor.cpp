@@ -93,7 +93,7 @@ RDFSerializerRaptor::~RDFSerializerRaptor() {
 	raptor_free_world(world);
 }
 
-raptor_term *getTerm(string &str, raptor_world *world) {
+raptor_term *getTerm(const string &str, raptor_world *world) {
 
 	if(str=="") {
 		throw std::runtime_error("Empty Value on triple!");
@@ -118,8 +118,7 @@ raptor_term *getTerm(string &str, raptor_world *world) {
 		// Remove " "
 		return raptor_new_term_from_literal(world, (const unsigned char *)str.substr(1, str.length()-2).c_str(), NULL, NULL);
 	} else if(str.at(0)=='_') {
-		str = str.substr (2);
-		return raptor_new_term_from_blank(world, (const unsigned char *)str.c_str());
+		return raptor_new_term_from_blank(world, (const unsigned char *)str.substr(2).c_str());
 	} else {
 		return raptor_new_term_from_uri_string(world, (const unsigned char *)str.c_str());
 	}

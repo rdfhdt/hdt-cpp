@@ -122,7 +122,7 @@ public:
 	~PlainDictionary();
 
 	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	unsigned int stringToId(const std::string &str, TripleComponentRole position);
 
     size_t getNumberOfElements();
 
@@ -152,7 +152,7 @@ public:
     IteratorUCharString *getShared();
 
 // ModifiableDictionary
-	unsigned int insert(std::string &str, TripleComponentRole position);
+	unsigned int insert(const std::string &str, TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);

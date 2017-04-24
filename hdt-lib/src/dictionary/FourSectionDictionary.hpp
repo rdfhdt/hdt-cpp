@@ -60,7 +60,7 @@ public:
 	~FourSectionDictionary();
 
 	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	unsigned int stringToId(const std::string &str, TripleComponentRole position);
 
     size_t getNumberOfElements();
 

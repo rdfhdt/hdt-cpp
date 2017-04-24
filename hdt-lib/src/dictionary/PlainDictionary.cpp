@@ -106,7 +106,7 @@ std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole pos
 	return string();
 }
 
-unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int PlainDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
 	DictEntryIt ret;
 
@@ -281,7 +281,7 @@ uint64_t PlainDictionary::size()
 }
 
 
-unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
+unsigned int PlainDictionary::insert(const std::string & str, TripleComponentRole pos)
 {
 	if(str=="") return 0;
 
