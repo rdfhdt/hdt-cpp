@@ -8,46 +8,49 @@ namespace hdt {
 
 string RDFParserSerd::getString(const SerdNode *term) {
 	string out;
+	out.reserve(term->n_bytes + 2);
 
 	if(term->type==SERD_URI) {
-		out.append((char *)term->buf);
+		out.append((const char *)term->buf);
 	} else if(term->type==SERD_BLANK) {
 		out.append("_:");
-		out.append((char *)term->buf);
+		out.append((const char *)term->buf);
 	} else if(term->type==SERD_CURIE) {
 		SerdChunk uri_prefix, uri_suffix;
 		if (serd_env_expand(env, term, &uri_prefix, &uri_suffix)) {
 			// ERROR BAD Curie / Prefix
 		}
-		out.append((char *)uri_prefix.buf);
-		out.append((char *)uri_suffix.buf);
+		out.append((const char *)uri_prefix.buf);
+		out.append((const char *)uri_suffix.buf);
 	}
-	//cout << out << endl;
 	return out;
 }
 
-string RDFParserSerd::getStringObject(const SerdNode *term, const SerdNode *dataType, const SerdNode *lang) {
-	string out;
-
+string RDFParserSerd::getStringObject(const SerdNode *term,
+                                      const SerdNode *dataType,
+                                      const SerdNode *lang) {
 	if(term->type!=SERD_LITERAL) {
 		return getString(term);
 	}
 
-	out.append("\"");
-	out.append((char *)term->buf);
+	string out;
+	out.reserve(term->n_bytes + 2 +
+	            (dataType ? dataType->n_bytes + 4 : 0) +
+	            (lang     ? lang->n_bytes + 1     : 0));
+
+	out.push_back('\"');
+	out.append((const char *)term->buf);
+	out.push_back('\"');
 	if(lang!=NULL){
-		out.append("\"@");
-		out.append((char *)lang->buf);
-	} else {
-		out.append("\"");
+		out.push_back('@');
+		out.append((const char *)lang->buf);
 	}
 	if(dataType!=NULL) {
 		out.append("^^<");
-		out.append((char *)dataType->buf);
-		out.append(">");
+		out.append((const char *)dataType->buf);
+		out.push_back('>');
 	}
 
-	//cout << out << endl;
 	return out;
 }
 
