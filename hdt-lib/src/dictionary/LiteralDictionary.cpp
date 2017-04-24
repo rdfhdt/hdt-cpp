@@ -107,7 +107,7 @@ std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole p
 	return string();
 }
 
-unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole position) {
+unsigned int LiteralDictionary::stringToId(const std::string &key, TripleComponentRole position) {
 	unsigned int ret;
 
 	if (key.length() == 0) {
@@ -556,7 +556,7 @@ void LiteralDictionary::stopProcessing(ProgressListener *listener) {
 
 }
 
-unsigned int LiteralDictionary::insert(std::string & str,
+unsigned int LiteralDictionary::insert(const std::string & str,
 		TripleComponentRole position) {
 	throw std::runtime_error("This dictionary does not support insertions.");
 }

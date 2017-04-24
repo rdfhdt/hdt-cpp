@@ -334,7 +334,7 @@ public:
 	 * Get Subject.
 	 * @return
 	 */
-	std::string &getSubject() {
+	const std::string &getSubject() const {
 		return subject;
 	}
 
@@ -356,7 +356,7 @@ public:
 	 * Get Predicate.
 	 * @return
 	 */
-	std::string &getPredicate() {
+	const std::string &getPredicate() const {
 		return predicate;
 	}
 
@@ -372,7 +372,7 @@ public:
 	 * Get Object.
 	 * @return
 	 */
-	std::string &getObject() {
+	const std::string &getObject() const {
 		return object;
 	}
 

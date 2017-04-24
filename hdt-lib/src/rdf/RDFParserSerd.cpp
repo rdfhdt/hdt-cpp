@@ -100,8 +100,11 @@ SerdStatus hdtserd_process_triple(void*              handle,
 
 	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
-	TripleString ts(serdParser->getString(subject), serdParser->getString(predicate), serdParser->getStringObject(object, object_datatype, object_lang));
-	serdParser->callback->processTriple(ts, serdParser->numByte);
+	serdParser->callback->processTriple(
+		TripleString(serdParser->getString(subject),
+		             serdParser->getString(predicate),
+		             serdParser->getStringObject(object, object_datatype, object_lang)),
+		serdParser->numByte);
 
 	return SERD_SUCCESS;
 }

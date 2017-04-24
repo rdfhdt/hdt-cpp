@@ -46,7 +46,7 @@ class RDFCallback {
 public:
 	virtual ~RDFCallback() { }
 
-	virtual void processTriple(TripleString &triple, unsigned long long pos)=0;
+	virtual void processTriple(const TripleString &triple, unsigned long long pos)=0;
 };
 
 class RDFParserCallback {

@@ -100,7 +100,7 @@ std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRo
 	return string();
 }
 
-unsigned int FourSectionDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int FourSectionDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
 	unsigned int ret;
 
