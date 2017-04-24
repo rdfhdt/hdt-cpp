@@ -111,26 +111,41 @@ SerdStatus hdtserd_process_triple(void*              handle,
 static const size_t SERD_PAGE_SIZE = 4096;
 static const unsigned LIBZ_BUFFER_SIZE = 64 * 1024;
 
-typedef struct {
-	gzFile file;
-	int err;
-} LibzSerdData;
-
-int libz_serd_error(void *stream) {
-	LibzSerdData *d = reinterpret_cast<LibzSerdData *>(stream);
-	return d->err;
-}
-
-size_t libz_serd_read(void *buf, size_t size, size_t nmemb, void *stream) {
-	LibzSerdData *d = reinterpret_cast<LibzSerdData *>(stream);
-
-	const int numRead = gzread(d->file, buf, nmemb * size);
-	if (numRead == -1) {
-		d->err = 1;
+struct LibzSerdStream {
+	LibzSerdStream(const char *fileName)
+		: file(gzopen(fileName, "rb"))
+		, err(0)
+	{
+		if (!file) {
+			throw ParseException("Could not open input file for parsing");
+		}
+		gzbuffer(file, LIBZ_BUFFER_SIZE);
 	}
 
-	return numRead;
-}
+	~LibzSerdStream() {
+		gzclose(file);
+	}
+
+	static int error(void *stream) {
+		LibzSerdStream *s = reinterpret_cast<LibzSerdStream *>(stream);
+		return s->err;
+	}
+
+	static size_t read(void *buf, size_t size, size_t nmemb, void *stream) {
+		LibzSerdStream *s = reinterpret_cast<LibzSerdStream *>(stream);
+
+		const int numRead = gzread(s->file, buf, nmemb * size);
+		if (numRead == -1) {
+			s->err = 1;
+		}
+
+		return numRead;
+	}
+
+private:
+	gzFile file;
+	int err;
+};
 
 #endif
 
@@ -176,21 +191,13 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 
 		// NOTE: Requires serd 0.27.1
 #ifdef HAVE_LIBZ
-		LibzSerdData libzSerdData;
-		libzSerdData.err = 0;
-		libzSerdData.file = gzopen(fileName, "rb");
-		if (!libzSerdData.file) {
-			throw ParseException("Could not open input file for parsing");
-		}
-
-		gzbuffer(libzSerdData.file, LIBZ_BUFFER_SIZE);
+		LibzSerdStream libzSerdStream(fileName);
 		const SerdStatus status = serd_reader_read_source(
-			reader, libz_serd_read, libz_serd_error,
-			&libzSerdData, input, SERD_PAGE_SIZE);
+			reader, &LibzSerdStream::read, &LibzSerdStream::error,
+			&libzSerdStream, input, SERD_PAGE_SIZE);
 		if (status) {
 			throw ParseException((const char*)serd_strerror(status));
 		}
-		gzclose(libzSerdData.file);
 #else
 		cerr << "HDT Library has not been compiled with gzip support." << endl;
 #endif
