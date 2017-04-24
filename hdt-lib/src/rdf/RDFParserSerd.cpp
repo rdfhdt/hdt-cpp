@@ -206,7 +206,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 	}
 	gzclose(libzSerdData.file);
 #else
-	cerr << "HDT Library has not been compiled with gzip support." << end;
+	cerr << "HDT Library has not been compiled with gzip support." << endl;
 #endif
 
     } else {
