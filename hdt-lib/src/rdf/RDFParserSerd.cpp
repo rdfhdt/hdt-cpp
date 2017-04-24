@@ -54,11 +54,11 @@ string RDFParserSerd::getStringObject(const SerdNode *term, const SerdNode *data
 }
 
 SerdStatus hdtserd_error(void* handle, const SerdError* error) {
-    //RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
-    //raptorParser->error.append("File: "+e->filename+" Line "+e->line+" Col "+e->col+" Parsing Error: "+e->fmt);
-    fprintf(stderr, error->fmt, error->args);
-    throw std::runtime_error("Error parsing input.");
-    return SERD_ERR_BAD_SYNTAX;
+	fprintf(stderr, "error: %s:%u:%u: ",
+	        error->filename, error->line, error->col);
+	vfprintf(stderr, error->fmt, *error->args);
+	throw std::runtime_error("Error parsing input.");
+	return error->status;
 }
 
 /**
