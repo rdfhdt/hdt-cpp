@@ -98,7 +98,7 @@ std::string KyotoDictionary::idToString(unsigned int id, TripleComponentRole pos
 	throw std::logic_error("Not implemented");
 }
 
-unsigned int KyotoDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int KyotoDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
 
 	unsigned int ret;
@@ -355,7 +355,7 @@ uint64_t KyotoDictionary::size()
 }
 
 
-unsigned int KyotoDictionary::insert(std::string & str, TripleComponentRole pos)
+unsigned int KyotoDictionary::insert(const std::string & str, TripleComponentRole pos)
 {
 
 	if(str=="") return 0;
