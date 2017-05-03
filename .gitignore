@@ -25,3 +25,6 @@ stamp-h1
 libcds-v1.0.12/includes
 !**/examples/*.cpp
 !**/tests/*.cpp
+*.o
+*.lo
+.deps

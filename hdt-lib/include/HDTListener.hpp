@@ -48,6 +48,12 @@ public:
     virtual void notifyProgress(float task, float level, const char *section)=0;
 };
 
+#ifdef WIN32
+#undef max
+#undef min
+#endif
+
+
 class IntermediateListener : public ProgressListener {
 	ProgressListener *child;
 	float min, max;

@@ -39,6 +39,7 @@
 #include <string.h>
 #include <sstream>
 #include <vector>
+#include <functional>
 
 namespace csd {
 
@@ -291,7 +292,7 @@ struct char_array_buffer : public std::streambuf {
 public:
 	char_array_buffer(const char *begin, const char *end) :
 		begin_(begin), end_(end), current_(begin_) {
-		assert(std::less_equal<const char *>()(begin_, end_));
+        assert(less_equal<const char *>()(begin_, end_));
 	};
 
 private:

@@ -24,7 +24,9 @@
 namespace cds_static
 {
 
+#ifndef WIN32
 	using std::max;
+#endif
 
 	SequenceGMRChunk::SequenceGMRChunk(uint * sequence, uint chunk_length, BitSequenceBuilder *bmb, PermutationBuilder *pmb) : Sequence(chunk_length) {
 		pmb->use();

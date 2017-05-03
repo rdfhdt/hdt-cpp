@@ -419,7 +419,12 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 
 					//register the number of lists per predicate
 					if (listsofPredicates[listPredicates] == 0) {
+#ifdef WIN32
+                        char *copylist = new char[listPredicates.size()+1];
+#else
 						char copylist[listPredicates.size()+1];
+#endif
+                        
 						//listPredicates.copy((char*) copylist.c_str(),
 						listPredicates.copy(copylist,
 								listPredicates.size(), 0);
@@ -431,7 +436,9 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 									predicateinlists[atoi(part)] + 1;
 							part = strtok(NULL, "+");
 						}
-
+#ifdef WIN32
+						delete copylist;
+#endif
 					}
 					// register the number of repetitions per lists
 					listsofPredicates[listPredicates] =
@@ -498,10 +505,14 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 		if (order == SPO) {
 			//register the number of lists per predicate
 			if (listsofPredicates[listPredicates] == 0) {
-				char copylist[listPredicates.size()+1];
-                                //listPredicates.copy((char*) copylist.c_str(),
-                                 listPredicates.copy(copylist,listPredicates.size(), 0);
-                                 copylist[listPredicates.size()]='\0';
+#ifdef WIN32
+                char *copylist=new char[listPredicates.size()+1];
+#else
+                char copylist[listPredicates.size()+1];
+#endif
+                //listPredicates.copy((char*) copylist.c_str(),
+                 listPredicates.copy(copylist,listPredicates.size(), 0);
+                 copylist[listPredicates.size()]='\0';
 
 				char *part = strtok(copylist, "+"); // passing a string starts a new iteration
 				while (part) {
@@ -509,7 +520,9 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 							+ 1;
 					part = strtok(NULL, "+");
 				}
-
+#ifdef WIN32
+                delete copylist;
+#endif
 			}
 			// register the number of repetitions per lists
 			listsofPredicates[listPredicates] =
@@ -1031,7 +1044,11 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 
 				//register the number of lists per predicate
 				if (listsofPredicates[listPredicates] == 0) {
+#ifdef WIN32
+                    char *copylist = new char[listPredicates.size()+1];
+#else
 					char copylist[listPredicates.size()+1];
+#endif
                                         listPredicates.copy(copylist,listPredicates.size(), 0);
                                         copylist[listPredicates.size()]='\0';
 
@@ -1042,7 +1059,9 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 								part)] + 1;
 						part = strtok(NULL, "+");
 					}
-
+#ifdef WIN32
+                    delete copylist;
+#endif
 				}
 				// register the number of repetitions per lists
 				listsofPredicates[listPredicates] =
@@ -1133,7 +1152,11 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 	if (istypedSubject) {
 		//register the number of lists per predicate
 		if (listsofPredicates[listPredicates] == 0) {
+#ifdef WIN32
+            char *copylist = new char[listPredicates.size()+1];
+#else
 			char copylist[listPredicates.size()+1];
+#endif
                         listPredicates.copy(copylist,listPredicates.size(), 0);
                         copylist[listPredicates.size()]='\0';
 
@@ -1143,7 +1166,9 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 				predicateinlists[atoi(part)] = predicateinlists[atoi(part)] + 1;
 				part = strtok(NULL, "+");
 			}
-
+#ifdef WIN32
+            delete copylist;
+#endif
 		}
 		// register the number of repetitions per lists
 		listsofPredicates[listPredicates] = listsofPredicates[listPredicates]

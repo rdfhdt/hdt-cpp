@@ -156,7 +156,7 @@ namespace cds_static
 	}
 
 	BitmapsSequence * BitmapsSequence::load(istream & fp) {
-		uint __attribute__((unused)) type = loadValue<uint>(fp);
+        uint type = loadValue<uint>(fp);
 		if(type!=BS_HDR) {
 			abort();
 		}

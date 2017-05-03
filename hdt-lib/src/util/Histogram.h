@@ -49,6 +49,9 @@ public:
 			freq[i] = other.freq[i];
 	}
 
+#undef min
+#undef max
+
 	/** Reset
 	 * @return void
 	 */

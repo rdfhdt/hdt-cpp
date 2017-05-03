@@ -186,6 +186,7 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 	}
 #endif
 
+#ifndef WIN32
 	if(pipeCommand.length()>0) {
 		pipeCommand.append(fileName);
 		if ((filePipe=popen(pipeCommand.c_str(),"r")) == NULL) {
@@ -203,11 +204,14 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 		cerr << "Error opening file " << fileName << " for parsing " << endl;
 		throw std::runtime_error("Error opening file for parsing");
 	}
+#endif
 }
 
 void DecompressStream::close() {
 	if(fileStream) fileStream->close();
+#ifndef WIN32
 	if(filePipe) pclose(filePipe);
+#endif
 #ifdef HAVE_LIBZ
 	if(gzStream) gzStream->close();
 #endif

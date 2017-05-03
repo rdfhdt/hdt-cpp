@@ -30,7 +30,10 @@
  */
 #include <stdexcept>
 #include <HDTVocabulary.hpp>
+
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 #include "TriplesKyoto.hpp"
 #include "TriplesComparator.hpp"
