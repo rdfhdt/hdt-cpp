@@ -328,9 +328,15 @@ const string vocabPredicate = "http://purl.org/HDT/hdt#";
  * @param maxSO Maximum SO in the dictionary.
  * @return void
  */
-void TriplesList::calculateDegree(string path, unsigned int maxSO) {
+void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsigned int maxSO) {
 	const int maxval = 1000000;
 	const int nbins = 1000000;
+	map<int, Histogram*> hDegreePartialPerPredicate;
+
+	for (int i=1;i<=numPredicates;i++){
+		 Histogram* hDegreePart = new Histogram(0, maxval, nbins);
+		 hDegreePartialPerPredicate[i]=hDegreePart;
+	}
 
 	map<string, int> listsofPredicates; //compute the different lists of Predicates;
 	map<int, int> predicateinlists; //compute the number of lists per predicate;
@@ -391,6 +397,18 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 
 				//cout << "\tpartial degree: " << ycount << endl;
 				hDegreePartial.add(ycount);
+
+				//update hDegreePartialPerPredicate
+				std::map<int,Histogram*>::iterator it = hDegreePartialPerPredicate.find(y); //search some previous degree of the predicate
+				  if (it != hDegreePartialPerPredicate.end()){
+					  it->second->add(ycount);
+				  }
+				  /*else{
+					   Histogram hDegreePartialPred(0, maxval, nbins);
+					   hDegreePartialPred.add(ycount);
+					   cout<<"saving hDegreePartialPred of pred "<<y<< " with value="<<ycount<<endl;
+					   hDegreePartialPerPredicate[y]=hDegreePartialPred;
+				  }*/
 
 				//cout << "\tlabeled degree: " << ychanged << endl;
 				hDegreeLabeled.add(ychanged);
@@ -453,6 +471,18 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 					hDegreePartial.add(ycount);
 					;
 
+					//update hDegreePartialPerPredicate
+					std::map<int,Histogram*>::iterator it = hDegreePartialPerPredicate.find(y); //search some previous degree of the predicate
+					  if (it != hDegreePartialPerPredicate.end()){
+						  it->second->add(ycount);
+					  }
+					 /* else{
+						   Histogram hDegreePartialPred(0, maxval, nbins);
+						   hDegreePartialPred.add(ycount);
+						   hDegreePartialPerPredicate[y]=hDegreePartialPred;
+						   cout<<"saving hDegreePartialPred of pred "<<y<< " with value="<<ycount<<endl;
+					  }*/
+
 					ycount = 1;
 				} else {
 					ycount++;
@@ -507,6 +537,18 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 
 		//cout << "\tpartial degree: " << ycount << endl;
 		hDegreePartial.add(ycount);
+
+		//update hDegreePartialPerPredicate
+		std::map<int,Histogram*>::iterator it = hDegreePartialPerPredicate.find(y); //search some previous degree of the predicate
+		  if (it != hDegreePartialPerPredicate.end()){
+			  it->second->add(ycount);
+		  }
+		 /* else{
+			   Histogram hDegreePartialPred(0, maxval, nbins);
+			   hDegreePartialPred.add(ycount);
+			   hDegreePartialPerPredicate[y]=hDegreePartialPred;
+			   cout<<"saving hDegreePartialPred of pred "<<y<< " with value="<<ycount<<endl;
+		  }*/
 
 		//cout << "\tlabeled degree: " << ychanged << endl;
 		hDegreeLabeled.add(ychanged);
@@ -667,9 +709,257 @@ void TriplesList::calculateDegree(string path, unsigned int maxSO) {
 			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"ListsperPredicate_average> "<<predicateHist.getMean()<< endl;
 			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<<"ListsperPredicate_deviation> "<<predicateHist.getDeviation()<< endl;
 
+
+
+		}
+		// dump the partial degree of each predicate
+		for (std::map<int, Histogram*>::iterator it = hDegreePartialPerPredicate.begin();
+							it != hDegreePartialPerPredicate.end(); ++it) {
+
+			it->second->end();
+			int predicateID = it->first;
+			if (direcc == "out"){ // just plot this metadata once
+				out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "StatsofPredicate> " << "_:Predicate"<<predicateID<< endl;
+				out_header_stats<<"_:Predicate"<<predicateID<<" <http://purl.org/dc/terms/identifier> "<<predicateID<< endl;
+			}
+
+			out_header_stats<<"_:Predicate"<<predicateID<<" <"<<vocabPredicate<< "Partial"<<direcc <<"Degree_average> "<<it->second->getMean()<< endl;
+
 		}
 
 	}
+	out_summary.close();
+	out_header_stats.close();
+//#endif
+
+}
+/** Calculate Degree
+ * @param path Description of the param.
+ * @param maxSO Maximum SO in the dictionary.
+ * @return void
+ */
+void TriplesList::calculateMinStats(string path, unsigned int numPredicates) {
+	const int maxval = 1000000;
+	const int nbins = 1000000;
+	map<int, Histogram*> hDegreePartialPerPredicate;
+
+	for (int i=1;i<=numPredicates;i++){
+		 Histogram* hDegreePart = new Histogram(0, maxval, nbins);
+		 hDegreePartialPerPredicate[i]=hDegreePart;
+	}
+
+	map<string, int> listsofPredicates; //compute the different lists of Predicates;
+	map<int, int> predicateinlists; //compute the number of lists per predicate;
+	string listPredicates = ""; //currentlist;
+	size_t numberofYs = 0;
+
+	Histogram hDegree(0, maxval, nbins);
+	Histogram hDegreePartial(0, maxval, nbins);
+	Histogram hDegreeLabeled(0, maxval, nbins);
+
+	size_t xcount = 1, ycount = 1, ychanged = 1;
+
+	TripleID currentTriple;
+
+	currentTriple = arrayOfTriples[0];
+	swapComponentOrder(&currentTriple, SPO, order);
+
+	size_t x = currentTriple.getSubject();
+	size_t y = currentTriple.getPredicate();
+	size_t z = currentTriple.getObject();
+
+
+
+	std::stringstream ss;
+	ss << (unsigned int) (currentTriple.getPredicate());
+	listPredicates = ss.str(); // The resulting string
+	numberofYs++;
+
+	//cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
+	cout << "Numberof Elements:" << getNumberOfElements() << endl;
+	fflush(stdout);
+	unsigned long numiterations = getNumberOfElements();
+	//size_t numiterations = 4953033043;
+	bool stopSO = false;
+	for (size_t i = 1; i < numiterations; i++) {
+		if (i % 1000000 == 0) {
+			cout << i << " triples" << endl;
+		}
+		if (!stopSO) {
+
+			currentTriple = arrayOfTriples[i];
+			swapComponentOrder(&currentTriple, SPO, order);
+			//cout<<currentTriple.getSubject()<< " " << currentTriple.getPredicate() << " " << currentTriple.getObject()<<"\n";
+			// Ignore duplicate triples
+			if ((x == currentTriple.getSubject())
+					&& (y == currentTriple.getPredicate())
+					&& (z == currentTriple.getObject())) {
+				continue;
+			}
+
+			if (x != currentTriple.getSubject()) {
+				//cout << "\tdegree: " << xcount <<endl;
+				hDegree.add(xcount);
+
+				//cout << "\tpartial degree: " << ycount << endl;
+				hDegreePartial.add(ycount);
+
+				//update hDegreePartialPerPredicate
+				std::map<int,Histogram*>::iterator it = hDegreePartialPerPredicate.find(y); //search some previous degree of the predicate
+				  if (it != hDegreePartialPerPredicate.end()){
+					  it->second->add(ycount);
+				  }
+				  /*else{
+					   Histogram hDegreePartialPred(0, maxval, nbins);
+					   hDegreePartialPred.add(ycount);
+					   cout<<"saving hDegreePartialPred of pred "<<y<< " with value="<<ycount<<endl;
+					   hDegreePartialPerPredicate[y]=hDegreePartialPred;
+				  }*/
+
+				//cout << "\tlabeled degree: " << ychanged << endl;
+				hDegreeLabeled.add(ychanged);
+
+				xcount = ycount = 1;
+				ychanged = 1;
+
+
+			} else {
+				xcount++;
+
+				if (y != currentTriple.getPredicate()) {
+
+
+					numberofYs++;
+
+					ychanged++;
+
+					//cout << "\tpartial degree: " << ycount << endl;
+					hDegreePartial.add(ycount);
+					;
+
+					//update hDegreePartialPerPredicate
+					std::map<int,Histogram*>::iterator it = hDegreePartialPerPredicate.find(y); //search some previous degree of the predicate
+					  if (it != hDegreePartialPerPredicate.end()){
+						  it->second->add(ycount);
+					  }
+					 /* else{
+						   Histogram hDegreePartialPred(0, maxval, nbins);
+						   hDegreePartialPred.add(ycount);
+						   hDegreePartialPerPredicate[y]=hDegreePartialPred;
+						   cout<<"saving hDegreePartialPred of pred "<<y<< " with value="<<ycount<<endl;
+					  }*/
+
+					ycount = 1;
+				} else {
+					ycount++;
+				}
+			}
+
+			//cout << currentTriple.getSubject() << " " << currentTriple.getPredicate() << " " << currentTriple.getObject() << endl;
+
+			x = currentTriple.getSubject();
+			y = currentTriple.getPredicate();
+			z = currentTriple.getObject();
+		}
+	}
+
+	//cout << "Fin listPredicates:" << listPredicates << endl;
+	fflush(stdout);
+
+
+
+
+
+		//cout << "\tdegree: " << xcount <<endl;
+		hDegree.add(xcount);
+
+		//cout << "\tpartial degree: " << ycount << endl;
+		hDegreePartial.add(ycount);
+
+		//update hDegreePartialPerPredicate
+		std::map<int,Histogram*>::iterator it = hDegreePartialPerPredicate.find(y); //search some previous degree of the predicate
+		  if (it != hDegreePartialPerPredicate.end()){
+			  it->second->add(ycount);
+		  }
+		 /* else{
+			   Histogram hDegreePartialPred(0, maxval, nbins);
+			   hDegreePartialPred.add(ycount);
+			   hDegreePartialPerPredicate[y]=hDegreePartialPred;
+			   cout<<"saving hDegreePartialPred of pred "<<y<< " with value="<<ycount<<endl;
+		  }*/
+
+		//cout << "\tlabeled degree: " << ychanged << endl;
+		hDegreeLabeled.add(ychanged);
+
+	hDegree.end();
+	hDegreePartial.end();
+	hDegreeLabeled.end();
+
+//#if 0
+	ofstream out;
+	ofstream out_summary;
+	ofstream out_header_stats;
+
+	out_summary.open((path + "_Summary").c_str(), ios::app); //append to the end
+	out_header_stats.open((path  + "_HeaderStats").c_str(), ios::app); //append to the end
+
+	string direcc = ""; //predicate total degree is neither in nor out
+
+//cout << endl << "Partial degree" << endl;
+
+
+	direcc = (order == SPO) ? "out" : "in";
+	//	cout << endl << "Degree" << endl;
+	out.open((path  + "_" + direcc).c_str(), ios::out);
+	out << "# " << direcc << " degree" << endl;
+	out_summary << "* " << direcc << " degree" << endl;
+	hDegree.dumpStr(out);
+	hDegree.dumpStr(out_summary, false);
+	out.close();
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< direcc <<"Degree_min> "<<hDegree.getMinValue()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< direcc <<"Degree_max> "<<hDegree.getMaxValue()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< direcc <<"Degree_average> "<<hDegree.getMean()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< direcc <<"Degree_deviation> "<<hDegree.getDeviation()<< endl;
+
+	out.open((path  + "_p" + direcc).c_str(), ios::out);
+	out << "# Partial " << direcc << " degree" << endl;
+	out_summary << "* Partial " << direcc << " degree" << endl;
+	hDegreePartial.dumpStr(out);
+	hDegreePartial.dumpStr(out_summary, false);
+	out.close();
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Partial"<< direcc <<"Degree_min> "<<hDegreePartial.getMinValue()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Partial"<<direcc <<"Degree_max> "<<hDegreePartial.getMaxValue()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Partial"<<direcc <<"Degree_average> "<<hDegreePartial.getMean()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Partial"<<direcc <<"Degree_deviation> "<<hDegreePartial.getDeviation()<< endl;
+
+	//cout << endl << "Labeled degree" << endl;
+	out.open((path  + "_l" + direcc).c_str(), ios::out);
+	out << "# Labeled" << direcc << " degree" << endl;
+	out_summary << "* Labeled" << direcc << " degree" << endl;
+	hDegreeLabeled.dumpStr(out);
+	hDegreeLabeled.dumpStr(out_summary, false);
+	out.close();
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Labeled"<< direcc <<"Degree_min> "<<hDegreeLabeled.getMinValue()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Labeled"<<direcc <<"Degree_max> "<<hDegreeLabeled.getMaxValue()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Labeled"<<direcc <<"Degree_average> "<<hDegreeLabeled.getMean()<< endl;
+	out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "Labeled"<<direcc <<"Degree_deviation> "<<hDegreeLabeled.getDeviation()<< endl;
+
+
+	// dump the partial degree of each predicate
+	for (std::map<int, Histogram*>::iterator it = hDegreePartialPerPredicate.begin();
+						it != hDegreePartialPerPredicate.end(); ++it) {
+
+		it->second->end();
+		int predicateID = it->first;
+		if (direcc == "out"){ // just plot this metadata once
+			out_header_stats<<vocabSubject<<" <"<<vocabPredicate<< "StatsofPredicate> " << "_:Predicate"<<predicateID<< endl;
+			out_header_stats<<"_:Predicate"<<predicateID<<" <http://purl.org/dc/terms/identifier> "<<predicateID<< endl;
+		}
+
+		out_header_stats<<"_:Predicate"<<predicateID<<" <"<<vocabPredicate<< "Partial"<<direcc <<"Degree_average> "<<it->second->getMean()<< endl;
+
+	}
+
 	out_summary.close();
 	out_header_stats.close();
 //#endif
@@ -1012,71 +1302,85 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
  * @param path Description of the param.
  * @return void
  */
-void TriplesList::calculateDegrees(string path, unsigned int maxSO,
-		unsigned int rdftypeID) {
+void TriplesList::calculateDegrees(string path, unsigned int maxSO,unsigned int numPredicates,
+		unsigned int rdftypeID, bool allStats) {
 
 	StopWatch st;
 
-	cout << "Calculate OUT Degree" << endl;
-	sort(SPO);
-	calculateDegree(path);
-
-	if (maxSO > 0) {
-		cout << "Calculate OUT Degree for SO (max:" << maxSO << ") " << endl;
-		calculateDegree(path, maxSO);
+	if (allStats==false){
+		cout<<"Generating minimum stats"<<endl;
+		cout << "Calculate OUT Degree" << endl;
+		sort(SPO);
+		calculateMinStats(path,numPredicates);
+		cout << "Calculate IN Degree" << endl;
+		cout << "..... sorting OPS" << endl;
+		sort(OPS);
+		cout << "......sort done" << endl;
+		calculateMinStats(path,numPredicates);
 	}
-	if (rdftypeID > 0) {
-		cout << "Calculate OUT Degree for Subjects with rdftype " << endl;
-		calculateDegreeType(path, rdftypeID);
-	}
+	else{
+		cout<<"Generating full stats"<<endl;
+		cout << "Calculate OUT Degree" << endl;
+		sort(SPO);
+		calculateDegree(path,numPredicates);
 
-	cout << "Calculate IN Degree" << endl;
-	cout << "..... sorting OPS" << endl;
-	sort(OPS);
-	cout << "......sort done" << endl;
-	calculateDegree(path);
-	if (maxSO > 0) {
-		cout << "Calculate IN Degree for SO (max:" << maxSO << ") " << endl;
-		calculateDegree(path, maxSO);
-	}
-
-	cout << "Calculate Direct OUT Degree" << endl;
-	cout << "..... sorting SOP" << endl;
-	sort(SOP);
-	cout << "......sort done" << endl;
-	calculateDegree(path);
-
-	if (maxSO > 0) {
-		cout << "Calculate Direct OUT Degree for SO (max:" << maxSO << ") "
-				<< endl;
-		calculateDegree(path, maxSO);
-	}
-
-	cout << "Calculate Direct IN Degree" << endl;
-	fflush(stdout);
-	cout << "..... sorting OSP" << endl;
-	sort(OSP);
-	cout << "......sort done" << endl;
-	fflush(stdout);
-	calculateDegree(path);
-	if (maxSO > 0) {
-			cout << "Calculate Direct IN Degree for SO (max:" << maxSO << ") "
-					<< endl;
-			calculateDegree(path, maxSO);
+		if (maxSO > 0) {
+			cout << "Calculate OUT Degree for SO (max:" << maxSO << ") " << endl;
+			calculateDegree(path, numPredicates,maxSO);
+		}
+		if (rdftypeID > 0) {
+			cout << "Calculate OUT Degree for Subjects with rdftype " << endl;
+			calculateDegreeType(path, rdftypeID);
 		}
 
-	cout << "Calculate Predicate IN Degree" << endl;
-	cout << "..... sorting PSO" << endl;
-	sort(PSO);
-	cout << "......sort done" << endl;
-	calculateDegree(path);
+		cout << "Calculate IN Degree" << endl;
+		cout << "..... sorting OPS" << endl;
+		sort(OPS);
+		cout << "......sort done" << endl;
+		calculateDegree(path,numPredicates);
+		if (maxSO > 0) {
+			cout << "Calculate IN Degree for SO (max:" << maxSO << ") " << endl;
+			calculateDegree(path, numPredicates,maxSO);
+		}
 
-	cout << "Calculate Predicate OUT Degree" << endl;
-	cout << "..... sorting POS" << endl;
-	sort(POS);
-	cout << "......sort done" << endl;
-	calculateDegree(path);
-	cout << "Degrees calculated in " << st << endl;
+		cout << "Calculate Direct OUT Degree" << endl;
+		cout << "..... sorting SOP" << endl;
+		sort(SOP);
+		cout << "......sort done" << endl;
+		calculateDegree(path,numPredicates);
+
+		if (maxSO > 0) {
+			cout << "Calculate Direct OUT Degree for SO (max:" << maxSO << ") "
+					<< endl;
+			calculateDegree(path, numPredicates,maxSO);
+		}
+
+		cout << "Calculate Direct IN Degree" << endl;
+		fflush(stdout);
+		cout << "..... sorting OSP" << endl;
+		sort(OSP);
+		cout << "......sort done" << endl;
+		fflush(stdout);
+		calculateDegree(path,numPredicates);
+		if (maxSO > 0) {
+				cout << "Calculate Direct IN Degree for SO (max:" << maxSO << ") "
+						<< endl;
+				calculateDegree(path, numPredicates,maxSO);
+			}
+
+		cout << "Calculate Predicate IN Degree" << endl;
+		cout << "..... sorting PSO" << endl;
+		sort(PSO);
+		cout << "......sort done" << endl;
+		calculateDegree(path,numPredicates);
+
+		cout << "Calculate Predicate OUT Degree" << endl;
+		cout << "..... sorting POS" << endl;
+		sort(POS);
+		cout << "......sort done" << endl;
+		calculateDegree(path,numPredicates);
+		cout << "Degrees calculated in " << st << endl;
+	}
 }
 
 
