@@ -21,7 +21,7 @@ void searchInHeader(int numPredicates, HDT* hdt,string metric) {
 	/*
 	 * Example of searching for a specific predicate
 	 */
-
+/*
 	string sub="http://example.org/predicate1";
 	int idPred = hdt->getDictionary()->stringToId(sub,PREDICATE);
 	stringstream ss;
@@ -35,8 +35,8 @@ void searchInHeader(int numPredicates, HDT* hdt,string metric) {
 		string valueofBranchingFactor = mysol->getObject();
 		cout<<"my value is:"<<valueofBranchingFactor<<endl;
 	}
+*/
 
-/*
 
 	for (int p = 1; p <= numPredicates; p++) {
 		stringstream ss;
@@ -49,7 +49,7 @@ void searchInHeader(int numPredicates, HDT* hdt,string metric) {
 			cout << hdt->getDictionary()->idToString(p,PREDICATE) << ": " + t->getObject() << endl;
 		}
 		delete tsol; // Remember to delete iterator to avoid memory leaks!
-	}*/
+	}
 }
 
 int main(int argc, char *argv[]) {
