@@ -46,7 +46,7 @@ class CompactTriples : public Triples  {
 private:
 	HDTSpecification spec;
 	IntSequence *streamY, *streamZ;
-	unsigned int numTriples;
+    size_t numTriples;
 	TripleComponentOrder order;
 
 public:
@@ -126,10 +126,10 @@ private:
 	CompactTriples *triples;
 	TripleID pattern, returnTriple;
 
-	unsigned int patX, patY, patZ;
+    size_t patX, patY, patZ;
 
-	unsigned int posY, posZ;
-	unsigned int x, y, z;
+    size_t posY, posZ;
+    size_t x, y, z;
 	bool goingUp;
 
 	void findRange();

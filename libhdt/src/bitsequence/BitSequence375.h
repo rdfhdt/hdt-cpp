@@ -108,8 +108,8 @@ public:
 	size_t rank0(const size_t i) const;
 	size_t selectPrev1(const size_t start) const;
 	size_t selectNext1(const size_t start) const;
-	size_t select0(size_t x) const;
-	size_t select1(size_t x) const;
+    size_t select0(const size_t x) const;
+    size_t select1(const size_t x) const;
 	size_t getNumBits() const;
 
 	size_t countOnes() const;

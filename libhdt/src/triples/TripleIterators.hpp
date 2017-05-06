@@ -85,15 +85,15 @@ public:
 class RandomAccessIterator {
 	IteratorTripleID *it;
 	TripleID *current;
-	unsigned int currentIdx;
-	unsigned int numElements;
+    size_t currentIdx;
+    size_t numElements;
 	bool goingUp;
 public:
 	RandomAccessIterator(IteratorTripleID *other);
 
-	TripleID *get(unsigned int idx);
+    TripleID *get(size_t idx);
 
-	unsigned int getNumElements();
+    size_t getNumElements();
 };
 
 } // namespace hdt

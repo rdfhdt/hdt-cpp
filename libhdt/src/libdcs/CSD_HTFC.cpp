@@ -284,7 +284,7 @@ CSD_HTFC::~CSD_HTFC()
                 delete blocks;
 }
 
-uint32_t CSD_HTFC::locate(const unsigned char *s, uint32_t len)
+size_t CSD_HTFC::locate(const unsigned char *s, size_t len)
 {
 	if(!text || !blocks)
 		return 0;
@@ -362,7 +362,7 @@ void CSD_HTFC::dumpBlock(uint block) {
 	delete [] string;
 }
 
-unsigned char* CSD_HTFC::extract(uint32_t id)
+unsigned char* CSD_HTFC::extract(size_t id)
 {
 	if(!text || !blocks) {
 		return NULL;
@@ -445,7 +445,7 @@ CSD* CSD_HTFC::load(istream &fp)
 #ifdef WIN32
 	dicc->text = (unsigned char *)malloc(dicc->bytes);
 	const unsigned int blocksize = 8192;
-	unsigned int counter=0;
+    size_t counter=0;
 	char *ptr = (char *)dicc->text;
 	while(counter<dicc->bytes && fp.good()) {
 		fp.read(ptr, dicc->bytes-counter > blocksize ? blocksize : dicc->bytes-counter);

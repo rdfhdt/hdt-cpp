@@ -50,7 +50,7 @@ PlainHeader::~PlainHeader() {
 void PlainHeader::load(std::istream & input, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	std::string format = controlInformation.getFormat();
-	uint32_t headerSize = controlInformation.getUint("length");
+    size_t headerSize = controlInformation.getUint("length");
 
 	// FIXME: Use format to create custom parser.
 	if(format!=HDTVocabulary::HEADER_NTRIPLES) {
@@ -85,7 +85,7 @@ size_t PlainHeader::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
     count += controlInformation.load(&ptr[count], ptrMax);
 
 	std::string format = controlInformation.getFormat();
-	uint32_t headerSize = controlInformation.getUint("length");
+    size_t headerSize = controlInformation.getUint("length");
 
 	// FIXME: Use format to create custom parser.
 	if(format!=HDTVocabulary::HEADER_NTRIPLES) {

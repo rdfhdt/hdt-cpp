@@ -147,7 +147,7 @@ public:
 	ComponentIterator(IteratorTripleID *iterator, TripleComponentRole component);
 
 	bool hasNext();
-	unsigned int next();
+    size_t next();
 	void goToStart();
 };
 

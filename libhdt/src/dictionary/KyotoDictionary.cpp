@@ -93,15 +93,15 @@ KyotoDictionary::~KyotoDictionary() {
 #endif
 }
 
-std::string KyotoDictionary::idToString(unsigned int id, TripleComponentRole position)
+std::string KyotoDictionary::idToString(size_t id, TripleComponentRole position)
 {
 	throw std::logic_error("Not implemented");
 }
 
-unsigned int KyotoDictionary::stringToId(const std::string &key, TripleComponentRole position)
+size_t KyotoDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
 
-	unsigned int ret;
+    size_t ret;
 
 	if(key.length()==0 || key.at(0) == '?') {
 		return 0;
@@ -186,7 +186,7 @@ void KyotoDictionary::startProcessing(ProgressListener *listener)
 void KyotoDictionary::updateIDs(DB *db) {
 	DB::Cursor *cur=db->cursor();
 	cur->jump();
-	unsigned int count=1;
+    size_t count=1;
 	while (cur->set_value((const char*)&count,sizeof(count), true)) {
 		count++;
 	}
@@ -204,7 +204,7 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 	curObj->jump();
 	string subjectStr;
 	string objectStr;
-	unsigned int count=1;
+    size_t count=1;
 	NOTIFY(listener, "Extracting Shared", 0, 100);
 
 	bool fetchLeft = true;
@@ -355,12 +355,12 @@ uint64_t KyotoDictionary::size()
 }
 
 
-unsigned int KyotoDictionary::insert(const std::string & str, TripleComponentRole pos)
+size_t KyotoDictionary::insert(const std::string & str, TripleComponentRole pos)
 {
 
 	if(str=="") return 0;
 
-	unsigned int value=0;
+    size_t value=0;
 
 	if(pos==SUBJECT) {
 			if(!subjects.set(str.c_str(), str.length(), (const char*)&value, sizeof(value))) cerr << "set error: " << subjects.error().name() << endl;
@@ -373,7 +373,7 @@ unsigned int KyotoDictionary::insert(const std::string & str, TripleComponentRol
 }
 
 
-unsigned int KyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+size_t KyotoDictionary::getGlobalId(size_t mapping, size_t id, DictionarySection position) {
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
 			return shared.count()+id+1;
@@ -397,11 +397,11 @@ unsigned int KyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id,
 }
 
 
-unsigned int KyotoDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+size_t KyotoDictionary::getGlobalId(size_t id, DictionarySection position) {
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int KyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+size_t KyotoDictionary::getLocalId(size_t mapping, size_t id, TripleComponentRole position) {
 	switch (position) {
 		case SUBJECT:
 			if(id<=shared.count()) {
@@ -428,7 +428,7 @@ unsigned int KyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, 
 		throw std::runtime_error("Item not found");
 }
 
-unsigned int KyotoDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+size_t KyotoDictionary::getLocalId(size_t id, TripleComponentRole position) {
 	return getLocalId(mapping,id,position);
 }
 
@@ -437,11 +437,11 @@ unsigned int KyotoDictionary::getLocalId(unsigned int id, TripleComponentRole po
 /** Get Max Id
  * @return The expected result
  */
-unsigned int KyotoDictionary::getMaxID() {
-	unsigned int s = subjects.count();
-	unsigned int o = objects.count();
-	unsigned int shared = subjects.count();
-	unsigned int max = s>o ? s : o;
+size_t KyotoDictionary::getMaxID() {
+    size_t s = subjects.count();
+    size_t o = objects.count();
+    size_t shared = subjects.count();
+    size_t max = s>o ? s : o;
 
 	if(mapping ==MAPPING2) {
 		return shared+max;
@@ -450,21 +450,21 @@ unsigned int KyotoDictionary::getMaxID() {
 	}
 }
 
-unsigned int KyotoDictionary::getMaxSubjectID() {
-	unsigned int sh = shared.count();
-	unsigned int s = subjects.count();
+size_t KyotoDictionary::getMaxSubjectID() {
+    size_t sh = shared.count();
+    size_t s = subjects.count();
 
 	return sh+s;
 }
 
-unsigned int KyotoDictionary::getMaxPredicateID() {
+size_t KyotoDictionary::getMaxPredicateID() {
 	return predicates.count();
 }
 
-unsigned int KyotoDictionary::getMaxObjectID() {
-	unsigned int sh = shared.count();
-	unsigned int s = subjects.count();
-	unsigned int o = objects.count();
+size_t KyotoDictionary::getMaxObjectID() {
+    size_t sh = shared.count();
+    size_t s = subjects.count();
+    size_t o = objects.count();
 
 	if(mapping ==MAPPING2) {
 		return sh+o;
@@ -473,19 +473,19 @@ unsigned int KyotoDictionary::getMaxObjectID() {
 	}
 }
 
-unsigned int KyotoDictionary::getNsubjects() {
+size_t KyotoDictionary::getNsubjects() {
 	return shared.count()+subjects.count();
 }
 
-unsigned int KyotoDictionary::getNpredicates() {
+size_t KyotoDictionary::getNpredicates() {
 	return predicates.count();
 }
 
-unsigned int KyotoDictionary::getNobjects() {
+size_t KyotoDictionary::getNobjects() {
 	return shared.count()+objects.count();
 }
 
-unsigned int KyotoDictionary::getNshared() {
+size_t KyotoDictionary::getNshared() {
 	return shared.count();
 }
 
@@ -511,7 +511,7 @@ string KyotoDictionary::getType() {
 	return HDTVocabulary::DICTIONARY_TYPE_PLAIN;
 }
 
-unsigned int KyotoDictionary::getMapping() {
+size_t KyotoDictionary::getMapping() {
 	return mapping;
 }
 

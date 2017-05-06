@@ -19,7 +19,7 @@ TriplePatternBinding::TriplePatternBinding(Triples *triples, TripleID &pattern, 
 	iterator = triples->search(this->pattern);
 
 #if 0
-	for(unsigned int i=0;i<varnames.size();i++) {
+    for(size_t i=0;i<varnames.size();i++) {
 		cout << "Indexing " << varnames[i] << " to " << i << endl;
 		varsByName[varnames[i]] = i;
 	}
@@ -31,7 +31,7 @@ TriplePatternBinding::~TriplePatternBinding() {
 	delete iterator;
 }
 
-unsigned int TriplePatternBinding::isOrdered(unsigned int numvar) {
+size_t TriplePatternBinding::isOrdered(size_t numvar) {
     //FIXME: CHECK depending on the order
     switch(vars[numvar]) {
     case 1:
@@ -44,7 +44,7 @@ unsigned int TriplePatternBinding::isOrdered(unsigned int numvar) {
     throw std::runtime_error("Wrong numvar");
 }
 
-unsigned int TriplePatternBinding::estimatedNumResults() {
+size_t TriplePatternBinding::estimatedNumResults() {
 	return iterator->estimatedNumResults();
 }
 
@@ -64,8 +64,8 @@ bool TriplePatternBinding::findNext() {
 
 #if 0
 // Use TriplePattern to jump to next occurence.
-bool TriplePatternBinding::findNext(const char *varName, unsigned int value=0) {
-	unsigned int varIdx = getVarIndex(varName);
+bool TriplePatternBinding::findNext(const char *varName, size_t value=0) {
+    size_t varIdx = getVarIndex(varName);
 
 	if(iterator->findNextOccurrence(value, vars[varIdx])) {
 		currentTriple = iterator->next();
@@ -84,10 +84,10 @@ void TriplePatternBinding::goToStart() {
 	iterator->goToStart();
 }
 
-unsigned int TriplePatternBinding::getNumVars() {
+size_t TriplePatternBinding::getNumVars() {
 	return vars.size();
 }
-unsigned int TriplePatternBinding::getVarValue(unsigned int numvar) {
+size_t TriplePatternBinding::getVarValue(size_t numvar) {
 	if(numvar>vars.size()){
 		throw std::runtime_error("Variable not available");
 	}
@@ -102,18 +102,18 @@ unsigned int TriplePatternBinding::getVarValue(unsigned int numvar) {
 		throw std::runtime_error("Wrong numvar");
 	}
 }
-unsigned int TriplePatternBinding::getVarValue(const char *varname) {
+size_t TriplePatternBinding::getVarValue(const char *varname) {
 	return getVarValue(getVarIndex(varname));
 }
 
-const char *TriplePatternBinding::getVarName(unsigned int numvar) {
+const char *TriplePatternBinding::getVarName(size_t numvar) {
 	if(numvar>vars.size()){
 		throw std::runtime_error("Variable not available");
 	}
 	return varnames[numvar].c_str();
 }
 
-void TriplePatternBinding::searchVar(unsigned int numvar, unsigned int value) {
+void TriplePatternBinding::searchVar(size_t numvar, size_t value) {
 	TripleID newPattern = pattern;
 
 	// Search on index.

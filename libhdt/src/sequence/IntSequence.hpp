@@ -58,7 +58,7 @@ public:
 		return false;
 	}
 
-	virtual unsigned int next() {
+    virtual size_t next() {
 		return 0;
 	}
 
@@ -145,8 +145,8 @@ public:
 	bool hasNext(){
 		return pos<stream->getNumberOfElements();
 	}
-	unsigned int next(){
-		return (unsigned int)stream->get(pos++);
+    size_t next(){
+        return stream->get(pos++);
 	}
 	void goToStart() {
 		pos=0;
@@ -154,14 +154,14 @@ public:
 };
 
 
-// Iterator using C++ vector<unsigned int>
+// Iterator using C++ vector<size_t>
 class VectorUIntIterator : public IteratorUInt {
 private:
-	std::vector<unsigned int> &triples;
+    std::vector<size_t> &triples;
 	size_t idx;
 
 public:
-	VectorUIntIterator(std::vector<unsigned int> &v) : triples(v), idx(0) { }
+    VectorUIntIterator(std::vector<size_t> &v) : triples(v), idx(0) { }
 
 	virtual ~VectorUIntIterator() {	}
 
@@ -169,7 +169,7 @@ public:
 		return idx<triples.size();
 	}
 
-	unsigned int next() {
+    size_t next() {
 		return triples[idx++];
 	}
 
@@ -181,12 +181,12 @@ public:
 // Iterator using C-Style array + count.
 class IteratorUintArray : public IteratorUInt {
 private:
-	unsigned int *array;
+    size_t *array;
 	size_t arraySize;
 	size_t idx;
 
 public:
-	IteratorUintArray(unsigned int *array, size_t arraySize) : array(array), arraySize(arraySize) { }
+    IteratorUintArray(size_t *array, size_t arraySize) : array(array), arraySize(arraySize) { }
 
 	virtual ~IteratorUintArray() {	}
 
@@ -194,7 +194,7 @@ public:
 		return idx<arraySize;
 	}
 
-	unsigned int next() {
+    size_t next() {
 		return array[idx++];
 	}
 

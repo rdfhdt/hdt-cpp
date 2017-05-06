@@ -44,7 +44,7 @@ CSD_Cache::~CSD_Cache()
 	delete child;
 }
 
-uint32_t CSD_Cache::locate(const unsigned char *s, uint32_t len)
+size_t CSD_Cache::locate(const unsigned char *s, size_t len)
 {
 	// FIXME: Not working.
 #if 0
@@ -57,7 +57,7 @@ uint32_t CSD_Cache::locate(const unsigned char *s, uint32_t len)
 	} else {
 		// Key not found: compute and insert the value
 		cout << "1not found" << s << endl;
-		uint32_t value = child->locate(s, len);
+        size_t value = child->locate(s, len);
 		cachestr[(char *)s] = value;
 		return value;
 	}
@@ -66,7 +66,7 @@ uint32_t CSD_Cache::locate(const unsigned char *s, uint32_t len)
 }
 
 
-unsigned char* CSD_Cache::extract(uint32_t id)
+unsigned char* CSD_Cache::extract(size_t id)
 {
 	return child->extract(id);
 /*

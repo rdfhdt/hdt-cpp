@@ -48,7 +48,7 @@ private:
 	csd::CSD *objectsLiterals;
 	csd::CSD *shared;
 
-	unsigned int mapping;
+    size_t mapping;
 	uint64_t sizeStrings;
 	uint32_t blocksize;
 
@@ -60,8 +60,8 @@ public:
 	LiteralDictionary(HDTSpecification &spec);
 	~LiteralDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(const std::string &str, TripleComponentRole position);
+    std::string idToString(size_t id, TripleComponentRole position);
+    size_t stringToId(const std::string &str, TripleComponentRole position);
 
 	/** Returns the number of IDs that contain s[1,..len] as a substring. It also
 	 * return in occs the IDs. Otherwise return 0.
@@ -69,25 +69,25 @@ public:
 	 *  @len: the length (in characters) of the string s.
 	 *  @occs: pointer where the ID located will be stored.
 	 * */
-	uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t **occs);
-    uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t offset, uint32_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ);
+    size_t substringToId(unsigned char *s, size_t len, uint32_t **occs);
+    size_t substringToId(unsigned char *s, size_t len, size_t offset, size_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ);
 
     size_t getNumberOfElements();
 
     uint64_t size();
 
-	unsigned int getNsubjects();
-	unsigned int getNpredicates();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+    size_t getNsubjects();
+    size_t getNpredicates();
+    size_t getNobjects();
+    size_t getNshared();
 
-	unsigned int getNobjectsNotLiterals();
-	unsigned int getNobjectsLiterals();
+    size_t getNobjectsNotLiterals();
+    size_t getNobjectsLiterals();
 
-	unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxPredicateID();
-	unsigned int getMaxObjectID();
+    size_t getMaxID();
+    size_t getMaxSubjectID();
+    size_t getMaxPredicateID();
+    size_t getMaxObjectID();
 
 	void populateHeader(Header &header, string rootNode);
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
@@ -102,13 +102,13 @@ public:
     IteratorUCharString *getObjects();
     IteratorUCharString *getShared();
 
-	unsigned int insert(const std::string &str, TripleComponentRole position);
+    size_t insert(const std::string &str, TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
 
 	string getType();
-	unsigned int getMapping();
+    size_t getMapping();
 
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
@@ -117,11 +117,11 @@ public:
 
 
 private:
-	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+    csd::CSD *getDictionarySection(size_t id, TripleComponentRole position);
+    size_t getGlobalId(size_t mapping, size_t id, DictionarySection position);
+    size_t getGlobalId(size_t id, DictionarySection position);
+    size_t getLocalId(size_t mapping, size_t id, TripleComponentRole position);
+    size_t getLocalId(size_t id, TripleComponentRole position);
 };
 
 }

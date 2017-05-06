@@ -59,15 +59,15 @@ public:
 	size_t countListsX();
 	size_t countItemsY(size_t x);
 
-	size_t search(unsigned int element, size_t ini, size_t fin);
-	size_t binSearch(unsigned int element, size_t ini, size_t fin);
-	size_t linSearch(unsigned int element, size_t ini, size_t fin);
+    size_t search(size_t element, size_t ini, size_t fin);
+    size_t binSearch(size_t element, size_t ini, size_t fin);
+    size_t linSearch(size_t element, size_t ini, size_t fin);
 
-	size_t findNextAppearance(size_t oldpos, unsigned int element);
+    size_t findNextAppearance(size_t oldpos, size_t element);
 
-	size_t findPreviousAppearance(size_t oldpos, unsigned int element);
+    size_t findPreviousAppearance(size_t oldpos, size_t element);
 
-	unsigned int get(size_t pos);
+    size_t get(size_t pos);
 
 	size_t getSize();
 

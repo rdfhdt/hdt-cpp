@@ -87,9 +87,9 @@ csd::CSD *loadSectionFMIndex(IteratorUCharString *iterator, bool sparse_bitseque
 	return new csd::CSD_FMIndex(iterator, sparse_bitsequence, bparam, bwt_sample, use_sample, listener);
 }
 
-std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole position) {
+std::string LiteralDictionary::idToString(size_t id, TripleComponentRole position) {
 	csd::CSD *section = getDictionarySection(id, position);
-	unsigned int localid = getLocalId(id, position);
+    size_t localid = getLocalId(id, position);
 
 	if (localid <= section->getLength()) {
 		const char * ptr = (const char *) section->extract(localid);
@@ -107,8 +107,8 @@ std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole p
 	return string();
 }
 
-unsigned int LiteralDictionary::stringToId(const std::string &key, TripleComponentRole position) {
-	unsigned int ret;
+size_t LiteralDictionary::stringToId(const std::string &key, TripleComponentRole position) {
+    size_t ret;
 
 	if (key.length() == 0) {
 		return 0;
@@ -408,12 +408,12 @@ IteratorUCharString *LiteralDictionary::getShared() {
 	throw std::logic_error("Not implemented");
 }
 
-uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32_t **occs){
+size_t LiteralDictionary::substringToId(unsigned char *s, size_t len, uint32_t **occs){
     uint32_t dummy;
     return this->substringToId(s, len, 0, 0, true, occs, &dummy);
 }
 
-uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32_t offset, uint32_t limit, bool deduplicate, uint32_t **occs, uint* num_occ){
+size_t LiteralDictionary::substringToId(unsigned char *s, size_t len, size_t offset, size_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ){
 
 	if(len==0) {
 		return 0;
@@ -493,24 +493,24 @@ void LiteralDictionary::populateHeader(Header & header, string rootNode) {
 			this->blocksize);
 }
 
-unsigned int LiteralDictionary::getNsubjects() {
+size_t LiteralDictionary::getNsubjects() {
 	return shared->getLength() + subjects->getLength();
 }
-unsigned int LiteralDictionary::getNpredicates() {
+size_t LiteralDictionary::getNpredicates() {
 	return predicates->getLength();
 }
-unsigned int LiteralDictionary::getNobjects() {
+size_t LiteralDictionary::getNobjects() {
 	return shared->getLength() + objectsNotLiterals->getLength() + objectsLiterals->getLength();
 }
-unsigned int LiteralDictionary::getNshared() {
+size_t LiteralDictionary::getNshared() {
 	return shared->getLength();
 }
 
-unsigned int LiteralDictionary::getMaxID() {
-	unsigned int s = subjects->getLength();
-	unsigned int o = objectsLiterals->getLength()+objectsNotLiterals->getLength();
-	unsigned int sh = shared->getLength();
-	unsigned int max = s > o ? s : o;
+size_t LiteralDictionary::getMaxID() {
+    size_t s = subjects->getLength();
+    size_t o = objectsLiterals->getLength()+objectsNotLiterals->getLength();
+    size_t sh = shared->getLength();
+    size_t max = s > o ? s : o;
 
 	if (mapping == MAPPING2) {
 		return sh + max;
@@ -519,18 +519,18 @@ unsigned int LiteralDictionary::getMaxID() {
 	}
 }
 
-unsigned int LiteralDictionary::getMaxSubjectID() {
+size_t LiteralDictionary::getMaxSubjectID() {
 	return getNsubjects();
 }
 
-unsigned int LiteralDictionary::getMaxPredicateID() {
+size_t LiteralDictionary::getMaxPredicateID() {
 	return predicates->getLength();
 }
 
-unsigned int LiteralDictionary::getMaxObjectID() {
-	unsigned int s = subjects->getLength();
-	unsigned int o = objectsLiterals->getLength()+objectsNotLiterals->getLength();
-	unsigned int sh = shared->getLength();
+size_t LiteralDictionary::getMaxObjectID() {
+    size_t s = subjects->getLength();
+    size_t o = objectsLiterals->getLength()+objectsNotLiterals->getLength();
+    size_t sh = shared->getLength();
 
 	if (mapping == MAPPING2) {
 		return sh + o;
@@ -556,7 +556,7 @@ void LiteralDictionary::stopProcessing(ProgressListener *listener) {
 
 }
 
-unsigned int LiteralDictionary::insert(const std::string & str,
+size_t LiteralDictionary::insert(const std::string & str,
 		TripleComponentRole position) {
 	throw std::runtime_error("This dictionary does not support insertions.");
 }
@@ -565,11 +565,11 @@ string LiteralDictionary::getType() {
 	return HDTVocabulary::DICTIONARY_TYPE_LITERAL;
 }
 
-unsigned int LiteralDictionary::getMapping() {
+size_t LiteralDictionary::getMapping() {
 	return mapping;
 }
 
-csd::CSD *LiteralDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) {
+csd::CSD *LiteralDictionary::getDictionarySection(size_t id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
 		if (id <= shared->getLength()) {
@@ -589,7 +589,7 @@ csd::CSD *LiteralDictionary::getDictionarySection(unsigned int id, TripleCompone
 			//cout << "Section SHARED" << endl;
 			return shared;
 		} else {
-			unsigned int localId = 0;
+            size_t localId = 0;
 			if (mapping == MAPPING2) {
 				localId = id - shared->getLength();
 			} else {
@@ -607,7 +607,7 @@ csd::CSD *LiteralDictionary::getDictionarySection(unsigned int id, TripleCompone
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int LiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+size_t LiteralDictionary::getGlobalId(size_t mapping, size_t id, DictionarySection position) {
 	switch (position) {
 	case NOT_SHARED_SUBJECT:
 		return shared->getLength() + id;
@@ -630,11 +630,11 @@ unsigned int LiteralDictionary::getGlobalId(unsigned int mapping, unsigned int i
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int LiteralDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+size_t LiteralDictionary::getGlobalId(size_t id, DictionarySection position) {
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int LiteralDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+size_t LiteralDictionary::getLocalId(size_t mapping, size_t id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
 		if (id <= shared->getLength()) {
@@ -647,7 +647,7 @@ unsigned int LiteralDictionary::getLocalId(unsigned int mapping, unsigned int id
 		if (id <= shared->getLength()) {
 			return id;
 		} else {
-			unsigned int localId = 0;
+            size_t localId = 0;
 			if (mapping == MAPPING2) {
 				localId = id - shared->getLength();
 			} else {
@@ -670,7 +670,7 @@ unsigned int LiteralDictionary::getLocalId(unsigned int mapping, unsigned int id
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int LiteralDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+size_t LiteralDictionary::getLocalId(size_t id, TripleComponentRole position) {
 	return getLocalId(mapping, id, position);
 }
 

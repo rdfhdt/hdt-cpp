@@ -45,9 +45,9 @@ void serializeTerm(std::string str, ostream &output) {
 	}
 }
 
-void RDFSerializerNTriples::serialize(IteratorTripleString *it, ProgressListener *listener, unsigned int totalTriples)
+void RDFSerializerNTriples::serialize(IteratorTripleString *it, ProgressListener *listener, size_t totalTriples)
 {
-	unsigned int numTriple=0;
+    size_t numTriple=0;
 	while(it->hasNext()) {
 		TripleString *ts = it->next();
 

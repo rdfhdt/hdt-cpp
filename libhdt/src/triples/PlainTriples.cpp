@@ -162,7 +162,7 @@ void PlainTriples::load(std::istream &input, ControlInformation &controlInformat
 		throw std::runtime_error("Trying to read PlainTriples but the data is not PlainTriples");
 	}
 
-	//unsigned int numTriples = controlInformation.getUint("numTriples");
+    //size_t numTriples = controlInformation.getUint("numTriples");
 	order = (TripleComponentOrder) controlInformation.getUint("order");
 
 	IntermediateListener iListener(listener);
@@ -275,7 +275,7 @@ ComponentIterator::ComponentIterator(IteratorTripleID *iterator, TripleComponent
 {
 }
 
-unsigned int ComponentIterator::next()
+size_t ComponentIterator::next()
 {
 	TripleID *triple = it->next();
 

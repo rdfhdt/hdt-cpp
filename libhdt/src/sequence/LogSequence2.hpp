@@ -215,7 +215,7 @@ public:
 
 
 inline unsigned int bits(size_t n) {
-	size_t b = 0;
+    unsigned int b = 0;
 	while (n) { b++; n >>= 1; }
 	return b;
 }

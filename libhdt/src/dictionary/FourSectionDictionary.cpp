@@ -80,11 +80,11 @@ csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, Progres
 }
 
 
-std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRole position)
+std::string FourSectionDictionary::idToString(size_t id, TripleComponentRole position)
 {
 	csd::CSD *section = getDictionarySection(id, position);
 
-	unsigned int localid = getLocalId(id, position);
+    size_t localid = getLocalId(id, position);
 
 	if(localid<=section->getLength()) {
 		const char * ptr = (const char *)section->extract(localid);
@@ -100,9 +100,9 @@ std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRo
 	return string();
 }
 
-unsigned int FourSectionDictionary::stringToId(const std::string &key, TripleComponentRole position)
+size_t FourSectionDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
-	unsigned int ret;
+    size_t ret;
 
         if(key.length()==0) {
 		return 0;
@@ -369,26 +369,26 @@ void FourSectionDictionary::populateHeader(Header & header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_BLOCK_SIZE, this->blocksize);
 }
 
-unsigned int FourSectionDictionary::getNsubjects(){
+size_t FourSectionDictionary::getNsubjects(){
 	return shared->getLength()+subjects->getLength();
 }
-unsigned int FourSectionDictionary::getNpredicates(){
+size_t FourSectionDictionary::getNpredicates(){
 	return predicates->getLength();
 }
-unsigned int FourSectionDictionary::getNobjects(){
+size_t FourSectionDictionary::getNobjects(){
 	return shared->getLength()+objects->getLength();
 }
-unsigned int FourSectionDictionary::getNshared(){
+size_t FourSectionDictionary::getNshared(){
 	return shared->getLength();
 }
 
 
-unsigned int FourSectionDictionary::getMaxID()
+size_t FourSectionDictionary::getMaxID()
 {
-	unsigned int s = subjects->getLength();
-	unsigned int o = objects->getLength();
-	unsigned int sh = shared->getLength();
-	unsigned int max = s>o ? s : o;
+    size_t s = subjects->getLength();
+    size_t o = objects->getLength();
+    size_t sh = shared->getLength();
+    size_t max = s>o ? s : o;
 
 	if(mapping ==MAPPING2) {
 		return sh+max;
@@ -397,21 +397,21 @@ unsigned int FourSectionDictionary::getMaxID()
 	}
 }
 
-unsigned int FourSectionDictionary::getMaxSubjectID()
+size_t FourSectionDictionary::getMaxSubjectID()
 {
 	return getNsubjects();
 }
 
-unsigned int FourSectionDictionary::getMaxPredicateID()
+size_t FourSectionDictionary::getMaxPredicateID()
 {
 	return predicates->getLength();
 }
 
-unsigned int FourSectionDictionary::getMaxObjectID()
+size_t FourSectionDictionary::getMaxObjectID()
 {
-	unsigned int s = subjects->getLength();
-	unsigned int o = objects->getLength();
-	unsigned int sh = shared->getLength();
+    size_t s = subjects->getLength();
+    size_t o = objects->getLength();
+    size_t sh = shared->getLength();
 
 	if(mapping ==MAPPING2) {
 		return sh+o;
@@ -435,12 +435,12 @@ string FourSectionDictionary::getType()
 	return HDTVocabulary::DICTIONARY_TYPE_FOUR;
 }
 
-unsigned int FourSectionDictionary::getMapping() {
+size_t FourSectionDictionary::getMapping() {
 	return mapping;
 }
 
 
-csd::CSD *FourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) {
+csd::CSD *FourSectionDictionary::getDictionarySection(size_t id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
 		if(id<=shared->getLength()) {
@@ -463,7 +463,7 @@ csd::CSD *FourSectionDictionary::getDictionarySection(unsigned int id, TripleCom
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int FourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+size_t FourSectionDictionary::getGlobalId(size_t mapping, size_t id, DictionarySection position) {
 	switch (position) {
 	case NOT_SHARED_SUBJECT:
 		return shared->getLength()+id;
@@ -487,11 +487,11 @@ unsigned int FourSectionDictionary::getGlobalId(unsigned int mapping, unsigned i
 }
 
 
-unsigned int FourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+size_t FourSectionDictionary::getGlobalId(size_t id, DictionarySection position) {
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int FourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+size_t FourSectionDictionary::getLocalId(size_t mapping, size_t id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
 		if(id<=shared->getLength()) {
@@ -518,7 +518,7 @@ unsigned int FourSectionDictionary::getLocalId(unsigned int mapping, unsigned in
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int FourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+size_t FourSectionDictionary::getLocalId(size_t id, TripleComponentRole position) {
 	return getLocalId(mapping,id,position);
 }
 

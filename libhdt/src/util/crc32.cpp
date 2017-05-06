@@ -103,7 +103,7 @@ static const crc32_t crc32_table[256] = {
  *****************************************************************************/
 crc32_t crc32_reflect(crc32_t data, size_t data_len)
 {
-    unsigned int i;
+    size_t i;
     crc32_t ret;
 
     ret = data & 0x01;

@@ -81,9 +81,9 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 
 	IteratorTripleID *it = triples.searchAll();
 
-	vector<unsigned int> vectorY, vectorZ;
-	unsigned int lastX=0, lastY=0, lastZ=0; // FIXME: lastZ is assigned, below, but never actually used?
-	unsigned int x, y, z;
+    vector<size_t> vectorY, vectorZ;
+    size_t lastX=0, lastY=0, lastZ=0; // FIXME: lastZ is assigned, below, but never actually used?
+    size_t x, y, z;
 
 	// First triple
 	if(it->hasNext()) {
@@ -146,13 +146,13 @@ void CompactTriples::load(ModifiableTriples &triples, ProgressListener *listener
 #if 0
 	// Debug Adjacency Lists
 	cout << "Y" << vectorY.size() << "): ";
-	for(unsigned int i=0;i<arrayY->getNumberOfElements();i++){
+    for(size_t i=0;i<arrayY->getNumberOfElements();i++){
 		cout << arrayY->get(i) << " ";
 	}
 	cout << endl;
 
 	cout << "Z" << vectorZ.size() << "): ";
-	for(unsigned int i=0;i<arrayZ->getNumberOfElements();i++){
+    for(size_t i=0;i<arrayZ->getNumberOfElements();i++){
 		cout << arrayZ->get(i) << " ";
 	}
 	cout << endl;

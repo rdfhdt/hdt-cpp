@@ -50,7 +50,7 @@
 
 //#define GOOGLE_HASH
 
-#ifdef GOOGLE_HASH 
+#ifdef GOOGLE_HASH
 #include <sparsehash/sparse_hash_map>
 
 using google::sparse_hash_map;      // namespace where class lives by default
@@ -69,7 +69,7 @@ namespace hdt {
 
 struct DictionaryEntry {
 public:
-	unsigned int id;
+    size_t id;
 	char *str;
 
 	bool static cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2);
@@ -84,7 +84,7 @@ struct str_cmp {
 
 typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 
-#ifdef GOOGLE_HASH 
+#ifdef GOOGLE_HASH
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
 
@@ -109,7 +109,7 @@ private:
 	DictEntryHash hashSubject;
 	DictEntryHash hashPredicate;
 	DictEntryHash hashObject;
-	unsigned int mapping;
+    size_t mapping;
 	uint64_t sizeStrings;
 
 	//ControlInformation controlInformation;
@@ -121,22 +121,22 @@ public:
 	PlainDictionary(HDTSpecification &spec);
 	~PlainDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(const std::string &str, TripleComponentRole position);
+    std::string idToString(size_t id, TripleComponentRole position);
+    size_t stringToId(const std::string &str, TripleComponentRole position);
 
     size_t getNumberOfElements();
 
     uint64_t size();
 
-	unsigned int getNsubjects();
-	unsigned int getNpredicates();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+    size_t getNsubjects();
+    size_t getNpredicates();
+    size_t getNobjects();
+    size_t getNshared();
 
-	unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxPredicateID();
-	unsigned int getMaxObjectID();
+    size_t getMaxID();
+    size_t getMaxSubjectID();
+    size_t getMaxPredicateID();
+    size_t getMaxObjectID();
 
 	void populateHeader(Header &header, string rootNode);
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
@@ -152,13 +152,13 @@ public:
     IteratorUCharString *getShared();
 
 // ModifiableDictionary
-	unsigned int insert(const std::string &str, TripleComponentRole position);
+    size_t insert(const std::string &str, TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
 
 	string getType();
-	unsigned int getMapping();
+    size_t getMapping();
 
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
@@ -175,16 +175,16 @@ private:
 	void idSort();
 	void updateIDs();
 
-	std::vector<DictionaryEntry*> &getDictionaryEntryVector(unsigned int id, TripleComponentRole position);
+    std::vector<DictionaryEntry*> &getDictionaryEntryVector(size_t id, TripleComponentRole position);
 
 public:
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+    size_t getGlobalId(size_t mapping, size_t id, DictionarySection position);
+    size_t getGlobalId(size_t id, DictionarySection position);
+    size_t getLocalId(size_t mapping, size_t id, TripleComponentRole position);
+    size_t getLocalId(size_t id, TripleComponentRole position);
 
-	void convertMapping(unsigned int mapping);
-	void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);
+    void convertMapping(size_t mapping);
+    void updateID(size_t oldid, size_t newid, DictionarySection position);
 };
 
 
