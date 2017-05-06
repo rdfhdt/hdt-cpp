@@ -53,9 +53,9 @@ void MatrixViewWidget::initializeGL()
 
 void MatrixViewWidget::paintShared()
 {
-    unsigned int nshared = hdtController->getHDT()->getDictionary()->getNshared();
+    size_t nshared = hdtController->getHDT()->getDictionary()->getNshared();
 
-    glColor4f(SHARED_AREA_COLOR);
+    glColor4d(SHARED_AREA_COLOR);
     glBegin(GL_QUADS);
     glVertex3f(0, 0, 0);
     glVertex3f(0, nshared, 0);
@@ -63,7 +63,7 @@ void MatrixViewWidget::paintShared()
     glVertex3f(nshared, 0, 0);
     glEnd();
 
-    glColor4f(SHARED_AREA_BORDER_COLOR);
+    glColor4d(SHARED_AREA_BORDER_COLOR);
     glBegin(GL_LINE_STRIP);
     glVertex3f(0, nshared, 0);
     glVertex3f(nshared, nshared, 0);
@@ -74,22 +74,22 @@ void MatrixViewWidget::paintShared()
 void MatrixViewWidget::paintScales()
 {
     hdt::Dictionary *dict = hdtController->getHDT()->getDictionary();
-    unsigned int nsubjects = dict->getMaxSubjectID();
-    unsigned int nobjects = dict->getMaxObjectID();
-    unsigned int npredicates = dict->getMaxPredicateID();
+    size_t nsubjects = dict->getMaxSubjectID();
+    size_t nobjects = dict->getMaxObjectID();
+    size_t npredicates = dict->getMaxPredicateID();
 
     // Draw subject scale
-    for (unsigned int i = 0; i <= nsubjects; i += 1+nsubjects / 15) {
+    for (size_t i = 0; i <= nsubjects; i += 1+nsubjects / 15) {
         QString str;
         if (nsubjects > 20000) {
             str.append(QString("%1K").arg(i/1000));
         } else {
             str.append(QString("%1").arg(i));
         }
-        glColor4f(TEXT_COLOR);
+        glColor4d(TEXT_COLOR);
         this->renderText(0.0, i+nsubjects*0.01, 0, str);
 
-        glColor4f(GRID_COLOR);
+        glColor4d(GRID_COLOR);
         glBegin(GL_LINES);
         glVertex3f(0, i, 0);
         glVertex3f(nobjects, i, 0);
@@ -99,17 +99,17 @@ void MatrixViewWidget::paintScales()
     }
 
     // Draw object scale
-    for (unsigned int i = 0; i <= nobjects; i += 1+ nobjects / 15) {
+    for (size_t i = 0; i <= nobjects; i += 1+ nobjects / 15) {
         QString str;
         if (nobjects > 20000) {
             str.append(QString("%1K").arg(i/1000));
         } else {
             str.append(QString("%1").arg(i));
         }
-        glColor4f(TEXT_COLOR);
+        glColor4d(TEXT_COLOR);
         this->renderText(i, 0.0, 0, str);
 
-        glColor4f(GRID_COLOR);
+        glColor4d(GRID_COLOR);
         glBegin(GL_LINES);
         glVertex3f(i, 0, 0);
         glVertex3f(i, nsubjects, 0);
@@ -119,13 +119,13 @@ void MatrixViewWidget::paintScales()
     }
 
     // Draw predicate scale
-    for (unsigned int i = 0; i <= npredicates; i += 1+npredicates / 10) {
+    for (size_t i = 0; i <= npredicates; i += 1+npredicates / 10) {
         QString str = QString::number(i);
         //texto(str, 0, 0, i);
-        glColor4f(TEXT_COLOR);
+        glColor4d(TEXT_COLOR);
         this->renderText(0, 0, i, str, QFont());
 
-        glColor4f(GRID_COLOR);
+        glColor4d(GRID_COLOR);
         glBegin(GL_LINES);
         glVertex3f(0, 0, i);
         glVertex3f(nobjects, 0, i);
@@ -135,7 +135,7 @@ void MatrixViewWidget::paintScales()
     }
 
     // Draw outter axis
-    glColor4f(AXIS_COLOR);
+    glColor4d(AXIS_COLOR);
     glBegin(GL_LINES);
     glVertex3f(0, 0, 0);
     glVertex3f(0, nsubjects, 0);
@@ -164,7 +164,7 @@ void MatrixViewWidget::paintScales()
     glEnd();
 
     // Draw labels
-    glColor4f(TEXT_COLOR);
+    glColor4d(TEXT_COLOR);
     renderText(0, nsubjects * 1.04, 0, "Subjects");
     renderText(nobjects * 1.05, 0, 0, "Objects");
     renderText(0, 0, npredicates*1.05, "Predicates");
@@ -186,9 +186,9 @@ void MatrixViewWidget::paintPoints()
             Color *c = hdtController->getHDTCachedInfo()->getPredicateColor(tid->getPredicate()-1);
 
             if(hdtController->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
-                glColor4f(c->r, c->g, c->b, 1.0);
+                glColor4d(c->r, c->g, c->b, 1.0);
             } else {
-                glColor4f(c->r/4, c->g/4, c->b/4, 0.3);
+                glColor4d(c->r/4, c->g/4, c->b/4, 0.3);
             }
 
             glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
@@ -201,16 +201,16 @@ void MatrixViewWidget::paintPoints()
         glPointSize(RDF_POINT_SIZE);
         glBegin(GL_POINTS);
         vector<hdt::TripleID> triples = hdtController->getTriples();
-        for(unsigned int i=0;i<triples.size();i++) {
+        for(size_t i=0;i<triples.size();i++) {
             hdt::TripleID *tid = &triples[i];
 
             if(tid->match(hdtController->getSearchPatternID())) {
                 Color *c = hdtController->getHDTCachedInfo()->getPredicateColor(tid->getPredicate()-1);
 
                 if(hdtController->getPredicateStatus()->isPredicateActive(tid->getPredicate()-1)) {
-                    glColor4f(c->r, c->g, c->b, 1.0);
+                    glColor4d(c->r, c->g, c->b, 1.0);
                 } else {
-                    glColor4f(c->r/4, c->g/4, c->b/4, 0.3);
+                    glColor4d(c->r/4, c->g/4, c->b/4, 0.3);
                 }
 
                 glVertex3f((float)tid->getObject(), (float)tid->getSubject(), (float)tid->getPredicate());
@@ -229,9 +229,9 @@ void MatrixViewWidget::paintSelected()
 
     // Draw selected triple
     if (selectedTriple.isValid()) {
-        unsigned int nsubjects = hdtController->getHDT()->getDictionary()->getMaxSubjectID();
-        unsigned int npredicates = hdtController->getHDT()->getDictionary()->getMaxPredicateID();
-        unsigned int nobjects = hdtController->getHDT()->getDictionary()->getMaxObjectID();
+        size_t nsubjects = hdtController->getHDT()->getDictionary()->getMaxSubjectID();
+        size_t npredicates = hdtController->getHDT()->getDictionary()->getMaxPredicateID();
+        size_t nobjects = hdtController->getHDT()->getDictionary()->getMaxObjectID();
 
         float x = selectedTriple.getObject();
         float y = selectedTriple.getSubject();
@@ -272,9 +272,9 @@ void MatrixViewWidget::paintGL()
 
     camera.applyTransform();
 
-    unsigned int nsubjects = hdtController->getHDT()->getDictionary()->getMaxSubjectID();
-    unsigned int nobjects = hdtController->getHDT()->getDictionary()->getMaxObjectID();
-    unsigned int npredicates = hdtController->getHDT()->getDictionary()->getMaxPredicateID();
+    size_t nsubjects = hdtController->getHDT()->getDictionary()->getMaxSubjectID();
+    size_t nobjects = hdtController->getHDT()->getDictionary()->getMaxObjectID();
+    size_t npredicates = hdtController->getHDT()->getDictionary()->getMaxPredicateID();
 
     glScalef(1.0f / (float) nobjects, 1.0f / (float) nsubjects, 1.0f / (float) npredicates);
 

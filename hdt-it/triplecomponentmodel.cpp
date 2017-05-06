@@ -13,7 +13,7 @@ TripleComponentModel::TripleComponentModel(HDTController *view, hdt::TripleCompo
 
 int TripleComponentModel::rowCount(const QModelIndex &parent) const
 {
-    int numResults = 0;
+    size_t numResults = 0;
 
     Q_UNUSED(parent);
     if(hdtController->getHDT() != NULL) {
@@ -32,7 +32,7 @@ int TripleComponentModel::rowCount(const QModelIndex &parent) const
     }
 
     // FIXME: QTableView crashes when returning more than 100 Million rows :(
-    return numResults > 100000000 ? 100000000 : numResults;
+    return (int)(numResults > 100000000 ? 100000000 : numResults);
 }
 
 int TripleComponentModel::columnCount(const QModelIndex &parent) const

@@ -105,17 +105,17 @@ void HDTCachedInfo::generateMatrix(hdt::ProgressListener *listener)
 
 }
 
-Color * HDTCachedInfo::getPredicateColor(unsigned int npred)
+Color * HDTCachedInfo::getPredicateColor(size_t npred)
 {
     return &predicateColors[npred];
 }
 
-unsigned int HDTCachedInfo::getPredicateUsages(unsigned int predicate)
+size_t HDTCachedInfo::getPredicateUsages(size_t predicate)
 {
     return predicateCount[predicate];
 }
 
-unsigned int HDTCachedInfo::getMaxPredicateCount()
+size_t HDTCachedInfo::getMaxPredicateCount()
 {
     return maxPredicateCount;
 }
@@ -130,8 +130,8 @@ void HDTCachedInfo::save(QString &fileName, hdt::ProgressListener *listener)
 	// Only save info of files bigger than 2M triples. Otherwise is fast to create from scratch.
 	if(hdt->getTriples()->getNumberOfElements()>2000000) {
 	    std::ofstream out(fileName.toLatin1(), ios::binary);
-	    unsigned int numTriples = triples.size();
-	    out.write((char *)&numTriples, sizeof(unsigned int));
+        uint64_t numTriples = triples.size();
+        out.write((char *)&numTriples, sizeof(uint64_t));
 	    out.write((char *)&triples[0], sizeof(hdt::TripleID)*numTriples);
 	    out.close();
 	}
@@ -143,8 +143,8 @@ void HDTCachedInfo::load(QString &fileName, hdt::ProgressListener *listener)
 
     std::ifstream in(fileName.toLatin1(), ios::binary);
     if(in.good()) {
-        unsigned int numTriples;
-        in.read((char *)&numTriples, sizeof(unsigned int));
+        uint64_t numTriples;
+        in.read((char *)&numTriples, sizeof(uint64_t));
         triples.resize(numTriples);
         in.read((char *)&triples[0], sizeof(hdt::TripleID)*numTriples);
         in.close();
