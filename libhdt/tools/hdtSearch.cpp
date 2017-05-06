@@ -89,7 +89,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 		IteratorTripleString *it = hdt->search(subj, pred, obj);
 
 		StopWatch st;
-		unsigned int numTriples=0;
+		size_t numTriples=0;
 		while(it->hasNext() && interruptSignal==0) {
 			TripleString *ts = it->next();
 			if(!measure)
