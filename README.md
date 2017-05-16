@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.580298.svg)](https://doi.org/10.5281/zenodo.580298)
+
 # C++ library for the HDT triple format
 HDT keeps big RDF datasets compressed while maintaining efficient search and browse operations.
 
