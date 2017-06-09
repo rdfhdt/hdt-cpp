@@ -10,7 +10,9 @@ SERD_SUPPORT=true
 
 CPP=g++
 
-FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option -std=c++0x
+OFLAGS=-O3
+
+FLAGS=$(OFLAGS) -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option -std=c++0x
 
 ifeq ($(CPP), g++)
 FLAGS+=-Wno-unused-but-set-variable
