@@ -1,5 +1,9 @@
 #ifdef HAVE_SERD
 
+#ifdef HAVE_LIBZ
+#include <zlib.h>
+#endif
+
 #include "../util/fileUtil.hpp"
 #include "RDFParserSerd.hpp"
 #include "RDFParser.hpp"
