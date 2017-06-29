@@ -11,17 +11,17 @@ string RDFParserSerd::getString(const SerdNode *term) {
 	out.reserve(term->n_bytes + 2);
 
 	if(term->type==SERD_URI) {
-		out.append((const char *)term->buf);
+		out.append((const char *)term->buf, term->n_bytes);
 	} else if(term->type==SERD_BLANK) {
 		out.append("_:");
-		out.append((const char *)term->buf);
+		out.append((const char *)term->buf, term->n_bytes);
 	} else if(term->type==SERD_CURIE) {
 		SerdChunk uri_prefix, uri_suffix;
 		if (serd_env_expand(env, term, &uri_prefix, &uri_suffix)) {
 			// ERROR BAD Curie / Prefix
 		}
-		out.append((const char *)uri_prefix.buf);
-		out.append((const char *)uri_suffix.buf);
+		out.append((const char *)uri_prefix.buf, uri_prefix.len);
+		out.append((const char *)uri_suffix.buf, uri_prefix.len);
 	}
 	return out;
 }
@@ -39,15 +39,15 @@ string RDFParserSerd::getStringObject(const SerdNode *term,
 	            (lang     ? lang->n_bytes + 1     : 0));
 
 	out.push_back('\"');
-	out.append((const char *)term->buf);
+	out.append((const char *)term->buf, term->n_bytes);
 	out.push_back('\"');
 	if(lang!=NULL){
 		out.push_back('@');
-		out.append((const char *)lang->buf);
+		out.append((const char *)lang->buf, lang->n_bytes);
 	}
 	if(dataType!=NULL) {
 		out.append("^^<");
-		out.append((const char *)dataType->buf);
+		out.append((const char *)dataType->buf, dataType->n_bytes);
 		out.push_back('>');
 	}
 
