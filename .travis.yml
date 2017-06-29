@@ -13,25 +13,26 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-4.8']
+          packages: ['g++-4.8', 'zlib1g-dev']
       env: export HDT_CPP=g++-4.8
     - os: linux
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-5']
+          packages: ['g++-5', 'zlib1g-dev']
       env: export HDT_CPP=g++-5
     - os: linux
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test']
-          packages: ['g++-6']
+          packages: ['g++-6', 'zlib1g-dev']
       env: export HDT_CPP=g++-6
 before_install:
   - pushd $HOME
-  # Download and install SERD
-  - curl -s http://download.drobilla.net/serd-0.24.0.tar.bz2 | tar -xj
-  - pushd serd-* && ./waf configure --prefix=$HOME/local && ./waf && ./waf install && popd
+  # Download and install Serd
+  # - curl -s http://download.drobilla.net/serd-0.24.0.tar.bz2 | tar -xj
+  - git clone https://github.com/drobilla/serd.git
+  - pushd serd* && ./waf configure --prefix=$HOME/local && ./waf && ./waf install && popd
   # Download and install Raptor
   - curl -s http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar -xz
   - pushd raptor2-* && ./configure --prefix=$HOME/local && make -j2 && make install && popd
