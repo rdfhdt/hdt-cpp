@@ -248,10 +248,10 @@ bool BitmapTriplesSearchIterator::canGoTo() {
 }
 
 void BitmapTriplesSearchIterator::goTo(unsigned int pos) {
-	if ((posZ + pos) >= maxZ) {
+    if ((pos) >= maxZ) {
 			throw std::runtime_error("Cannot goTo on this pattern.");
 	}
-	posZ += pos; // move the position of Z
+    posZ = pos; // move the position of Z
 	goToY(); // go to the correct Y
 }
 

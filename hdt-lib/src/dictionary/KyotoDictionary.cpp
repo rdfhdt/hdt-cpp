@@ -30,7 +30,10 @@
  */
 
 #include <sstream>
+
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <stdexcept>
 #include "KyotoDictionary.hpp"
 
