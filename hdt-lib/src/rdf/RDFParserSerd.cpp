@@ -105,7 +105,6 @@ SerdStatus hdtserd_on_statement(void               *handle,
 #ifdef HAVE_LIBZ
 
 static const size_t SERD_PAGE_SIZE = 4096;
-static const unsigned LIBZ_BUFFER_SIZE = 64 * 1024;
 
 struct LibzSerdStream {
 	LibzSerdStream(const char *fileName)
@@ -115,7 +114,6 @@ struct LibzSerdStream {
 		if (!file) {
 			throw ParseException("Could not open input file for parsing");
 		}
-		gzbuffer(file, LIBZ_BUFFER_SIZE);
 	}
 
 	~LibzSerdStream() {
