@@ -70,7 +70,7 @@ public:
     * @param role Triple Role (Subject, Predicate, Object) to be fetched.
     * @return ID of the specified String
     */
-    virtual unsigned int stringToId(std::string &str, TripleComponentRole role)=0;
+    virtual unsigned int stringToId(const std::string &str, TripleComponentRole role)=0;
 
     /**
     * Convert a TripleString object to a TripleID, using the dictionary to perform the conversion.
@@ -78,7 +78,7 @@ public:
     * @param tripleString TripleString to be converted.
     * @return resulting TripleID
     */
-    void tripleStringtoTripleID(TripleString &tripleString, TripleID &tid) {
+    void tripleStringtoTripleID(const TripleString &tripleString, TripleID &tid) {
     	tid.setSubject(stringToId(tripleString.getSubject(), SUBJECT));
     	tid.setPredicate(stringToId(tripleString.getPredicate(), PREDICATE));
     	tid.setObject(stringToId(tripleString.getObject(), OBJECT));
@@ -179,7 +179,7 @@ public:
     * @param str
     * @param role
     */
-    virtual unsigned int insert(std::string &str, TripleComponentRole role)=0;
+    virtual unsigned int insert(const std::string &str, TripleComponentRole role)=0;
 
     /**
     * Function to be called before starting inserting entries to the dictionary to perform an initialization.

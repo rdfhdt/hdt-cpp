@@ -60,14 +60,14 @@ TESTS=$(patsubst %.cpp,%, $(wildcard tests/*.cpp))
 EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
 
 all:
-	@$(MAKE) showflags 
+	@$(MAKE) showflags
 	@$(MAKE) -C $(LIBCDSPATH)
 	@$(MAKE) tools tests/jointest
 	#@$(MAKE) tests examples
 
 re:
 	@$(MAKE) clean
-	@$(MAKE) all 
+	@$(MAKE) all
 
 showflags:
 	@echo " [CFG] OS= $(OS)"
@@ -105,12 +105,11 @@ libhdt.a: $(OBJECTS) $(HEADERS)
 	@rm -Rf libhdt.a
 	@ar rcs libhdt.a $(OBJECTS)
 
-doc:	
+doc:
 	@echo " [HDT] Generating documentation"
 	$(DOXYGEN)
-	
+
 clean:
 	@echo " [CLN] Removing object files"
 	@rm -f $(OBJECTS) $(TOOLS) $(TESTS) $(EXAMPLES) libhdt.a *~
 	@rm -Rf tools/*dSYM tests/*dSYM examples/*dSYM docs/*
-

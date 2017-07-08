@@ -198,7 +198,7 @@ ModifiableTriples* BasicHDT::getLoadTriples() {
 }
 
 
-void DictionaryLoader::processTriple(hdt::TripleString& triple,	unsigned long long pos) {
+void DictionaryLoader::processTriple(const hdt::TripleString& triple,	unsigned long long pos) {
 	//cerr << "Triple String: " << triple << endl;
 	dictionary->insert(triple.getSubject(), SUBJECT);
 	dictionary->insert(triple.getPredicate(), PREDICATE);
@@ -257,7 +257,7 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 	}
 }
 
-void TriplesLoader::processTriple(hdt::TripleString& triple, unsigned long long pos) {
+void TriplesLoader::processTriple(const hdt::TripleString& triple, unsigned long long pos) {
 	TripleID ti;
 	dictionary->tripleStringtoTripleID(triple, ti);
 	if (ti.isValid()) {

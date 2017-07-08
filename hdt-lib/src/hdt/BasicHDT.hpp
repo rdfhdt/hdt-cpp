@@ -148,7 +148,7 @@ private:
 	unsigned long long count;
 public:
 	DictionaryLoader(ModifiableDictionary *dictionary, ProgressListener *listener) : dictionary(dictionary), listener(listener), count(0) { }
-	void processTriple(TripleString &triple, unsigned long long pos);
+	void processTriple(const TripleString &triple, unsigned long long pos);
 	inline unsigned long long getCount() {
 		return count;
 	}
@@ -163,7 +163,7 @@ private:
 	uint64_t sizeBytes;
 public:
 	TriplesLoader(Dictionary *dictionary, ModifiableTriples *triples, ProgressListener *listener) : dictionary(dictionary), triples(triples), listener(listener), count(0), sizeBytes(0) { }
-	void processTriple(TripleString &triple, unsigned long long pos);
+	void processTriple(const TripleString &triple, unsigned long long pos);
 	uint64_t getSize() {
 		return sizeBytes;
 	}
