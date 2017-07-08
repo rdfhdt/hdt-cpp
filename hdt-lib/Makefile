@@ -10,10 +10,10 @@ SERD_SUPPORT=true
 
 CPP=g++
 
+FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option -std=c++0x
+
 ifeq ($(CPP), g++)
-FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unknown-warning-option -std=gnu++11
-else
-FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option
+FLAGS+=-Wno-unused-but-set-variable
 endif
 
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
