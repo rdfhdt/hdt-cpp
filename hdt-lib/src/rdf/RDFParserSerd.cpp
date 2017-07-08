@@ -154,10 +154,12 @@ SerdSyntax RDFParserSerd::getParserType(RDFNotation notation) {
 	switch(notation){
 	case NTRIPLES:
 		return SERD_NTRIPLES;
+	case NQUAD:
+		return SERD_NQUADS;
 	case TURTLE:
 		return SERD_TURTLE;
 	default:
-		throw ParseException("Serd parser only supports ntriples and turtle.");
+		throw ParseException("Serd parser only supports ntriples, nquads, and turtle.");
 	}
 }
 
