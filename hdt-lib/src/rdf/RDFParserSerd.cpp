@@ -25,7 +25,7 @@ string RDFParserSerd::getString(const SerdNode *term) {
 			// ERROR BAD Curie / Prefix
 		}
 		out.append((const char *)uri_prefix.buf, uri_prefix.len);
-		out.append((const char *)uri_suffix.buf, uri_prefix.len);
+		out.append((const char *)uri_suffix.buf, uri_suffix.len);
 	}
 	return out;
 }
@@ -51,7 +51,7 @@ string RDFParserSerd::getStringObject(const SerdNode *term,
 	}
 	if(dataType!=NULL) {
 		out.append("^^<");
-		out.append((const char *)dataType->buf, dataType->n_bytes);
+		out.append(getString(dataType));
 		out.push_back('>');
 	}
 
