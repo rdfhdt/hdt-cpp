@@ -54,12 +54,14 @@ void help() {
 	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
 	cout << "\t-V\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
+	cout << "\t-p\tPrints a progress indicator." << endl;
 }
 
 int main(int argc, char **argv) {
 	string inputFile;
 	string outputFile;
 	bool verbose=false; // NOTE: generates -Wunused-but-set-variable warning.
+	bool showProgress=false;
 	bool generateIndex=false;
 	string configFile;
 	string options;
@@ -69,7 +71,7 @@ int main(int argc, char **argv) {
 	RDFNotation notation = NTRIPLES;
 
 	int c;
-	while( (c = getopt(argc,argv,"c:o:vf:B:i:V"))!=-1) {
+	while( (c = getopt(argc,argv,"c:o:vpf:B:i:V"))!=-1) {
 		switch(c) {
 		case 'c':
 			configFile = optarg;
@@ -81,6 +83,9 @@ int main(int argc, char **argv) {
 			break;
 		case 'v':
 			verbose = true;
+			break;
+		case 'p':
+			showProgress = true;
 			break;
 		case 'f':
 			rdfFormat = optarg;
@@ -146,7 +151,6 @@ int main(int argc, char **argv) {
 	}
 
 	// Process
-	StdoutProgressListener progress;
 	HDTSpecification spec(configFile);
 
 	spec.setOptions(options);
@@ -155,7 +159,8 @@ int main(int argc, char **argv) {
 		// Read RDF
 		StopWatch globalTimer;
 
-		HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, &progress);
+		ProgressListener* progress = showProgress ? new StdoutProgressListener() : NULL;
+		HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, progress);
 
 		ofstream out;
 
@@ -164,7 +169,7 @@ int main(int argc, char **argv) {
 		if(!out.good()){
 			throw std::runtime_error("Could not open output file.");
 		}
-		hdt->saveToHDT(out, &progress);
+		hdt->saveToHDT(out, progress);
 		out.close();
 
 		globalTimer.stop();
@@ -175,10 +180,11 @@ int main(int argc, char **argv) {
 		cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
 
 		if(generateIndex) {
-			hdt = HDTManager::indexedHDT(hdt, &progress);
+			hdt = HDTManager::indexedHDT(hdt, progress);
 		}
 
 		delete hdt;
+		delete progress;
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
 		return 1;

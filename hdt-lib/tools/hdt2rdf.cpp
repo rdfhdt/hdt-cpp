@@ -48,15 +48,20 @@ void help() {
 	cout << "\t-V\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 
+	cout << "\t-p\tPrints a progress indicator." << endl;
 }
 
 int main(int argc, char **argv) {
 	int c;
 	string rdfFormat, inputFile, outputFile;
 	RDFNotation notation = NTRIPLES;
+	bool showProgress=false;
 
-	while( (c = getopt(argc,argv,"f:V:"))!=-1) {
+	while( (c = getopt(argc,argv,"pf:V:"))!=-1) {
 		switch(c) {
+		case 'p':
+			showProgress = true;
+			break;
 		case 'f':
 			rdfFormat = optarg;
 			cerr << "Format: " << rdfFormat << endl;
@@ -112,8 +117,8 @@ int main(int argc, char **argv) {
 	}
 
 	try {
-		StdoutProgressListener progress;
-		HDT *hdt = HDTManager::mapHDT(inputFile.c_str(), &progress);
+		ProgressListener* progress = showProgress ? new StdoutProgressListener() : NULL;
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str(), progress);
 
 		if(outputFile!="-") {
 			RDFSerializer *serializer = RDFSerializer::getSerializer(outputFile.c_str(), notation);
@@ -125,6 +130,7 @@ int main(int argc, char **argv) {
 			delete serializer;
 		}
 		delete hdt;
+		delete progress;
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
 		return 1;
