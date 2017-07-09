@@ -46,20 +46,27 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-f\t<format>\tRDF Format of the output" << endl;
 	cout << "\t-V\tPrints the HDT version number." << endl;
-	//cout << "\t-v\tVerbose output" << endl;
-
+	cout << "\t-p\tPrints a progress indicator." << endl;
+	cout << "\t-v\tVerbose output" << endl;
 }
 
 int main(int argc, char **argv) {
 	int c;
 	string rdfFormat, inputFile, outputFile;
 	RDFNotation notation = NTRIPLES;
+	bool verbose=false;
+	bool showProgress=false;
 
-	while( (c = getopt(argc,argv,"f:V:"))!=-1) {
+	while( (c = getopt(argc,argv,"vpf:V:"))!=-1) {
 		switch(c) {
+		case 'v':
+			verbose = true;
+			break;
+		case 'p':
+			showProgress = true;
+			break;
 		case 'f':
 			rdfFormat = optarg;
-			cerr << "Format: " << rdfFormat << endl;
 			break;
 		case 'V':
 			cerr << HDTVersion::get_version_string(".") << endl;
@@ -70,6 +77,8 @@ int main(int argc, char **argv) {
 			return 1;
 		}
 	}
+
+#define vout if (!verbose) {} else std::cerr /* Verbose output */
 
 	if(argc-optind<2) {
 		cerr << "ERROR: You must supply an input and output" << endl << endl;
@@ -94,6 +103,7 @@ int main(int argc, char **argv) {
 			help();
 			return 1;
 		}
+		vout << "Format: " << rdfFormat << endl;
 	}
 
 	inputFile = argv[optind];
@@ -112,8 +122,8 @@ int main(int argc, char **argv) {
 	}
 
 	try {
-		StdoutProgressListener progress;
-		HDT *hdt = HDTManager::mapHDT(inputFile.c_str(), &progress);
+		ProgressListener* progress = showProgress ? new StdoutProgressListener() : NULL;
+		HDT *hdt = HDTManager::mapHDT(inputFile.c_str(), progress);
 
 		if(outputFile!="-") {
 			RDFSerializer *serializer = RDFSerializer::getSerializer(outputFile.c_str(), notation);
@@ -125,6 +135,7 @@ int main(int argc, char **argv) {
 			delete serializer;
 		}
 		delete hdt;
+		delete progress;
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
 		return 1;
