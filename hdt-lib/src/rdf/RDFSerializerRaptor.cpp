@@ -12,11 +12,18 @@ using namespace std;
 
 namespace hdt {
 
+static void log_handler(void *user_data, raptor_log_message *message) {
+	if (message) {
+		cerr << "Serializer message: => " << (const char*)message->text;
+	}
+}
+
 RDFSerializerRaptor::RDFSerializerRaptor(const char *fileName, RDFNotation notation)
 	: RDFSerializer(notation),
 	  readingFromStream(false)
 {
 	world = raptor_new_world();
+	raptor_world_set_log_handler(world, (void *)this, log_handler);
 
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 
@@ -46,7 +53,8 @@ int iostream_write_bytes (void *context, const void *ptr, size_t size, size_t nm
 int iostream_write_byte(void *context, const int byte) {
 	std::ostream *out = reinterpret_cast<std::ostream *>(context);
 	if(out->good()) {
-		out->write((const char *)&byte, sizeof(int));
+		const char c = static_cast<char>(byte);
+		out->write(&c, sizeof(c));
 		return 0;
 	} else {
 		return 1;
@@ -62,11 +70,12 @@ RDFSerializerRaptor::RDFSerializerRaptor(std::ostream &s, RDFNotation notation)
 	  readingFromStream(true)
 {
 	world = raptor_new_world();
+	raptor_world_set_log_handler(world, (void *)this, log_handler);
 
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 
 	memset(&handler, 0, sizeof(handler));
-	handler.version = 1;
+	handler.version = 2;
 	handler.init = iostream_init;
 	handler.finish = iostream_finish;
 	handler.write_byte = iostream_write_byte;
