@@ -351,7 +351,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 	//cerr << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
-void BasicHDT::fillHeader(string& baseUri) {
+void BasicHDT::fillHeader(const string& baseUri) {
 	string formatNode = "_:format";
 	string dictNode = "_:dictionary";
 	string triplesNode = "_:triples";
@@ -444,8 +444,7 @@ void BasicHDT::addDictionaryFromHDT(const char *fileName, ModifiableDictionary *
 
         cerr << endl << "Load dictionary from " << fileName << endl;
         for(long long int i=0;i<otherDict->getNsubjects();i++) {
-                string a = otherDict->idToString(i+1, SUBJECT);
-                dict->insert(a, SUBJECT);
+                dict->insert(otherDict->idToString(i+1, SUBJECT), SUBJECT);
 
                 if ((listener != NULL) && (i % 100000) == 0) {
                         sprintf(str, "%lld subjects added.", i);
@@ -454,13 +453,11 @@ void BasicHDT::addDictionaryFromHDT(const char *fileName, ModifiableDictionary *
         }
 
         for(long long int i=0;i<otherDict->getNpredicates();i++) {
-                string a = otherDict->idToString(i+1, PREDICATE);
-                dict->insert(a, PREDICATE);
+                dict->insert(otherDict->idToString(i+1, PREDICATE), PREDICATE);
         }
 
         for(long long int i=0;i<otherDict->getNobjects();i++) {
-                string a = otherDict->idToString(i+1, OBJECT);
-                dict->insert(a, OBJECT);
+                dict->insert(otherDict->idToString(i+1, OBJECT), OBJECT);
 
                 if ((listener != NULL) && (i % 100000) == 0) {
                         sprintf(str, "%lld objects added.", i);
@@ -537,7 +534,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 	        LogSequence2 subjectMap(bits(dictionary->getNsubjects()), nsubjects);
 	        subjectMap.resize(nsubjects);
 	        for(unsigned int i=0;i<nsubjects;i++) {
-	        	string str = dict->idToString(i+1, SUBJECT);
+	        	const string str = dict->idToString(i+1, SUBJECT);
 	        	unsigned int newid = dictionary->stringToId(str, SUBJECT);
 	        	subjectMap.set(i, newid);
 	        }
@@ -546,7 +543,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 	        LogSequence2 predicateMap(bits(dictionary->getNpredicates()), npredicates);
 	        predicateMap.resize(npredicates);
 	        for(unsigned int i=0;i<npredicates;i++) {
-	        	string str = dict->idToString(i+1, PREDICATE);
+	        	const string str = dict->idToString(i+1, PREDICATE);
 	        	unsigned int newid = dictionary->stringToId(str, PREDICATE);
 	        	predicateMap.set(i, newid);
 	        }
@@ -555,7 +552,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 	        LogSequence2 objectMap(bits(dictionary->getNobjects()), nobjects);
 	        objectMap.resize(nobjects);
 	        for(unsigned int i=0;i<nobjects;i++) {
-	        	string str = dict->idToString(i+1, OBJECT);
+	        	const string str = dict->idToString(i+1, OBJECT);
 	        	unsigned int newid = dictionary->stringToId(str, OBJECT);
 	        	objectMap.set(i, newid);
 	        }

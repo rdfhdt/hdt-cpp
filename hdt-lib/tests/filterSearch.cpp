@@ -145,7 +145,7 @@ int main(int argc, char **argv) {
 
 						pattern.setObject(results[i]);
 
-						string objStr = dict->idToString(results[i], OBJECT);
+						const string objStr = dict->idToString(results[i], OBJECT);
 
 						IteratorTripleID *it = triples->search(pattern);
 
@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
 								// QUERY Q4
 								TripleID pat2(ts->getSubject(), 0, 0);
 								TripleString out;
-								string subjStr = dict->idToString(ts->getSubject(), SUBJECT);
+								const string subjStr = dict->idToString(ts->getSubject(), SUBJECT);
 
 								IteratorTripleID *it2 = triples->search(pat2);
 								while(it2->hasNext()) {

@@ -94,7 +94,7 @@ std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole p
 	if (localid <= section->getLength()) {
 		const char * ptr = (const char *) section->extract(localid);
 		if (ptr != NULL) {
-			string out = ptr;
+			const string out(ptr);
 			//section->freeString((unsigned char*)ptr);
                         // TODO: find out why overloaded function 'freeString' isn't getting called, this solves it for now
                         delete [] ptr;

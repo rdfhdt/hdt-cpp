@@ -168,7 +168,7 @@ void HDTOperation::saveToHDT(QString &fileName)
     this->fileName = fileName;
 }
 
-void HDTOperation::loadFromRDF(hdt::HDTSpecification &spec, QString &fileName, hdt::RDFNotation notation, string &baseUri)
+void HDTOperation::loadFromRDF(hdt::HDTSpecification &spec, QString &fileName, hdt::RDFNotation notation, const string &baseUri)
 {
     this->op = RDF_READ;
     this->spec = spec;

@@ -61,9 +61,8 @@ public:
 	}
 	virtual string getVar(unsigned int numvar) {
 		unsigned int id = varID->getVarValue(numvar);
-		string varName(getVarName(numvar));
 
-		return dict->idToString(id, varRole.find(varName)->second);
+		return dict->idToString(id, varRole.find(getVarName(numvar))->second);
 	}
 	virtual const char *getVarName(unsigned int numvar) {
 		return varID->getVarName(numvar);

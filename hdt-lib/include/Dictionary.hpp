@@ -91,12 +91,9 @@ public:
     * @return resultant TripleSTring
     */
     void tripleIDtoTripleString(TripleID &tripleID, TripleString &ts) {
-    	string s = idToString(tripleID.getSubject(), SUBJECT);
-    	string p = idToString(tripleID.getPredicate(), PREDICATE);
-    	string o = idToString(tripleID.getObject(), OBJECT);
-    	ts.setSubject(s);
-    	ts.setPredicate(p);
-    	ts.setObject(o);
+	    ts.setSubject(idToString(tripleID.getSubject(), SUBJECT));
+    	ts.setPredicate(idToString(tripleID.getPredicate(), PREDICATE));
+    	ts.setObject(idToString(tripleID.getObject(), OBJECT));
     }
 
     /** Number of total elements of the dictionary
