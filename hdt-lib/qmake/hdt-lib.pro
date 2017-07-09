@@ -74,6 +74,7 @@ SOURCES += \
     ../src/rdf/RDFParser.cpp \
     ../src/rdf/RDFSerializerNTriples.cpp \
     ../src/rdf/RDFSerializerRaptor.cpp \
+    ../src/rdf/RDFSerializerSerd.cpp \
     ../src/rdf/RDFSerializer.cpp \
     ../src/util/fileUtil.cpp \
     ../src/rdf/RDFParserRaptorCallback.cpp \
@@ -149,6 +150,7 @@ HEADERS += \
     ../src/rdf/RDFParserNtriples.hpp \
     ../src/rdf/RDFSerializerNTriples.hpp \
     ../src/rdf/RDFSerializerRaptor.hpp \
+    ../src/rdf/RDFSerializerSerd.hpp \
     ../src/rdf/RDFParserRaptorCallback.hpp \
     ../src/rdf/RDFParserSerd.hpp \
     ../src/sparql/VarBindingInterface.hpp \
