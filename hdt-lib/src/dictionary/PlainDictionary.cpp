@@ -99,11 +99,10 @@ std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole pos
 
 	if(localid<vector.size()) {
 		DictionaryEntry *entry = vector[localid];
-		string result(entry->str);
-		return result;
+		return std::string(entry->str);
 	}
 
-	return string();
+	return std::string();
 }
 
 unsigned int PlainDictionary::stringToId(const std::string &key, TripleComponentRole position)

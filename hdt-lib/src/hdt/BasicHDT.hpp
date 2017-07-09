@@ -59,7 +59,7 @@ private:
 	void loadDictionaryFromHDTs(const char** fileName, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
 	void loadTriplesFromHDTs(const char** fileNames, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
 
-	void fillHeader(string &baseUri);
+	void fillHeader(const string &baseUri);
 
     size_t loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
     size_t loadMMapIndex(ProgressListener *listener=NULL);

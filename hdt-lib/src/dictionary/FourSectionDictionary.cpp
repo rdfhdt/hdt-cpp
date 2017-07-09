@@ -89,7 +89,7 @@ std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRo
 	if(localid<=section->getLength()) {
 		const char * ptr = (const char *)section->extract(localid);
 		if(ptr!=NULL) {
-			string out = ptr;
+			const string out(ptr);
 			section->freeString((unsigned char*)ptr);
 			return out;
 		} else {

@@ -60,7 +60,7 @@ void HDTController::updateOnHDTChanged()
     emit datasetChanged();
 }
 
-void HDTController::importRDFFile(QString file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
+void HDTController::importRDFFile(QString file, const string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
 {
     closeHDT();
 

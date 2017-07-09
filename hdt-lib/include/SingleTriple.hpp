@@ -342,11 +342,11 @@ public:
 	 * Set Subject.
 	 * @param subject
 	 */
-	void setSubject(std::string &subject) {
+	void setSubject(const std::string &subject) {
 		this->subject = subject;
 	}
 
-	inline void setAll(std:: string &subject, std:: string &predicate, std:: string &object) {
+	inline void setAll(const std::string &subject, const std::string &predicate, const std::string &object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;
@@ -364,7 +364,7 @@ public:
 	 *
 	 * @param predicate
 	 */
-	void setPredicate(std::string &predicate) {
+	void setPredicate(const std::string &predicate) {
 		this->predicate = predicate;
 	}
 
@@ -380,7 +380,7 @@ public:
 	 * Set Object.
 	 * @param object
 	 */
-	void setObject(std::string &object) {
+	void setObject(const std::string &object) {
 		this->object = object;
 	}
 

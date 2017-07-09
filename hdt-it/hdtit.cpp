@@ -119,7 +119,7 @@ void HDTit::openHDTFile(QString &file)
     hdtChanged(file);
 }
 
-void HDTit::importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
+void HDTit::importRDFFile(QString &file, const string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
 {
     hdtController->importRDFFile(file, baseUri, notation, spec);
 
