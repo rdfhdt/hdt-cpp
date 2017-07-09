@@ -35,6 +35,8 @@
 
 using namespace std;
 
+const string EMPTY_STRING = "";
+
 namespace hdt {
 
 ControlInformation::ControlInformation() : type(UNKNOWN_CI) {}
@@ -201,7 +203,8 @@ void ControlInformation::setFormat(const std::string& format) {
 }
 
 const std::string& ControlInformation::get(const std::string& key) const {
-	return map.at(key);
+  std::map<string,string>::const_iterator it = map.find(key);
+  return it == map.end() ? EMPTY_STRING : it->second;
 }
 
 void ControlInformation::set(const std::string& key, const std::string& value) {
@@ -209,7 +212,8 @@ void ControlInformation::set(const std::string& key, const std::string& value) {
 }
 
 uint64_t ControlInformation::getUint(const std::string& key) const {
-    return strtoull(map.at(key).c_str(), NULL, 10);
+  std::map<string,string>::const_iterator it = map.find(key);
+  return it == map.end() ? 0 : strtoull(it->second.c_str(), NULL, 10);
 }
 
 void ControlInformation::setUint(const std::string& key, uint64_t value) {

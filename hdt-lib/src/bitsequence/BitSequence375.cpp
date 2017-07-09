@@ -316,6 +316,8 @@ size_t BitSequence375::selectPrev1(const size_t start) const
 
 #ifdef __GNUC__
 #define first_bit_set(a) __builtin_ffs(a)
+#elif defined(WIN32)
+#define first_bit_set(a) __lzcnt(a)
 #else
 #define first_bit_set(a) ffs(a)
 #endif

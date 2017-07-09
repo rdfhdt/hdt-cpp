@@ -89,15 +89,13 @@ public:
 
 	/** Get a property of the ControlInformation
 	 * @param key
-	 * @return
-	 * @throws std::out_of_range if the key is not found
+	 * @return the value, or the empty string if the key does not exist
 	 */
 	const std::string& get(const std::string& key) const;
 
 	/** Get a property of the ControlInformation as unsigned int
 	 * @param key
-	 * @return
-	 * @throws std::out_of_range if the key is not found
+	 * @return the value, or 0 if the key does not exist
 	 */
     uint64_t getUint(const std::string& key) const;
 

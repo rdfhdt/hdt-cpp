@@ -1,3 +1,6 @@
+#include <QFileDialog>
+#include <QMessageBox>
+
 #include "hdtspecform.hpp"
 #include "ui_hdtspecform.h"
 

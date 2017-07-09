@@ -32,7 +32,7 @@ int main(int argc, char ** argv) {
 
   fstream input(argv[1],ios::in | ios::binary);
   if(!input.is_open()) {
-    cout << "Error opening file: " << argv[1] << endl;
+    cerr << "Error opening file: " << argv[1] << endl;
     return -1;
   }
 
@@ -52,7 +52,7 @@ int main(int argc, char ** argv) {
   _ssa->build_index();
   _ssa->print_stats();
 
-  cout << "Index size: " << _ssa->size() << endl;
+  cerr << "Index size: " << _ssa->size() << endl;
 
   ofstream fp(argv[2]);
   _ssa->save(fp);
@@ -64,4 +64,3 @@ int main(int argc, char ** argv) {
 
   return 0;
 }
-

@@ -29,7 +29,7 @@ namespace cds_static
 
 	LCP_PhiSpare::LCP_PhiSpare(TextIndex *csa, char *text, size_t _n, int _q) {
 		if(_q > (int)_n) {
-			cout << "Specified q (" << _q << ") greater than string length (" << _n << ")" << endl;
+			cerr << "Specified q (" << _q << ") greater than string length (" << _n << ")" << endl;
 			exit(1);
 		}
 		lcp_type = PHI;
@@ -44,7 +44,7 @@ namespace cds_static
 			m = 1+(_n-1)/_q;
 			plcp = new int[m];	 //space for sampled lcps
 			if(plcp==NULL) {
-				cout << "Failed to allocate memory for plcp." << endl;
+				cerr << "Failed to allocate memory for plcp." << endl;
 				exit(1);
 			}
 			// initialize samples to -1

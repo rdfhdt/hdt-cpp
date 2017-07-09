@@ -206,7 +206,7 @@ TripleID *RandomAccessIterator::get(unsigned int idx)
 		//cout << "NEXT" << endl;
 	}
 	if(currentIdx!=idx) {
-		cout << "ERROR: " << currentIdx << "!=" << idx << " PREV/NEXT: "<< it->hasPrevious() << ", " << it->hasNext() << endl;
+		cerr << "ERROR: " << currentIdx << "!=" << idx << " PREV/NEXT: "<< it->hasPrevious() << ", " << it->hasNext() << endl;
 	}
 
 	return current;
@@ -240,7 +240,3 @@ RandomAccessIterator::RandomAccessIterator(IteratorTripleID *other) :
 
 
 }
-
-
-
-

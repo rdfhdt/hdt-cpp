@@ -39,9 +39,9 @@ using namespace std;
 #include <sys/stat.h>	// stat()
 #include <fcntl.h>
 
-#include <unistd.h>
 #include <stdlib.h> // for qsort
 #ifndef WIN32
+#include <unistd.h>
 #include <sys/mman.h> // For mmap
 #endif
 #include <string.h> // memcpy
@@ -85,7 +85,9 @@ TripleListDisk::TripleListDisk() :
 
 TripleListDisk::~TripleListDisk() {
 	this->unmapFile();
+#ifndef WIN32
 	close(fd);
+#endif
 
 	if(unlink(fileName.c_str())==-1) {
 		perror("Unlinking tmp file");
@@ -142,6 +144,7 @@ void TripleListDisk::ensureSize(unsigned int newsize) {
 
 	unmapFile();
 
+#ifndef WIN32
 	int pos = lseek(fd, newsize*sizeof(TripleID)-1, SEEK_SET);
 	if(pos==-1) {
 		perror("Error lseek");
@@ -155,7 +158,6 @@ void TripleListDisk::ensureSize(unsigned int newsize) {
 		throw std::runtime_error("Error write");
 	}
 
-#ifndef WIN32
 	fsync(fd);
 #endif
 

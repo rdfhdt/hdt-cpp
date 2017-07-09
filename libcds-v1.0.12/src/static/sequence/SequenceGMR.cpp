@@ -23,7 +23,9 @@
 namespace cds_static
 {
 
-	using std::max;
+#ifndef WIN32
+    using std::max;
+#endif
 	SequenceGMR::SequenceGMR(uint * sequence, size_t n, uint chunk_length, BitSequenceBuilder * bmb, SequenceBuilder * ssb) : Sequence(n) {
 		bmb->use();
 		ssb->use();

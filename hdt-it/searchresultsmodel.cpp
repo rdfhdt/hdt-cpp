@@ -36,7 +36,7 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
     case Qt::ToolTipRole:
     case Qt::DisplayRole:
     {
-	// cout << "SearchResultsModel.data " << index.row() << "," << index.column() << endl;
+	// cerr << "SearchResultsModel.data " << index.row() << "," << index.column() << endl;
         // Compiler complains that by calling findTriple we are modifying internal
         // state, which is illegal due to this function being const. But we need to
         // modify the currentIndex and currentTriple, so we can avoid it.
@@ -55,9 +55,9 @@ QVariant SearchResultsModel::data(const QModelIndex &index, int role) const
         return stringutils::toQString(d->idToString(currentTriple->getObject(), hdt::OBJECT).c_str());
             }
         } catch (char *e) {
-            cout << "Error accesing dictionary: " << e << endl;
+            cerr << "Error accesing dictionary: " << e << endl;
         } catch (const char *e) {
-            cout << "Error accesing dictionary: " << e << endl;
+            cerr << "Error accesing dictionary: " << e << endl;
         }
         return QVariant();
 
@@ -151,7 +151,7 @@ void SearchResultsModel::findTriple(unsigned int index)
 	goingUp = true;
         currentTriple = triples->next();
         currentIndex = index;
-	//cout << "Jump: " << currentIndex << " => " << *currentTriple << endl;
+	//cerr << "Jump: " << currentIndex << " => " << *currentTriple << endl;
         return;
     }
 
@@ -175,11 +175,5 @@ void SearchResultsModel::findTriple(unsigned int index)
         currentIndex++;
     }
 
-    //cout << "Access " << currentIndex << " => " << *currentTriple << endl;
+    //cerr << "Access " << currentIndex << " => " << *currentTriple << endl;
 }
-
-
-
-
-
-

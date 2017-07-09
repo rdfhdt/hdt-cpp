@@ -26,7 +26,10 @@
 
 #include <mmap.h>
 
+#ifndef WIN32
 #include <unistd.h>
+#endif
+
 #include <stdio.h>
 
 namespace cds_static
