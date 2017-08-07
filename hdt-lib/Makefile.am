@@ -1,3 +1,5 @@
+SUBDIRS = . tests 
+
 AUTOMAKE_OPTIONS = subdir-objects
 
 lib_LTLIBRARIES = libhdt.la
