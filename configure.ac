@@ -58,5 +58,6 @@ AC_TYPE_UINT8_T
 AC_CONFIG_FILES([
   Makefile
   hdt-lib/Makefile
+  hdt-lib/tests/Makefile
 ])
 AC_OUTPUT
