@@ -4,6 +4,7 @@
  *  Created on: 02/03/2011
  *      Author: mck
  */
+#if HAVE_CDS
 
 #include <vector>
 #include <WaveletTreeNoptrs.h>
@@ -57,6 +58,9 @@ int main(int argc, char **argv) {
 
 	delete seq2;
 }
-
-
-
+#else
+int main()
+{
+	return 0;
+}
+#endif
