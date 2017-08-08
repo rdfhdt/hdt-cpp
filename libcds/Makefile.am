@@ -70,4 +70,4 @@ static/textindex/mmap.cpp\
 static/textindex/qsufsort.cpp\
 static/textindex/suftest3.test.cpp\
 static/textindex/TextIndex.cpp\
-static/textindex/TextIndexCSA.cpp\
+static/textindex/TextIndexCSA.cpp
