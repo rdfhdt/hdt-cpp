@@ -78,4 +78,4 @@ src/static/textindex/TextIndexCSA.cpp\
 src/utils/Array.cpp\
 src/utils/BitString.cpp\
 src/utils/cppUtils.cpp\
-src/utils/timing.cpp\
+src/utils/timing.cpp
