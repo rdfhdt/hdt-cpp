@@ -19,7 +19,7 @@
  *
  */
 
-#include <BitSequenceBuilderDArray.h>
+#include "BitSequenceBuilderDArray.h"
 
 namespace cds_static
 {
