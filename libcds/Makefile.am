@@ -2,15 +2,7 @@ SUBDIRS = . tests
 
 AUTOMAKE_OPTIONS = subdir-objects
 
-AM_CPPFLAGS = \
--Isrc/static/bitsequence\
--Isrc/static/coders\
--Isrc/static/mapper\
--Isrc/static/permutation\
--Isrc/static/sequence\
--Isrc/static/suffixtree\
--Isrc/static/textindex\
--Isrc/utils
+AM_CPPFLAGS =  -I$(builddir)/include $(WARN_CFLAGS)
 
 lib_LTLIBRARIES = libcds.la
 libcds_la_SOURCES = \
