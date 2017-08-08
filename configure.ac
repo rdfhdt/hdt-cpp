@@ -2,10 +2,11 @@ AC_INIT([hdt], [1.1.1], [pablo.torres.t@gmail.com])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_HEADERS([build/config.h])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([foreign])
 AM_SILENT_RULES([yes])
 
 AC_PROG_CXX
+gl_EARLY
 AC_LANG([C++])
 AC_PROG_INSTALL
 AC_PROG_CPP
@@ -44,16 +45,15 @@ AC_ARG_WITH([zlib],
    AC_SUBST(HAVE_ZLIB,"-DHAVE_LIBZ"))
    AC_MSG_NOTICE([ZLIB enabled])])
 
-# Checks for header files.
-AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h sys/time.h])
-
 # Check for typedefs, structures, and compiler characteristics
 AC_HEADER_STDBOOL
-AC_C_INLINE
-AC_TYPE_SIZE_T
-AC_TYPE_UINT16_T
-AC_TYPE_UINT32_T
-AC_TYPE_UINT8_T
+
+gl_INIT
+gl_WARN_ADD([-Wall], [WARN_CFLAGS])
+gl_WARN_ADD([-Wextra], [WARN_CFLAGS])
+gl_WARN_ADD([-Wno-unused-but-set-variable], [WARN_CFLAGS])
+gl_WARN_ADD([-Wno-unused-parameter], [WARN_CFLAGS])
+gl_WARN_ADD([-Wno-unknown-warning-option], [WARN_CFLAGS])
 
 AC_CONFIG_FILES([
   Makefile

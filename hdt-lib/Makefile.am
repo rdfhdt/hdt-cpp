@@ -67,7 +67,8 @@ src/util/propertyutil.cpp \
 src/util/StopWatch.cpp \
 third/gzstream.cpp 
 
-AM_CPPFLAGS = -I$(builddir)/include \
+AM_CPPFLAGS = $(WARN_CFLAGS) \
+-I$(top_builddir)/lib -I$(builddir)/include \
 $(LIBCDS_HDR) $(LIBCDS_CFLAGS) \
 $(RAPTOR2_HDR) $(RAPTOR2_CFLAGS) \
 $(SERD_HDR) $(SERD_CFLAGS) \
