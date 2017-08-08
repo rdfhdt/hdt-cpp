@@ -360,7 +360,7 @@ top_srcdir = @top_srcdir@
 zlib_CFLAGS = @zlib_CFLAGS@
 zlib_LIBS = @zlib_LIBS@
 AUTOMAKE_OPTIONS = subdir-objects
-SUBDIRS = hdt-lib
+SUBDIRS = libcds hdt-lib 
 ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = m4/gnulib-cache.m4
 all: all-recursive

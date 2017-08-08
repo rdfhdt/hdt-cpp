@@ -20,6 +20,7 @@ rdf2hdt
 replaceHeader
 hdt-lib/examples/*
 hdt-lib/.libs
+libcds/.libs
 
 # Autotools 
 build/config.h

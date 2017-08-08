@@ -1,4 +1,4 @@
-AC_INIT([hdt], [1.1.1], [pablo.torres.t@gmail.com])
+AC_INIT([hdt], [1.1.1], [some@email.com])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_HEADERS([build/config.h])
@@ -55,6 +55,13 @@ AC_ARG_WITH([zlib],
 
 # Check for typedefs, structures, and compiler characteristics
 AC_HEADER_STDBOOL
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_TYPE_UINT32_T
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_CHECK_FUNCS([select])
 
 gl_INIT
 gl_WARN_ADD([-Wall], [WARN_CFLAGS])
@@ -68,5 +75,7 @@ AC_CONFIG_FILES([
   Makefile
   hdt-lib/Makefile
   hdt-lib/tests/Makefile
+  libcds/Makefile
+  libcds/tests/Makefile
 ])
 AC_OUTPUT
