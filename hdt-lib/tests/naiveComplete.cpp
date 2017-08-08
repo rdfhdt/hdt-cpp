@@ -1,3 +1,5 @@
+#if HAVE_CDS
+
 #include <HDT.hpp>
 #include "../src/hdt/BasicHDT.hpp"
 #include "../src/dictionary/LiteralDictionary.hpp"
@@ -188,3 +190,11 @@ int main(int argc, char **argv) {
 		cerr << "ERROR: " << e.what() << endl;
 	}
 }
+
+#else
+int main()
+{
+	return 0;
+}
+
+#endif

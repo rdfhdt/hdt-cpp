@@ -1,3 +1,4 @@
+#if HAVE_CDS
 
 #include <HDT.hpp>
 #include <HDTManager.hpp>
@@ -98,3 +99,9 @@ int main(int argc, char **argv) {
 		cerr << "ERROR: " << e.what() << endl;
 	}
 }
+#else
+int main()
+{
+	return 0;
+}
+#endif
