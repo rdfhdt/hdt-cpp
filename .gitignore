@@ -1,3 +1,5 @@
+# Others
+*~
 # vim
 *.swp
 
@@ -20,15 +22,12 @@ hdt-lib/examples/*
 hdt-lib/.libs
 
 # Autotools 
-build
-m4
-autom4te.cache
+build/config.h
+build/stamp-h1
+autom4te.cache/
 config.log
-config.h
 config.status
-configure
 Makefile
-Makefile.in
 aclocal.m4
 libtool
 

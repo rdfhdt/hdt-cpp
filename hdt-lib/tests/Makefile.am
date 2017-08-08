@@ -67,7 +67,7 @@ streamtest_SOURCES = streamtest.cpp
 testmax_SOURCES = testmax.cpp
 wav_SOURCES = wav.cpp
 
-AM_CPPFLAGS = -I@top_srcdir@/hdt-lib/include
+AM_CPPFLAGS = -I@top_srcdir@/hdt-lib/include $(WARN_CFLAGS)
 AM_LDFLAGS = $(LIBCDS_LIB) $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB)
 LDADD = ../libhdt.la
 
