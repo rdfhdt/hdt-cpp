@@ -3,7 +3,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_HEADERS([build/config.h])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
-#AM_SILENT_RULES([yes])
+AM_SILENT_RULES([yes])
 
 AC_PROG_CXX
 AC_LANG([C++])
