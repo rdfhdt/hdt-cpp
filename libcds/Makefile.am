@@ -1,6 +1,16 @@
-SUBDIRS = .
+SUBDIRS = . tests
 
 AUTOMAKE_OPTIONS = subdir-objects
+
+AM_CPPFLAGS = \
+-Isrc/static/bitsequence\
+-Isrc/static/coders\
+-Isrc/static/mapper\
+-Isrc/static/permutation\
+-Isrc/static/sequence\
+-Isrc/static/suffixtree\
+-Isrc/static/textindex\
+-Isrc/utils
 
 lib_LTLIBRARIES = libcds.la
 libcds_la_SOURCES = \
