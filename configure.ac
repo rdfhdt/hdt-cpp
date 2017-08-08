@@ -30,6 +30,14 @@ AC_ARG_WITH([raptor2-prefix],
    AC_DEFINE([HAVE_RAPTOR2],[1],[raptor2 available])
    AC_MSG_NOTICE([RAPTOR2 enabled])])
 
+AC_ARG_WITH([kyoto-prefix],
+  AS_HELP_STRING([--with-kyoto-prefix=DIR], [Enables kyoto library]),
+  [AC_SUBST(KYOTO_HDR, "-I$with_kyoto_prefix/include")
+   AC_SUBST(KYOTO_LIB, "-L$with_kyoto_prefix/lib -lkyotocabinet")
+   AC_SUBST(KYOTO_CFLAGS, "-DHAVE_KYOTO")
+   AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
+   AC_MSG_NOTICE([KYOTO enabled])])
+
 AC_ARG_WITH([serd-prefix],
   AS_HELP_STRING([--with-serd-prefix=DIR], [Enables serd library]),
   [AC_SUBST(SERD_HDR,"-I$with_serd_prefix/include")
@@ -51,6 +59,7 @@ AC_HEADER_STDBOOL
 gl_INIT
 gl_WARN_ADD([-Wall], [WARN_CFLAGS])
 gl_WARN_ADD([-Wextra], [WARN_CFLAGS])
+gl_WARN_ADD([-Wno-sign-compare], [WARN_CFLAGS])
 gl_WARN_ADD([-Wno-unused-but-set-variable], [WARN_CFLAGS])
 gl_WARN_ADD([-Wno-unused-parameter], [WARN_CFLAGS])
 gl_WARN_ADD([-Wno-unknown-warning-option], [WARN_CFLAGS])
