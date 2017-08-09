@@ -60,9 +60,9 @@ script:
   - test -f $HOME/bin/searchHeader
   - test -f $HOME/lib/libhdt.la
   - test -f $HOME/lib/libcds.la
-  - "[ \"$TRAVIS_OS_NAME\" = \"linux\" ] && test -L $HOME/lib/libhdt.so"
-  - "[ \"$TRAVIS_OS_NAME\" = \"linux\" ] && test -L $HOME/lib/libcds.so"
-  - "[ \"$TRAVIS_OS_NAME\" = \"osx\" ] && test -L $HOME/lib/libhdt.dylib"
-  - "[ \"$TRAVIS_OS_NAME\" = \"osx\" ] && test -L $HOME/lib/libcds.dylib"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $HOME/lib/libhdt.so; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $HOME/lib/libcds.so; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $HOME/lib/libhdt.dylib; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $HOME/lib/libcds.dylib; fi"
   - test -f $HOME/lib/pkgconfig/hdt.pc
   - test -f $HOME/lib/pkgconfig/cds.pc
