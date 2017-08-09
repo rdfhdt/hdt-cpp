@@ -40,6 +40,7 @@ before_install:
   - popd
 script:
   # Build standalone binaries
+  - ./autogen.sh
   - ./configure --enable-libcds --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME
   - make -j $(nproc) CXX=$HDT_CPP
   # Make and run selected tests
