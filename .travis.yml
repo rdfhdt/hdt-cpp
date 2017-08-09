@@ -56,8 +56,8 @@ script:
   - test -f $HOME/bin/replaceHeader
   - test -f $HOME/bin/searchHeader
   - test -f $HOME/lib/libhdt.la
-  - test -f $HOME/lib/libhdt.so
+  - test -L $HOME/lib/libhdt.so
   - test -f $HOME/lib/libcds.la
-  - test -f $HOME/lib/libcds.so
+  - test -L $HOME/lib/libcds.so
   - test -f $HOME/lib/pkgconfig/hdt.pc
   - test -f $HOME/lib/pkgconfig/cds.pc
