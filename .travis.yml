@@ -47,4 +47,4 @@ script:
   # Make and run selected tests
   #- make check -j $(nproc)
   - make install
-  - $HOME/bin/hdtSearch -q 0 data/literals.hdt
+  - $HOME/bin/hdtSearch -q 0 hdt-lib/data/literals.hdt
