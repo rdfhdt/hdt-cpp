@@ -1,7 +1,4 @@
 language: cpp
-env:
-  global:
-    - MAKEFLAGS="-j 2"
 matrix:
   include:
     - os: osx
@@ -45,9 +42,9 @@ script:
   # Build standalone binaries
   - ./autogen.sh
   - ./configure --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
-  - make
+  - make -j2
   # Make and run selected tests
-  #- make check
+  #- make check -j2
   - make install
   - $HOME/bin/hdtSearch -q 0 hdt-lib/data/literals.hdt
   # Test installation files
