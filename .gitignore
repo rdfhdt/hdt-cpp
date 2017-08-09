@@ -24,13 +24,15 @@ libcds/.libs
 
 # Autotools 
 *.pc
-build/config.h
-build/stamp-h1
+build/
 autom4te.cache/
 config.log
 config.status
+configure
 Makefile
+Makefile.in
 libtool
+aclocal.m4
 
 .DS_Store
 *.pro.user
