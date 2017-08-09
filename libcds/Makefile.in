@@ -88,6 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@WANTS_LIBCDS_TRUE@am__append_1 = libcds.la
 subdir = libcds
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
@@ -206,6 +207,7 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+@WANTS_LIBCDS_TRUE@am_libcds_la_rpath = -rpath $(libdir)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -353,9 +355,6 @@ KYOTO_HDR = @KYOTO_HDR@
 KYOTO_LIB = @KYOTO_LIB@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LIBCDS_CFLAGS = @LIBCDS_CFLAGS@
-LIBCDS_HDR = @LIBCDS_HDR@
-LIBCDS_LIB = @LIBCDS_LIB@
 LIBGNU_LIBDEPS = @LIBGNU_LIBDEPS@
 LIBGNU_LTLIBDEPS = @LIBGNU_LTLIBDEPS@
 LIBOBJS = @LIBOBJS@
@@ -463,7 +462,7 @@ zlib_LIBS = @zlib_LIBS@
 SUBDIRS = . tests
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS = -I$(builddir)/include $(WARN_CFLAGS)
-lib_LTLIBRARIES = libcds.la
+lib_LTLIBRARIES = $(am__append_1)
 libcds_la_SOURCES = \
 src/static/bitsequence/BitSequenceBuilderDArray.cpp\
 src/static/bitsequence/BitSequenceBuilderRG.cpp\
@@ -866,7 +865,7 @@ src/utils/timing.lo: src/utils/$(am__dirstamp) \
 	src/utils/$(DEPDIR)/$(am__dirstamp)
 
 libcds.la: $(libcds_la_OBJECTS) $(libcds_la_DEPENDENCIES) $(EXTRA_libcds_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(CXXLINK) -rpath $(libdir) $(libcds_la_OBJECTS) $(libcds_la_LIBADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(am_libcds_la_rpath) $(libcds_la_OBJECTS) $(libcds_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

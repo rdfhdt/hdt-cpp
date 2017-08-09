@@ -4,7 +4,10 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 AM_CPPFLAGS =  -I$(builddir)/include $(WARN_CFLAGS)
 
-lib_LTLIBRARIES = libcds.la
+lib_LTLIBRARIES = 
+if WANTS_LIBCDS
+lib_LTLIBRARIES += libcds.la
+endif
 libcds_la_SOURCES = \
 src/static/bitsequence/BitSequenceBuilderDArray.cpp\
 src/static/bitsequence/BitSequenceBuilderRG.cpp\

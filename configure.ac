@@ -14,13 +14,14 @@ AM_PROG_AR
 LT_INIT([shared static])
 
 # Checks for libraries
-AC_ARG_WITH([libcds-prefix], 
-  AS_HELP_STRING([--with-libcds-prefix=DIR],[Enables cds library]), 
-  [AC_SUBST(LIBCDS_HDR,"-I$with_libcds_prefix/include")
-   AC_SUBST(LIBCDS_LIB,"-L$with_libcds_prefix/lib -lcds")
-   AC_SUBST(LIBCDS_CFLAGS,"-DHAVE_CDS")
-   AC_DEFINE([HAVE_CDS],[1],[cds available])
-   AC_MSG_NOTICE([LIBCDS enabled])])
+AC_ARG_ENABLE([libcds], 
+  AS_HELP_STRING([--enable-libcds],[Turn on libcds]),
+  [case "${enableval}" in
+    yes) wants_cds=true ;;
+    no)  wants_cds=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-libcds]) ;;
+   esac],[wants_cds=false]) 
+AM_CONDITIONAL([WANTS_LIBCDS], [test x$wants_cds = xtrue])
 
 AC_ARG_WITH([raptor2-prefix],
   AS_HELP_STRING([--with-raptor2-prefix=DIR], [Enables raptor2 library]),

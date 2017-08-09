@@ -26,6 +26,8 @@ src/libdcs/CSD_FMIndex.cpp \
 src/libdcs/CSD_HTFC.cpp \
 src/libdcs/CSD_PFC.cpp \
 src/libdcs/VByte.cpp \
+src/libdcs/fmindex/SSA.cpp \
+src/libdcs/fmindex/SuffixArray.cpp \
 src/rdf/RDFParser.cpp \
 src/rdf/RDFParserNtriples.cpp \
 src/rdf/RDFParserRaptorCallback.cpp \
@@ -77,8 +79,14 @@ $(ZLIB_CFLAGS)
 
 AM_LDFLAGS = $(LIBCDS_LIB) $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 
-bin_PROGRAMS = hdt2rdf hdtInfo hdtSearch rdf2hdt replaceHeader
 LDADD = libhdt.la
+
+if WANTS_LIBCDS
+AM_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
+LDADD += ../libcds/libcds.la
+endif
+
+bin_PROGRAMS = hdt2rdf hdtInfo hdtSearch rdf2hdt replaceHeader
 hdt2rdf_SOURCES = tools/hdt2rdf.cpp
 hdtInfo_SOURCES = tools/hdtInfo.cpp
 hdtSearch_SOURCES = tools/hdtSearch.cpp
