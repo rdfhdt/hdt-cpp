@@ -36,20 +36,13 @@ before_install:
   - curl -s http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar -xz
   - pushd raptor2-* && ./configure --prefix=$HOME/local && make -j2 && make install && popd
   # Set up build environment
-  - $HDT_CPP --version
-  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/local/lib"
-  - export HDT_LDFLAGS="-I$HOME/local/include -L$HOME/local/lib"
+  - $HDT_CXX --version
   - popd
 script:
   # Build standalone binaries
-  - cd hdt-lib
-  - make -j2       CPP=$HDT_CPP LDFLAGS="$HDT_LDFLAGS"
+  - ./configure --enable-libcds --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME
+  - make -j $(nproc) CXX=$HDT_CPP
   # Make and run selected tests
-  - make -j2 tests CPP=$HDT_CPP LDFLAGS="$HDT_LDFLAGS"
-  - tests/bit375 > /dev/null
-  - tests/bitutiltest > /dev/null
-  - tests/listener > /dev/null
-  - tests/logarr > /dev/null
-  - tests/streamtest > /dev/null
-  - tests/testmax > /dev/null
-  - tools/hdtSearch -q 0 data/literals.hdt
+  #- make -j2 check CXX=$HDT_CPP
+  - make install
+  - $HOME/bin/hdtSearch -q 0 data/literals.hdt
