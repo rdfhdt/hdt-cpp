@@ -36,7 +36,7 @@ before_install:
   - curl -s http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar -xz
   - pushd raptor2-* && ./configure --prefix=$HOME/local && make -j2 && make install && popd
   # Set up build environment
-  - $HDT_CXX --version
+  - $HDT_CPP --version
   - popd
 script:
   # Build standalone binaries
