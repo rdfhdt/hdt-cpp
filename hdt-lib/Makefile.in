@@ -89,6 +89,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@WANTS_LIBCDS_TRUE@am__append_1 = -DHAVE_CDS -I$(top_builddir)/libcds/include
+@WANTS_LIBCDS_TRUE@am__append_2 = ../libcds/libcds.la
 bin_PROGRAMS = hdt2rdf$(EXEEXT) hdtInfo$(EXEEXT) hdtSearch$(EXEEXT) \
 	rdf2hdt$(EXEEXT) replaceHeader$(EXEEXT)
 subdir = hdt-lib
@@ -149,8 +151,9 @@ am_libhdt_la_OBJECTS = src/bitsequence/BitSequence375.lo \
 	src/huffman/Huffman.lo src/libdcs/CSD_Cache2.lo \
 	src/libdcs/CSD_Cache.lo src/libdcs/CSD.lo \
 	src/libdcs/CSD_FMIndex.lo src/libdcs/CSD_HTFC.lo \
-	src/libdcs/CSD_PFC.lo src/libdcs/VByte.lo src/rdf/RDFParser.lo \
-	src/rdf/RDFParserNtriples.lo \
+	src/libdcs/CSD_PFC.lo src/libdcs/VByte.lo \
+	src/libdcs/fmindex/SSA.lo src/libdcs/fmindex/SuffixArray.lo \
+	src/rdf/RDFParser.lo src/rdf/RDFParserNtriples.lo \
 	src/rdf/RDFParserRaptorCallback.lo src/rdf/RDFParserSerd.lo \
 	src/rdf/RDFSerializer.lo src/rdf/RDFSerializerNTriples.lo \
 	src/rdf/RDFSerializerRaptor.lo src/sequence/AdjacencyList.lo \
@@ -181,23 +184,23 @@ PROGRAMS = $(bin_PROGRAMS)
 am_hdt2rdf_OBJECTS = tools/hdt2rdf.$(OBJEXT)
 hdt2rdf_OBJECTS = $(am_hdt2rdf_OBJECTS)
 hdt2rdf_LDADD = $(LDADD)
-hdt2rdf_DEPENDENCIES = libhdt.la
+hdt2rdf_DEPENDENCIES = libhdt.la $(am__append_2)
 am_hdtInfo_OBJECTS = tools/hdtInfo.$(OBJEXT)
 hdtInfo_OBJECTS = $(am_hdtInfo_OBJECTS)
 hdtInfo_LDADD = $(LDADD)
-hdtInfo_DEPENDENCIES = libhdt.la
+hdtInfo_DEPENDENCIES = libhdt.la $(am__append_2)
 am_hdtSearch_OBJECTS = tools/hdtSearch.$(OBJEXT)
 hdtSearch_OBJECTS = $(am_hdtSearch_OBJECTS)
 hdtSearch_LDADD = $(LDADD)
-hdtSearch_DEPENDENCIES = libhdt.la
+hdtSearch_DEPENDENCIES = libhdt.la $(am__append_2)
 am_rdf2hdt_OBJECTS = tools/rdf2hdt.$(OBJEXT)
 rdf2hdt_OBJECTS = $(am_rdf2hdt_OBJECTS)
 rdf2hdt_LDADD = $(LDADD)
-rdf2hdt_DEPENDENCIES = libhdt.la
+rdf2hdt_DEPENDENCIES = libhdt.la $(am__append_2)
 am_replaceHeader_OBJECTS = tools/replaceHeader.$(OBJEXT)
 replaceHeader_OBJECTS = $(am_replaceHeader_OBJECTS)
 replaceHeader_LDADD = $(LDADD)
-replaceHeader_DEPENDENCIES = libhdt.la
+replaceHeader_DEPENDENCIES = libhdt.la $(am__append_2)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -349,9 +352,6 @@ KYOTO_HDR = @KYOTO_HDR@
 KYOTO_LIB = @KYOTO_LIB@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LIBCDS_CFLAGS = @LIBCDS_CFLAGS@
-LIBCDS_HDR = @LIBCDS_HDR@
-LIBCDS_LIB = @LIBCDS_LIB@
 LIBGNU_LIBDEPS = @LIBGNU_LIBDEPS@
 LIBGNU_LTLIBDEPS = @LIBGNU_LTLIBDEPS@
 LIBOBJS = @LIBOBJS@
@@ -482,6 +482,8 @@ src/libdcs/CSD_FMIndex.cpp \
 src/libdcs/CSD_HTFC.cpp \
 src/libdcs/CSD_PFC.cpp \
 src/libdcs/VByte.cpp \
+src/libdcs/fmindex/SSA.cpp \
+src/libdcs/fmindex/SuffixArray.cpp \
 src/rdf/RDFParser.cpp \
 src/rdf/RDFParserNtriples.cpp \
 src/rdf/RDFParserRaptorCallback.cpp \
@@ -523,16 +525,12 @@ src/util/propertyutil.cpp \
 src/util/StopWatch.cpp \
 third/gzstream.cpp 
 
-AM_CPPFLAGS = $(WARN_CFLAGS) \
--I$(top_builddir)/lib -I$(builddir)/include \
-$(LIBCDS_HDR) $(LIBCDS_CFLAGS) \
-$(RAPTOR2_HDR) $(RAPTOR2_CFLAGS) \
-$(KYOTO_HDR) $(KYOTO_CFLAGS) \
-$(SERD_HDR) $(SERD_CFLAGS) \
-$(ZLIB_CFLAGS)
-
+AM_CPPFLAGS = $(WARN_CFLAGS) -I$(top_builddir)/lib \
+	-I$(builddir)/include $(LIBCDS_HDR) $(LIBCDS_CFLAGS) \
+	$(RAPTOR2_HDR) $(RAPTOR2_CFLAGS) $(KYOTO_HDR) $(KYOTO_CFLAGS) \
+	$(SERD_HDR) $(SERD_CFLAGS) $(ZLIB_CFLAGS) $(am__append_1)
 AM_LDFLAGS = $(LIBCDS_LIB) $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
-LDADD = libhdt.la
+LDADD = libhdt.la $(am__append_2)
 hdt2rdf_SOURCES = tools/hdt2rdf.cpp
 hdtInfo_SOURCES = tools/hdtInfo.cpp
 hdtSearch_SOURCES = tools/hdtSearch.cpp
@@ -687,6 +685,16 @@ src/libdcs/CSD_PFC.lo: src/libdcs/$(am__dirstamp) \
 	src/libdcs/$(DEPDIR)/$(am__dirstamp)
 src/libdcs/VByte.lo: src/libdcs/$(am__dirstamp) \
 	src/libdcs/$(DEPDIR)/$(am__dirstamp)
+src/libdcs/fmindex/$(am__dirstamp):
+	@$(MKDIR_P) src/libdcs/fmindex
+	@: > src/libdcs/fmindex/$(am__dirstamp)
+src/libdcs/fmindex/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) src/libdcs/fmindex/$(DEPDIR)
+	@: > src/libdcs/fmindex/$(DEPDIR)/$(am__dirstamp)
+src/libdcs/fmindex/SSA.lo: src/libdcs/fmindex/$(am__dirstamp) \
+	src/libdcs/fmindex/$(DEPDIR)/$(am__dirstamp)
+src/libdcs/fmindex/SuffixArray.lo: src/libdcs/fmindex/$(am__dirstamp) \
+	src/libdcs/fmindex/$(DEPDIR)/$(am__dirstamp)
 src/rdf/$(am__dirstamp):
 	@$(MKDIR_P) src/rdf
 	@: > src/rdf/$(am__dirstamp)
@@ -906,6 +914,8 @@ mostlyclean-compile:
 	-rm -f src/huffman/*.lo
 	-rm -f src/libdcs/*.$(OBJEXT)
 	-rm -f src/libdcs/*.lo
+	-rm -f src/libdcs/fmindex/*.$(OBJEXT)
+	-rm -f src/libdcs/fmindex/*.lo
 	-rm -f src/rdf/*.$(OBJEXT)
 	-rm -f src/rdf/*.lo
 	-rm -f src/sequence/*.$(OBJEXT)
@@ -945,6 +955,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/libdcs/$(DEPDIR)/CSD_HTFC.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/libdcs/$(DEPDIR)/CSD_PFC.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/libdcs/$(DEPDIR)/VByte.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/libdcs/fmindex/$(DEPDIR)/SSA.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/libdcs/fmindex/$(DEPDIR)/SuffixArray.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/rdf/$(DEPDIR)/RDFParser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/rdf/$(DEPDIR)/RDFParserNtriples.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/rdf/$(DEPDIR)/RDFParserRaptorCallback.Plo@am__quote@
@@ -1026,6 +1038,7 @@ clean-libtool:
 	-rm -rf src/header/.libs src/header/_libs
 	-rm -rf src/huffman/.libs src/huffman/_libs
 	-rm -rf src/libdcs/.libs src/libdcs/_libs
+	-rm -rf src/libdcs/fmindex/.libs src/libdcs/fmindex/_libs
 	-rm -rf src/rdf/.libs src/rdf/_libs
 	-rm -rf src/sequence/.libs src/sequence/_libs
 	-rm -rf src/sparql/.libs src/sparql/_libs
@@ -1235,6 +1248,8 @@ distclean-generic:
 	-rm -f src/huffman/$(am__dirstamp)
 	-rm -f src/libdcs/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/libdcs/$(am__dirstamp)
+	-rm -f src/libdcs/fmindex/$(DEPDIR)/$(am__dirstamp)
+	-rm -f src/libdcs/fmindex/$(am__dirstamp)
 	-rm -f src/rdf/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/rdf/$(am__dirstamp)
 	-rm -f src/sequence/$(DEPDIR)/$(am__dirstamp)
@@ -1259,7 +1274,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
 	clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
-	-rm -rf src/bitsequence/$(DEPDIR) src/dictionary/$(DEPDIR) src/hdt/$(DEPDIR) src/header/$(DEPDIR) src/huffman/$(DEPDIR) src/libdcs/$(DEPDIR) src/rdf/$(DEPDIR) src/sequence/$(DEPDIR) src/sparql/$(DEPDIR) src/triples/$(DEPDIR) src/util/$(DEPDIR) third/$(DEPDIR) tools/$(DEPDIR)
+	-rm -rf src/bitsequence/$(DEPDIR) src/dictionary/$(DEPDIR) src/hdt/$(DEPDIR) src/header/$(DEPDIR) src/huffman/$(DEPDIR) src/libdcs/$(DEPDIR) src/libdcs/fmindex/$(DEPDIR) src/rdf/$(DEPDIR) src/sequence/$(DEPDIR) src/sparql/$(DEPDIR) src/triples/$(DEPDIR) src/util/$(DEPDIR) third/$(DEPDIR) tools/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1305,7 +1320,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-recursive
-	-rm -rf src/bitsequence/$(DEPDIR) src/dictionary/$(DEPDIR) src/hdt/$(DEPDIR) src/header/$(DEPDIR) src/huffman/$(DEPDIR) src/libdcs/$(DEPDIR) src/rdf/$(DEPDIR) src/sequence/$(DEPDIR) src/sparql/$(DEPDIR) src/triples/$(DEPDIR) src/util/$(DEPDIR) third/$(DEPDIR) tools/$(DEPDIR)
+	-rm -rf src/bitsequence/$(DEPDIR) src/dictionary/$(DEPDIR) src/hdt/$(DEPDIR) src/header/$(DEPDIR) src/huffman/$(DEPDIR) src/libdcs/$(DEPDIR) src/libdcs/fmindex/$(DEPDIR) src/rdf/$(DEPDIR) src/sequence/$(DEPDIR) src/sparql/$(DEPDIR) src/triples/$(DEPDIR) src/util/$(DEPDIR) third/$(DEPDIR) tools/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

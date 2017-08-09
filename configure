@@ -661,9 +661,8 @@ KYOTO_HDR
 RAPTOR2_CFLAGS
 RAPTOR2_LIB
 RAPTOR2_HDR
-LIBCDS_CFLAGS
-LIBCDS_LIB
-LIBCDS_HDR
+WANTS_LIBCDS_FALSE
+WANTS_LIBCDS_TRUE
 CXXCPP
 LT_SYS_LIBRARY_PATH
 OTOOL64
@@ -799,7 +798,7 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
-with_libcds_prefix
+enable_libcds
 with_raptor2_prefix
 with_kyoto_prefix
 with_serd_prefix
@@ -1464,6 +1463,7 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-libcds         Turn on libcds
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1476,8 +1476,6 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
-  --with-libcds-prefix=DIR
-                          Enables cds library
   --with-raptor2-prefix=DIR
                           Enables raptor2 library
   --with-kyoto-prefix=DIR Enables kyoto library
@@ -16674,20 +16672,23 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 # Checks for libraries
+# Check whether --enable-libcds was given.
+if test "${enable_libcds+set}" = set; then :
+  enableval=$enable_libcds; case "${enableval}" in
+    yes) wants_cds=true ;;
+    no)  wants_cds=false ;;
+    *) as_fn_error $? "bad value ${enableval} for --enable-libcds" "$LINENO" 5 ;;
+   esac
+else
+  wants_cds=false
+fi
 
-# Check whether --with-libcds-prefix was given.
-if test "${with_libcds_prefix+set}" = set; then :
-  withval=$with_libcds_prefix; LIBCDS_HDR="-I$with_libcds_prefix/include"
-
-   LIBCDS_LIB="-L$with_libcds_prefix/lib -lcds"
-
-   LIBCDS_CFLAGS="-DHAVE_CDS"
-
-
-$as_echo "#define HAVE_CDS 1" >>confdefs.h
-
-   { $as_echo "$as_me:${as_lineno-$LINENO}: LIBCDS enabled" >&5
-$as_echo "$as_me: LIBCDS enabled" >&6;}
+ if test x$wants_cds = xtrue; then
+  WANTS_LIBCDS_TRUE=
+  WANTS_LIBCDS_FALSE='#'
+else
+  WANTS_LIBCDS_TRUE='#'
+  WANTS_LIBCDS_FALSE=
 fi
 
 
@@ -17738,6 +17739,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${WANTS_LIBCDS_TRUE}" && test -z "${WANTS_LIBCDS_FALSE}"; then
+  as_fn_error $? "conditional \"WANTS_LIBCDS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${GL_COND_LIBTOOL_TRUE}" && test -z "${GL_COND_LIBTOOL_FALSE}"; then
