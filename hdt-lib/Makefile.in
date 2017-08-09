@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -90,9 +89,6 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @WANTS_LIBCDS_TRUE@am__append_1 = -DHAVE_CDS -I$(top_builddir)/libcds/include
-@WANTS_LIBCDS_TRUE@am__append_2 = ../libcds/libcds.la
-bin_PROGRAMS = hdt2rdf$(EXEEXT) hdtInfo$(EXEEXT) hdtSearch$(EXEEXT) \
-	rdf2hdt$(EXEEXT) replaceHeader$(EXEEXT)
 subdir = hdt-lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
@@ -135,7 +131,7 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libhdt_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
@@ -180,27 +176,6 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-PROGRAMS = $(bin_PROGRAMS)
-am_hdt2rdf_OBJECTS = tools/hdt2rdf.$(OBJEXT)
-hdt2rdf_OBJECTS = $(am_hdt2rdf_OBJECTS)
-hdt2rdf_LDADD = $(LDADD)
-hdt2rdf_DEPENDENCIES = libhdt.la $(am__append_2)
-am_hdtInfo_OBJECTS = tools/hdtInfo.$(OBJEXT)
-hdtInfo_OBJECTS = $(am_hdtInfo_OBJECTS)
-hdtInfo_LDADD = $(LDADD)
-hdtInfo_DEPENDENCIES = libhdt.la $(am__append_2)
-am_hdtSearch_OBJECTS = tools/hdtSearch.$(OBJEXT)
-hdtSearch_OBJECTS = $(am_hdtSearch_OBJECTS)
-hdtSearch_LDADD = $(LDADD)
-hdtSearch_DEPENDENCIES = libhdt.la $(am__append_2)
-am_rdf2hdt_OBJECTS = tools/rdf2hdt.$(OBJEXT)
-rdf2hdt_OBJECTS = $(am_rdf2hdt_OBJECTS)
-rdf2hdt_LDADD = $(LDADD)
-rdf2hdt_DEPENDENCIES = libhdt.la $(am__append_2)
-am_replaceHeader_OBJECTS = tools/replaceHeader.$(OBJEXT)
-replaceHeader_OBJECTS = $(am_replaceHeader_OBJECTS)
-replaceHeader_LDADD = $(LDADD)
-replaceHeader_DEPENDENCIES = libhdt.la $(am__append_2)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -235,12 +210,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(libhdt_la_SOURCES) $(hdt2rdf_SOURCES) $(hdtInfo_SOURCES) \
-	$(hdtSearch_SOURCES) $(rdf2hdt_SOURCES) \
-	$(replaceHeader_SOURCES)
-DIST_SOURCES = $(libhdt_la_SOURCES) $(hdt2rdf_SOURCES) \
-	$(hdtInfo_SOURCES) $(hdtSearch_SOURCES) $(rdf2hdt_SOURCES) \
-	$(replaceHeader_SOURCES)
+SOURCES = $(libhdt_la_SOURCES)
+DIST_SOURCES = $(libhdt_la_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -456,7 +427,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 zlib_CFLAGS = @zlib_CFLAGS@
 zlib_LIBS = @zlib_LIBS@
-SUBDIRS = . tests 
+SUBDIRS = . tools tests 
 AUTOMAKE_OPTIONS = subdir-objects
 lib_LTLIBRARIES = libhdt.la
 libhdt_la_SOURCES = \
@@ -526,16 +497,10 @@ src/util/StopWatch.cpp \
 third/gzstream.cpp 
 
 AM_CPPFLAGS = $(WARN_CFLAGS) -I$(top_builddir)/lib \
-	-I$(builddir)/include $(LIBCDS_HDR) $(LIBCDS_CFLAGS) \
-	$(RAPTOR2_HDR) $(RAPTOR2_CFLAGS) $(KYOTO_HDR) $(KYOTO_CFLAGS) \
-	$(SERD_HDR) $(SERD_CFLAGS) $(ZLIB_CFLAGS) $(am__append_1)
-AM_LDFLAGS = $(LIBCDS_LIB) $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
-LDADD = libhdt.la $(am__append_2)
-hdt2rdf_SOURCES = tools/hdt2rdf.cpp
-hdtInfo_SOURCES = tools/hdtInfo.cpp
-hdtSearch_SOURCES = tools/hdtSearch.cpp
-rdf2hdt_SOURCES = tools/rdf2hdt.cpp
-replaceHeader_SOURCES = tools/replaceHeader.cpp
+	-I$(builddir)/include $(RAPTOR2_HDR) $(RAPTOR2_CFLAGS) \
+	$(KYOTO_HDR) $(KYOTO_CFLAGS) $(SERD_HDR) $(SERD_CFLAGS) \
+	$(ZLIB_CFLAGS) $(am__append_1)
+AM_LDFLAGS = $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 all: all-recursive
 
 .SUFFIXES:
@@ -814,91 +779,6 @@ third/gzstream.lo: third/$(am__dirstamp) \
 
 libhdt.la: $(libhdt_la_OBJECTS) $(libhdt_la_DEPENDENCIES) $(EXTRA_libhdt_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(CXXLINK) -rpath $(libdir) $(libhdt_la_OBJECTS) $(libhdt_la_LIBADD) $(LIBS)
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
-	fi; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p \
-	 || test -f $$p1 \
-	  ; then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' \
-	    -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	    } \
-	; done
-
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' \
-	`; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-tools/$(am__dirstamp):
-	@$(MKDIR_P) tools
-	@: > tools/$(am__dirstamp)
-tools/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) tools/$(DEPDIR)
-	@: > tools/$(DEPDIR)/$(am__dirstamp)
-tools/hdt2rdf.$(OBJEXT): tools/$(am__dirstamp) \
-	tools/$(DEPDIR)/$(am__dirstamp)
-
-hdt2rdf$(EXEEXT): $(hdt2rdf_OBJECTS) $(hdt2rdf_DEPENDENCIES) $(EXTRA_hdt2rdf_DEPENDENCIES) 
-	@rm -f hdt2rdf$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(hdt2rdf_OBJECTS) $(hdt2rdf_LDADD) $(LIBS)
-tools/hdtInfo.$(OBJEXT): tools/$(am__dirstamp) \
-	tools/$(DEPDIR)/$(am__dirstamp)
-
-hdtInfo$(EXEEXT): $(hdtInfo_OBJECTS) $(hdtInfo_DEPENDENCIES) $(EXTRA_hdtInfo_DEPENDENCIES) 
-	@rm -f hdtInfo$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(hdtInfo_OBJECTS) $(hdtInfo_LDADD) $(LIBS)
-tools/hdtSearch.$(OBJEXT): tools/$(am__dirstamp) \
-	tools/$(DEPDIR)/$(am__dirstamp)
-
-hdtSearch$(EXEEXT): $(hdtSearch_OBJECTS) $(hdtSearch_DEPENDENCIES) $(EXTRA_hdtSearch_DEPENDENCIES) 
-	@rm -f hdtSearch$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(hdtSearch_OBJECTS) $(hdtSearch_LDADD) $(LIBS)
-tools/rdf2hdt.$(OBJEXT): tools/$(am__dirstamp) \
-	tools/$(DEPDIR)/$(am__dirstamp)
-
-rdf2hdt$(EXEEXT): $(rdf2hdt_OBJECTS) $(rdf2hdt_DEPENDENCIES) $(EXTRA_rdf2hdt_DEPENDENCIES) 
-	@rm -f rdf2hdt$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(rdf2hdt_OBJECTS) $(rdf2hdt_LDADD) $(LIBS)
-tools/replaceHeader.$(OBJEXT): tools/$(am__dirstamp) \
-	tools/$(DEPDIR)/$(am__dirstamp)
-
-replaceHeader$(EXEEXT): $(replaceHeader_OBJECTS) $(replaceHeader_DEPENDENCIES) $(EXTRA_replaceHeader_DEPENDENCIES) 
-	@rm -f replaceHeader$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(replaceHeader_OBJECTS) $(replaceHeader_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -928,7 +808,6 @@ mostlyclean-compile:
 	-rm -f src/util/*.lo
 	-rm -f third/*.$(OBJEXT)
 	-rm -f third/*.lo
-	-rm -f tools/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -997,11 +876,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/util/$(DEPDIR)/filemap.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/util/$(DEPDIR)/propertyutil.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@third/$(DEPDIR)/gzstream.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hdt2rdf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hdtInfo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hdtSearch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/rdf2hdt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/replaceHeader.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1202,12 +1076,10 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS)
-install-binPROGRAMS: install-libLTLIBRARIES
-
+all-am: Makefile $(LTLIBRARIES)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(libdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1262,19 +1134,17 @@ distclean-generic:
 	-rm -f src/util/$(am__dirstamp)
 	-rm -f third/$(DEPDIR)/$(am__dirstamp)
 	-rm -f third/$(am__dirstamp)
-	-rm -f tools/$(DEPDIR)/$(am__dirstamp)
-	-rm -f tools/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
-	clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+	mostlyclean-am
 
 distclean: distclean-recursive
-	-rm -rf src/bitsequence/$(DEPDIR) src/dictionary/$(DEPDIR) src/hdt/$(DEPDIR) src/header/$(DEPDIR) src/huffman/$(DEPDIR) src/libdcs/$(DEPDIR) src/libdcs/fmindex/$(DEPDIR) src/rdf/$(DEPDIR) src/sequence/$(DEPDIR) src/sparql/$(DEPDIR) src/triples/$(DEPDIR) src/util/$(DEPDIR) third/$(DEPDIR) tools/$(DEPDIR)
+	-rm -rf src/bitsequence/$(DEPDIR) src/dictionary/$(DEPDIR) src/hdt/$(DEPDIR) src/header/$(DEPDIR) src/huffman/$(DEPDIR) src/libdcs/$(DEPDIR) src/libdcs/fmindex/$(DEPDIR) src/rdf/$(DEPDIR) src/sequence/$(DEPDIR) src/sparql/$(DEPDIR) src/triples/$(DEPDIR) src/util/$(DEPDIR) third/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1297,7 +1167,7 @@ install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-libLTLIBRARIES
+install-exec-am: install-libLTLIBRARIES
 
 install-html: install-html-recursive
 
@@ -1320,7 +1190,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-recursive
-	-rm -rf src/bitsequence/$(DEPDIR) src/dictionary/$(DEPDIR) src/hdt/$(DEPDIR) src/header/$(DEPDIR) src/huffman/$(DEPDIR) src/libdcs/$(DEPDIR) src/libdcs/fmindex/$(DEPDIR) src/rdf/$(DEPDIR) src/sequence/$(DEPDIR) src/sparql/$(DEPDIR) src/triples/$(DEPDIR) src/util/$(DEPDIR) third/$(DEPDIR) tools/$(DEPDIR)
+	-rm -rf src/bitsequence/$(DEPDIR) src/dictionary/$(DEPDIR) src/hdt/$(DEPDIR) src/header/$(DEPDIR) src/huffman/$(DEPDIR) src/libdcs/$(DEPDIR) src/libdcs/fmindex/$(DEPDIR) src/rdf/$(DEPDIR) src/sequence/$(DEPDIR) src/sparql/$(DEPDIR) src/triples/$(DEPDIR) src/util/$(DEPDIR) third/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1337,29 +1207,34 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-libLTLIBRARIES
+uninstall-am: uninstall-libLTLIBRARIES
 
 .MAKE: $(am__recursive_targets) install-am install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
-	check-am clean clean-binPROGRAMS clean-generic \
-	clean-libLTLIBRARIES clean-libtool cscopelist-am ctags \
-	ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-libLTLIBRARIES \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
+	check-am clean clean-generic clean-libLTLIBRARIES \
+	clean-libtool cscopelist-am ctags ctags-am distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am \
+	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-libLTLIBRARIES
+	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES
 
 .PRECIOUS: Makefile
 
+
+#bin_PROGRAMS = hdt2rdf hdtInfo hdtSearch rdf2hdt replaceHeader
+#hdt2rdf_SOURCES = tools/hdt2rdf.cpp
+#hdtInfo_SOURCES = tools/hdtInfo.cpp
+#hdtSearch_SOURCES = tools/hdtSearch.cpp
+#rdf2hdt_SOURCES = tools/rdf2hdt.cpp
+#replaceHeader_SOURCES = tools/replaceHeader.cpp
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

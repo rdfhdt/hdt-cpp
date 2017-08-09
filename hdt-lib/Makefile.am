@@ -1,4 +1,4 @@
-SUBDIRS = . tests 
+SUBDIRS = . tools tests 
 
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -71,24 +71,20 @@ third/gzstream.cpp
 
 AM_CPPFLAGS = $(WARN_CFLAGS) \
 -I$(top_builddir)/lib -I$(builddir)/include \
-$(LIBCDS_HDR) $(LIBCDS_CFLAGS) \
 $(RAPTOR2_HDR) $(RAPTOR2_CFLAGS) \
 $(KYOTO_HDR) $(KYOTO_CFLAGS) \
 $(SERD_HDR) $(SERD_CFLAGS) \
 $(ZLIB_CFLAGS)
 
-AM_LDFLAGS = $(LIBCDS_LIB) $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
-
-LDADD = libhdt.la
+AM_LDFLAGS = $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 
 if WANTS_LIBCDS
 AM_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
-LDADD += ../libcds/libcds.la
 endif
 
-bin_PROGRAMS = hdt2rdf hdtInfo hdtSearch rdf2hdt replaceHeader
-hdt2rdf_SOURCES = tools/hdt2rdf.cpp
-hdtInfo_SOURCES = tools/hdtInfo.cpp
-hdtSearch_SOURCES = tools/hdtSearch.cpp
-rdf2hdt_SOURCES = tools/rdf2hdt.cpp
-replaceHeader_SOURCES = tools/replaceHeader.cpp
+#bin_PROGRAMS = hdt2rdf hdtInfo hdtSearch rdf2hdt replaceHeader
+#hdt2rdf_SOURCES = tools/hdt2rdf.cpp
+#hdtInfo_SOURCES = tools/hdtInfo.cpp
+#hdtSearch_SOURCES = tools/hdtSearch.cpp
+#rdf2hdt_SOURCES = tools/rdf2hdt.cpp
+#replaceHeader_SOURCES = tools/replaceHeader.cpp

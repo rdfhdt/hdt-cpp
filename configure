@@ -17602,7 +17602,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile hdt-lib/Makefile hdt-lib/tests/Makefile libcds/Makefile libcds/tests/Makefile"
+ac_config_files="$ac_config_files Makefile hdt-lib/Makefile hdt-lib/tools/Makefile hdt-lib/tests/Makefile libcds/Makefile libcds/tests/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -18759,6 +18759,7 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "hdt-lib/Makefile") CONFIG_FILES="$CONFIG_FILES hdt-lib/Makefile" ;;
+    "hdt-lib/tools/Makefile") CONFIG_FILES="$CONFIG_FILES hdt-lib/tools/Makefile" ;;
     "hdt-lib/tests/Makefile") CONFIG_FILES="$CONFIG_FILES hdt-lib/tests/Makefile" ;;
     "libcds/Makefile") CONFIG_FILES="$CONFIG_FILES libcds/Makefile" ;;
     "libcds/tests/Makefile") CONFIG_FILES="$CONFIG_FILES libcds/tests/Makefile" ;;
