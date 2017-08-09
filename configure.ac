@@ -87,6 +87,7 @@ AC_CONFIG_FILES([
   libhdt/Makefile
   libhdt/tools/Makefile
   libhdt/tests/Makefile
+  libcds/cds.pc
   libcds/Makefile
   libcds/tests/Makefile
 ])

@@ -47,3 +47,16 @@ script:
   #- make check -j $(nproc)
   - make install
   - $HOME/bin/hdtSearch -q 0 hdt-lib/data/literals.hdt
+  - test -f $HOME/bin/hdt2rdf
+  - test -f $HOME/bin/hdtInfo
+  - test -f $HOME/bin/hdtSearch
+  - test -f $HOME/bin/modifyHeader
+  - test -f $HOME/bin/rdf2hdt
+  - test -f $HOME/bin/replaceHeader
+  - test -f $HOME/bin/searchHeader
+  - test -f $HOME/lib/libhdt.la
+  - test -f $HOME/lib/libhdt.so
+  - test -f $HOME/lib/libcds.la
+  - test -f $HOME/lib/libcds.so
+  - test -f $HOME/lib/pkgconfig/hdt.pc
+  - test -f $HOME/lib/pkgconfig/cds.pc
