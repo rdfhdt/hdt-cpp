@@ -2,6 +2,24 @@ SUBDIRS = . tools tests
 
 AUTOMAKE_OPTIONS = subdir-objects
 
+include_HEADERS = \
+	include/ControlInformation.hpp\
+	include/Dictionary.hpp\
+	include/HDTEnums.hpp\
+	include/HDT.hpp\
+	include/HDTListener.hpp\
+	include/HDTManager.hpp\
+	include/HDTSpecification.hpp\
+	include/HDTVersion.hpp\
+	include/HDTVocabulary.hpp\
+	include/Header.hpp\
+	include/Iterator.hpp\
+	include/RDF.hpp\
+	include/RDFParser.hpp\
+	include/RDFSerializer.hpp\
+	include/SingleTriple.hpp\
+	include/Triples.hpp
+
 lib_LTLIBRARIES = libhdt.la
 libhdt_la_SOURCES = \
 src/bitsequence/BitSequence375.cpp \
@@ -81,10 +99,3 @@ AM_LDFLAGS = $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 if WANTS_LIBCDS
 AM_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
 endif
-
-#bin_PROGRAMS = hdt2rdf hdtInfo hdtSearch rdf2hdt replaceHeader
-#hdt2rdf_SOURCES = tools/hdt2rdf.cpp
-#hdtInfo_SOURCES = tools/hdtInfo.cpp
-#hdtSearch_SOURCES = tools/hdtSearch.cpp
-#rdf2hdt_SOURCES = tools/rdf2hdt.cpp
-#replaceHeader_SOURCES = tools/replaceHeader.cpp

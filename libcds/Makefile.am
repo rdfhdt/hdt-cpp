@@ -4,8 +4,92 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 AM_CPPFLAGS =  -I$(builddir)/include $(WARN_CFLAGS)
 
-lib_LTLIBRARIES = 
+include_HEADERS =
+lib_LTLIBRARIES =
+
 if WANTS_LIBCDS
+include_HEADERS += \
+	include/Array.h \
+	include/BitmapsSequence.h\
+	include/BitSequenceBuilderDArray.h\
+	include/BitSequenceBuilder.h\
+	include/BitSequenceBuilderRG.h\
+	include/BitSequenceBuilderRRR.h\
+	include/BitSequenceBuilderSDArray.h\
+	include/BitSequenceDArray.h\
+	include/BitSequence.h\
+	include/BitSequenceRG.h\
+	include/BitSequenceRRR.h\
+	include/BitSequenceSDArray.h\
+	include/BitString.h\
+	include/Coder.h\
+	include/comparray4.h\
+	include/cppUtils.h\
+	include/factorization.h\
+	include/factorization_var.h\
+	include/huff.h\
+	include/HuffmanCoder.h\
+	include/interface.h\
+	include/LCP_DAC.h\
+	include/LCP_DAC_VAR.h\
+	include/LCP_FMN.h\
+	include/LCP.h\
+	include/LCP_naive.h\
+	include/LCP_PhiSpare.h\
+	include/LCP_PT.h\
+	include/LCP_Sad.h\
+	include/libcdsBasics.h\
+	include/libcdsSDArray.h\
+	include/libcdsTrees.h\
+	include/MapperCont.h\
+	include/Mapper.h\
+	include/MapperNone.h\
+	include/MapperRev.h\
+	include/mmap.h\
+	include/NPR_CN.h\
+	include/NPR_FMN.h\
+	include/NPR.h\
+	include/NSV.h\
+	include/perm.h\
+	include/PermutationBuilder.h\
+	include/PermutationBuilderMRRR.h\
+	include/PermutationBuilderWT.h\
+	include/Permutation.h\
+	include/PermutationMRRR.h\
+	include/PermutationWT.h\
+	include/PSV.h\
+	include/RMQ_succinct.h\
+	include/RMQ_succinct_lcp.h\
+	include/sdarraySadakane.h\
+	include/SequenceAlphPart.h\
+	include/SequenceBuilderAlphPart.h\
+	include/SequenceBuilderGMRChunk.h\
+	include/SequenceBuilderGMR.h\
+	include/SequenceBuilder.h\
+	include/SequenceBuilderStr.h\
+	include/SequenceBuilderWaveletMatrix.h\
+	include/SequenceBuilderWaveletTree.h\
+	include/SequenceBuilderWaveletTreeNoptrs.h\
+	include/SequenceBuilderWaveletTreeNoptrsS.h\
+	include/SequenceGMRChunk.h\
+	include/SequenceGMR.h\
+	include/Sequence.h\
+	include/SuffixTree.h\
+	include/SuffixTreeY.h\
+	include/TableOffsetRRR.h\
+	include/TextIndexCSA.h\
+	include/TextIndex.h\
+	include/timing.h\
+	include/WaveletMatrix.h\
+	include/WaveletTree.h\
+	include/WaveletTreeNoptrs.h\
+	include/WaveletTreeNoptrsS.h\
+	include/wt_coder_binary.h\
+	include/wt_coder.h\
+	include/wt_coder_huff.h\
+	include/wt_node.h\
+	include/wt_node_internal.h\
+	include/wt_node_leaf.h
 lib_LTLIBRARIES += libcds.la
 endif
 libcds_la_SOURCES = \

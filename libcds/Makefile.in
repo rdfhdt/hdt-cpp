@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -88,7 +89,90 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@WANTS_LIBCDS_TRUE@am__append_1 = libcds.la
+@WANTS_LIBCDS_TRUE@am__append_1 = \
+@WANTS_LIBCDS_TRUE@	include/Array.h \
+@WANTS_LIBCDS_TRUE@	include/BitmapsSequence.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceBuilderDArray.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceBuilder.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceBuilderRG.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceBuilderRRR.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceBuilderSDArray.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceDArray.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequence.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceRG.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceRRR.h\
+@WANTS_LIBCDS_TRUE@	include/BitSequenceSDArray.h\
+@WANTS_LIBCDS_TRUE@	include/BitString.h\
+@WANTS_LIBCDS_TRUE@	include/Coder.h\
+@WANTS_LIBCDS_TRUE@	include/comparray4.h\
+@WANTS_LIBCDS_TRUE@	include/cppUtils.h\
+@WANTS_LIBCDS_TRUE@	include/factorization.h\
+@WANTS_LIBCDS_TRUE@	include/factorization_var.h\
+@WANTS_LIBCDS_TRUE@	include/huff.h\
+@WANTS_LIBCDS_TRUE@	include/HuffmanCoder.h\
+@WANTS_LIBCDS_TRUE@	include/interface.h\
+@WANTS_LIBCDS_TRUE@	include/LCP_DAC.h\
+@WANTS_LIBCDS_TRUE@	include/LCP_DAC_VAR.h\
+@WANTS_LIBCDS_TRUE@	include/LCP_FMN.h\
+@WANTS_LIBCDS_TRUE@	include/LCP.h\
+@WANTS_LIBCDS_TRUE@	include/LCP_naive.h\
+@WANTS_LIBCDS_TRUE@	include/LCP_PhiSpare.h\
+@WANTS_LIBCDS_TRUE@	include/LCP_PT.h\
+@WANTS_LIBCDS_TRUE@	include/LCP_Sad.h\
+@WANTS_LIBCDS_TRUE@	include/libcdsBasics.h\
+@WANTS_LIBCDS_TRUE@	include/libcdsSDArray.h\
+@WANTS_LIBCDS_TRUE@	include/libcdsTrees.h\
+@WANTS_LIBCDS_TRUE@	include/MapperCont.h\
+@WANTS_LIBCDS_TRUE@	include/Mapper.h\
+@WANTS_LIBCDS_TRUE@	include/MapperNone.h\
+@WANTS_LIBCDS_TRUE@	include/MapperRev.h\
+@WANTS_LIBCDS_TRUE@	include/mmap.h\
+@WANTS_LIBCDS_TRUE@	include/NPR_CN.h\
+@WANTS_LIBCDS_TRUE@	include/NPR_FMN.h\
+@WANTS_LIBCDS_TRUE@	include/NPR.h\
+@WANTS_LIBCDS_TRUE@	include/NSV.h\
+@WANTS_LIBCDS_TRUE@	include/perm.h\
+@WANTS_LIBCDS_TRUE@	include/PermutationBuilder.h\
+@WANTS_LIBCDS_TRUE@	include/PermutationBuilderMRRR.h\
+@WANTS_LIBCDS_TRUE@	include/PermutationBuilderWT.h\
+@WANTS_LIBCDS_TRUE@	include/Permutation.h\
+@WANTS_LIBCDS_TRUE@	include/PermutationMRRR.h\
+@WANTS_LIBCDS_TRUE@	include/PermutationWT.h\
+@WANTS_LIBCDS_TRUE@	include/PSV.h\
+@WANTS_LIBCDS_TRUE@	include/RMQ_succinct.h\
+@WANTS_LIBCDS_TRUE@	include/RMQ_succinct_lcp.h\
+@WANTS_LIBCDS_TRUE@	include/sdarraySadakane.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceAlphPart.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilderAlphPart.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilderGMRChunk.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilderGMR.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilder.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilderStr.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilderWaveletMatrix.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilderWaveletTree.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilderWaveletTreeNoptrs.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceBuilderWaveletTreeNoptrsS.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceGMRChunk.h\
+@WANTS_LIBCDS_TRUE@	include/SequenceGMR.h\
+@WANTS_LIBCDS_TRUE@	include/Sequence.h\
+@WANTS_LIBCDS_TRUE@	include/SuffixTree.h\
+@WANTS_LIBCDS_TRUE@	include/SuffixTreeY.h\
+@WANTS_LIBCDS_TRUE@	include/TableOffsetRRR.h\
+@WANTS_LIBCDS_TRUE@	include/TextIndexCSA.h\
+@WANTS_LIBCDS_TRUE@	include/TextIndex.h\
+@WANTS_LIBCDS_TRUE@	include/timing.h\
+@WANTS_LIBCDS_TRUE@	include/WaveletMatrix.h\
+@WANTS_LIBCDS_TRUE@	include/WaveletTree.h\
+@WANTS_LIBCDS_TRUE@	include/WaveletTreeNoptrs.h\
+@WANTS_LIBCDS_TRUE@	include/WaveletTreeNoptrsS.h\
+@WANTS_LIBCDS_TRUE@	include/wt_coder_binary.h\
+@WANTS_LIBCDS_TRUE@	include/wt_coder.h\
+@WANTS_LIBCDS_TRUE@	include/wt_coder_huff.h\
+@WANTS_LIBCDS_TRUE@	include/wt_node.h\
+@WANTS_LIBCDS_TRUE@	include/wt_node_internal.h\
+@WANTS_LIBCDS_TRUE@	include/wt_node_leaf.h
+
+@WANTS_LIBCDS_TRUE@am__append_2 = libcds.la
 subdir = libcds
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
@@ -99,7 +183,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/warnings.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
+DIST_COMMON = $(srcdir)/Makefile.am $(am__include_HEADERS_DIST) \
+	$(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/build/config.h
 CONFIG_CLEAN_FILES =
@@ -131,7 +216,7 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(libdir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libcds_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
@@ -257,6 +342,45 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__include_HEADERS_DIST = include/Array.h include/BitmapsSequence.h \
+	include/BitSequenceBuilderDArray.h \
+	include/BitSequenceBuilder.h include/BitSequenceBuilderRG.h \
+	include/BitSequenceBuilderRRR.h \
+	include/BitSequenceBuilderSDArray.h \
+	include/BitSequenceDArray.h include/BitSequence.h \
+	include/BitSequenceRG.h include/BitSequenceRRR.h \
+	include/BitSequenceSDArray.h include/BitString.h \
+	include/Coder.h include/comparray4.h include/cppUtils.h \
+	include/factorization.h include/factorization_var.h \
+	include/huff.h include/HuffmanCoder.h include/interface.h \
+	include/LCP_DAC.h include/LCP_DAC_VAR.h include/LCP_FMN.h \
+	include/LCP.h include/LCP_naive.h include/LCP_PhiSpare.h \
+	include/LCP_PT.h include/LCP_Sad.h include/libcdsBasics.h \
+	include/libcdsSDArray.h include/libcdsTrees.h \
+	include/MapperCont.h include/Mapper.h include/MapperNone.h \
+	include/MapperRev.h include/mmap.h include/NPR_CN.h \
+	include/NPR_FMN.h include/NPR.h include/NSV.h include/perm.h \
+	include/PermutationBuilder.h include/PermutationBuilderMRRR.h \
+	include/PermutationBuilderWT.h include/Permutation.h \
+	include/PermutationMRRR.h include/PermutationWT.h \
+	include/PSV.h include/RMQ_succinct.h \
+	include/RMQ_succinct_lcp.h include/sdarraySadakane.h \
+	include/SequenceAlphPart.h include/SequenceBuilderAlphPart.h \
+	include/SequenceBuilderGMRChunk.h include/SequenceBuilderGMR.h \
+	include/SequenceBuilder.h include/SequenceBuilderStr.h \
+	include/SequenceBuilderWaveletMatrix.h \
+	include/SequenceBuilderWaveletTree.h \
+	include/SequenceBuilderWaveletTreeNoptrs.h \
+	include/SequenceBuilderWaveletTreeNoptrsS.h \
+	include/SequenceGMRChunk.h include/SequenceGMR.h \
+	include/Sequence.h include/SuffixTree.h include/SuffixTreeY.h \
+	include/TableOffsetRRR.h include/TextIndexCSA.h \
+	include/TextIndex.h include/timing.h include/WaveletMatrix.h \
+	include/WaveletTree.h include/WaveletTreeNoptrs.h \
+	include/WaveletTreeNoptrsS.h include/wt_coder_binary.h \
+	include/wt_coder.h include/wt_coder_huff.h include/wt_node.h \
+	include/wt_node_internal.h include/wt_node_leaf.h
+HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -462,7 +586,8 @@ zlib_LIBS = @zlib_LIBS@
 SUBDIRS = . tests
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS = -I$(builddir)/include $(WARN_CFLAGS)
-lib_LTLIBRARIES = $(am__append_1)
+include_HEADERS = $(am__append_1)
+lib_LTLIBRARIES = $(am__append_2)
 libcds_la_SOURCES = \
 src/static/bitsequence/BitSequenceBuilderDArray.cpp\
 src/static/bitsequence/BitSequenceBuilderRG.cpp\
@@ -1002,6 +1127,27 @@ clean-libtool:
 	-rm -rf src/static/suffixtree/.libs src/static/suffixtree/_libs
 	-rm -rf src/static/textindex/.libs src/static/textindex/_libs
 	-rm -rf src/utils/.libs src/utils/_libs
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -1159,10 +1305,10 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1234,7 +1380,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am:
+install-data-am: install-includeHEADERS
 
 install-dvi: install-dvi-recursive
 
@@ -1280,7 +1426,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-libLTLIBRARIES
+uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
 
 .MAKE: $(am__recursive_targets) install-am install-strip
 
@@ -1291,13 +1437,14 @@ uninstall-am: uninstall-libLTLIBRARIES
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am \
-	install-libLTLIBRARIES install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-libLTLIBRARIES
+	install-html-am install-includeHEADERS install-info \
+	install-info-am install-libLTLIBRARIES install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-includeHEADERS uninstall-libLTLIBRARIES
 
 .PRECIOUS: Makefile
 
