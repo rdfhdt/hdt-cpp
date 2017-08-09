@@ -23,6 +23,7 @@ hdt-lib/.libs
 libcds/.libs
 
 # Autotools 
+*.pc
 build/config.h
 build/stamp-h1
 autom4te.cache/

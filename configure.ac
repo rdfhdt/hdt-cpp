@@ -1,4 +1,4 @@
-AC_INIT([hdt], [1.1.1], [some@email.com])
+AC_INIT([libhdt], [1.1.2], [some@email.com], [hdt], [https://github.com/rdfhdt/hdt-cpp])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_HEADERS([build/config.h])
@@ -74,6 +74,7 @@ gl_WARN_ADD([-Wno-unknown-warning-option], [WARN_CFLAGS])
 
 AC_CONFIG_FILES([
   Makefile
+  hdt-lib/hdt.pc
   hdt-lib/Makefile
   hdt-lib/tools/Makefile
   hdt-lib/tests/Makefile

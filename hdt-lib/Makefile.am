@@ -99,3 +99,6 @@ AM_LDFLAGS = $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 if WANTS_LIBCDS
 AM_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
 endif
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = hdt.pc
