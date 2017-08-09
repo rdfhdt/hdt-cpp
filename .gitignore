@@ -30,7 +30,6 @@ autom4te.cache/
 config.log
 config.status
 Makefile
-aclocal.m4
 libtool
 
 .DS_Store
