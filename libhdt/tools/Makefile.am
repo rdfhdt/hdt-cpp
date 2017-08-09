@@ -2,7 +2,7 @@ bin_PROGRAMS = hdt2rdf hdtInfo hdtSearch modifyHeader rdf2hdt replaceHeader sear
 
 AM_DEFAULT_SOURCE_EXT = .cpp
 
-AM_CPPFLAGS = -I@top_srcdir@/hdt-lib/include $(WARN_CFLAGS)
+AM_CPPFLAGS = -I@top_srcdir@/libhdt/include $(WARN_CFLAGS)
 AM_LDFLAGS = $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 LDADD = ../libhdt.la
 

@@ -18,8 +18,8 @@ hdtInfo
 hdtSearch
 rdf2hdt
 replaceHeader
-hdt-lib/examples/*
-hdt-lib/.libs
+libhdt/examples/*
+libhdt/.libs
 libcds/.libs
 
 # Autotools 
