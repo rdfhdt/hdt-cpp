@@ -41,7 +41,7 @@ before_install:
 script:
   # Build standalone binaries
   - ./autogen.sh
-  - ./configure --enable-libcds --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
+  - ./configure --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
   - make -j $(nproc)
   # Make and run selected tests
   #- make check -j $(nproc)

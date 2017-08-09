@@ -15,13 +15,29 @@ LT_INIT([shared static])
 
 # Checks for libraries
 AC_ARG_ENABLE([libcds], 
-  AS_HELP_STRING([--enable-libcds],[Turn on libcds]),
+  AS_HELP_STRING([--enable-libcds],[Turn on libcds [default: yes]]),
   [case "${enableval}" in
     yes) wants_cds=true ;;
     no)  wants_cds=false ;;
     *) AC_MSG_ERROR([bad value ${enableval} for --enable-libcds]) ;;
-   esac],[wants_cds=false]) 
+   esac],[wants_cds=true]) 
 AM_CONDITIONAL([WANTS_LIBCDS], [test x$wants_cds = xtrue])
+AM_COND_IF([WANTS_LIBCDS],
+  AC_MSG_NOTICE([LIBCDS enabled]))
+
+AC_ARG_ENABLE([zlib],
+  AS_HELP_STRING([--enable-zlib], [Turn on z library (default: yes) ]),
+  [case "${enableval}" in
+    yes) wants_z=true ;;
+    no)  wants_z=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-zlib]) ;;
+   esac],[wants_z=true])
+AM_CONDITIONAL([WANTS_Z], [test x$wants_z = xtrue])
+AM_COND_IF([WANTS_Z],
+  [PKG_CHECK_MODULES([zlib],[zlib],
+    AC_SUBST(ZLIB_LIB,"-lz")
+    AC_SUBST(HAVE_ZLIB,"-DHAVE_LIBZ"))
+   AC_MSG_NOTICE([ZLIB enabled])])
 
 AC_ARG_WITH([raptor2-prefix],
   AS_HELP_STRING([--with-raptor2-prefix=DIR], [Enables raptor2 library]),
@@ -46,13 +62,6 @@ AC_ARG_WITH([serd-prefix],
    AC_SUBST(SERD_CFLAGS, "-DHAVE_SERD")
    AC_DEFINE([HAVE_SERD],[1],[serd available])
    AC_MSG_NOTICE([SERD enabled])])
-
-AC_ARG_WITH([zlib],
-  AS_HELP_STRING([--with-zlib], [Enables z library]),
-  [PKG_CHECK_MODULES([zlib],[zlib],
-   AC_SUBST(ZLIB_LIB,"-lz")
-   AC_SUBST(HAVE_ZLIB,"-DHAVE_LIBZ"))
-   AC_MSG_NOTICE([ZLIB enabled])])
 
 # Check for typedefs, structures, and compiler characteristics
 AC_HEADER_STDBOOL
