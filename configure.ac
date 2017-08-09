@@ -74,10 +74,10 @@ gl_WARN_ADD([-Wno-unknown-warning-option], [WARN_CFLAGS])
 
 AC_CONFIG_FILES([
   Makefile
-  hdt-lib/hdt.pc
-  hdt-lib/Makefile
-  hdt-lib/tools/Makefile
-  hdt-lib/tests/Makefile
+  libhdt/hdt.pc
+  libhdt/Makefile
+  libhdt/tools/Makefile
+  libhdt/tests/Makefile
   libcds/Makefile
   libcds/tests/Makefile
 ])
