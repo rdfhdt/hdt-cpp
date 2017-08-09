@@ -91,6 +91,8 @@ include_HEADERS += \
 	include/wt_node_internal.h\
 	include/wt_node_leaf.h
 lib_LTLIBRARIES += libcds.la
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = cds.pc
 endif
 libcds_la_SOURCES = \
 src/static/bitsequence/BitSequenceBuilderDArray.cpp\
