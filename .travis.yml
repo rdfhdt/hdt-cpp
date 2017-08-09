@@ -42,9 +42,9 @@ before_install:
 script:
   # Build standalone binaries
   - ./autogen.sh
-  - ./configure --enable-libcds --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME
-  - make -j $(nproc) CXX=$HDT_CPP
+  - ./configure --enable-libcds --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
+  - make -j $(nproc)
   # Make and run selected tests
-  #- make -j2 check CXX=$HDT_CPP
+  #- make check -j $(nproc)
   - make install
   - $HOME/bin/hdtSearch -q 0 data/literals.hdt
