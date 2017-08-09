@@ -1,4 +1,7 @@
 language: cpp
+env:
+  global:
+    - MAKEFLAGS="-j 2"
 matrix:
   include:
     - os: osx
@@ -42,11 +45,12 @@ script:
   # Build standalone binaries
   - ./autogen.sh
   - ./configure --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
-  - make -j $(nproc)
+  - make
   # Make and run selected tests
-  #- make check -j $(nproc)
+  #- make check
   - make install
   - $HOME/bin/hdtSearch -q 0 hdt-lib/data/literals.hdt
+  # Test installation files
   - test -f $HOME/bin/hdt2rdf
   - test -f $HOME/bin/hdtInfo
   - test -f $HOME/bin/hdtSearch
@@ -55,8 +59,10 @@ script:
   - test -f $HOME/bin/replaceHeader
   - test -f $HOME/bin/searchHeader
   - test -f $HOME/lib/libhdt.la
-  - test -L $HOME/lib/libhdt.so
   - test -f $HOME/lib/libcds.la
-  - test -L $HOME/lib/libcds.so
+  - [ "$TRAVIS_OS_NAME" == "linux" ] && test -L $HOME/lib/libhdt.so
+  - [ "$TRAVIS_OS_NAME" == "linux" ] && test -L $HOME/lib/libcds.so
+  - [ "$TRAVIS_OS_NAME" == "osx" ] && test -L $HOME/lib/libhdt.dylib
+  - [ "$TRAVIS_OS_NAME" == "osx" ] && test -L $HOME/lib/libcds.dylib
   - test -f $HOME/lib/pkgconfig/hdt.pc
   - test -f $HOME/lib/pkgconfig/cds.pc
