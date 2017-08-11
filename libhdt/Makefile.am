@@ -85,7 +85,80 @@ src/util/filemap.cpp \
 src/util/fileUtil.cpp \
 src/util/propertyutil.cpp \
 src/util/StopWatch.cpp \
-third/gzstream.cpp 
+src/util/getopt.c \
+third/gzstream.cpp \
+src/bitsequence/BitSeq.h\
+src/bitsequence/BitSequence375.h\
+src/huffman/huff.h\
+src/huffman/Huffman.h\
+src/libdcs/CSD_Cache2.h\
+src/libdcs/CSD_Cache.h\
+src/libdcs/CSD_FMIndex.h\
+src/libdcs/CSD.h\
+src/libdcs/CSD_HTFC.h\
+src/libdcs/CSD_PFC.h\
+src/libdcs/fmindex/SSA.h\
+src/libdcs/fmindex/SuffixArray.h\
+src/libdcs/hutucker/binarynode.h\
+src/libdcs/hutucker/hutucker.h\
+src/libdcs/VByte.h\
+src/util/bitutil.h\
+src/util/crc16.h\
+src/util/crc32.h\
+src/util/crc8.h\
+src/util/filemap.h\
+src/util/Histogram.h\
+src/util/lru_cache.h\
+src/util/mygetopt.h\
+src/util/propertyutil.h\
+third/gzstream.h\
+src/dictionary/FourSectionDictionary.hpp\
+src/dictionary/KyotoDictionary.hpp\
+src/dictionary/LiteralDictionary.hpp\
+src/dictionary/PlainDictionary.hpp\
+src/hdt/BasicHDT.hpp\
+src/hdt/BasicModifiableHDT.hpp\
+src/hdt/HDTFactory.hpp\
+src/hdt/TripleIDStringIterator.hpp\
+src/header/PlainHeader.hpp\
+src/rdf/RDFParserNtriples.hpp\
+src/rdf/RDFParserRaptorCallback.hpp\
+src/rdf/RDFParserSerd.hpp\
+src/rdf/RDFSerializerNTriples.hpp\
+src/rdf/RDFSerializerRaptor.hpp\
+src/sequence/AdjacencyList.hpp\
+src/sequence/ArraySequence.hpp\
+src/sequence/HuffmanSequence.hpp\
+src/sequence/IntSequence.hpp\
+src/sequence/LogSequence2.hpp\
+src/sequence/LogSequence.hpp\
+src/sequence/WaveletSequence.hpp\
+src/sparql/BaseJoinBinding.hpp\
+src/sparql/CachedBinding.hpp\
+src/sparql/IndexJoinBinding.hpp\
+src/sparql/JoinAlgorithms.hpp\
+src/sparql/joins.hpp\
+src/sparql/MergeJoinBinding.hpp\
+src/sparql/QueryProcessor.hpp\
+src/sparql/SortBinding.hpp\
+src/sparql/TriplePatternBinding.hpp\
+src/sparql/VarBindingInterface.hpp\
+src/sparql/VarFilterBinding.hpp\
+src/triples/BitmapTriples.hpp\
+src/triples/CompactTriples.hpp\
+src/triples/PlainTriples.hpp\
+src/triples/predicateindex.hpp\
+src/triples/TripleIterators.hpp\
+src/triples/TripleListDisk.hpp\
+src/triples/TripleOrderConvert.hpp\
+src/triples/TriplesComparator.hpp\
+src/triples/TriplesKyoto.hpp\
+src/triples/TriplesList.hpp\
+src/util/fdstream.hpp\
+src/util/fileUtil.hpp\
+src/util/StopWatch.hpp\
+src/util/unicode.hpp\
+third/fdstream.hpp
 
 AM_CPPFLAGS = $(WARN_CFLAGS) \
 -I$(top_builddir)/lib -I$(builddir)/include \
@@ -98,6 +171,7 @@ AM_LDFLAGS = $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 
 if WANTS_LIBCDS
 AM_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
+libhdt_la_LIBADD = $(top_builddir)/libcds/libcds.la
 endif
 
 pkgconfigdir = $(libdir)/pkgconfig
