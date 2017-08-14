@@ -1,4 +1,7 @@
 language: cpp
+env:
+  - TESTS_HDT="bit375 bitutiltest listener logarr streamtest testmax"
+  - TESTS_CDS="testArray testBitSequence testHuffman testLCP testNPR testSequence testSuffixTree testTextIndex timeSequence toArray2 toArray"
 matrix:
   include:
     - os: osx
@@ -45,6 +48,9 @@ script:
   - make -j2
   # Make and run selected tests
   #- make check -j2
+  - pushd libcds && TESTS=$TESTS_CDS make -e check -j2 && popd
+  - pushd libhdt && TESTS=$TESTS_HDT make -e check -j2 && popd
+  # Install
   - make install
   - $HOME/bin/hdtSearch -q 0 hdt-lib/data/literals.hdt
   # Test installation files
