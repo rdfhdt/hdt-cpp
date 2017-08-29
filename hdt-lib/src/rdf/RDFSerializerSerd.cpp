@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <cstring>
 #include <stdexcept>
 
 #include "RDFSerializerSerd.hpp"
@@ -73,32 +74,25 @@ SerdNode getTerm(const string &str, SerdNode* datatype, SerdNode* lang)
 	const uint8_t *const buf = (const uint8_t*)str.c_str();
 	const size_t         len = str.length();
 	if (str.at(0) == '"') {
-		size_t       endQuote = len - 1;
-		const size_t dpos     = str.find("\"^^");
-		if (dpos != string::npos) {
+		const size_t endQuote = str.rfind("\"");
+		if (!strncmp((const char*)buf + endQuote, "\"^^", 3)) {
 			if (!datatype) {
 				throw std::runtime_error("Unexpected datatype");
 			}
 
-			const uint8_t* datatypeStart = buf + dpos + 3;
+			const uint8_t* datatypeStart = buf + endQuote + 3;
 			if (*datatypeStart == '<') {
 				*datatype = serd_node_from_substring(
-					SERD_URI, datatypeStart + 1, len - dpos - 5);
+					SERD_URI, datatypeStart + 1, len - endQuote - 5);
 			} else {
-				*datatype = serd_node_from_substring(
-					SERD_CURIE, datatypeStart, len - dpos - 4);
+				*datatype = serd_node_from_string(SERD_CURIE, datatypeStart);
 			}
-			endQuote = dpos;
-		}
-
-		const size_t lpos = str.find("\"@");
-		if (lpos != string::npos) {
+		} else if (!strncmp((const char*)buf + endQuote, "\"@", 2)) {
 			if (!lang) {
 				throw std::runtime_error("Unexpected language");
 			}
 
-			*lang    = serd_node_from_string(SERD_LITERAL, buf + lpos + 2);
-			endQuote = lpos;
+			*lang = serd_node_from_string(SERD_LITERAL, buf + endQuote + 2);
 		}
 
 		return serd_node_from_substring(SERD_LITERAL, buf + 1, endQuote - 1);
