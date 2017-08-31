@@ -376,7 +376,7 @@ bool CSD_PFC::locateBlock(const unsigned char *s, size_t *block)
 	else
 		*block = center-1;
 
-	if(*block == (unsigned int)-1) {
+	if(*block == (size_t) -1) {
 		*block = 0;
 	}
 
