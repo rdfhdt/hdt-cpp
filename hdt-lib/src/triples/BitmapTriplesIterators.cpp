@@ -306,7 +306,12 @@ bool BitmapTriplesSearchIterator::isSorted(TripleComponentRole role) {
     throw std::runtime_error("Order not supported");
 }
 
-
+void BitmapTriplesSearchIterator::skip(unsigned int offset) {
+  if ((posZ + offset) >= maxZ) {
+    throw std::runtime_error("Cannot goTo on this pattern.");
+  }
+  posZ += offset;
+}
 
 MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat) :
     triples(trip),
