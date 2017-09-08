@@ -266,6 +266,7 @@ public:
 	void goTo(unsigned int pos);
 	bool findNextOccurrence(unsigned int value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
+	void skip(unsigned int pos);
 };
 
 

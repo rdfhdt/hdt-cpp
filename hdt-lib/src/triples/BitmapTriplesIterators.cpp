@@ -308,7 +308,7 @@ bool BitmapTriplesSearchIterator::isSorted(TripleComponentRole role) {
 
 void BitmapTriplesSearchIterator::skip(unsigned int offset) {
   if ((posZ + offset) >= maxZ) {
-    throw std::runtime_error("Cannot goTo on this pattern.");
+    throw std::runtime_error("Cannot skip this pattern.");
   }
   posZ += offset;
 }
@@ -938,6 +938,13 @@ bool ObjectIndexIterator::isSorted(TripleComponentRole role) {
     }
 
     throw std::runtime_error("Order not supported");
+}
+
+void ObjectIndexIterator::skip(unsigned int pos) {
+  if(minIndex+pos>maxIndex) {
+    throw std::runtime_error("Cannot skip beyond last element");
+  }
+  posIndex = minIndex+pos;
 }
 
 
