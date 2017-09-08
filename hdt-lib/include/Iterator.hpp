@@ -133,6 +133,8 @@ public:
 	}
 	virtual void goTo(unsigned int /*pos*/) {
 	}
+	virtual void skip(unsigned int /*pos*/) {
+	}
 	virtual bool findNextOccurrence(unsigned int /*value*/, unsigned char /*component*/) {
 		return false;
 	}
