@@ -886,10 +886,10 @@ bool ObjectIndexIterator::canGoTo()
 
 void ObjectIndexIterator::goTo(unsigned int pos)
 {
-    if(minIndex+pos>maxIndex) {
-	throw std::runtime_error("Cannot goto beyond last element");
+    if(pos>maxIndex) {
+        throw std::runtime_error("Cannot goto beyond last element");
     }
-    posIndex = minIndex+pos;
+    posIndex = pos;
 }
 
 bool ObjectIndexIterator::findNextOccurrence(unsigned int value, unsigned char component) {
