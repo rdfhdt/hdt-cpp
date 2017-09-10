@@ -674,6 +674,11 @@ unsigned int LiteralDictionary::getLocalId(unsigned int id, TripleComponentRole 
 	return getLocalId(mapping, id, position);
 }
 
+hdt::IteratorUCharString* LiteralDictionary::getSuggestions(const char *prefix, hdt::TripleComponentRole role)
+{
+    throw std::logic_error("getSuggestions not implemented");
+}
+
 void LiteralDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults) {
 	if (role == PREDICATE) {
 		predicates->fillSuggestions(base, out, maxResults);

@@ -519,7 +519,10 @@ void KyotoDictionary::getSuggestions(const char *base, hdt::TripleComponentRole 
 {
     throw std::logic_error("getSuggestions not implemented");
 }
-
+hdt::IteratorUCharString * KyotoDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role)
+{
+    throw std::logic_error("getSuggestions not implemented");
+}
 
 }
 

@@ -483,6 +483,10 @@ hdt::IteratorUCharString *CSD_PFC::listAll() {
 	return new PFCIterator(this);
 }
 
+hdt::IteratorUCharString * CSD_PFC::getSuggestions(const char *prefix)
+{
+	return new PFCSuggestionIterator(this,prefix);
+}
 void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
 {
     size_t block = 0;

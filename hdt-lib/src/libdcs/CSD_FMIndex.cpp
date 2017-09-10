@@ -420,9 +420,13 @@ void CSD_FMIndex::quicksort(uint32_t *occs, size_t ini, size_t end) {
 
 void CSD_FMIndex::dumpAll() {
 	//FIXME: To be completed
-
+	throw std::logic_error("Not implemented");
 }
 
+hdt::IteratorUCharString *csd::CSD_FMIndex::getSuggestions(const char *prefix){
+	//FIXME: Not implemented
+	throw std::logic_error("Not implemented");
+}
 void csd::CSD_FMIndex::fillSuggestions(const char *base,
         vector<std::string> &out, int maxResults) {
     size_t len = strlen(base);

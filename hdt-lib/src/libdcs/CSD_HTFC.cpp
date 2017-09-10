@@ -797,7 +797,13 @@ uint CSD_HTFC::longest_common_prefix(const unsigned char* str1, const unsigned c
 
 void CSD_HTFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
 {
+	//FIXME: To be completed
+	throw std::logic_error("Not implemented");
+}
 
+hdt::IteratorUCharString * CSD_HTFC::getSuggestions(const char *prefix){
+	//FIXME: To be completed
+	throw std::logic_error("Not implemented");
 }
 
 }

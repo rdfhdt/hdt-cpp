@@ -112,6 +112,8 @@ public:
 
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
+    hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+
 private:
 	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);

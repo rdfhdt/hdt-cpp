@@ -714,4 +714,9 @@ void PlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole 
     throw std::logic_error("getSuggestions not implemented");
 }
 
+hdt::IteratorUCharString* PlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role)
+{
+    throw std::logic_error("getSuggestions not implemented");
+}
+
 }

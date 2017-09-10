@@ -162,6 +162,8 @@ public:
 
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
+    hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+
 // Private methods
 private:
 	void insert(std::string entry, DictionarySection pos);

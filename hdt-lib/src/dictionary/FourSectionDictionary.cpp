@@ -522,6 +522,26 @@ unsigned int FourSectionDictionary::getLocalId(unsigned int id, TripleComponentR
 	return getLocalId(mapping,id,position);
 }
 
+hdt::IteratorUCharString *FourSectionDictionary::getSuggestions(const char *prefix, TripleComponentRole role){
+	if(role==PREDICATE) {
+			return predicates->getSuggestions(prefix);
+	}
+
+	IteratorUCharString * sharedIt = shared->getSuggestions(prefix);
+	IteratorUCharString * subjectIt;
+	IteratorUCharString * objectIt;
+
+	// Merge results from shared and subjects/objects keeping order
+	if(role==SUBJECT) {
+		subjectIt = subjects->getSuggestions(prefix);
+		return new MergeIteratorUCharString(sharedIt,subjectIt);
+	} else if(role==OBJECT){
+		objectIt = objects->getSuggestions(prefix);
+		return new MergeIteratorUCharString(sharedIt,objectIt);
+	}
+	return NULL;
+
+}
 void FourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
 	if(role==PREDICATE) {

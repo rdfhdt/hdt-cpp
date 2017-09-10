@@ -37,6 +37,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 namespace hdt {
 
@@ -57,6 +58,92 @@ public:
 
     virtual size_t getNumberOfElements() {
 		return 0;
+	}
+
+	virtual void freeStr(unsigned char* /*ptr*/) {
+
+	}
+};
+/*
+ * IteratorUCharString that consumes two IteratorUCharString in alphabetical order
+ */
+class MergeIteratorUCharString: public IteratorUCharString {
+private:
+	IteratorUCharString* it1;
+	IteratorUCharString* it2;
+	unsigned char *string1;
+	unsigned char *string2;
+	int prevString;
+
+public:
+	MergeIteratorUCharString(IteratorUCharString* iterator1, IteratorUCharString* iterator2):it1(iterator1), it2(iterator2){
+
+		string1=NULL;
+		string2=NULL;
+		string str_my_txt1,str_my_txt2;
+		if (it1->hasNext()){
+			string1 = it1->next();
+		}
+		if (it2->hasNext()){
+			string2=it2->next();
+		}
+
+		prevString=0;
+	}
+	virtual ~MergeIteratorUCharString() { }
+
+	virtual bool hasNext() {
+		if (prevString==1){
+			return (string2||it1->hasNext());
+		}
+		else if (prevString==2){
+			return (string1||it2->hasNext());
+		}
+		else return (string1 || string2);
+	}
+
+	unsigned char *next() {
+		unsigned char * retString;
+		// load strings
+		if (prevString==1){
+			string1=NULL;
+			if (it1->hasNext()){
+				string1=it1->next();
+			}
+		}
+		else if (prevString==2){
+			string2=NULL;
+			if (it2->hasNext()){
+				string2=it2->next();
+			}
+		}
+
+		if (string1&&string2){
+			int cmp = strcmp(reinterpret_cast<const char*>(string1),reinterpret_cast<const char*>(string2));
+			if (cmp<=0){
+				retString=string1;
+				prevString=1;
+			}
+			else{
+				retString=string2;
+				prevString=2;
+			}
+		}
+		else{
+			if (string1){
+				prevString=1;
+				retString = string1;
+			}
+			else{
+				prevString=2;
+				retString = string2;
+			}
+		}
+		return retString;
+	}
+
+    virtual size_t getNumberOfElements() {
+		return it1->getNumberOfElements()+it2->getNumberOfElements();
 	}
 
 	virtual void freeStr(unsigned char* /*ptr*/) {
