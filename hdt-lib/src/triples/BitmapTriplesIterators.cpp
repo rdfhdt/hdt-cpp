@@ -249,10 +249,10 @@ bool BitmapTriplesSearchIterator::canGoTo() {
 
 void BitmapTriplesSearchIterator::goTo(unsigned int pos) {
     if ((pos) >= maxZ) {
-			throw std::runtime_error("Cannot goTo on this pattern.");
-	}
+        throw std::runtime_error(string("Given index is ") + to_string(pos) + ". Cannot go beyond last element index: " + to_string(maxZ));
+    }
     posZ = pos; // move the position of Z
-	goToY(); // go to the correct Y
+    goToY(); // go to the correct Y
 }
 
 TripleComponentOrder BitmapTriplesSearchIterator::getOrder() {
@@ -306,11 +306,8 @@ bool BitmapTriplesSearchIterator::isSorted(TripleComponentRole role) {
     throw std::runtime_error("Order not supported");
 }
 
-void BitmapTriplesSearchIterator::skip(unsigned int offset) {
-  if ((posZ + offset) >= maxZ) {
-    throw std::runtime_error("Cannot skip this pattern.");
-  }
-  posZ += offset;
+void BitmapTriplesSearchIterator::skip(unsigned int pos) {
+  goTo(posZ+pos);
 }
 
 MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat) :
@@ -887,7 +884,7 @@ bool ObjectIndexIterator::canGoTo()
 void ObjectIndexIterator::goTo(unsigned int pos)
 {
     if(pos>maxIndex) {
-        throw std::runtime_error("Cannot goto beyond last element");
+        throw std::runtime_error(string("Given index: ") + to_string(pos) + ". Cannot go beyond last element index: " + to_string(maxIndex));
     }
     posIndex = pos;
 }
@@ -941,10 +938,7 @@ bool ObjectIndexIterator::isSorted(TripleComponentRole role) {
 }
 
 void ObjectIndexIterator::skip(unsigned int pos) {
-  if(minIndex+pos>maxIndex) {
-    throw std::runtime_error("Cannot skip beyond last element");
-  }
-  posIndex = minIndex+pos;
+    goTo(minIndex+pos);
 }
 
 
