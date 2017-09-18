@@ -69,6 +69,9 @@ protected:
 public:
 	SequentialSearchIteratorTripleID(TripleID &pattern, IteratorTripleID *other);
 	~SequentialSearchIteratorTripleID();
+	size_t estimatedNumResults();
+	bool canGoTo();
+	void goTo(unsigned int pos);
 
 	bool hasNext();
 	TripleID *next();

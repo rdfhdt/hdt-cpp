@@ -141,6 +141,21 @@ bool SequentialSearchIteratorTripleID::hasPrevious()
 	return hasPreviousTriples;
 }
 
+size_t SequentialSearchIteratorTripleID::estimatedNumResults()
+{
+	return iterator->estimatedNumResults();
+}
+
+bool SequentialSearchIteratorTripleID::canGoTo(){
+	return false; // to point that it is not direct but slow
+}
+void SequentialSearchIteratorTripleID::goTo(unsigned int pos){
+	iterator->goToStart();
+	for (int i=0;i<=pos;i++){
+		doFetchNext();
+	}
+}
+
 void SequentialSearchIteratorTripleID::doFetchPrevious()
 {
 	hasPreviousTriples = false;
