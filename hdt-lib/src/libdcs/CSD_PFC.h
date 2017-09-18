@@ -290,7 +290,7 @@ public:
 	}
 
 	unsigned char *next() {
-		string currentSolution =strdup(tmpStr.c_str());
+		char* currentSolution =strdup(tmpStr.c_str());
 		// prepare for the following solution
 		hasnext=false;
 		while (!hasnext&&!terminate){
@@ -300,7 +300,7 @@ public:
 				locateBlock();
 			}
 		}
-		return (unsigned char*)currentSolution.c_str();
+		return (unsigned char*)currentSolution;
 	}
 
 	size_t getNumberOfElements() {
