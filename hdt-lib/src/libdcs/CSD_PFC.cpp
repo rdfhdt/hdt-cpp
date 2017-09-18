@@ -373,12 +373,16 @@ bool CSD_PFC::locateBlock(const unsigned char *s, size_t *block)
 	// If (cmp > 0) -> c-1 is the candidate block for 's'
 	if (cmp < 0)
 		*block = center;
-	else
-		*block = center-1;
-
-	if(*block == (unsigned int)-1) {
-		*block = 0;
+	else {
+		if (center!=0)
+			*block = center-1;
+		else
+			*block = 0;
 	}
+
+	/*if(*block == (unsigned int)-1) {
+		*block = 0;
+	}*/
 
 	return false;
 }
