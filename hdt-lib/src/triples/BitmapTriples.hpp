@@ -201,6 +201,8 @@ public:
     size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
+	bool canGoTo();
+	void goTo(unsigned int pos);
 	bool findNextOccurrence(unsigned int value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };

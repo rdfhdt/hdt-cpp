@@ -251,7 +251,7 @@ void BitmapTriplesSearchIterator::goTo(unsigned int pos) {
     if ((pos) >= maxZ) {
 			throw std::runtime_error("Cannot goTo on this pattern.");
 	}
-    posZ = pos; // move the position of Z
+    posZ = minZ+pos; // move the position of Z
 	goToY(); // go to the correct Y
 }
 
@@ -407,6 +407,27 @@ TripleID *MiddleWaveletIterator::previous()
 void MiddleWaveletIterator::goToStart()
 {
     predicateOcurrence = 1;
+    posY = predicateIndex->getAppearance(patY, predicateOcurrence);
+
+    posZ = prevZ = adjZ.find(posY);
+    nextZ = adjZ.last(posY);
+    //nextZ = adjZ.findNext(prevZ)-1;
+
+    x = adjY.findListIndex(posY)+1;
+    y = adjY.get(posY);
+    z = adjZ.get(posZ);
+}
+
+bool MiddleWaveletIterator::canGoTo() {
+    return true;
+}
+
+void MiddleWaveletIterator::goTo(unsigned int pos) {
+    if ((pos) >= maxZ) {
+			throw std::runtime_error("Cannot goTo on this pattern.");
+	}
+
+    predicateOcurrence = pos;
     posY = predicateIndex->getAppearance(patY, predicateOcurrence);
 
     posZ = prevZ = adjZ.find(posY);
