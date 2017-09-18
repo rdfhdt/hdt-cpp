@@ -90,8 +90,7 @@ int main(int argc, char **argv) {
 
 			size_t numResults = it->estimatedNumResults();
 			srand(time(NULL));
-			int randNumber = 1 + int(numResults * rand() / (RAND_MAX + 1.0));
-
+			int randNumber = int(numResults * rand() / (RAND_MAX));
 			cout << "We pick the random solution #" << randNumber << " out of " << numResults << " results"<< endl;
 
 			it->goTo(randNumber);
