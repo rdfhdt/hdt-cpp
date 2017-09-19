@@ -219,6 +219,10 @@ public:
 		return false;
 	}
 	virtual void goTo(unsigned int /*pos*/) {
+	/* Absolute repositioning of index: ie. go to the index set in the given argument (pos) */
+	}
+	virtual void skip(unsigned int /*pos*/) {
+	/* Relative repositioning of index: ie. skip index by given argument places */
 	}
 	virtual bool findNextOccurrence(unsigned int /*value*/, unsigned char /*component*/) {
 		return false;

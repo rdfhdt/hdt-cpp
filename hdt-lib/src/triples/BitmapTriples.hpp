@@ -171,6 +171,7 @@ public:
 	TripleComponentOrder getOrder();
 	bool canGoTo();
 	void goTo(unsigned int pos);
+	void skip(unsigned int pos);
 	bool findNextOccurrence(unsigned int value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };
@@ -203,6 +204,7 @@ public:
 	TripleComponentOrder getOrder();
 	bool canGoTo();
 	void goTo(unsigned int pos);
+	void skip(unsigned int pos);
 	bool findNextOccurrence(unsigned int value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };
@@ -265,6 +267,7 @@ public:
 	TripleComponentOrder getOrder();
 	bool canGoTo();
 	void goTo(unsigned int pos);
+	void skip(unsigned int pos);
 	bool findNextOccurrence(unsigned int value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };

@@ -247,12 +247,24 @@ bool BitmapTriplesSearchIterator::canGoTo() {
     return true;
 }
 
+template <typename T>
+  std::string NumberToString ( T Number )
+  {
+     std::ostringstream ss;
+     ss << Number;
+     return ss.str();
+  }
+
 void BitmapTriplesSearchIterator::goTo(unsigned int pos) {
     if ((pos) >= maxZ) {
-			throw std::runtime_error("Cannot goTo on this pattern.");
+    	throw std::runtime_error(string("Given index is ") + NumberToString(pos) + ". Cannot go beyond last element index: " + NumberToString(maxZ));
 	}
-    posZ = minZ+pos; // move the position of Z
+    posZ = pos; // move the position of Z
 	goToY(); // go to the correct Y
+}
+
+void BitmapTriplesSearchIterator::skip(unsigned int pos) {
+	goTo(posZ+pos);
 }
 
 TripleComponentOrder BitmapTriplesSearchIterator::getOrder() {
@@ -437,6 +449,10 @@ void MiddleWaveletIterator::goTo(unsigned int pos) {
     x = adjY.findListIndex(posY)+1;
     y = adjY.get(posY);
     z = adjZ.get(posZ);
+}
+
+void MiddleWaveletIterator::skip(unsigned int pos) {
+   goTo(predicateOcurrence+pos);
 }
 
 size_t MiddleWaveletIterator::estimatedNumResults()
@@ -902,10 +918,15 @@ bool ObjectIndexIterator::canGoTo()
 
 void ObjectIndexIterator::goTo(unsigned int pos)
 {
-    if(minIndex+pos>maxIndex) {
-	throw std::runtime_error("Cannot goto beyond last element");
+    if(pos>maxIndex) {
+    	throw std::runtime_error(string("Given index: ") + NumberToString(pos) + ". Cannot go beyond last element index: " + NumberToString(maxIndex));
     }
-    posIndex = minIndex+pos;
+    posIndex = pos;
+}
+
+void ObjectIndexIterator::skip(unsigned int pos)
+{
+	goTo(minIndex+pos);
 }
 
 bool ObjectIndexIterator::findNextOccurrence(unsigned int value, unsigned char component) {

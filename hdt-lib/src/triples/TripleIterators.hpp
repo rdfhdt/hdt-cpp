@@ -72,6 +72,7 @@ public:
 	size_t estimatedNumResults();
 	bool canGoTo();
 	void goTo(unsigned int pos);
+	void skip(unsigned int pos);
 
 	bool hasNext();
 	TripleID *next();

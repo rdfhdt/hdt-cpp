@@ -155,6 +155,11 @@ void SequentialSearchIteratorTripleID::goTo(unsigned int pos){
 		doFetchNext();
 	}
 }
+void SequentialSearchIteratorTripleID::skip(unsigned int pos){
+	for (int i=0;i<pos;i++){
+		doFetchNext();
+	}
+}
 
 void SequentialSearchIteratorTripleID::doFetchPrevious()
 {

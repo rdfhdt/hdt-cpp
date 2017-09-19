@@ -28,9 +28,9 @@ void signalHandler(int sig) {
 }
 
 void help() {
-	cout << "$ goto <HDT file> <subject> <predicate> <object> " << endl;
+	cout << "$ randomSolution <HDT file> <subject> <predicate> <object> " << endl;
 	cout << "\t-h\t\t\t\tThis help" << endl;
-	cout << "\t-q\t<query>\t\tLaunch query to search for a random solution. E.g. \"? http://www.w3.org/2000/01/rdf-schema#label ?\"" << endl;
+	cout << "\t-q\t<query>\t\tLaunch query and pick a random solution. E.g. \"? http://www.w3.org/2000/01/rdf-schema#label ?\"" << endl;
 }
 
 int main(int argc, char **argv) {
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 			int randNumber = int(numResults * rand() / (RAND_MAX));
 			cout << "We pick the random solution #" << randNumber << " out of " << numResults << " results"<< endl;
 
-			it->goTo(randNumber);
+			it->skip(randNumber);
 			TripleID* result=it->next();
 			cout<<"The selected random triple ID is: "<<result->getSubject()<<" "<<result->getPredicate()<<" "<<result->getObject()<<endl;
 			TripleString resString;
