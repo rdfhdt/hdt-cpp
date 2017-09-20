@@ -1,3 +1,4 @@
+[![Join the chat at https://gitter.im/rdfhdt](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rdfhdt)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.580298.svg)](https://doi.org/10.5281/zenodo.580298)
 
 # C++ library for the HDT triple format
