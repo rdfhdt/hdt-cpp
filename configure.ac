@@ -5,6 +5,7 @@ AC_CONFIG_HEADERS([build/config.h])
 AM_INIT_AUTOMAKE([foreign])
 AM_SILENT_RULES([yes])
 
+CXXFLAGS="$CXXFLAGS -g -O2 -std=c++0x"
 AC_PROG_CXX
 gl_EARLY
 AC_LANG([C++])
@@ -14,13 +15,13 @@ AM_PROG_AR
 LT_INIT([shared static])
 
 # Checks for libraries
-AC_ARG_ENABLE([libcds], 
+AC_ARG_ENABLE([libcds],
   AS_HELP_STRING([--enable-libcds],[Turn on libcds [default: yes]]),
   [case "${enableval}" in
     yes) wants_cds=true ;;
     no)  wants_cds=false ;;
     *) AC_MSG_ERROR([bad value ${enableval} for --enable-libcds]) ;;
-   esac],[wants_cds=true]) 
+   esac],[wants_cds=true])
 AM_CONDITIONAL([WANTS_LIBCDS], [test x$wants_cds = xtrue])
 AM_COND_IF([WANTS_LIBCDS],
   AC_MSG_NOTICE([LIBCDS enabled]))
