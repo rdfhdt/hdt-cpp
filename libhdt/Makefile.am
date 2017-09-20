@@ -1,4 +1,4 @@
-SUBDIRS = . tools tests 
+SUBDIRS = . tools tests
 
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -53,6 +53,7 @@ src/rdf/RDFParserSerd.cpp \
 src/rdf/RDFSerializer.cpp \
 src/rdf/RDFSerializerNTriples.cpp \
 src/rdf/RDFSerializerRaptor.cpp \
+src/rdf/RDFSerializerSerd.cpp \
 src/sequence/AdjacencyList.cpp \
 src/sequence/ArraySequence.cpp \
 src/sequence/HuffmanSequence.cpp \
@@ -126,6 +127,7 @@ src/rdf/RDFParserRaptorCallback.hpp\
 src/rdf/RDFParserSerd.hpp\
 src/rdf/RDFSerializerNTriples.hpp\
 src/rdf/RDFSerializerRaptor.hpp\
+src/rdf/RDFSerializerSerd.hpp\
 src/sequence/AdjacencyList.hpp\
 src/sequence/ArraySequence.hpp\
 src/sequence/HuffmanSequence.hpp\
