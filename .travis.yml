@@ -1,4 +1,8 @@
 language: cpp
+env:
+  global:
+    - TESTS_HDT="bit375 bitutiltest listener logarr streamtest testmax"
+    - TESTS_CDS="testArray testBitSequence testHuffman testLCP testNPR testSequence testSuffixTree testTextIndex timeSequence toArray2 toArray"
 matrix:
   include:
     - os: osx
@@ -37,19 +41,31 @@ before_install:
   - pushd raptor2-* && ./configure --prefix=$HOME/local && make -j2 && make install && popd
   # Set up build environment
   - $HDT_CPP --version
-  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/local/lib"
-  - export HDT_LDFLAGS="-I$HOME/local/include -L$HOME/local/lib"
   - popd
 script:
   # Build standalone binaries
-  - cd hdt-lib
-  - make -j2       CPP=$HDT_CPP LDFLAGS="$HDT_LDFLAGS"
-  # Make and run selected tests
-  - make -j2 tests CPP=$HDT_CPP LDFLAGS="$HDT_LDFLAGS"
-  - tests/bit375 > /dev/null
-  - tests/bitutiltest > /dev/null
-  - tests/listener > /dev/null
-  - tests/logarr > /dev/null
-  - tests/streamtest > /dev/null
-  - tests/testmax > /dev/null
-  - tools/hdtSearch -q 0 data/literals.hdt
+  - ./autogen.sh
+  - ./configure --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
+  - make -j2
+  # Make and run selected tests. Most tests in HDT are failing
+  - pushd libcds && TESTS=$TESTS_CDS make -e check -j2 && popd
+  - pushd libhdt && TESTS=$TESTS_HDT make -e check -j2 && popd
+  # Install
+  - make install
+  - $HOME/bin/hdtSearch -q 0 hdt-lib/data/literals.hdt
+  # Test installation files
+  - test -f $HOME/bin/hdt2rdf
+  - test -f $HOME/bin/hdtInfo
+  - test -f $HOME/bin/hdtSearch
+  - test -f $HOME/bin/modifyHeader
+  - test -f $HOME/bin/rdf2hdt
+  - test -f $HOME/bin/replaceHeader
+  - test -f $HOME/bin/searchHeader
+  - test -f $HOME/lib/libhdt.la
+  - test -f $HOME/lib/libcds.la
+  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $HOME/lib/libhdt.so; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $HOME/lib/libcds.so; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $HOME/lib/libhdt.dylib; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $HOME/lib/libcds.dylib; fi"
+  - test -f $HOME/lib/pkgconfig/hdt.pc
+  - test -f $HOME/lib/pkgconfig/cds.pc

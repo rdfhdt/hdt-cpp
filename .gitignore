@@ -1,3 +1,40 @@
+# Others
+*~
+# vim
+*.swp
+
+# C++ builds
+*.o
+*.so
+*.a
+*.out
+*.lo
+*.la
+.dirstamp
+
+# Executables
+hdt2rdf
+hdtInfo
+hdtSearch
+rdf2hdt
+replaceHeader
+libhdt/examples/*
+libhdt/.libs
+libcds/.libs
+
+# Autotools 
+m4/
+*.pc
+build/
+autom4te.cache/
+config.log
+config.status
+configure
+Makefile
+Makefile.in
+libtool
+aclocal.m4
+
 .DS_Store
 *.pro.user
 *.o

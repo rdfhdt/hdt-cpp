@@ -1,0 +1,172 @@
+SUBDIRS = . tests
+
+AUTOMAKE_OPTIONS = subdir-objects
+
+AM_CPPFLAGS =  -I$(builddir)/include $(WARN_CFLAGS)
+
+include_HEADERS =
+lib_LTLIBRARIES =
+
+if WANTS_LIBCDS
+include_HEADERS += \
+	include/Array.h \
+	include/BitmapsSequence.h\
+	include/BitSequenceBuilderDArray.h\
+	include/BitSequenceBuilder.h\
+	include/BitSequenceBuilderRG.h\
+	include/BitSequenceBuilderRRR.h\
+	include/BitSequenceBuilderSDArray.h\
+	include/BitSequenceDArray.h\
+	include/BitSequence.h\
+	include/BitSequenceRG.h\
+	include/BitSequenceRRR.h\
+	include/BitSequenceSDArray.h\
+	include/BitString.h\
+	include/Coder.h\
+	include/comparray4.h\
+	include/cppUtils.h\
+	include/factorization.h\
+	include/factorization_var.h\
+	include/huff.h\
+	include/HuffmanCoder.h\
+	include/interface.h\
+	include/LCP_DAC.h\
+	include/LCP_DAC_VAR.h\
+	include/LCP_FMN.h\
+	include/LCP.h\
+	include/LCP_naive.h\
+	include/LCP_PhiSpare.h\
+	include/LCP_PT.h\
+	include/LCP_Sad.h\
+	include/libcdsBasics.h\
+	include/libcdsSDArray.h\
+	include/libcdsTrees.h\
+	include/MapperCont.h\
+	include/Mapper.h\
+	include/MapperNone.h\
+	include/MapperRev.h\
+	include/mmap.h\
+	include/NPR_CN.h\
+	include/NPR_FMN.h\
+	include/NPR.h\
+	include/NSV.h\
+	include/perm.h\
+	include/PermutationBuilder.h\
+	include/PermutationBuilderMRRR.h\
+	include/PermutationBuilderWT.h\
+	include/Permutation.h\
+	include/PermutationMRRR.h\
+	include/PermutationWT.h\
+	include/PSV.h\
+	include/RMQ_succinct.h\
+	include/RMQ_succinct_lcp.h\
+	include/sdarraySadakane.h\
+	include/SequenceAlphPart.h\
+	include/SequenceBuilderAlphPart.h\
+	include/SequenceBuilderGMRChunk.h\
+	include/SequenceBuilderGMR.h\
+	include/SequenceBuilder.h\
+	include/SequenceBuilderStr.h\
+	include/SequenceBuilderWaveletMatrix.h\
+	include/SequenceBuilderWaveletTree.h\
+	include/SequenceBuilderWaveletTreeNoptrs.h\
+	include/SequenceBuilderWaveletTreeNoptrsS.h\
+	include/SequenceGMRChunk.h\
+	include/SequenceGMR.h\
+	include/Sequence.h\
+	include/SuffixTree.h\
+	include/SuffixTreeY.h\
+	include/TableOffsetRRR.h\
+	include/TextIndexCSA.h\
+	include/TextIndex.h\
+	include/timing.h\
+	include/WaveletMatrix.h\
+	include/WaveletTree.h\
+	include/WaveletTreeNoptrs.h\
+	include/WaveletTreeNoptrsS.h\
+	include/wt_coder_binary.h\
+	include/wt_coder.h\
+	include/wt_coder_huff.h\
+	include/wt_node.h\
+	include/wt_node_internal.h\
+	include/wt_node_leaf.h
+lib_LTLIBRARIES += libcds.la
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = cds.pc
+endif
+libcds_la_SOURCES = \
+src/static/bitsequence/BitSequenceBuilderDArray.cpp\
+src/static/bitsequence/BitSequenceBuilderRG.cpp\
+src/static/bitsequence/BitSequenceBuilderRRR.cpp\
+src/static/bitsequence/BitSequenceBuilderSDArray.cpp\
+src/static/bitsequence/BitSequence.cpp\
+src/static/bitsequence/BitSequenceDArray.cpp\
+src/static/bitsequence/BitSequenceRG.cpp\
+src/static/bitsequence/BitSequenceRRR.cpp\
+src/static/bitsequence/BitSequenceSDArray.cpp\
+src/static/bitsequence/sdarraySadakane.cpp\
+src/static/bitsequence/TableOffsetRRR.cpp\
+src/static/coders/huff.cpp\
+src/static/coders/HuffmanCoder.cpp\
+src/static/mapper/MapperCont.cpp\
+src/static/mapper/Mapper.cpp\
+src/static/mapper/MapperNone.cpp\
+src/static/mapper/MapperRev.cpp\
+src/static/permutation/perm.cpp\
+src/static/permutation/PermutationBuilderMRRR.cpp\
+src/static/permutation/PermutationBuilderWT.cpp\
+src/static/permutation/Permutation.cpp\
+src/static/permutation/PermutationMRRR.cpp\
+src/static/permutation/PermutationWT.cpp\
+src/static/sequence/BitmapsSequence.cpp\
+src/static/sequence/SequenceAlphPart.cpp\
+src/static/sequence/SequenceBuilderAlphPart.cpp\
+src/static/sequence/SequenceBuilderGMRChunk.cpp\
+src/static/sequence/SequenceBuilderGMR.cpp\
+src/static/sequence/SequenceBuilderStr.cpp\
+src/static/sequence/SequenceBuilderWaveletMatrix.cpp\
+src/static/sequence/SequenceBuilderWaveletTree.cpp\
+src/static/sequence/SequenceBuilderWaveletTreeNoptrs.cpp\
+src/static/sequence/SequenceBuilderWaveletTreeNoptrsS.cpp\
+src/static/sequence/Sequence.cpp\
+src/static/sequence/SequenceGMRChunk.cpp\
+src/static/sequence/SequenceGMR.cpp\
+src/static/sequence/WaveletMatrix.cpp\
+src/static/sequence/WaveletTree.cpp\
+src/static/sequence/WaveletTreeNoptrs.cpp\
+src/static/sequence/WaveletTreeNoptrsS.cpp\
+src/static/sequence/wt_coder_binary.cpp\
+src/static/sequence/wt_coder.cpp\
+src/static/sequence/wt_coder_huff.cpp\
+src/static/sequence/wt_node.cpp\
+src/static/sequence/wt_node_internal.cpp\
+src/static/sequence/wt_node_leaf.cpp\
+src/static/suffixtree/factorization.cpp\
+src/static/suffixtree/factorization_var.cpp\
+src/static/suffixtree/LCP.cpp\
+src/static/suffixtree/LCP_DAC.cpp\
+src/static/suffixtree/LCP_DAC_VAR.cpp\
+src/static/suffixtree/LCP_FMN.cpp\
+src/static/suffixtree/LCP_naive.cpp\
+src/static/suffixtree/LCP_PhiSpare.cpp\
+src/static/suffixtree/LCP_PT.cpp\
+src/static/suffixtree/LCP_Sad.cpp\
+src/static/suffixtree/NPR_CN.cpp\
+src/static/suffixtree/NPR.cpp\
+src/static/suffixtree/NPR_FMN.cpp\
+src/static/suffixtree/NSV.cpp\
+src/static/suffixtree/PSV.cpp\
+src/static/suffixtree/RMQ_succinct.cpp\
+src/static/suffixtree/RMQ_succinct_lcp.cpp\
+src/static/suffixtree/SuffixTree.cpp\
+src/static/suffixtree/SuffixTreeY.cpp\
+src/static/textindex/comparray4.cpp\
+src/static/textindex/mmap.cpp\
+src/static/textindex/qsufsort.cpp\
+src/static/textindex/suftest3.test.cpp\
+src/static/textindex/TextIndex.cpp\
+src/static/textindex/TextIndexCSA.cpp\
+src/utils/Array.cpp\
+src/utils/BitString.cpp\
+src/utils/cppUtils.cpp\
+src/utils/timing.cpp
