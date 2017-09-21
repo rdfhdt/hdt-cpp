@@ -87,6 +87,9 @@ class CSD
     // Search for terms by prefix. It returns an iterator of all results in the dictionary
     virtual hdt::IteratorUCharString *getSuggestions(const char *prefix)=0;
 
+    // Search for terms by prefix. It returns an iterator of all results in the dictionary, by ID
+    virtual hdt::IteratorUInt *getIDSuggestions(const char *prefix)=0;
+
     /** Stores a CSD structure given a file pointer.
 	@fp: pointer to the file saving a CSD structure.
     */

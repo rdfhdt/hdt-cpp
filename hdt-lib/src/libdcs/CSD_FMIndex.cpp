@@ -427,6 +427,12 @@ hdt::IteratorUCharString *csd::CSD_FMIndex::getSuggestions(const char *prefix){
 	//FIXME: Not implemented
 	throw std::logic_error("Not implemented");
 }
+
+hdt::IteratorUInt *csd::CSD_FMIndex::getIDSuggestions(const char *prefix){
+	//FIXME: Not implemented
+	throw std::logic_error("Not implemented");
+}
+
 void csd::CSD_FMIndex::fillSuggestions(const char *base,
         vector<std::string> &out, int maxResults) {
     size_t len = strlen(base);

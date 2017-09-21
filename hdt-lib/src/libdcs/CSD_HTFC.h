@@ -113,6 +113,8 @@ class CSD_HTFC : public CSD
 
     hdt::IteratorUCharString *getSuggestions(const char *prefix);
 
+    hdt::IteratorUInt *getIDSuggestions(const char *prefix);
+
     hdt::IteratorUCharString *listAll() { throw std::logic_error("Not Implemented"); }
 
   protected:

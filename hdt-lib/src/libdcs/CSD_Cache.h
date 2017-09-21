@@ -112,6 +112,11 @@ private:
 		return child->getSuggestions(prefix);
 	}
 
+	// Search for terms by prefix. It returns an iterator of all results in the dictionary, by ID
+		hdt::IteratorUInt *getIDSuggestions(const char *prefix){
+			return child->getIDSuggestions(prefix);
+		}
+
     CSD *getChild() {
     	return child;
     }

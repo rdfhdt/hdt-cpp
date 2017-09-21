@@ -491,6 +491,14 @@ hdt::IteratorUCharString * CSD_PFC::getSuggestions(const char *prefix)
 {
 	return new PFCSuggestionIterator(this,prefix);
 }
+
+hdt::IteratorUInt * CSD_PFC::getIDSuggestions(const char *prefix)
+{
+	//TODO
+	return new PFCSuggestionIDIterator(this,prefix);
+	return NULL;
+}
+
 void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)
 {
     size_t block = 0;

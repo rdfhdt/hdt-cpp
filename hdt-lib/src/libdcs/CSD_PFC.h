@@ -98,6 +98,9 @@ public:
 	// Search for terms by prefix. It returns an iterator of all results in the dictionary
 	hdt::IteratorUCharString *getSuggestions(const char *base);
 
+	// Search for terms by prefix. It returns an iterator of all results in the dictionary, by ID
+	hdt::IteratorUInt *getIDSuggestions(const char *prefix);
+
 	hdt::IteratorUCharString *listAll();
 protected:
 	uint64_t bytes;	//! Size of the Front-Coding encoded sequence (in bytes).
@@ -147,6 +150,7 @@ protected:
 
 	friend class PFCIterator;
 	friend class PFCSuggestionIterator;
+	friend class PFCSuggestionIDIterator;
 };
 
 class PFCIterator: public hdt::IteratorUCharString {
@@ -301,6 +305,140 @@ public:
 			}
 		}
 		return (unsigned char*)currentSolution;
+	}
+
+	size_t getNumberOfElements() {
+		return 0; //not possible to estimate accurately.
+	}
+
+	virtual void freeStr(unsigned char *ptr) {
+		pfc->freeString(ptr);
+	}
+};
+
+
+
+class PFCSuggestionIDIterator: public hdt::IteratorUInt {
+private:
+	CSD_PFC *pfc;
+	size_t max;
+	size_t count;
+	const char *prefix;
+	bool hasnext;
+	string tmpStr;
+	size_t block;
+	bool terminate;
+	unsigned int idInBlock;
+	unsigned int delta;
+	size_t pos;
+	unsigned int slen;
+	unsigned int prefixlen;
+public:
+
+	PFCSuggestionIDIterator(CSD_PFC *pfc, const char *prefix) :
+			pfc(pfc), count(1), prefix(prefix) {
+		max = pfc->getLength();
+		prefixlen = strlen(prefix);
+		hasnext = false;
+		terminate = false;
+		block = 0;
+		idInBlock = 0;
+		delta = 0;
+		pos=0;
+		slen=0;
+		tmpStr = "";
+		pfc->locateBlock((unsigned char *) prefix, &block); //locate block where the substring might be located
+
+		if (!pfc->text || !pfc->blocks || block >= pfc->nblocks) {
+			return;
+		}
+
+		// locate the first occurrence
+		// locate the block where the prefix should be located
+		locateBlock();
+		if (!hasnext) { //try to locate it inside a block
+			locateInternal();
+		}
+	}
+	void locateBlock() {
+		hasnext=false;
+		if (block >= pfc->nblocks){
+			terminate=true;
+		}
+		if (!terminate){
+			pos = pfc->blocks->get(block);
+
+			delta = 0;
+			idInBlock = 0;
+
+			// Read the first string
+			tmpStr.clear();
+			tmpStr.append((char*) (pfc->text + pos));
+
+			slen = tmpStr.length() + 1;
+			pos += slen;
+
+			int cmp = strncmp(prefix, tmpStr.c_str(), prefixlen);
+			if (cmp == 0) { //substring found!
+				hasnext = true;
+			} else if (cmp < 0) {
+				terminate = true;
+				hasnext = false;
+			}
+
+			idInBlock++;
+		}
+	}
+	void locateInternal() {
+		hasnext=false;
+		// Scanning the block until a decission about the existence of 's' can be made.
+
+		while (((idInBlock < pfc->blocksize) && (pos < pfc->bytes) && !terminate) && !hasNext()) {
+			// Decode the prefix
+			pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, &delta);
+
+			// Guess suffix size
+			slen = strlen((char*) pfc->text + pos) + 1;
+
+			tmpStr.resize(delta);
+			tmpStr.append((char*) pfc->text + pos);
+
+			int cmp = strncmp(prefix, tmpStr.c_str(), prefixlen);
+			if (cmp == 0) {
+				hasnext = true;
+
+			} else if (cmp < 0) {
+				terminate = true;
+				hasnext = false;
+			}
+
+			pos += slen;
+			idInBlock++;
+		}
+	}
+
+	virtual ~PFCSuggestionIDIterator() {
+	}
+
+	bool hasNext() {
+		if (terminate)
+			return false;
+		else
+			return hasnext;
+	}
+
+	unsigned int next() {
+		unsigned int currentSolution = (block*pfc->blocksize)+idInBlock;
+		// prepare for the following solution
+		hasnext=false;
+		while (!hasnext&&!terminate){
+			locateInternal();
+			if (!hasnext){
+				block++;
+				locateBlock();
+			}
+		}
+		return currentSolution;
 	}
 
 	size_t getNumberOfElements() {

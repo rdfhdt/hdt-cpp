@@ -524,6 +524,10 @@ hdt::IteratorUCharString * KyotoDictionary::getSuggestions(const char *base, hdt
     throw std::logic_error("getSuggestions not implemented");
 }
 
+hdt::IteratorUInt *KyotoDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+	  throw std::logic_error("getIDSuggestions not implemented");
+}
+
 }
 
 #endif

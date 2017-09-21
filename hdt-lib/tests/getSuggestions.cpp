@@ -92,12 +92,27 @@ int main(int argc, char **argv) {
 
 			cout<< endl<<endl<<"- ALL SOLUTIONS WITH THE NEW ITERATOR METHOD:"<<endl;
 
-			IteratorUCharString * itSol = dict->getSuggestions(query.c_str(),
-					role);
+			IteratorUCharString * itSol = dict->getSuggestions(query.c_str(),role);
 
 			int i=1;
 			while (itSol->hasNext()) {
-				cout << "Solution "<<(i++)<<":"<< itSol->next() << endl;
+				stringstream s;
+				s << itSol->next();
+				string solString = s.str();
+				cout << "Solution "<<(i++)<<":"<< solString << ", which is ID "<<dict->stringToId(solString,role) << endl;
+				//printf("Sol %d:%s\n",(i++),itSol->next());
+			}
+
+
+			cout<<endl<<"Now let's try the same but getting the solution as IDs"<<endl;
+
+			IteratorUInt *itIDSol = dict->getIDSuggestions(query.c_str(),role);
+
+			unsigned int sol=0;
+			while (itIDSol->hasNext()) {
+				sol =  itIDSol->next();
+				cout << "Solution ID is "<<sol << ", which corresponds to string: "<<dict->idToString(sol,role)<<endl;
+				//printf("Sol %d:%s\n",(i++),itSol->next());
 			}
 
 		} else {

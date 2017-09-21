@@ -164,6 +164,8 @@ public:
 
     hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
 
+    hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
+
 // Private methods
 private:
 	void insert(std::string entry, DictionarySection pos);

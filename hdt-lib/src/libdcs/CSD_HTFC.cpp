@@ -806,6 +806,11 @@ hdt::IteratorUCharString * CSD_HTFC::getSuggestions(const char *prefix){
 	throw std::logic_error("Not implemented");
 }
 
+hdt::IteratorUInt *CSD_HTFC::getIDSuggestions(const char *prefix){
+	//FIXME: To be completed
+		throw std::logic_error("Not implemented");
+}
+
 }
 
 #else

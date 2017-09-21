@@ -258,6 +258,51 @@ public:
 	}
 };
 
+class IteratorUInt {
+public:
+	virtual ~IteratorUInt() { }
+
+	virtual bool hasNext() {
+		return false;
+	}
+
+	virtual unsigned int next() {
+		return 0;
+	}
+
+	virtual void goToStart() {
+	}
+};
+
+/*
+ * IteratorUCharString that consumes two IteratorUInt, one after the other
+ */
+class SequentialIteratorUInt: public IteratorUInt {
+private:
+	IteratorUInt* it1;
+	IteratorUInt* it2;
+	unsigned int offset; //the offset to apply to it2
+
+public:
+	SequentialIteratorUInt(IteratorUInt* iterator1, IteratorUInt* iterator2, unsigned int offsetIt2):it1(iterator1), it2(iterator2), offset(offsetIt2){
+	}
+	virtual ~SequentialIteratorUInt() { }
+
+	virtual bool hasNext() {
+		return (it1->hasNext() || it2->hasNext());
+	}
+
+	unsigned int next() {
+		if (it1->hasNext()){
+			return it1->next();
+		}
+		else if (it2->hasNext()){
+			return (offset+it2->next());
+		}
+		return 0;
+	}
+};
+
 }
 
 #endif /* HDT_ITERATOR_HPP_ */

@@ -542,6 +542,27 @@ hdt::IteratorUCharString *FourSectionDictionary::getSuggestions(const char *pref
 	return NULL;
 
 }
+
+hdt::IteratorUInt *FourSectionDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+	if(role==PREDICATE) {
+			return predicates->getIDSuggestions(prefix);
+	}
+
+	IteratorUInt * sharedIt = shared->getIDSuggestions(prefix);
+	IteratorUInt * subjectIt;
+	IteratorUInt * objectIt;
+
+	// Merge results from shared and subjects/objects keeping order
+	if(role==SUBJECT) {
+		subjectIt = subjects->getIDSuggestions(prefix);
+		return new SequentialIteratorUInt(sharedIt,subjectIt,shared->getLength());
+	} else if(role==OBJECT){
+		objectIt = objects->getIDSuggestions(prefix);
+		return new SequentialIteratorUInt(sharedIt,objectIt,shared->getLength());
+	}
+	return NULL;
+
+}
 void FourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
 	if(role==PREDICATE) {

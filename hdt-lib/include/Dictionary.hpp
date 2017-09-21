@@ -167,6 +167,7 @@ public:
     virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)=0;
 
     virtual hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role)=0;
+    virtual hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role)=0;
 };
 
 class ModifiableDictionary : public Dictionary {
