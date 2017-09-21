@@ -254,7 +254,15 @@ public:
 		return NULL;
 	}
 	virtual void goToStart() {
-
+	}
+	virtual size_t estimatedNumResults() {
+		return 0;
+	}
+	virtual ResultEstimationType numResultEstimation() {
+		return UNKNOWN;
+	}
+	virtual void skip(unsigned int /*pos*/) {
+	/* Relative repositioning of index: ie. skip index by given argument places */
 	}
 };
 
