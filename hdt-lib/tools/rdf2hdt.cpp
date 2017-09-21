@@ -47,7 +47,7 @@ using namespace std;
 void help() {
 	cout << "$ rdf2hdt [options] <rdf input file> <hdt output file> " << endl;
 	cout << "\t-h\t\t\tThis help" << endl;
-	cout << "\t-i\t\tAlso generate index to solve all triple patterns." << endl;
+	cout << "\t-i\t\t\tAlso generate index to solve all triple patterns." << endl;
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
 	cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
 	cout << "\t-f\t<format>\tFormat of the RDF input (ntriples, nquad, n3, turtle, rdfxml)" << endl;
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 	RDFNotation notation = NTRIPLES;
 
 	int c;
-	while( (c = getopt(argc,argv,"c:o:vpf:B:i:V"))!=-1) {
+	while( (c = getopt(argc,argv,"c:o:vpf:B:iV"))!=-1) {
 		switch(c) {
 		case 'c':
 			configFile = optarg;
@@ -172,12 +172,7 @@ int main(int argc, char **argv) {
 		ofstream out;
 
 		// Save HDT
-		out.open(outputFile.c_str(), ios::out | ios::binary | ios::trunc);
-		if(!out.good()){
-			throw std::runtime_error("Could not open output file.");
-		}
-		hdt->saveToHDT(out, progress);
-		out.close();
+		hdt->saveToHDT(outputFile.c_str(), progress);
 
 		globalTimer.stop();
 		vout << "HDT Successfully generated." << endl;
