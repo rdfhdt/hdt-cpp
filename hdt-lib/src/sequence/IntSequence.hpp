@@ -37,6 +37,8 @@
 
 #include <HDTListener.hpp>
 
+#include <Iterator.hpp>
+
 namespace hdt {
 
 enum SequenceType {
@@ -47,7 +49,7 @@ enum SequenceType {
 	SEQ_TYPE_WAVELET,
 	SEQ_TYPE_LOG2,
 };
-
+/*
 class IteratorUInt {
 public:
 	virtual ~IteratorUInt() { }
@@ -63,6 +65,7 @@ public:
 	virtual void goToStart() {
 	}
 };
+*/
 
 
 class IntSequence {

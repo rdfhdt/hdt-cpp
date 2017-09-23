@@ -7,6 +7,8 @@
 #include <HDTVocabulary.hpp>
 #include <QAbstractItemModel>
 #include <QDir>
+#include <QMainWindow>
+#include <QTableView>
 
 #include "hdtcontroller.hpp"
 
@@ -32,7 +34,7 @@ public:
     ~HDTit();
 
     void openHDTFile(QString &file);
-    void importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
+    void importRDFFile(QString &file, const string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
 
     HDTController *getManager();
 private slots:

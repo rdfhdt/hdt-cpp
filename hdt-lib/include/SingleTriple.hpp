@@ -334,7 +334,7 @@ public:
 	 * Get Subject.
 	 * @return
 	 */
-	std::string &getSubject() {
+	const std::string &getSubject() const {
 		return subject;
 	}
 
@@ -342,11 +342,11 @@ public:
 	 * Set Subject.
 	 * @param subject
 	 */
-	void setSubject(std::string &subject) {
+	void setSubject(const std::string &subject) {
 		this->subject = subject;
 	}
 
-	inline void setAll(std:: string &subject, std:: string &predicate, std:: string &object) {
+	inline void setAll(const std::string &subject, const std::string &predicate, const std::string &object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;
@@ -356,7 +356,7 @@ public:
 	 * Get Predicate.
 	 * @return
 	 */
-	std::string &getPredicate() {
+	const std::string &getPredicate() const {
 		return predicate;
 	}
 
@@ -364,7 +364,7 @@ public:
 	 *
 	 * @param predicate
 	 */
-	void setPredicate(std::string &predicate) {
+	void setPredicate(const std::string &predicate) {
 		this->predicate = predicate;
 	}
 
@@ -372,7 +372,7 @@ public:
 	 * Get Object.
 	 * @return
 	 */
-	std::string &getObject() {
+	const std::string &getObject() const {
 		return object;
 	}
 
@@ -380,7 +380,7 @@ public:
 	 * Set Object.
 	 * @param object
 	 */
-	void setObject(std::string &object) {
+	void setObject(const std::string &object) {
 		this->object = object;
 	}
 
@@ -463,7 +463,8 @@ public:
 	 */
 	void read(std::string line){
 		size_t pos_a = 0, pos_b;
-
+		//trim the line
+		line.erase(line.find_last_not_of(" \t\n\r\f\v") + 1);
 		// Reads the subject
 		pos_b = line.find(" ", pos_a);
 		subject = line.substr(pos_a, pos_b - pos_a);
@@ -476,9 +477,8 @@ public:
 		//if(predicate[0]=='?') predicate = "";
 		pos_a = pos_b + 1;
 
-		// Reads the predicate
-		pos_b = line.find(" ", pos_a);
-		object = line.substr(pos_a, pos_b - pos_a);
+		// Reads the object
+		object = line.substr(pos_a);
 		//if(object[0]=='?') object = "";
 		pos_a = pos_b;
 	}

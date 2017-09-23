@@ -129,11 +129,11 @@ void HDTCachedInfo::save(QString &fileName, hdt::ProgressListener *listener)
 {
 	// Only save info of files bigger than 2M triples. Otherwise is fast to create from scratch.
 	if(hdt->getTriples()->getNumberOfElements()>2000000) {
-		std::ofstream out(fileName.toAscii(), ios::binary);
-		unsigned int numTriples = triples.size();
-		out.write((char *)&numTriples, sizeof(unsigned int));
-		out.write((char *)&triples[0], sizeof(hdt::TripleID)*numTriples);
-		out.close();
+	    std::ofstream out(fileName.toLatin1(), ios::binary);
+	    unsigned int numTriples = triples.size();
+	    out.write((char *)&numTriples, sizeof(unsigned int));
+	    out.write((char *)&triples[0], sizeof(hdt::TripleID)*numTriples);
+	    out.close();
 	}
 }
 
@@ -141,7 +141,7 @@ void HDTCachedInfo::load(QString &fileName, hdt::ProgressListener *listener)
 {
     generateGeneralInfo(listener);
 
-    std::ifstream in(fileName.toAscii(), ios::binary);
+    std::ifstream in(fileName.toLatin1(), ios::binary);
     if(in.good()) {
         unsigned int numTriples;
         in.read((char *)&numTriples, sizeof(unsigned int));

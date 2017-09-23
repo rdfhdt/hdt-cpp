@@ -39,6 +39,7 @@
 #include <string.h>
 #include <sstream>
 #include <vector>
+#include <functional>
 
 namespace csd {
 
@@ -291,7 +292,7 @@ struct char_array_buffer : public std::streambuf {
 public:
 	char_array_buffer(const char *begin, const char *end) :
 		begin_(begin), end_(end), current_(begin_) {
-		assert(std::less_equal<const char *>()(begin_, end_));
+        assert(less_equal<const char *>()(begin_, end_));
 	};
 
 private:
@@ -419,7 +420,17 @@ void CSD_FMIndex::quicksort(uint32_t *occs, size_t ini, size_t end) {
 
 void CSD_FMIndex::dumpAll() {
 	//FIXME: To be completed
+	throw std::logic_error("Not implemented");
+}
 
+hdt::IteratorUCharString *csd::CSD_FMIndex::getSuggestions(const char *prefix){
+	//FIXME: Not implemented
+	throw std::logic_error("Not implemented");
+}
+
+hdt::IteratorUInt *csd::CSD_FMIndex::getIDSuggestions(const char *prefix){
+	//FIXME: Not implemented
+	throw std::logic_error("Not implemented");
 }
 
 void csd::CSD_FMIndex::fillSuggestions(const char *base,

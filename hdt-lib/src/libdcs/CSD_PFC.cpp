@@ -57,7 +57,7 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progress
     text = (unsigned char*)malloc(reservedSize*sizeof(unsigned char));
 
     // Pointers to the first string of each block.
-    blocks = new hdt::LogSequence2(sizeof(size_t)==8 ? 34 : 32);
+    blocks = new hdt::LogSequence2(sizeof(size_t)==8 ? 37 : 32);
 
     unsigned char *currentStr = NULL;
     size_t currentLength = 0;
@@ -373,12 +373,16 @@ bool CSD_PFC::locateBlock(const unsigned char *s, size_t *block)
 	// If (cmp > 0) -> c-1 is the candidate block for 's'
 	if (cmp < 0)
 		*block = center;
-	else
-		*block = center-1;
-
-	if(*block == (unsigned int)-1) {
-		*block = 0;
+	else {
+		if (center!=0)
+			*block = center-1;
+		else
+			*block = 0;
 	}
+
+	/*if(*block == (unsigned int)-1) {
+		*block = 0;
+	}*/
 
 	return false;
 }
@@ -481,6 +485,18 @@ size_t CSD_PFC::longest_common_prefix(const unsigned char* str1, const unsigned 
 
 hdt::IteratorUCharString *CSD_PFC::listAll() {
 	return new PFCIterator(this);
+}
+
+hdt::IteratorUCharString * CSD_PFC::getSuggestions(const char *prefix)
+{
+	return new PFCSuggestionIterator(this,prefix);
+}
+
+hdt::IteratorUInt * CSD_PFC::getIDSuggestions(const char *prefix)
+{
+	//TODO
+	return new PFCSuggestionIDIterator(this,prefix);
+	return NULL;
 }
 
 void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int maxResults)

@@ -177,16 +177,16 @@ size_t AdjacencyList::getSize() {
 
 void AdjacencyList::dump() {
 	for(unsigned int i=0; i<countListsX() && i<100; i++) {
-		cout << " [";
+		cerr << " [";
 		for(unsigned int j=0; j<countItemsY(i) && i<100; j++) {
-			cout << get(find(i)+j);
+			cerr << get(find(i)+j);
 
 			if(j!=countItemsY(i)-1)
-				cout << ",";
+				cerr << ",";
 		}
-		cout << "] ";
+		cerr << "] ";
 	}
-	cout << endl;
+	cerr << endl;
 
 #if 0
 	cout << "List has " << getSize() << " elements in " << countListsX() << " lists" << endl;

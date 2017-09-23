@@ -23,7 +23,7 @@ public:
 		st.reset();
 	}
 
-	void processTriple(TripleString &triple, unsigned long long pos) {
+	void processTriple(const TripleString &triple, unsigned long long pos) {
 		count++;
 		if(count%1000000 == 0) {
 			cout << (count/1000000) << " M triples parsed in " << st << endl;

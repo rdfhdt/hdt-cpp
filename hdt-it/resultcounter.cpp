@@ -1,5 +1,5 @@
 #include "resultcounter.hpp"
-#include <QtConcurrentRun>
+#include <QtConcurrent/QtConcurrent>
 
 
 ResultCounter::ResultCounter(QObject *parent, HDTController *controller) :

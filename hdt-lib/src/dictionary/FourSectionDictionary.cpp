@@ -89,7 +89,7 @@ std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRo
 	if(localid<=section->getLength()) {
 		const char * ptr = (const char *)section->extract(localid);
 		if(ptr!=NULL) {
-			string out = ptr;
+			const string out(ptr);
 			section->freeString((unsigned char*)ptr);
 			return out;
 		} else {
@@ -100,7 +100,7 @@ std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRo
 	return string();
 }
 
-unsigned int FourSectionDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int FourSectionDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
 	unsigned int ret;
 
@@ -263,6 +263,8 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		iListener.setRange(0, 20);
 		IteratorUCharString *itSubj = other->getSubjects();
 		delete subjects;
+		subjects=NULL;
+		delete subjects;
 		subjects = loadSection(itSubj, blocksize, &iListener);
 		delete itSubj;
 
@@ -270,6 +272,7 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		iListener.setRange(20, 21);
 		IteratorUCharString *itPred = other->getPredicates();
 		delete predicates;
+		predicates=NULL;
 		predicates = loadSection(itPred, blocksize, &iListener);
 		delete itPred;
 
@@ -277,6 +280,7 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		iListener.setRange(21, 90);
 		IteratorUCharString *itObj = other->getObjects();
 		delete objects;
+		objects=NULL;
 		objects = loadSection(itObj, blocksize, &iListener);
 		delete itObj;
 
@@ -284,6 +288,7 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 		iListener.setRange(90, 100);
 		IteratorUCharString *itShared = other->getShared();
 		delete shared;
+		shared=NULL;
 		shared = loadSection(itShared, blocksize, &iListener);
 		delete itShared;
 
@@ -517,6 +522,47 @@ unsigned int FourSectionDictionary::getLocalId(unsigned int id, TripleComponentR
 	return getLocalId(mapping,id,position);
 }
 
+hdt::IteratorUCharString *FourSectionDictionary::getSuggestions(const char *prefix, TripleComponentRole role){
+	if(role==PREDICATE) {
+			return predicates->getSuggestions(prefix);
+	}
+
+	IteratorUCharString * sharedIt = shared->getSuggestions(prefix);
+	IteratorUCharString * subjectIt;
+	IteratorUCharString * objectIt;
+
+	// Merge results from shared and subjects/objects keeping order
+	if(role==SUBJECT) {
+		subjectIt = subjects->getSuggestions(prefix);
+		return new MergeIteratorUCharString(sharedIt,subjectIt);
+	} else if(role==OBJECT){
+		objectIt = objects->getSuggestions(prefix);
+		return new MergeIteratorUCharString(sharedIt,objectIt);
+	}
+	return NULL;
+
+}
+
+hdt::IteratorUInt *FourSectionDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+	if(role==PREDICATE) {
+			return predicates->getIDSuggestions(prefix);
+	}
+
+	IteratorUInt * sharedIt = shared->getIDSuggestions(prefix);
+	IteratorUInt * subjectIt;
+	IteratorUInt * objectIt;
+
+	// Merge results from shared and subjects/objects keeping order
+	if(role==SUBJECT) {
+		subjectIt = subjects->getIDSuggestions(prefix);
+		return new SequentialIteratorUInt(sharedIt,subjectIt,shared->getLength());
+	} else if(role==OBJECT){
+		objectIt = objects->getIDSuggestions(prefix);
+		return new SequentialIteratorUInt(sharedIt,objectIt,shared->getLength());
+	}
+	return NULL;
+
+}
 void FourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
 	if(role==PREDICATE) {

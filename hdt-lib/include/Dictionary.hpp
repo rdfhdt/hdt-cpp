@@ -70,7 +70,7 @@ public:
     * @param role Triple Role (Subject, Predicate, Object) to be fetched.
     * @return ID of the specified String
     */
-    virtual unsigned int stringToId(std::string &str, TripleComponentRole role)=0;
+    virtual unsigned int stringToId(const std::string &str, TripleComponentRole role)=0;
 
     /**
     * Convert a TripleString object to a TripleID, using the dictionary to perform the conversion.
@@ -78,7 +78,7 @@ public:
     * @param tripleString TripleString to be converted.
     * @return resulting TripleID
     */
-    void tripleStringtoTripleID(TripleString &tripleString, TripleID &tid) {
+    void tripleStringtoTripleID(const TripleString &tripleString, TripleID &tid) {
     	tid.setSubject(stringToId(tripleString.getSubject(), SUBJECT));
     	tid.setPredicate(stringToId(tripleString.getPredicate(), PREDICATE));
     	tid.setObject(stringToId(tripleString.getObject(), OBJECT));
@@ -91,12 +91,9 @@ public:
     * @return resultant TripleSTring
     */
     void tripleIDtoTripleString(TripleID &tripleID, TripleString &ts) {
-    	string s = idToString(tripleID.getSubject(), SUBJECT);
-    	string p = idToString(tripleID.getPredicate(), PREDICATE);
-    	string o = idToString(tripleID.getObject(), OBJECT);
-    	ts.setSubject(s);
-    	ts.setPredicate(p);
-    	ts.setObject(o);
+	    ts.setSubject(idToString(tripleID.getSubject(), SUBJECT));
+    	ts.setPredicate(idToString(tripleID.getPredicate(), PREDICATE));
+    	ts.setObject(idToString(tripleID.getObject(), OBJECT));
     }
 
     /** Number of total elements of the dictionary
@@ -168,6 +165,9 @@ public:
 	virtual unsigned int getMapping()=0;
 
     virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)=0;
+
+    virtual hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role)=0;
+    virtual hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role)=0;
 };
 
 class ModifiableDictionary : public Dictionary {
@@ -179,7 +179,7 @@ public:
     * @param str
     * @param role
     */
-    virtual unsigned int insert(std::string &str, TripleComponentRole role)=0;
+    virtual unsigned int insert(const std::string &str, TripleComponentRole role)=0;
 
     /**
     * Function to be called before starting inserting entries to the dictionary to perform an initialization.

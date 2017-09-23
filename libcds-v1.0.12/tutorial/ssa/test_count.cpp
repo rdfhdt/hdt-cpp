@@ -45,7 +45,7 @@ int main(int argc, char ** argv) {
 
   fstream input(argv[1],ios::in | ios::binary);
   if(!input.is_open()) {
-    cout << "Error opening file: " << argv[1] << endl;
+    cerr << "Error opening file: " << argv[1] << endl;
     return -1;
   }
 
@@ -88,15 +88,15 @@ int main(int argc, char ** argv) {
     uint occ = _ssa->count(pattern,m);
     uint real_occ = brute_check(text,n,pattern,m);
     if(occ!=real_occ) {
-      cout << "Error for pattern " << i+1 << endl;
-      cout << "ssa->count() returned " << occ << endl;
-      cout << "expected value is " << real_occ << endl;
+      cerr << "Error for pattern " << i+1 << endl;
+      cerr << "ssa->count() returned " << occ << endl;
+      cerr << "expected value is " << real_occ << endl;
       break;
     }
     total_occ += occ;
   }
 
-  cout << "Total occ: " << total_occ << endl;
+  cerr << "Total occ: " << total_occ << endl;
 
   delete [] pattern;
   delete _ssa;

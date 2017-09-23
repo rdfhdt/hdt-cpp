@@ -22,10 +22,8 @@ TARGET = hdt
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += HAVE_CDS
-
-DEFINES += HAVE_LIBZ HAVE_LIBRAPTOR2 RAPTOR_STATIC 
-#HAVE_SERD
+DEFINES += HAVE_LIBZ HAVE_SERD HAVE_CDS
+#HAVE_RAPTOR RAPTOR_STATIC
 
 win32:OutputDir = 'win32'
 unix:OutputDir = 'unix'
@@ -76,6 +74,7 @@ SOURCES += \
     ../src/rdf/RDFParser.cpp \
     ../src/rdf/RDFSerializerNTriples.cpp \
     ../src/rdf/RDFSerializerRaptor.cpp \
+    ../src/rdf/RDFSerializerSerd.cpp \
     ../src/rdf/RDFSerializer.cpp \
     ../src/util/fileUtil.cpp \
     ../src/rdf/RDFParserRaptorCallback.cpp \
@@ -151,6 +150,7 @@ HEADERS += \
     ../src/rdf/RDFParserNtriples.hpp \
     ../src/rdf/RDFSerializerNTriples.hpp \
     ../src/rdf/RDFSerializerRaptor.hpp \
+    ../src/rdf/RDFSerializerSerd.hpp \
     ../src/rdf/RDFParserRaptorCallback.hpp \
     ../src/rdf/RDFParserSerd.hpp \
     ../src/sparql/VarBindingInterface.hpp \
@@ -194,6 +194,9 @@ INCLUDEPATH += ../include
 #For libcds
 LIBCDSBASE = ../../libcds-v1.0.12/src
 
+#For serd
+INCLUDEPATH += F:/serd-0.26.0/serd/
+
 INCLUDEPATH += $${LIBCDSBASE}/utils \
     $${LIBCDSBASE}/static/bitsequence \
     $${LIBCDSBASE}/static/sequence \
@@ -205,7 +208,7 @@ INCLUDEPATH += $${LIBCDSBASE}/utils \
 
 
 #For raptor
-INCLUDEPATH += /usr/local/include
+INCLUDEPATH += /usr/local/include /usr/local/include/serd-0/serd
 
 #Windows
 win32-g++:contains(QMAKE_HOST.arch, x86_64):{
@@ -213,3 +216,7 @@ win32-g++:contains(QMAKE_HOST.arch, x86_64):{
 } else {
     win32:INCLUDEPATH += C:/mingw/include C:/MinGW/msys/1.0/include C:/MinGW/msys/1.0/local/include
 }
+
+# Windows Visual Studio
+
+win32:INCLUDEPATH += "F:\git\zlib\bin"

@@ -53,10 +53,10 @@ BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, Tr
     patZ = pattern.getObject();
 
 #if 0
-    cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
-    cout << "AdjY: " << endl;
+    cerr << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+    cerr << "AdjY: " << endl;
     adjY.dump();
-    cout << "AdjZ: " << endl;
+    cerr << "AdjZ: " << endl;
     adjZ.dump();
 #endif
 
@@ -70,8 +70,8 @@ BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, Tr
 
         uint x = adjY.findListIndex(posY)+1;
 
-        cout << "FWD2 posZ: " << mposZ << " posY: " << posY << "\t";
-        cout << "Triple: " << x << ", " << y << ", " << z << endl;
+        cerr << "FWD2 posZ: " << mposZ << " posY: " << posY << "\t";
+        cerr << "Triple: " << x << ", " << y << ", " << z << endl;
     }
 #endif
 
@@ -84,7 +84,7 @@ void BitmapTriplesSearchIterator::updateOutput() {
     // Convert local order to SPO
     returnTriple.setAll(x,y,z);
     swapComponentOrder(&returnTriple, triples->order, SPO);
-    //cout << returnTriple << endl;
+    //cerr << returnTriple << endl;
 }
 
 void BitmapTriplesSearchIterator::findRange()
@@ -127,7 +127,7 @@ void BitmapTriplesSearchIterator::findRange()
         maxZ = adjZ.getSize();
     }
 
-    //cout << "findRange: Y(" << minY <<  ", " << maxY << ") Z(" << minZ <<", " << maxZ << ")" << endl;
+    //cerr << "findRange: Y(" << minY <<  ", " << maxY << ") Z(" << minZ <<", " << maxZ << ")" << endl;
 }
 
 bool BitmapTriplesSearchIterator::hasNext()
@@ -138,9 +138,9 @@ bool BitmapTriplesSearchIterator::hasNext()
 TripleID *BitmapTriplesSearchIterator::next()
 {
 #if 0
-    cout << "FWD posZ: " << posZ << " posY: " << posY << endl;
-    cout << "\tFWD nextZ: " << nextZ << " nextY: " << nextY << endl;
-    cout << "\tTriple: " << x << ", " << y << ", " << z << endl;
+    cerr << "FWD posZ: " << posZ << " posY: " << posY << endl;
+    cerr << "\tFWD nextZ: " << nextZ << " nextY: " << nextY << endl;
+    cerr << "\tTriple: " << x << ", " << y << ", " << z << endl;
 #endif
 
     z = adjZ.get(posZ);
@@ -200,9 +200,9 @@ TripleID *BitmapTriplesSearchIterator::previous()
 #endif
 
 #if 0
-    cout << "BACK posZ: " << posZ << " posY: " << posY << endl;
-    cout << "\tBack nextZ: " << nextZ << " nextY: " << nextY << endl;
-    cout << "\tTriple: " << x << ", " << y << ", " << z << endl;
+    cerr << "BACK posZ: " << posZ << " posY: " << posY << endl;
+    cerr << "\tBack nextZ: " << nextZ << " nextY: " << nextY << endl;
+    cerr << "\tTriple: " << x << ", " << y << ", " << z << endl;
 #endif
 
     updateOutput();
@@ -247,12 +247,24 @@ bool BitmapTriplesSearchIterator::canGoTo() {
     return true;
 }
 
+template <typename T>
+  std::string NumberToString ( T Number )
+  {
+     std::ostringstream ss;
+     ss << Number;
+     return ss.str();
+  }
+
 void BitmapTriplesSearchIterator::goTo(unsigned int pos) {
-	if ((posZ + pos) >= maxZ) {
-			throw std::runtime_error("Cannot goTo on this pattern.");
+    if ((pos) >= maxZ) {
+    	throw std::runtime_error(string("Given index is ") + NumberToString(pos) + ". Cannot go beyond last element index: " + NumberToString(maxZ));
 	}
-	posZ += pos; // move the position of Z
+    posZ = pos; // move the position of Z
 	goToY(); // go to the correct Y
+}
+
+void BitmapTriplesSearchIterator::skip(unsigned int pos) {
+	goTo(posZ+pos);
 }
 
 TripleComponentOrder BitmapTriplesSearchIterator::getOrder() {
@@ -327,11 +339,11 @@ MiddleWaveletIterator::MiddleWaveletIterator(BitmapTriples *trip, TripleID &pat)
     }
 
 #if 0
-    cout << "AdjY: " << endl;
+    cerr << "AdjY: " << endl;
     adjY.dump();
-    cout << "AdjZ: " << endl;
+    cerr << "AdjZ: " << endl;
     adjZ.dump();
-    cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+    cerr << "Pattern: " << patX << " " << patY << " " << patZ << endl;
 #endif
 
     // Find largest position of Z
@@ -357,7 +369,7 @@ bool MiddleWaveletIterator::hasNext()
 
 TripleID *MiddleWaveletIterator::next()
 {
-    //cout << "nextTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
+    //cerr << "nextTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
     if(posZ>nextZ) {
         predicateOcurrence++;
         posY = predicateIndex->getAppearance(patY, predicateOcurrence);
@@ -384,7 +396,7 @@ bool MiddleWaveletIterator::hasPrevious()
 
 TripleID *MiddleWaveletIterator::previous()
 {
-    //cout << "previousTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
+    //cerr << "previousTriple: " << predicateOcurrence << ", " << prevZ << ", " << posZ << ", " << nextZ << endl;
     if(posZ<=prevZ) {
         predicateOcurrence--;
         posY = predicateIndex->getAppearance(patY, predicateOcurrence);
@@ -416,6 +428,31 @@ void MiddleWaveletIterator::goToStart()
     x = adjY.findListIndex(posY)+1;
     y = adjY.get(posY);
     z = adjZ.get(posZ);
+}
+
+bool MiddleWaveletIterator::canGoTo() {
+    return true;
+}
+
+void MiddleWaveletIterator::goTo(unsigned int pos) {
+    if ((pos) >= maxZ) {
+			throw std::runtime_error("Cannot goTo on this pattern.");
+	}
+
+    predicateOcurrence = pos;
+    posY = predicateIndex->getAppearance(patY, predicateOcurrence);
+
+    posZ = prevZ = adjZ.find(posY);
+    nextZ = adjZ.last(posY);
+    //nextZ = adjZ.findNext(prevZ)-1;
+
+    x = adjY.findListIndex(posY)+1;
+    y = adjY.get(posY);
+    z = adjZ.get(posZ);
+}
+
+void MiddleWaveletIterator::skip(unsigned int pos) {
+   goTo(predicateOcurrence+pos);
 }
 
 size_t MiddleWaveletIterator::estimatedNumResults()
@@ -528,11 +565,11 @@ IteratorY::IteratorY(BitmapTriples *trip, TripleID &pat) :
     }
 
 #if 0
-    cout << "AdjY: " << endl;
+    cerr << "AdjY: " << endl;
     adjY.dump();
-    cout << "AdjZ: " << endl;
+    cerr << "AdjZ: " << endl;
     adjZ.dump();
-    cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+    cerr << "Pattern: " << patX << " " << patY << " " << patZ << endl;
 #endif
 
     goToStart();
@@ -661,12 +698,12 @@ ObjectIndexIterator::ObjectIndexIterator(BitmapTriples *trip, TripleID &pat) :
     }
 
 #if 0
-    cout << "Pattern: " << patX << " " << patY << " " << patZ << endl;
-    cout << "AdjY: " << endl;
+    cerr << "Pattern: " << patX << " " << patY << " " << patZ << endl;
+    cerr << "AdjY: " << endl;
     adjY.dump();
-    cout << "AdjZ: " << endl;
+    cerr << "AdjZ: " << endl;
     adjZ.dump();
-    cout << "AdjIndexObjects: " << endl;
+    cerr << "AdjIndexObjects: " << endl;
     adjIndex.dump();
 #endif
 
@@ -765,9 +802,9 @@ void ObjectIndexIterator::calculateRange() {
 
 
     if(patY!=0) {
-        //cout << endl << endl << "binsearch " << patY <<  endl;
+        //cerr << endl << endl << "binsearch " << patY <<  endl;
         while (minIndex <= maxIndex) {
-            //cout << "binSearch range: " << minIndex << ", " << maxIndex << endl;
+            //cerr << "binSearch range: " << minIndex << ", " << maxIndex << endl;
             long long mid = (minIndex + maxIndex) >> 1;
             unsigned int predicate=getY(mid);
 
@@ -777,16 +814,16 @@ void ObjectIndexIterator::calculateRange() {
                 maxIndex = mid - 1;
             } else {
 #if 0
-                cout << "Middle found at " << mid << " => " << predicate << " Y=" << getY(mid) << endl;
-                cout << "At maxIndex: " << maxIndex << " => Y=" << getY(maxIndex) << endl;
-                cout << "At minIndex: " << minIndex << " => Y=" << getY(minIndex) << endl;
+                cerr << "Middle found at " << mid << " => " << predicate << " Y=" << getY(mid) << endl;
+                cerr << "At maxIndex: " << maxIndex << " => Y=" << getY(maxIndex) << endl;
+                cerr << "At minIndex: " << minIndex << " => Y=" << getY(minIndex) << endl;
 
                 // Do Sequential search
                 unsigned int left = mid;
                 while(left>minIndex && predicate==patY) {
                     left--;
                     predicate = getY(left);
-                    cout << "Check left: " << minIndex << "/" << left << "=>" << predicate << " Z=" << adjZ.get(getPosZ(left))<< endl;
+                    cerr << "Check left: " << minIndex << "/" << left << "=>" << predicate << " Z=" << adjZ.get(getPosZ(left))<< endl;
                 }
                 minIndex= predicate==patY ? left : left+1;
 
@@ -795,7 +832,7 @@ void ObjectIndexIterator::calculateRange() {
                 while(right<maxIndex && predicate==patY) {
                     right++;
                     predicate = getY(right);
-                    cout << "Check right: " << right << "/" << maxIndex << "=>" << predicate << " Z=" << adjZ.get(getPosZ(right)) << endl;
+                    cerr << "Check right: " << right << "/" << maxIndex << "=>" << predicate << " Z=" << adjZ.get(getPosZ(right)) << endl;
                 }
                 maxIndex = predicate==patY ? right :  right-1;
 
@@ -835,17 +872,17 @@ void ObjectIndexIterator::calculateRange() {
                 maxIndex = predicate==patY ? pos : pos-1;
 #endif
 
-//                cout << "Left bound" << endl;
+//                cerr << "Left bound" << endl;
 //                for(unsigned int i=minIndex-2; i<=minIndex+2; i++) {
 //                    if(i>=0) {
-//                        cout << "Found: " << i << "=>" << getY(i) << " " << ((i>= minIndex && i<=maxIndex) ? '*': ' ') << " Z=" << adjZ.get(getPosZ(i))<< endl;
+//                        cerr << "Found: " << i << "=>" << getY(i) << " " << ((i>= minIndex && i<=maxIndex) ? '*': ' ') << " Z=" << adjZ.get(getPosZ(i))<< endl;
 //                    }
 //                }
 
-//                cout << "Right bound" << endl;
+//                cerr << "Right bound" << endl;
 //                for(unsigned int i=maxIndex-2; i<=maxIndex+2; i++) {
 //                    if(i>=0) {
-//                        cout << "Found: " << i << "=>" << getY(i) << " " << ((i>= minIndex && i<=maxIndex) ? '*': ' ') << " Z=" << adjZ.get(getPosZ(i))<< endl;
+//                        cerr << "Found: " << i << "=>" << getY(i) << " " << ((i>= minIndex && i<=maxIndex) ? '*': ' ') << " Z=" << adjZ.get(getPosZ(i))<< endl;
 //                    }
 //                }
 
@@ -881,10 +918,15 @@ bool ObjectIndexIterator::canGoTo()
 
 void ObjectIndexIterator::goTo(unsigned int pos)
 {
-    if(minIndex+pos>maxIndex) {
-	throw std::runtime_error("Cannot goto beyond last element");
+    if(pos>maxIndex) {
+    	throw std::runtime_error(string("Given index: ") + NumberToString(pos) + ". Cannot go beyond last element index: " + NumberToString(maxIndex));
     }
-    posIndex = minIndex+pos;
+    posIndex = pos;
+}
+
+void ObjectIndexIterator::skip(unsigned int pos)
+{
+	goTo(minIndex+pos);
 }
 
 bool ObjectIndexIterator::findNextOccurrence(unsigned int value, unsigned char component) {

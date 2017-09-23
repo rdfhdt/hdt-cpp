@@ -10,10 +10,12 @@ SERD_SUPPORT=true
 
 CPP=g++
 
+OFLAGS=-O3
+
+FLAGS=$(OFLAGS) -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option -std=c++0x
+
 ifeq ($(CPP), g++)
-FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unknown-warning-option
-else
-FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option
+FLAGS+=-Wno-unused-but-set-variable
 endif
 
 INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
@@ -60,14 +62,14 @@ TESTS=$(patsubst %.cpp,%, $(wildcard tests/*.cpp))
 EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))
 
 all:
-	@$(MAKE) showflags 
+	@$(MAKE) showflags
 	@$(MAKE) -C $(LIBCDSPATH)
 	@$(MAKE) tools tests/jointest
 	#@$(MAKE) tests examples
 
 re:
 	@$(MAKE) clean
-	@$(MAKE) all 
+	@$(MAKE) all
 
 showflags:
 	@echo " [CFG] OS= $(OS)"
@@ -105,12 +107,11 @@ libhdt.a: $(OBJECTS) $(HEADERS)
 	@rm -Rf libhdt.a
 	@ar rcs libhdt.a $(OBJECTS)
 
-doc:	
+doc:
 	@echo " [HDT] Generating documentation"
 	$(DOXYGEN)
-	
+
 clean:
 	@echo " [CLN] Removing object files"
 	@rm -f $(OBJECTS) $(TOOLS) $(TESTS) $(EXAMPLES) libhdt.a *~
 	@rm -Rf tools/*dSYM tests/*dSYM examples/*dSYM docs/*
-

@@ -141,6 +141,26 @@ bool SequentialSearchIteratorTripleID::hasPrevious()
 	return hasPreviousTriples;
 }
 
+size_t SequentialSearchIteratorTripleID::estimatedNumResults()
+{
+	return iterator->estimatedNumResults();
+}
+
+bool SequentialSearchIteratorTripleID::canGoTo(){
+	return false; // to point that it is not direct but slow
+}
+void SequentialSearchIteratorTripleID::goTo(unsigned int pos){
+	iterator->goToStart();
+	for (int i=0;i<=pos;i++){
+		doFetchNext();
+	}
+}
+void SequentialSearchIteratorTripleID::skip(unsigned int pos){
+	for (int i=0;i<pos;i++){
+		doFetchNext();
+	}
+}
+
 void SequentialSearchIteratorTripleID::doFetchPrevious()
 {
 	hasPreviousTriples = false;
@@ -206,7 +226,7 @@ TripleID *RandomAccessIterator::get(unsigned int idx)
 		//cout << "NEXT" << endl;
 	}
 	if(currentIdx!=idx) {
-		cout << "ERROR: " << currentIdx << "!=" << idx << " PREV/NEXT: "<< it->hasPrevious() << ", " << it->hasNext() << endl;
+		cerr << "ERROR: " << currentIdx << "!=" << idx << " PREV/NEXT: "<< it->hasPrevious() << ", " << it->hasNext() << endl;
 	}
 
 	return current;
@@ -240,7 +260,3 @@ RandomAccessIterator::RandomAccessIterator(IteratorTripleID *other) :
 
 
 }
-
-
-
-

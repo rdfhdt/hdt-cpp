@@ -73,9 +73,11 @@ namespace cds_static
                                  // TODO: it could be implemented in a more efficient (low level) way
     bool wt_coder_huff::is_set(uint symbol, uint l) const
     {
-        uint buffer[maxBuffer];
+        uint *buffer = new uint[maxBuffer];
         hc->encode(symbol, buffer, (size_t)0);
-        return bitget(buffer,l);
+        bool ret = bitget(buffer,l);
+        delete buffer;
+        return ret;
     }
 
     bool wt_coder_huff::is_set(uint *symbol, uint l) const {
@@ -84,9 +86,11 @@ namespace cds_static
 
     bool wt_coder_huff::done(uint symbol, uint l) const
     {
-        uint buffer[maxBuffer];
+        uint *buffer = new uint[maxBuffer];
         uint s_len = (uint)hc->encode(symbol, buffer, (size_t)0);
-        return l==s_len;
+        bool ret =  l==s_len;
+        delete buffer;
+        return ret;
     }
 
     size_t wt_coder_huff::getSize() const

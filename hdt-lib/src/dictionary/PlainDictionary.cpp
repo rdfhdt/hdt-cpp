@@ -99,14 +99,13 @@ std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole pos
 
 	if(localid<vector.size()) {
 		DictionaryEntry *entry = vector[localid];
-		string result(entry->str);
-		return result;
+		return std::string(entry->str);
 	}
 
-	return string();
+	return std::string();
 }
 
-unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int PlainDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
 	DictEntryIt ret;
 
@@ -281,7 +280,7 @@ uint64_t PlainDictionary::size()
 }
 
 
-unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
+unsigned int PlainDictionary::insert(const std::string & str, TripleComponentRole pos)
 {
 	if(str=="") return 0;
 
@@ -713,6 +712,15 @@ unsigned int PlainDictionary::getMapping() {
 void PlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
     throw std::logic_error("getSuggestions not implemented");
+}
+
+hdt::IteratorUCharString* PlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role)
+{
+    throw std::logic_error("getSuggestions not implemented");
+}
+
+hdt::IteratorUInt * PlainDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+	throw std::logic_error("getIDSuggestions not implemented");
 }
 
 }

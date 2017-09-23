@@ -47,19 +47,21 @@ using namespace std;
 void help() {
 	cout << "$ rdf2hdt [options] <rdf input file> <hdt output file> " << endl;
 	cout << "\t-h\t\t\tThis help" << endl;
-	cout << "\t-i\t\tAlso generate index to solve all triple patterns." << endl;
+	cout << "\t-i\t\t\tAlso generate index to solve all triple patterns." << endl;
 	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
 	cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
 	cout << "\t-f\t<format>\tFormat of the RDF input (ntriples, nquad, n3, turtle, rdfxml)" << endl;
 	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
 	cout << "\t-V\tPrints the HDT version number." << endl;
-	//cout << "\t-v\tVerbose output" << endl;
+	cout << "\t-p\tPrints a progress indicator." << endl;
+	cout << "\t-v\tVerbose output" << endl;
 }
 
 int main(int argc, char **argv) {
 	string inputFile;
 	string outputFile;
-	bool verbose=false; // NOTE: generates -Wunused-but-set-variable warning.
+	bool verbose=false;
+	bool showProgress=false;
 	bool generateIndex=false;
 	string configFile;
 	string options;
@@ -69,22 +71,22 @@ int main(int argc, char **argv) {
 	RDFNotation notation = NTRIPLES;
 
 	int c;
-	while( (c = getopt(argc,argv,"c:o:vf:B:i:V"))!=-1) {
+	while( (c = getopt(argc,argv,"c:o:vpf:B:iV"))!=-1) {
 		switch(c) {
 		case 'c':
 			configFile = optarg;
-			cout << "Configfile: " << configFile << endl;
 			break;
 		case 'o':
 			options = optarg;
-			cout << "Options: " << options << endl;
 			break;
 		case 'v':
 			verbose = true;
 			break;
+		case 'p':
+			showProgress = true;
+			break;
 		case 'f':
 			rdfFormat = optarg;
-			cout << "RDF format: " << rdfFormat << endl;
 			break;
 		case 'B':
 			baseUri = optarg;
@@ -96,14 +98,23 @@ int main(int argc, char **argv) {
 			cout << HDTVersion::get_version_string(".") << endl;
 			return 0;
 		default:
-			cout << "ERROR: Unknown option" << endl;
+			cerr << "ERROR: Unknown option" << endl;
 			help();
 			return 1;
 		}
 	}
 
+#define vout if (!verbose) {} else std::cerr /* Verbose output */
+
+	if (!configFile.empty()) {
+		vout << "Configfile: " << configFile << endl;
+	}
+	if (!options.empty()) {
+		vout << "Options: " << options << endl;
+	}
+
 	if(argc-optind<2) {
-		cout << "ERROR: You must supply an input and output" << endl << endl;
+		cerr << "ERROR: You must supply an input and output" << endl << endl;
 		help();
 		return 1;
 	}
@@ -112,13 +123,13 @@ int main(int argc, char **argv) {
 	outputFile = argv[optind+1];
 
 	if(inputFile=="") {
-		cout << "ERROR: You must supply an RDF input file" << endl << endl;
+		cerr << "ERROR: You must supply an RDF input file" << endl << endl;
 		help();
 		return 1;
 	}
 
 	if(outputFile=="") {
-		cout << "ERROR: You must supply an HDT output file" << endl << endl;
+		cerr << "ERROR: You must supply an HDT output file" << endl << endl;
 		help();
 		return 1;
 	}
@@ -139,14 +150,14 @@ int main(int argc, char **argv) {
 		} else if(rdfFormat=="rdfxml") {
 			notation = XML;
 		} else {
-			cout << "ERROR: The RDF input format must be one of: (ntriples, nquad, n3, turtle, rdfxml)" << endl;
+			cerr << "ERROR: The RDF input format must be one of: (ntriples, nquad, n3, turtle, rdfxml)" << endl;
 			help();
 			return 1;
 		}
+		vout << "RDF format: " << rdfFormat << endl;
 	}
 
 	// Process
-	StdoutProgressListener progress;
 	HDTSpecification spec(configFile);
 
 	spec.setOptions(options);
@@ -155,32 +166,30 @@ int main(int argc, char **argv) {
 		// Read RDF
 		StopWatch globalTimer;
 
-		HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, &progress);
+		ProgressListener* progress = showProgress ? new StdoutProgressListener() : NULL;
+		HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, progress);
 
 		ofstream out;
 
 		// Save HDT
-		out.open(outputFile.c_str(), ios::out | ios::binary | ios::trunc);
-		if(!out.good()){
-			throw std::runtime_error("Could not open output file.");
-		}
-		hdt->saveToHDT(out, &progress);
-		out.close();
+		hdt->saveToHDT(outputFile.c_str(), progress);
 
 		globalTimer.stop();
-		cout << "HDT Successfully generated.                        " << endl;
-		cout << "Total processing time: ";
-		cout << "Clock(" << globalTimer.getRealStr();
-		cout << ")  User(" << globalTimer.getUserStr();
-		cout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
+		vout << "HDT Successfully generated." << endl;
+		vout << "Total processing time: ";
+		vout << "Clock(" << globalTimer.getRealStr();
+		vout << ")  User(" << globalTimer.getUserStr();
+		vout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
 
 		if(generateIndex) {
-			hdt = HDTManager::indexedHDT(hdt, &progress);
+			hdt = HDTManager::indexedHDT(hdt, progress);
 		}
 
 		delete hdt;
+		delete progress;
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
+		return 1;
 	}
 
 }

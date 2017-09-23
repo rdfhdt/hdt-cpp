@@ -9,6 +9,9 @@
 #ifdef HAVE_RAPTOR
 #include "RDFSerializerRaptor.hpp"
 #endif
+#ifdef HAVE_SERD
+#include "RDFSerializerSerd.hpp"
+#endif
 #include "RDFSerializerNTriples.hpp"
 
 namespace hdt {
@@ -16,7 +19,9 @@ namespace hdt {
 RDFSerializer *RDFSerializer::getSerializer(std::ostream &out, RDFNotation notation) {
 
 #ifdef HAVE_RAPTOR
-		return new RDFSerializerRaptor(out, notation);
+	return new RDFSerializerRaptor(out, notation);
+#elif defined(HAVE_SERD)
+	return new RDFSerializerSerd(out, notation);
 #else
 	if(notation==NTRIPLES) {
 		return new RDFSerializerNTriples(out,notation);
@@ -30,6 +35,8 @@ RDFSerializer *RDFSerializer::getSerializer(const char *fileName, RDFNotation no
 
 #ifdef HAVE_RAPTOR
 	return new RDFSerializerRaptor(fileName, notation);
+#elif defined(HAVE_SERD)
+	return new RDFSerializerSerd(fileName, notation);
 #else
 	if(notation==NTRIPLES) {
 		return new RDFSerializerNTriples(fileName,notation);

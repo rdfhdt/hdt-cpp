@@ -1,5 +1,8 @@
+#include <QApplication>
+#include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
 #include <QtGui>
+#include <QPushButton>
 
 #include <HDTManager.hpp>
 
@@ -8,7 +11,7 @@
 #define USE_DIALOG
 //#define OPERATION_CANCELABLE
 
-#ifdef __WIN32__
+#ifdef WIN32
 #include <windows.h>
 #define sleep(a) Sleep((a)*1000)
 #else
@@ -58,9 +61,9 @@ void HDTOperation::execute() {
             // TODO: Decompress GZIP here using progress bar.
             // TODO: Detect whether .hdtcache and .hdt.index exist to be more accurate with the progress
 #if 1
-            hdt = hdt::HDTManager::mapIndexedHDT(fileName.toAscii(), &iListener);
+            hdt = hdt::HDTManager::mapIndexedHDT(fileName.toLatin1(), &iListener);
 #else            
-            hdt = hdt::HDTManager::loadIndexedHDT(fileName.toAscii(), &iListener);
+            hdt = hdt::HDTManager::loadIndexedHDT(fileName.toLatin1(), &iListener);
 #endif
             iListener.setRange(70, 100);
             hdtInfo = new HDTCachedInfo(hdt);
@@ -76,7 +79,7 @@ void HDTOperation::execute() {
             hdt::IntermediateListener iListener(dynamic_cast<ProgressListener *>(this));
 
             iListener.setRange(0,80);
-            hdt = hdt::HDTManager::generateHDT(fileName.toAscii(), baseUri.c_str(), notation, spec, &iListener);
+            hdt = hdt::HDTManager::generateHDT(fileName.toLatin1(), baseUri.c_str(), notation, spec, &iListener);
 
             iListener.setRange(80, 90);
             hdt = hdt::HDTManager::indexedHDT(hdt);
@@ -89,16 +92,16 @@ void HDTOperation::execute() {
             break;
             }
         case HDT_WRITE:
-            hdt->saveToHDT(fileName.toAscii(), dynamic_cast<ProgressListener *>(this));
+            hdt->saveToHDT(fileName.toLatin1(), dynamic_cast<ProgressListener *>(this));
             break;
         case RDF_WRITE:{
-            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toAscii(), notation);
+            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toLatin1(), notation);
             hdt->saveToRDF(*serializer, dynamic_cast<ProgressListener *>(this));
             delete serializer;
             break;
             }
         case RESULT_EXPORT: {
-            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toAscii(), notation);
+            hdt::RDFSerializer *serializer = hdt::RDFSerializer::getSerializer(fileName.toLatin1(), notation);
             serializer->serialize(iterator, dynamic_cast<ProgressListener *>(this), numResults );
             delete serializer;
             delete iterator;
@@ -107,11 +110,11 @@ void HDTOperation::execute() {
         }
         emit processFinished(0);
     } catch (char* err) {
-        cout << "Error caught: " << err << endl;
+        cerr << "Error caught: " << err << endl;
         errorMessage = err;
         emit processFinished(1);
     } catch (const char* err) {
-        cout << "Error caught: " << err << endl;
+        cerr << "Error caught: " << err << endl;
         errorMessage = (char *)err;
         emit processFinished(1);
     }
@@ -122,7 +125,7 @@ void HDTOperation::execute() {
 void HDTOperation::notifyProgress(float level, const char *section) {
 #ifdef OPERATION_CANCELABLE
     if(isCancelled) {
-        cout << "Throwing exception to cancel" << endl;
+        cerr << "Throwing exception to cancel" << endl;
         throw (char *)"Cancelled by user";
     }
 #endif
@@ -136,7 +139,7 @@ void HDTOperation::notifyProgress(float task, float level, const char *section)
 {
 #ifdef OPERATION_CANCELABLE
     if(isCancelled) {
-        cout << "Throwing exception to cancel" << endl;
+        cerr << "Throwing exception to cancel" << endl;
         throw (char *)"Cancelled by user";
     }
 #endif
@@ -165,7 +168,7 @@ void HDTOperation::saveToHDT(QString &fileName)
     this->fileName = fileName;
 }
 
-void HDTOperation::loadFromRDF(hdt::HDTSpecification &spec, QString &fileName, hdt::RDFNotation notation, string &baseUri)
+void HDTOperation::loadFromRDF(hdt::HDTSpecification &spec, QString &fileName, hdt::RDFNotation notation, const string &baseUri)
 {
     this->op = RDF_READ;
     this->spec = spec;
@@ -270,15 +273,12 @@ int HDTOperation::exec()
 
 void HDTOperation::cancel()
 {
-    //cout << "Operation cancelled" << endl;
+    //cerr << "Operation cancelled" << endl;
     isCancelled = true;
 }
 
 void HDTOperation::finished()
 {
-    cout << "Finished! :)" << endl;
+    cerr << "Finished! :)" << endl;
     emit processFinished(0);
 }
-
-
-

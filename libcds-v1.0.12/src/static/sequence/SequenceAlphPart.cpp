@@ -21,6 +21,7 @@
 #include <SequenceAlphPart.h>
 
 #include <iostream>
+#include <functional>
 #include <algorithm>
 
 using namespace std;
@@ -98,7 +99,7 @@ namespace cds_static
 			pairs[i] = pair<size_t,uint>(occ[i],i);
 		}
 		pairs[sigma+1] = pair<size_t,uint>(0,sigma+1);
-		sort(pairs,pairs+sigma+2,greater<pair<size_t,uint> >());
+        sort(pairs,pairs+sigma+2,greater<pair<size_t,uint> >());
 
 		revPermFreq = new uint[sigma+1];
 		for(uint i=0;i<=sigma;i++) {

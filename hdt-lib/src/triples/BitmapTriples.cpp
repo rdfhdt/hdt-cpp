@@ -126,7 +126,7 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 	LogSequence2 *vectorY = new LogSequence2(bits(triples.getNumberOfElements()));
 	LogSequence2 *vectorZ = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
 
-	unsigned int lastX, lastY, lastZ;
+	unsigned int lastX=0, lastY=0, lastZ=0;
 	unsigned int x, y, z;
 
 	unsigned int numTriples=0;
@@ -251,7 +251,7 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
     generateIndexMemory(&iListener);
    	//generateIndexMemoryFast(listener);
 
-	cout << "Index generated in "<< global << endl;
+	cerr << "Index generated in "<< global << endl;
 }
 
 void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
@@ -278,12 +278,12 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 
 		NOTIFYCOND3(&iListener, "Counting appearances of objects", i, arrayZ->getNumberOfElements(), 1000000);
 	}
-	cout << "Count Objects in " << st << " Max was: " << maxCount << endl;
+	cerr << "Count Objects in " << st << " Max was: " << maxCount << endl;
 	st.reset();
 
 #if 0
     for(size_t i=0;i<objectCount->getNumberOfElements();i++) {
-		cout << "Object " << (i+1) << " appears " << objectCount->get(i) << " times." << endl;
+		cerr << "Object " << (i+1) << " appears " << objectCount->get(i) << " times." << endl;
 	}
 #endif
 
@@ -300,26 +300,26 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	  bitmapIndex->set(arrayZ->getNumberOfElements()-1, true);
 	delete objectCount;
 	objectCount=NULL;
-	cout << "Bitmap in " << st << endl;
+	cerr << "Bitmap in " << st << endl;
 	st.reset();
 
-    cout << "Bitmap bits: " << bitmapIndex->getNumBits() << " Ones: " << bitmapIndex->countOnes() << endl;
+    cerr << "Bitmap bits: " << bitmapIndex->getNumBits() << " Ones: " << bitmapIndex->countOnes() << endl;
 #if 0
     for(size_t i=0;i<bitmapIndex->getNumBits();i++) {
 		if(bitmapIndex->access(i)){
-			cout << "1";
+			cerr << "1";
 		} else {
-			cout << "0";
+			cerr << "0";
 		}
 	}
-	cout << endl;
+	cerr << endl;
 
 	for(int i=0;i<bitmapIndex->getNumBits();i++) {
 		unsigned int pos = 0;
 		if(i>0) {
 			pos = bitmapIndex->select1(i)+1;
 		}
-		cout << "Object " << (i+1) << " is stored at " << pos << endl;
+		cerr << "Object " << (i+1) << " is stored at " << pos << endl;
 	}
 #endif
 
@@ -360,7 +360,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	}
 	delete objectInsertedCount;
 	objectInsertedCount=NULL;
-	cout << "Object references in " << st << endl;
+	cerr << "Object references in " << st << endl;
 	st.reset();
 
 	predCount->reduceBits();
@@ -369,9 +369,9 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 
 #if 0
     for(size_t i=0;i<objectArray->getNumberOfElements();i++) {
-		cout << "Position " << (i) << " references " << objectArray->get(i) << " ." << endl;
+		cerr << "Position " << (i) << " references " << objectArray->get(i) << " ." << endl;
 		if(bitmapIndex->access(i)) {
-			cout << endl;
+			cerr << endl;
 		}
 	}
 #endif
@@ -441,7 +441,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 		NOTIFYCOND3(&iListener, "Sorting object sublists", first, arrayZ->getNumberOfElements(), 10000);
 	} while(object<=bitmapIndex->countOnes());
 
-	cout << "Sort lists in " << st << endl;
+	cerr << "Sort lists in " << st << endl;
 	st.reset();
 
 	// Save Object Index
@@ -454,10 +454,10 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 
         size_t cobject = i==0 ? 1 : bitmapIndex->rank1(i-1)+1;
         size_t subject = indexPtr==0 ? 1 : bitmapY->rank1(indexPtr-1)+1;
-		cout << "\tFinal: " << i << " (" << indexPtr << " > " <<  cobject << "-" << pred << "-"<<subject<<")" << endl;
+		cerr << "\tFinal: " << i << " (" << indexPtr << " > " <<  cobject << "-" << pred << "-"<<subject<<")" << endl;
 
         if(bitmapIndex->access(i)) {
-            cout << endl;
+            cerr << endl;
         }
     }
 #endif
@@ -469,8 +469,8 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,40);
 
-    cout << "Generate Object Index" << endl;
-    cout << " Gather object lists..." << endl;
+    cerr << "Generate Object Index" << endl;
+    cerr << " Gather object lists..." << endl;
 
 	// For each object, a list of (zpos, predicate)
 	vector<vector<pair<unsigned int, unsigned int> > > index;
@@ -486,7 +486,7 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 		}
 		unsigned int adjZlist = i>0 ?  bitmapZ->rank1(i-1) : 0;
 
-		//cout << "Item " << i << " in adjlist " << adjZlist << endl;
+		//cerr << "Item " << i << " in adjlist " << adjZlist << endl;
 		unsigned int pred = arrayY->get(adjZlist);
 		maxpred = pred>maxpred ? pred : maxpred;
 
@@ -508,7 +508,7 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 	}
 	bitmapIndex = new BitSequence375(arrayZ->getNumberOfElements());
 
-    cout << " Serialize object lists..." << endl;
+    cerr << " Serialize object lists..." << endl;
 	iListener.setRange(40, 80);
 	unsigned int pos=0;
 	unsigned int numBits = bits(arrayY->getNumberOfElements());
@@ -552,26 +552,26 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 
 		unsigned int cobject = i==0 ? 1 : bitmapIndex->rank1(i-1)+1;
 		unsigned int subject = indexPtr==0 ? 1 : bitmapY->rank1(indexPtr-1)+1;
-		cout << "\tFinal: " << i << " (" << indexPtr << " > " <<  cobject << "-" << pred << "-"<<subject<<")" << endl;
+		cerr << "\tFinal: " << i << " (" << indexPtr << " > " <<  cobject << "-" << pred << "-"<<subject<<")" << endl;
 
         if(bitmapIndex->access(i)) {
-            cout << endl;
+            cerr << endl;
         }
     }
 #endif
 
-	cout << "Index generated in " << st << endl;
+	cerr << "Index generated in " << st << endl;
 
-	cout << "Num triples: " << getNumberOfElements() << endl;
-	cout << "Order: " << getOrderStr(order) << endl;
-	cout << "Original triples size: " << size() << endl;
-	cout << "Stream size: " << arrayIndex->size() << " <" << ((unsigned long long)(arrayIndex->size())*100) / size() << "%>"<< endl;
-	cout << "Bitmap Object size: " << bitmapIndex->getSizeBytes() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()))*100 / size() << "%>"<< endl;
+	cerr << "Num triples: " << getNumberOfElements() << endl;
+	cerr << "Order: " << getOrderStr(order) << endl;
+	cerr << "Original triples size: " << size() << endl;
+	cerr << "Stream size: " << arrayIndex->size() << " <" << ((unsigned long long)(arrayIndex->size())*100) / size() << "%>"<< endl;
+	cerr << "Bitmap Object size: " << bitmapIndex->getSizeBytes() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()))*100 / size() << "%>"<< endl;
 
-    cout << "Total Index size: " << bitmapIndex->getSizeBytes()+arrayIndex->size() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()+arrayIndex->size()))*100 / size() << "%>"<< endl;
-    cout << "Total size: " << size()+bitmapIndex->getSizeBytes()+arrayIndex->size() << endl;
+    cerr << "Total Index size: " << bitmapIndex->getSizeBytes()+arrayIndex->size() << " <" << ((unsigned long long)(bitmapIndex->getSizeBytes()+arrayIndex->size()))*100 / size() << "%>"<< endl;
+    cerr << "Total size: " << size()+bitmapIndex->getSizeBytes()+arrayIndex->size() << endl;
 
-	cout << "Number of lists: " << bitmapZ->countOnes() << " Bits: " << bits(bitmapZ->countOnes()) << endl;
+	cerr << "Number of lists: " << bitmapZ->countOnes() << " Bits: " << bits(bitmapZ->countOnes()) << endl;
 }
 
 void BitmapTriples::populateHeader(Header &header, string rootNode) {

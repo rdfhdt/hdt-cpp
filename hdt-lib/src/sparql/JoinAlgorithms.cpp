@@ -96,53 +96,53 @@ bool checkComparisons(TripleID &a, TripleID &b, unsigned short conditions) {
 
 void dumpComparisons(unsigned short conditions) {
 	if( (conditions & (1<<0))) {
-		cout << "SUBJA SUBJB" << endl;
+		cerr << "SUBJA SUBJB" << endl;
 	}
 	if( (conditions & (1<<1))) {
-		cout << "SUBJA PREDB" << endl;
+		cerr << "SUBJA PREDB" << endl;
 	}
 	if( (conditions & (1<<2))) {
-		cout << "SUBJA OBJB" << endl;
+		cerr << "SUBJA OBJB" << endl;
 	}
 
 	if( (conditions & (1<<3))) {
-		cout << "PREDA SUBJB" << endl;
+		cerr << "PREDA SUBJB" << endl;
 	}
 	if( (conditions & (1<<4))) {
-		cout << "PREDA PREDB" << endl;
+		cerr << "PREDA PREDB" << endl;
 	}
 	if( (conditions & (1<<5))) {
-		cout << "PREDA OBJB" << endl;
+		cerr << "PREDA OBJB" << endl;
 	}
 
 	if( (conditions & (1<<6))) {
-		cout << "OBJA SUBJB" << endl;
+		cerr << "OBJA SUBJB" << endl;
 	}
 	if( (conditions & (1<<7))) {
-		cout << "OBJA PREDB" << endl;
+		cerr << "OBJA PREDB" << endl;
 	}
 	if( (conditions & (1<<8))) {
-		cout << "OBJA OBJB" << endl;
+		cerr << "OBJA OBJB" << endl;
 	}
 
 	if( (conditions & (1<<9))) {
-		cout << "SUBJA PREDA" << endl;
+		cerr << "SUBJA PREDA" << endl;
 	}
 	if( (conditions & (1<<10))) {
-		cout << "SUBJA OBJA" << endl;
+		cerr << "SUBJA OBJA" << endl;
 	}
 	if( (conditions & (1<<11))) {
-		cout << "PREDA OBJA" << endl;
+		cerr << "PREDA OBJA" << endl;
 	}
 
 	if( (conditions & (1<<12))) {
-		cout << "SUBJB PREDB" << endl;
+		cerr << "SUBJB PREDB" << endl;
 	}
 	if( (conditions & (1<<13))) {
-		cout << "SUBJB OBJB" << endl;
+		cerr << "SUBJB OBJB" << endl;
 	}
 	if( (conditions & (1<<14))) {
-		cout << "PREDB OBJB" << endl;
+		cerr << "PREDB OBJB" << endl;
 	}
 }
 

@@ -35,7 +35,7 @@ namespace cds_static
 		long long nb = 1;
 		nb = (nb*b*n+W-1)/W;
 		if(nb > MAXINT) {
-			cout << "Memory limit excess (in LCP)" << endl;
+			cerr << "Memory limit excess (in LCP)" << endl;
 			exit(1);
 		}
 		lcp_array = new uint[(size_t)nb];

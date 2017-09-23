@@ -30,7 +30,10 @@
  */
 
 #include <sstream>
+
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <stdexcept>
 #include "KyotoDictionary.hpp"
 
@@ -95,7 +98,7 @@ std::string KyotoDictionary::idToString(unsigned int id, TripleComponentRole pos
 	throw std::logic_error("Not implemented");
 }
 
-unsigned int KyotoDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int KyotoDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
 
 	unsigned int ret;
@@ -220,10 +223,10 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 	while(fetchLeft && fetchRight) {
 		int cmp = subjectStr.compare(objectStr);
 
-		//cout << " Left: "<< subjectStr << endl << "Right: " << objectStr << endl << "Cmp: " << cmp << endl << endl;
+		//cerr << " Left: "<< subjectStr << endl << "Right: " << objectStr << endl << "Cmp: " << cmp << endl << endl;
 
 		if(cmp==0) {
-			//cout << "New shared: " << subjectStr<<endl;
+			//cerr << "New shared: " << subjectStr<<endl;
 			curSubj->remove();
 			curObj->remove();
 			shared.set(subjectStr.c_str(), subjectStr.length(), (const char *)&count, sizeof(count));
@@ -242,9 +245,9 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 		}
 
 	if((iterations%100000)==0) {
-		cout << "Iterations: "<< (iterations/1000) << "K   " << endl;
-			cout << "Subjects " << leftCount << "/" << totalSubjects << endl;
-			cout << "Objects " << rightCount << "/" << totalObjects << endl;
+		cerr << "Iterations: "<< (iterations/1000) << "K   " << endl;
+			cerr << "Subjects " << leftCount << "/" << totalSubjects << endl;
+			cerr << "Objects " << rightCount << "/" << totalObjects << endl;
 		}
 		iterations++;
 	}
@@ -270,7 +273,7 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 		}
 
 		if((count%100000)==0) {
-			cout << "Subjects: "<< (count/1000) << "K / " << (totalSubjects/1000) << "K" << endl;
+			cerr << "Subjects: "<< (count/1000) << "K / " << (totalSubjects/1000) << "K" << endl;
 		}
 		count++;
 	}
@@ -300,7 +303,7 @@ void KyotoDictionary::stopProcessing(ProgressListener *listener)
 	objects.defrag();
 #endif
 
-	dumpSizes(cout);
+	dumpSizes(cerr);
 }
 
 
@@ -352,7 +355,7 @@ uint64_t KyotoDictionary::size()
 }
 
 
-unsigned int KyotoDictionary::insert(std::string & str, TripleComponentRole pos)
+unsigned int KyotoDictionary::insert(const std::string & str, TripleComponentRole pos)
 {
 
 	if(str=="") return 0;
@@ -492,15 +495,15 @@ void KyotoDictionary::populateHeader(Header &header, string rootNode)
 }
 
 void KyotoDictionary::dumpSizes(ostream &out) {
-	cout << endl;
-	cout << "\n\t [Dictionary stats:\n";
-	cout << "\t   shared subjects-objects:" << getNshared() << "\n";
-	cout << "\t   not shared subjects:" << getNsubjects() - getNshared() << "\n";
-	cout << "\t   not shared objects:" << getNobjects() - getNshared() << "\n";
-	cout << "\t total subjects:" << getNsubjects() << "\n";
-	cout << "\t total objects:" << getNobjects() << "\n";
-	cout << "\t total predicates:" << getNpredicates() << " ]\n\n";
-	cout << endl;
+	cerr << endl;
+	cerr << "\n\t [Dictionary stats:\n";
+	cerr << "\t   shared subjects-objects:" << getNshared() << "\n";
+	cerr << "\t   not shared subjects:" << getNsubjects() - getNshared() << "\n";
+	cerr << "\t   not shared objects:" << getNobjects() - getNshared() << "\n";
+	cerr << "\t total subjects:" << getNsubjects() << "\n";
+	cerr << "\t total objects:" << getNobjects() << "\n";
+	cerr << "\t total predicates:" << getNpredicates() << " ]\n\n";
+	cerr << endl;
 }
 
 
@@ -516,7 +519,14 @@ void KyotoDictionary::getSuggestions(const char *base, hdt::TripleComponentRole 
 {
     throw std::logic_error("getSuggestions not implemented");
 }
+hdt::IteratorUCharString * KyotoDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role)
+{
+    throw std::logic_error("getSuggestions not implemented");
+}
 
+hdt::IteratorUInt *KyotoDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+	  throw std::logic_error("getIDSuggestions not implemented");
+}
 
 }
 

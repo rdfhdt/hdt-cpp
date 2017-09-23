@@ -94,7 +94,7 @@ std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole p
 	if (localid <= section->getLength()) {
 		const char * ptr = (const char *) section->extract(localid);
 		if (ptr != NULL) {
-			string out = ptr;
+			const string out(ptr);
 			//section->freeString((unsigned char*)ptr);
                         // TODO: find out why overloaded function 'freeString' isn't getting called, this solves it for now
                         delete [] ptr;
@@ -107,7 +107,7 @@ std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole p
 	return string();
 }
 
-unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole position) {
+unsigned int LiteralDictionary::stringToId(const std::string &key, TripleComponentRole position) {
 	unsigned int ret;
 
 	if (key.length() == 0) {
@@ -556,7 +556,7 @@ void LiteralDictionary::stopProcessing(ProgressListener *listener) {
 
 }
 
-unsigned int LiteralDictionary::insert(std::string & str,
+unsigned int LiteralDictionary::insert(const std::string & str,
 		TripleComponentRole position) {
 	throw std::runtime_error("This dictionary does not support insertions.");
 }
@@ -672,6 +672,15 @@ unsigned int LiteralDictionary::getLocalId(unsigned int mapping, unsigned int id
 
 unsigned int LiteralDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
 	return getLocalId(mapping, id, position);
+}
+
+hdt::IteratorUCharString* LiteralDictionary::getSuggestions(const char *prefix, hdt::TripleComponentRole role)
+{
+    throw std::logic_error("getSuggestions not implemented");
+}
+
+hdt::IteratorUInt *LiteralDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+	throw std::logic_error("getIDSuggestions not implemented");
 }
 
 void LiteralDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults) {

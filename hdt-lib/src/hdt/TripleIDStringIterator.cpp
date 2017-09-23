@@ -42,5 +42,15 @@ void TripleIDStringIterator::goToStart() {
 	iterator->goToStart();
 }
 
+size_t TripleIDStringIterator::estimatedNumResults() {
+	return iterator->estimatedNumResults();
+}
+ResultEstimationType TripleIDStringIterator::numResultEstimation() {
+	return iterator->numResultEstimation();
+}
+void TripleIDStringIterator::skip(unsigned int pos) {
+	iterator->skip(pos);
+}
+
 }
 

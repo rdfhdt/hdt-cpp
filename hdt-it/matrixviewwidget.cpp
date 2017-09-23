@@ -123,7 +123,7 @@ void MatrixViewWidget::paintScales()
         QString str = QString::number(i);
         //texto(str, 0, 0, i);
         glColor4f(TEXT_COLOR);
-        this->renderText(0, 0, i, str, QFont(), 2000);
+        this->renderText(0, 0, i, str, QFont());
 
         glColor4f(GRID_COLOR);
         glBegin(GL_LINES);

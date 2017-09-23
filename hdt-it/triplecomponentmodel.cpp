@@ -50,14 +50,14 @@ QVariant TripleComponentModel::data(const QModelIndex &index, int role) const
     case Qt::ToolTipRole:
     case Qt::DisplayRole:
     {
-        //cout << "Data: " << index.row() << " role: " << role << " type: " << tripleComponentRole << endl;
+        //cerr << "Data: " << index.row() << " role: " << role << " type: " << tripleComponentRole << endl;
         hdt::Dictionary *d = hdtController->getHDT()->getDictionary();
         try {
         return stringutils::toQString(d->idToString(index.row()+1, tripleComponentRole).c_str());
         } catch (char *e) {
-            cout << "Error accessing dictionary: " << e << endl;
+            cerr << "Error accessing dictionary: " << e << endl;
         } catch (const char *e) {
-            cout << "Error accessing dictionary: " << e << endl;
+            cerr << "Error accessing dictionary: " << e << endl;
         }
         return QVariant();
     }

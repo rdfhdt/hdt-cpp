@@ -12,11 +12,18 @@ using namespace std;
 
 namespace hdt {
 
+static void log_handler(void *user_data, raptor_log_message *message) {
+	if (message) {
+		cerr << "Serializer message: => " << (const char*)message->text;
+	}
+}
+
 RDFSerializerRaptor::RDFSerializerRaptor(const char *fileName, RDFNotation notation)
 	: RDFSerializer(notation),
 	  readingFromStream(false)
 {
 	world = raptor_new_world();
+	raptor_world_set_log_handler(world, (void *)this, log_handler);
 
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 
@@ -46,7 +53,8 @@ int iostream_write_bytes (void *context, const void *ptr, size_t size, size_t nm
 int iostream_write_byte(void *context, const int byte) {
 	std::ostream *out = reinterpret_cast<std::ostream *>(context);
 	if(out->good()) {
-		out->write((const char *)&byte, sizeof(int));
+		const char c = static_cast<char>(byte);
+		out->write(&c, sizeof(c));
 		return 0;
 	} else {
 		return 1;
@@ -62,11 +70,12 @@ RDFSerializerRaptor::RDFSerializerRaptor(std::ostream &s, RDFNotation notation)
 	  readingFromStream(true)
 {
 	world = raptor_new_world();
+	raptor_world_set_log_handler(world, (void *)this, log_handler);
 
 	base_uri = raptor_new_uri(world, (const unsigned char*)"http://www.rdfhdt.org/");
 
 	memset(&handler, 0, sizeof(handler));
-	handler.version = 1;
+	handler.version = 2;
 	handler.init = iostream_init;
 	handler.finish = iostream_finish;
 	handler.write_byte = iostream_write_byte;
@@ -93,7 +102,7 @@ RDFSerializerRaptor::~RDFSerializerRaptor() {
 	raptor_free_world(world);
 }
 
-raptor_term *getTerm(string &str, raptor_world *world) {
+raptor_term *getTerm(const string &str, raptor_world *world) {
 
 	if(str=="") {
 		throw std::runtime_error("Empty Value on triple!");
@@ -118,8 +127,7 @@ raptor_term *getTerm(string &str, raptor_world *world) {
 		// Remove " "
 		return raptor_new_term_from_literal(world, (const unsigned char *)str.substr(1, str.length()-2).c_str(), NULL, NULL);
 	} else if(str.at(0)=='_') {
-		str = str.substr (2);
-		return raptor_new_term_from_blank(world, (const unsigned char *)str.c_str());
+		return raptor_new_term_from_blank(world, (const unsigned char *)str.substr(2).c_str());
 	} else {
 		return raptor_new_term_from_uri_string(world, (const unsigned char *)str.c_str());
 	}

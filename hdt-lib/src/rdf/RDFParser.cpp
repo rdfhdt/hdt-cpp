@@ -6,13 +6,11 @@
  */
 
 #include "RDFParser.hpp"
-#ifdef HAVE_RAPTOR
-#include "RDFParserRaptorCallback.hpp"
-#endif
-#include "RDFParser.hpp"
-#include "RDFParserNtriples.hpp"
 #ifdef HAVE_SERD
 #include "RDFParserSerd.hpp"
+#endif
+#ifdef HAVE_RAPTOR
+#include "RDFParserRaptorCallback.hpp"
 #endif
 
 namespace hdt {

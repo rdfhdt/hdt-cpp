@@ -29,6 +29,7 @@
 #define _CSDCACHE_H
 
 //#include "../util/lru.hpp"
+#include "../util/lrucache.hpp"
 
 #include <iostream>
 #include <cassert>
@@ -45,9 +46,8 @@ using namespace std;
 namespace csd
 {
 
-//typedef lru::LRUCacheH4<uint32_t, string> LRU_Int;
-//typedef lru::LRUCacheH4<char *, uint32_t> LRU_Str;
-
+typedef cache::lru_cache<uint32_t, string> LRU_Int;
+typedef cache::lru_cache<char *, uint32_t> LRU_Str;
 
 class CSD_Cache : public CSD
 {
@@ -102,9 +102,20 @@ private:
 	@fp: pointer to the file storing a CSD_PFC structure. */
     static CSD * load(istream & fp);
 
-    void fillSuggestions(const char *base, vector<string> &out, int maxResults) {
-    	child->fillSuggestions(base, out, maxResults);
+    // Search for terms by prefix. It returns a vector of a given maximum size "maxResults"
+    void fillSuggestions(const char *prefix, vector<string> &out, int maxResults) {
+    	child->fillSuggestions(prefix, out, maxResults);
     }
+
+	// Search for terms by prefix. It returns an iterator of all results in the dictionary
+	hdt::IteratorUCharString *getSuggestions(const char *prefix){
+		return child->getSuggestions(prefix);
+	}
+
+	// Search for terms by prefix. It returns an iterator of all results in the dictionary, by ID
+		hdt::IteratorUInt *getIDSuggestions(const char *prefix){
+			return child->getIDSuggestions(prefix);
+		}
 
     CSD *getChild() {
     	return child;

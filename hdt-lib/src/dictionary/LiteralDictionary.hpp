@@ -61,7 +61,7 @@ public:
 	~LiteralDictionary();
 
 	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	unsigned int stringToId(const std::string &str, TripleComponentRole position);
 
 	/** Returns the number of IDs that contain s[1,..len] as a substring. It also
 	 * return in occs the IDs. Otherwise return 0.
@@ -102,7 +102,7 @@ public:
     IteratorUCharString *getObjects();
     IteratorUCharString *getShared();
 
-	unsigned int insert(std::string &str, TripleComponentRole position);
+	unsigned int insert(const std::string &str, TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
@@ -111,6 +111,10 @@ public:
 	unsigned int getMapping();
 
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
+
+    hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+    hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
+
 
 private:
 	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);

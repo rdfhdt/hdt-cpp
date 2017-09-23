@@ -1,6 +1,8 @@
-
 #ifdef HAVE_SERD
 
+#ifdef HAVE_LIBZ
+#include <zlib.h>
+#endif
 
 #include "../util/fileUtil.hpp"
 #include "RDFParserSerd.hpp"
@@ -9,169 +11,207 @@
 namespace hdt {
 
 string RDFParserSerd::getString(const SerdNode *term) {
-    string out;
+	string out;
+	out.reserve(term->n_bytes + 2);
 
-    if(term->type==SERD_URI) {
-        out.append((char *)term->buf);
-    } else if(term->type==SERD_BLANK) {
-        out.append("_:");
-        out.append((char *)term->buf);
-    } else if(term->type==SERD_CURIE) {
-        SerdChunk uri_prefix, uri_suffix;
-        if (serd_env_expand(env, term, &uri_prefix, &uri_suffix)) {
-            // ERROR BAD Curie / Prefix
-        }
-        out.append((char *)uri_prefix.buf);
-        out.append((char *)uri_suffix.buf);
-    }
-    //cout << out << endl;
-    return out;
+	if(term->type==SERD_URI) {
+		out.append((const char *)term->buf, term->n_bytes);
+	} else if(term->type==SERD_BLANK) {
+		out.append("_:");
+		out.append((const char *)term->buf, term->n_bytes);
+	} else if(term->type==SERD_CURIE) {
+		SerdChunk uri_prefix, uri_suffix;
+		if (serd_env_expand(env, term, &uri_prefix, &uri_suffix)) {
+			// ERROR BAD Curie / Prefix
+		}
+		out.append((const char *)uri_prefix.buf, uri_prefix.len);
+		out.append((const char *)uri_suffix.buf, uri_suffix.len);
+	}
+	return out;
 }
 
-string RDFParserSerd::getStringObject(const SerdNode *term, const SerdNode *dataType, const SerdNode *lang) {
-    string out;
+string RDFParserSerd::getStringObject(const SerdNode *term,
+                                      const SerdNode *dataType,
+                                      const SerdNode *lang) {
+	if(term->type!=SERD_LITERAL) {
+		return getString(term);
+	}
 
-    if(term->type!=SERD_LITERAL) {
-        return getString(term);
-    }
+	string out;
+	out.reserve(term->n_bytes + 2 +
+	            (dataType ? dataType->n_bytes + 4 : 0) +
+	            (lang     ? lang->n_bytes + 1     : 0));
 
-    out.append("\"");
-    out.append((char *)term->buf);
-    if(lang!=NULL){
-        out.append("\"@");
-        out.append((char *)lang->buf);
-    } else {
-        out.append("\"");
-    }
-    if(dataType!=NULL) {
-        out.append("^^<");
-        out.append((char *)dataType->buf);
-        out.append(">");
-    }
+	out.push_back('\"');
+	out.append((const char *)term->buf, term->n_bytes);
+	out.push_back('\"');
+	if(lang!=NULL){
+		out.push_back('@');
+		out.append((const char *)lang->buf, lang->n_bytes);
+	}
+	if(dataType!=NULL) {
+		out.append("^^<");
+		out.append(getString(dataType));
+		out.push_back('>');
+	}
 
-    //cout << out << endl;
-    return out;
+	return out;
 }
 
-SerdStatus hdtserd_error(void* handle, const SerdError* error) {
-    //RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
-    //raptorParser->error.append("File: "+e->filename+" Line "+e->line+" Col "+e->col+" Parsing Error: "+e->fmt);
-    fprintf(stderr, error->fmt, error->args);
-    throw std::runtime_error("Error parsing input.");
-    return SERD_ERR_BAD_SYNTAX;
+SerdStatus hdtserd_on_error(void *handle, const SerdError *error) {
+	fprintf(stderr, "error: %s:%u:%u: ",
+	        error->filename, error->line, error->col);
+	vfprintf(stderr, error->fmt, *error->args);
+	throw std::runtime_error("Error parsing input.");
+	return error->status;
 }
 
-/**
-   Sink (callback) for base URI changes.
+// Callback for base URI changes (@base directives)
+SerdStatus hdtserd_on_base(void *handle, const SerdNode *uri) {
+	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
-   Called whenever the base URI of the serialisation changes.
-*/
-SerdStatus hdtserd_basechanged(void* handle, const SerdNode* uri) {
-    RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
-
-    return serd_env_set_base_uri(raptorParser->env, uri);
+	return serd_env_set_base_uri(serdParser->env, uri);
 }
 
-/**
-   Sink (callback) for namespace definitions.
+// Callback for namespace definitions (@prefix directives)
+SerdStatus hdtserd_on_prefix(void           *handle,
+                             const SerdNode *name,
+                             const SerdNode *uri) {
+	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
-   Called whenever a prefix is defined in the serialisation.
-*/
-SerdStatus hdtserd_prefixchanged(void* handle,const SerdNode* name, const SerdNode* uri) {
-    RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
-
-    return serd_env_set_prefix(raptorParser->env, name, uri);
+	return serd_env_set_prefix(serdParser->env, name, uri);
 }
 
+// Callback for statements
+SerdStatus hdtserd_on_statement(void               *handle,
+                                SerdStatementFlags  flags,
+                                const SerdNode     *graph,
+                                const SerdNode     *subject,
+                                const SerdNode     *predicate,
+                                const SerdNode     *object,
+                                const SerdNode     *datatype,
+                                const SerdNode     *lang) {
+	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
-/**
-   Sink (callback) for statements.
+	serdParser->callback->processTriple(
+		TripleString(serdParser->getString(subject),
+		             serdParser->getString(predicate),
+		             serdParser->getStringObject(object, datatype, lang)),
+		serdParser->numByte);
 
-   Called for every RDF statement in the serialisation.
-*/
-SerdStatus hdtserd_process_triple(void* handle,
-                                        SerdStatementFlags flags,
-                                        const SerdNode*    graph,
-                                        const SerdNode*    subject,
-                                        const SerdNode*    predicate,
-                                        const SerdNode*    object,
-                                        const SerdNode*    object_datatype,
-                                        const SerdNode*    object_lang) {
-
-    RDFParserSerd *raptorParser = reinterpret_cast<RDFParserSerd *>(handle);
-
-    TripleString ts( raptorParser->getString(subject), raptorParser->getString(predicate), raptorParser->getStringObject(object, object_datatype, object_lang));
-    raptorParser->callback->processTriple(ts, raptorParser->numByte);
-
-    return SERD_SUCCESS;
+	return SERD_SUCCESS;
 }
 
-/**
-   Sink (callback) for anonymous node end markers.
+#ifdef HAVE_LIBZ
 
-   This is called to indicate that the anonymous node with the given
-   @c value will no longer be referred to by any future statements
-   (i.e. the anonymous serialisation of the node is finished).
-*/
-SerdStatus hdtserd_end(void* handle, const SerdNode* node) {
-    return SERD_SUCCESS;
-}
+static const size_t SERD_PAGE_SIZE = 4096;
 
+struct LibzSerdStream {
+	LibzSerdStream(const char *fileName)
+		: file(gzopen(fileName, "rb"))
+		, err(0)
+	{
+		if (!file) {
+			throw ParseException("Could not open input file for parsing");
+		}
+	}
 
+	~LibzSerdStream() {
+		gzclose(file);
+	}
+
+	static int error(void *stream) {
+		LibzSerdStream *s = reinterpret_cast<LibzSerdStream *>(stream);
+		return s->err;
+	}
+
+	static size_t read(void *buf, size_t size, size_t nmemb, void *stream) {
+		LibzSerdStream *s = reinterpret_cast<LibzSerdStream *>(stream);
+
+		const int numRead = gzread(s->file, buf, nmemb * size);
+		if (numRead == -1) {
+			s->err = 1;
+		}
+
+		return numRead;
+	}
+
+private:
+	gzFile file;
+	int err;
+};
+
+#endif
 
 RDFParserSerd::RDFParserSerd() : numByte(0)
 {
 }
 
 RDFParserSerd::~RDFParserSerd() {
-
 }
 
-SerdSyntax RDFParserSerd::getParserType(RDFNotation notation){
-    switch(notation){
-    case NTRIPLES:
-        return SERD_NTRIPLES;
-    case TURTLE:
-        return SERD_TURTLE;
-    default:
-        throw ParseException("Serd parser only supports ntriples and turtle.");
-    }
+SerdSyntax RDFParserSerd::getParserType(RDFNotation notation) {
+	switch(notation){
+	case NTRIPLES:
+		return SERD_NTRIPLES;
+	case NQUAD:
+		return SERD_NQUADS;
+	case TURTLE:
+		return SERD_TURTLE;
+	default:
+		throw ParseException("Serd parser only supports ntriples, nquads, and turtle.");
+	}
 }
 
 void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback) {
+	this->callback = callback;
+	this->numByte = fileUtil::getSize(fileName);
 
-    this->callback = callback;
-    this->numByte = fileUtil::getSize(fileName);
+	// Create Base URI and environment
+	SerdURI  base_uri = SERD_URI_NULL;
+	SerdNode base = serd_node_new_file_uri((const uint8_t *)fileName, NULL, &base_uri, false);
+	env = serd_env_new(&base);
 
-    // Create Base URI and environment
-    SerdURI  base_uri = SERD_URI_NULL;
-    SerdNode base = serd_node_new_file_uri((const uint8_t *)fileName, NULL, &base_uri, false);
-    env = serd_env_new(&base);
+	SerdReader* reader = serd_reader_new(
+		getParserType(notation), this, NULL,
+		(SerdBaseSink)hdtserd_on_base,
+		(SerdPrefixSink)hdtserd_on_prefix,
+		(SerdStatementSink)hdtserd_on_statement,
+		NULL);
 
-    SerdReader* reader = serd_reader_new(
-                getParserType(notation), this, NULL,
-                (SerdBaseSink)hdtserd_basechanged,
-                (SerdPrefixSink)hdtserd_prefixchanged,
-                (SerdStatementSink)hdtserd_process_triple,
-                (SerdEndSink)hdtserd_end);
+	serd_reader_set_error_sink(reader, hdtserd_on_error, NULL);
 
-    serd_reader_set_error_sink(reader, hdtserd_error, NULL);
+	const uint8_t* input=serd_uri_to_path((const uint8_t *)fileName);
 
+	if(fileUtil::str_ends_with(fileName,".gz")){
 
-    const uint8_t* input=serd_uri_to_path((const uint8_t *)fileName);
-    FILE *in_fd = fopen((const char*)input, "r");
-    // TODO: fadvise sequential
-    if(in_fd==NULL) {
-        throw ParseException("Could not open input file for parsing");
-    }
-    serd_reader_read_file_handle(reader, in_fd, (const uint8_t *)fileName);
+		// NOTE: Requires serd 0.27.1
+#ifdef HAVE_LIBZ
+		LibzSerdStream libzSerdStream(fileName);
+		const SerdStatus status = serd_reader_read_source(
+			reader, &LibzSerdStream::read, &LibzSerdStream::error,
+			&libzSerdStream, input, SERD_PAGE_SIZE);
+		if (status) {
+			throw ParseException((const char*)serd_strerror(status));
+		}
+#else
+		cerr << "HDT Library has not been compiled with gzip support." << endl;
+#endif
 
-    serd_reader_free(reader);
+	} else {
+		FILE *in_fd = fopen((const char*)input, "r");
+		// TODO: fadvise sequential
+		if(in_fd==NULL) {
+			throw ParseException("Could not open input file for parsing");
+		}
+		serd_reader_read_file_handle(reader, in_fd, (const uint8_t *)fileName);
+		fclose(in_fd);
+	}
 
-    fclose(in_fd);
+	serd_reader_free(reader);
 
-    serd_env_free(env);
-    serd_node_free(&base);
+	serd_env_free(env);
+	serd_node_free(&base);
 }
 
 }

@@ -27,6 +27,9 @@ public:
 	bool hasPrevious();
 	TripleString *previous();
 	void goToStart();
+	size_t estimatedNumResults();
+	ResultEstimationType numResultEstimation();
+	void skip(unsigned int pos);
 };
 
 } /* namespace hdt */

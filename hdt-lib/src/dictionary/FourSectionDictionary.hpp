@@ -60,7 +60,7 @@ public:
 	~FourSectionDictionary();
 
 	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	unsigned int stringToId(const std::string &str, TripleComponentRole position);
 
     size_t getNumberOfElements();
 
@@ -93,6 +93,9 @@ public:
 	unsigned int getMapping();
 
     void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
+    hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+    hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
+
 
 private:
 	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);

@@ -81,7 +81,14 @@ class CSD
     /** Returns the number of strings in the dictionary. */
     uint32_t getLength();
 
-    virtual void fillSuggestions(const char *base, vector<string> &out, int maxResults)=0;
+    // Search for terms by prefix. It returns a vector of a given maximum size "maxResults"
+    virtual void fillSuggestions(const char *prefix, vector<string> &out, int maxResults)=0;
+
+    // Search for terms by prefix. It returns an iterator of all results in the dictionary
+    virtual hdt::IteratorUCharString *getSuggestions(const char *prefix)=0;
+
+    // Search for terms by prefix. It returns an iterator of all results in the dictionary, by ID
+    virtual hdt::IteratorUInt *getIDSuggestions(const char *prefix)=0;
 
     /** Stores a CSD structure given a file pointer.
 	@fp: pointer to the file saving a CSD structure.

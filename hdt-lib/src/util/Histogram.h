@@ -25,6 +25,13 @@ public:
 	 * @param End Description of the param.
 	 * @param nBins Description of the param.
 	 */
+
+	Histogram() :
+			Start(0), nBins_by_interval(0), nBins(0),
+					freq(new unsigned int[0]) {
+			reset();
+		}
+
 	Histogram(const double& Start, const double& End, const unsigned int& nBins) :
 		Start(Start), nBins_by_interval(nBins / (End - Start)), nBins(nBins),
 				freq(new unsigned int[nBins]) {
@@ -41,6 +48,9 @@ public:
 		for (unsigned int i(0); i < nBins; ++i)
 			freq[i] = other.freq[i];
 	}
+
+#undef min
+#undef max
 
 	/** Reset
 	 * @return void
@@ -113,6 +123,7 @@ public:
 	 * @return void
 	 */
 	void end() {
+
 		mean = mean / number;
 		deviation = deviation / number - mean * mean;
 		deviation = sqrt(deviation);
@@ -156,7 +167,7 @@ public:
 		fileName.append(suffix);
 		ofstream outfile;
 
-		cout << "Writing histogram to: " << fileName << endl;
+		cerr << "Writing histogram to: " << fileName << endl;
 
 		outfile.open(fileName.c_str());
 

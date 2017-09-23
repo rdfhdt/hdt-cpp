@@ -119,7 +119,7 @@ void HDTit::openHDTFile(QString &file)
     hdtChanged(file);
 }
 
-void HDTit::importRDFFile(QString &file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
+void HDTit::importRDFFile(QString &file, const string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec)
 {
     hdtController->importRDFFile(file, baseUri, notation, spec);
 
@@ -182,7 +182,7 @@ void HDTit::on_actionImportRDF_triggered()
         hdtSpecForm.fillHDTSpecification(spec);
 
         QString file = hdtSpecForm.getFileName();
-        string baseUri = string(hdtSpecForm.getBaseUri().toAscii());
+        string baseUri = string(hdtSpecForm.getBaseUri().toLatin1());
         hdt::RDFNotation notation = hdtSpecForm.getNotation();
         importRDFFile(file, baseUri, notation, spec);
     }

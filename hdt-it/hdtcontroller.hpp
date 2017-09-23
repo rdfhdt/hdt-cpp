@@ -52,7 +52,7 @@ public:
     bool hasHDT();
     void openHDTFile(QString file);
     void saveHDTFile(QString file);
-    void importRDFFile(QString file, string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
+    void importRDFFile(QString file, const string &baseUri, hdt::RDFNotation notation, hdt::HDTSpecification &spec);
     void exportRDFFile(QString file, hdt::RDFNotation notation);
     void exportResultsRDFFile(QString file, hdt::RDFNotation notation);
     void closeHDT();

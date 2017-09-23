@@ -47,6 +47,7 @@ public:
 	static uint64_t getSize(const char *file);
 
 	static void decompress(const char *input, const char * output, hdt::ProgressListener *listener=NULL);
+	static int str_ends_with(const char *str, const char *suffix);
 };
 
 class DecompressStream {

@@ -111,6 +111,10 @@ class CSD_HTFC : public CSD
 
     void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 
+    hdt::IteratorUCharString *getSuggestions(const char *prefix);
+
+    hdt::IteratorUInt *getIDSuggestions(const char *prefix);
+
     hdt::IteratorUCharString *listAll() { throw std::logic_error("Not Implemented"); }
 
   protected:

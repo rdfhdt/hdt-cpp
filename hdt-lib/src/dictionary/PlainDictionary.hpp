@@ -42,7 +42,11 @@
 #include <fstream>
 #include <iostream>
 
+#ifndef WIN32
 #include <ext/hash_map>
+#else
+#include <unordered_map>
+#endif
 
 //#define GOOGLE_HASH
 
@@ -54,7 +58,9 @@ using __gnu_cxx::hash;  // or __gnu_cxx::hash, or maybe tr1::hash, depending on 
 
 #else
 
+#ifndef WIN32
 namespace std { using namespace __gnu_cxx; }
+#endif
 
 #endif
 
@@ -81,7 +87,14 @@ typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 #ifdef GOOGLE_HASH 
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
+
+#ifdef WIN32
+/*typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;*/
+typedef unordered_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
+#else
 typedef std::hash_map<const char *, DictionaryEntry *, __gnu_cxx::hash<const char *>, str_cmp> DictEntryHash;
+
+#endif
 #endif
 
 typedef DictEntryHash::const_iterator DictEntryIt;
@@ -109,7 +122,7 @@ public:
 	~PlainDictionary();
 
 	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	unsigned int stringToId(const std::string &str, TripleComponentRole position);
 
     size_t getNumberOfElements();
 
@@ -139,7 +152,7 @@ public:
     IteratorUCharString *getShared();
 
 // ModifiableDictionary
-	unsigned int insert(std::string &str, TripleComponentRole position);
+	unsigned int insert(const std::string &str, TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
@@ -148,6 +161,10 @@ public:
 	unsigned int getMapping();
 
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
+
+    hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+
+    hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 // Private methods
 private:

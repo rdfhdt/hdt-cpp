@@ -48,6 +48,12 @@ public:
     virtual void notifyProgress(float task, float level, const char *section)=0;
 };
 
+#ifdef WIN32
+#undef max
+#undef min
+#endif
+
+
 class IntermediateListener : public ProgressListener {
 	ProgressListener *child;
 	float min, max;
@@ -84,13 +90,13 @@ public:
 	virtual ~StdoutProgressListener() { }
 
     void notifyProgress(float level, const char *section) {
-    	std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << level << " %                      \r";
-		std::cout.flush();
+    	std::cerr << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << level << " %                      \r";
+		std::cerr.flush();
 	}
 
     void notifyProgress(float task, float level, const char *section) {
-    	std::cout << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << task << " % / " << level << " %                      \r";
-                std::cout.flush();
+    	std::cerr << "\r " << std::setw( 3 ) << std::setprecision( 5 )<< section << ": " << task << " % / " << level << " %                      \r";
+                std::cerr.flush();
         }
 
 };

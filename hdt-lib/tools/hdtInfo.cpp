@@ -71,14 +71,14 @@ int main(int argc, char **argv) {
 			cout << HDTVersion::get_version_string(".") << endl;
 			return 0;
 		default:
-			cout << "ERROR: Unknown option" << endl;
+			cerr << "ERROR: Unknown option" << endl;
 			help();
 			return 1;
 		}
 	}
 
 	if(argc-optind<1) {
-		cout << "ERROR: You must supply an HDT File" << endl << endl;
+		cerr << "ERROR: You must supply an HDT File" << endl << endl;
 		help();
 		return 1;
 	}
@@ -155,5 +155,6 @@ int main(int argc, char **argv) {
 
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
+		return 1;
 	}
 }

@@ -50,7 +50,7 @@ public:
     HDTOperation(hdt::HDT *hdt, HDTCachedInfo *hdtInfo);
     void saveToRDF(QString &fileName, hdt::RDFNotation notation);
     void saveToHDT(QString &fileName);
-    void loadFromRDF(hdt::HDTSpecification &spec, QString &fileName, hdt::RDFNotation notation, string &baseUri);
+    void loadFromRDF(hdt::HDTSpecification &spec, QString &fileName, hdt::RDFNotation notation, const string &baseUri);
     void loadFromHDT(QString &fileName);
     void exportResults(QString &fileName, hdt::IteratorTripleString *iterator, unsigned int numResults, hdt::RDFNotation notation);
     hdt::HDT *getHDT();

@@ -87,6 +87,10 @@ int main(int argc, char **argv) {
 	}
 	inputFile = argv[optind];
 	outputFile = argv[optind+1];
+	if (strcmp(inputFile,outputFile)==0){
+		cerr<< "ERROR: input and output files must me different" << endl <<endl;
+		return 1;
+	}
 
 	try {
 		// LOAD
@@ -127,5 +131,6 @@ int main(int argc, char **argv) {
 		delete hdt;
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
+		return 1;
 	}
 }

@@ -29,6 +29,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <sys/stat.h>
+#include <string.h>
 #include "fileUtil.hpp"
 
 #ifdef HAVE_LIBZ
@@ -157,6 +158,21 @@ void fileUtil::decompress(const char *input, const char * output, hdt::ProgressL
 #endif
 }
 
+/*  returns 1 iff str ends with suffix  */
+int fileUtil::str_ends_with(const char * str, const char * suffix) {
+
+  if( str == NULL || suffix == NULL )
+    return 0;
+
+  size_t str_len = strlen(str);
+  size_t suffix_len = strlen(suffix);
+
+  if(suffix_len > str_len)
+    return 0;
+
+  return 0 == strncmp( str + str_len - suffix_len, suffix, suffix_len );
+}
+
 DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NULL), fileStream(NULL) {
 
 #ifdef HAVE_LIBZ
@@ -186,6 +202,7 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 	}
 #endif
 
+#ifndef WIN32
 	if(pipeCommand.length()>0) {
 		pipeCommand.append(fileName);
 		if ((filePipe=popen(pipeCommand.c_str(),"r")) == NULL) {
@@ -203,11 +220,14 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 		cerr << "Error opening file " << fileName << " for parsing " << endl;
 		throw std::runtime_error("Error opening file for parsing");
 	}
+#endif
 }
 
 void DecompressStream::close() {
 	if(fileStream) fileStream->close();
+#ifndef WIN32
 	if(filePipe) pclose(filePipe);
+#endif
 #ifdef HAVE_LIBZ
 	if(gzStream) gzStream->close();
 #endif

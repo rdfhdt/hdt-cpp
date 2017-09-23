@@ -36,7 +36,7 @@ private:
 				return i;
 			}
 		}
-		cout << "Var name: " << varName << " not found" << endl;
+		cerr << "Var name: " << varName << " not found" << endl;
 		throw std::runtime_error("Var name does not exist");
 	}
 public:
@@ -61,9 +61,8 @@ public:
 	}
 	virtual string getVar(unsigned int numvar) {
 		unsigned int id = varID->getVarValue(numvar);
-		string varName(getVarName(numvar));
 
-		return dict->idToString(id, varRole.find(varName)->second);
+		return dict->idToString(id, varRole.find(getVarName(numvar))->second);
 	}
 	virtual const char *getVarName(unsigned int numvar) {
 		return varID->getVarName(numvar);

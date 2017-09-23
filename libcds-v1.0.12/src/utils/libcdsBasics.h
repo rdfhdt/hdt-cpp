@@ -29,7 +29,9 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <sys/stat.h>
 #include <iostream>
 #include <fstream>
@@ -43,6 +45,10 @@
 #ifdef WIN32
 typedef unsigned int uint;
 typedef unsigned short ushort;
+
+#define min(a,b) (((a)<(b))?(a):(b))
+#define max(a,b) (((a)>(b))?(a):(b))
+
 #endif
 
 
