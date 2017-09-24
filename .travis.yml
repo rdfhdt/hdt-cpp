@@ -53,7 +53,7 @@ script:
   - pushd libhdt && TESTS=$TESTS_HDT make -e check -j2 && popd
   # Install
   - make install
-  - $HOME/bin/hdtSearch -q 0 hdt-lib/data/literals.hdt
+  - $HOME/bin/hdtSearch -q 0 libhdt/data/literals.hdt
   # Test installation files
   - test -f $HOME/bin/hdt2rdf
   - test -f $HOME/bin/hdtInfo
