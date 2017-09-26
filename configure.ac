@@ -40,14 +40,6 @@ AM_COND_IF([WANTS_Z],
     AC_SUBST(HAVE_ZLIB,"-DHAVE_LIBZ"))
    AC_MSG_NOTICE([ZLIB enabled])])
 
-AC_ARG_WITH([raptor2-prefix],
-  AS_HELP_STRING([--with-raptor2-prefix=DIR], [Enables raptor2 library]),
-  [AC_SUBST(RAPTOR2_HDR,"-I$with_raptor2_prefix/include")
-   AC_SUBST(RAPTOR2_LIB,"-L$with_raptor2_prefix/lib -lraptor2")
-   AC_SUBST(RAPTOR2_CFLAGS, "-DHAVE_RAPTOR")
-   AC_DEFINE([HAVE_RAPTOR2],[1],[raptor2 available])
-   AC_MSG_NOTICE([RAPTOR2 enabled])])
-
 AC_ARG_WITH([kyoto-prefix],
   AS_HELP_STRING([--with-kyoto-prefix=DIR], [Enables kyoto library]),
   [AC_SUBST(KYOTO_HDR, "-I$with_kyoto_prefix/include")

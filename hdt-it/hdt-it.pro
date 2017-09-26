@@ -115,16 +115,15 @@ macx:LIBS += $${LIBCDS}/qmake/macx/libcds.a ../hdt-lib/qmake/macx/libhdt.a
 
 #Windows
 win32-g++:contains(QMAKE_HOST.arch, x86_64):{
-    #win32:LIBS += -L"C:/msys/local/lib/" -lraptor2 -lxml2 -lws2_32
+    #win32:LIBS += -L"C:/msys/local/lib/" -lxml2 -lws2_32
 } else {
-   # win32:LIBS += -L"C:/MinGW/msys/1.0/local/lib/" -lraptor2 -lxml2 -lws2_32
+   # win32:LIBS += -L"C:/MinGW/msys/1.0/local/lib/" -lxml2 -lws2_32
 }
 
 win32:LIBS += -L"C:/msys/local/lib/" -L"/usr/local/lib" -L"C:/MinGW/msys/1.0/local/lib/"
 
 #Unix (Linux & Mac)
 unix:LIBS += -L"/usr/local/lib" -lz -lserd-0
-#-lraptor2
 
 RESOURCES += \
     hdtresources.qrc
