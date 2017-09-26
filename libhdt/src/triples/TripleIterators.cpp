@@ -147,7 +147,7 @@ size_t SequentialSearchIteratorTripleID::estimatedNumResults()
 }
 
 bool SequentialSearchIteratorTripleID::canGoTo(){
-	return false; // to point that it is not direct but slow
+	return true;
 }
 void SequentialSearchIteratorTripleID::goTo(unsigned int pos){
 	iterator->goToStart();
