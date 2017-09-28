@@ -37,16 +37,13 @@ before_install:
   # - curl -s http://download.drobilla.net/serd-0.24.0.tar.bz2 | tar -xj
   - git clone https://github.com/drobilla/serd.git
   - pushd serd* && ./waf configure --prefix=$HOME/local && ./waf && ./waf install && popd
-  # Download and install Raptor
-  - curl -s http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar -xz
-  - pushd raptor2-* && ./configure --prefix=$HOME/local && make -j2 && make install && popd
   # Set up build environment
   - $HDT_CPP --version
   - popd
 script:
   # Build standalone binaries
   - ./autogen.sh
-  - ./configure --with-serd-prefix=$HOME/local --with-raptor2-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
+  - ./configure --with-serd-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
   - make -j2
   # Make and run selected tests. Most tests in HDT are failing
   - pushd libcds && TESTS=$TESTS_CDS make -e check -j2 && popd
