@@ -47,10 +47,10 @@ script:
   - make -j2
   # Make and run selected tests. Most tests in HDT are failing
   - TESTS=$TESTS_CDS make -e check -j2 -C libcds || ( cat libcds/tests/test-suite.log && exit -1)
-  - TESTS=$TESTS_HDT LD_LIBRAR_PATH=$HOME/local/lib make -e check -j2 -C libhdt || ( cat libhdt/tests/test-suite.log && exit -1)
+  - TESTS=$TESTS_HDT LD_LIBRARY_PATH=$HOME/local/lib make -e check -j2 -C libhdt || ( cat libhdt/tests/test-suite.log && exit -1)
   # Install
   - make install
-  - LD_LIBRAR_PATH=$HOME/local/lib $HOME/bin/hdtSearch -q 0 libhdt/data/literals.hdt
+  - LD_LIBRARY_PATH=$HOME/local/lib $HOME/bin/hdtSearch -q 0 libhdt/data/literals.hdt
   # Test installation files
   - test -f $HOME/bin/hdt2rdf
   - test -f $HOME/bin/hdtInfo
