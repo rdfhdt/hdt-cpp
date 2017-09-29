@@ -27,7 +27,7 @@ AM_COND_IF([WANTS_LIBCDS],
   AC_MSG_NOTICE([LIBCDS enabled]))
 
 AC_ARG_ENABLE([zlib],
-  AS_HELP_STRING([--enable-zlib], [Turn on z library (default: yes) ]),
+  AS_HELP_STRING([--enable-zlib], [Turn on z library [default: yes] ]),
   [case "${enableval}" in
     yes) wants_z=true ;;
     no)  wants_z=false ;;
@@ -35,10 +35,9 @@ AC_ARG_ENABLE([zlib],
    esac],[wants_z=true])
 AM_CONDITIONAL([WANTS_Z], [test x$wants_z = xtrue])
 AM_COND_IF([WANTS_Z],
-  [PKG_CHECK_MODULES([zlib],[zlib],
-    AC_SUBST(ZLIB_LIB,"-lz")
-    AC_SUBST(HAVE_ZLIB,"-DHAVE_LIBZ"))
-   AC_MSG_NOTICE([ZLIB enabled])])
+  [PKG_CHECK_MODULES([ZLIB],[zlib],
+    [AC_DEFINE([HAVE_LIBZ],[1],[zlib available])
+  ])])
 
 AC_ARG_WITH([kyoto-prefix],
   AS_HELP_STRING([--with-kyoto-prefix=DIR], [Enables kyoto library]),
