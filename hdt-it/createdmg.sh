@@ -23,19 +23,6 @@ rm -Rf $FOLDER/*
 echo macdeployqt $SRCAPP
 macdeployqt $SRCAPP
 
-# Add dependencies of raptor)
-cp -R /usr/lib/libcurl.4.dylib $SRCAPP/Contents/Frameworks
-#cp -R /usr/lib/libxml2.2.dylib $SRCAPP/Contents/Frameworks
-#cp -R /usr/lib/libxslt.1.dylib $SRCAPP/Contents/Frameworks
-
-# Relocate references
-install_name_tool -change "/usr/lib/libcurl.4.dylib" "@executable_path/../Frameworks/libcurl.4.dylib" $SRCAPP/Contents/Frameworks/libraptor2.0.dylib
-#install_name_tool -change "/usr/lib/libxml2.2.dylib" "@executable_path/../Frameworks/libxml2.2.dylib" $SRCAPP/Contents/Frameworks/libraptor2.0.dylib
-#install_name_tool -change "/usr/lib/libxslt.1.dylib" "@executable_path/../Frameworks/libxslt.1.dylib" $SRCAPP/Contents/Frameworks/libraptor2.0.dylib
-
-#install_name_tool -change "/usr/lib/libxml2.2.dylib" "@executable_path/../Frameworks/libxml2.2.dylib" $SRCAPP/Contents/Frameworks/libxslt.1.dylib
-#install_name_tool -change "/usr/lib/libxslt.1.lib" "@executable_path/../Frameworks/libxslt.1.dylib" $SRCAPP/Contents/Frameworks/libxslt.1.dylib
-
 # ADD Translation files
 cp -Rf *.qm $SRCAPP/Contents/Resources
 
@@ -63,8 +50,8 @@ echo "Fill moredatasets.txt"
 echo "You can download more datasets from http://www.rdfhdt.org/datasets or import your own ones using the 'Import RDF' option!" > $FOLDER/datasets/moredatasets.txt
 
 # COPY APP to folder
-echo cp -R $SRCAPP $FOLDER 
-cp -R $SRCAPP $FOLDER 
+echo cp -R $SRCAPP $FOLDER
+cp -R $SRCAPP $FOLDER
 
 # COPY DATASETS
 for i in $DATASETS

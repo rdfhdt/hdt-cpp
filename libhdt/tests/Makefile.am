@@ -28,7 +28,6 @@ opendic \
 parse \
 patsearch \
 popcnt \
-rdfprint \
 streamtest \
 testmax \
 wav
@@ -36,7 +35,7 @@ wav
 AM_DEFAULT_SOURCE_EXT = .cpp
 
 AM_CPPFLAGS = -I@top_srcdir@/libhdt/include $(WARN_CFLAGS)
-AM_LDFLAGS = $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
+AM_LDFLAGS = $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 LDADD = ../libhdt.la
 
 if WANTS_LIBCDS
@@ -45,4 +44,3 @@ LDADD += $(top_builddir)/libcds/libcds.la
 endif
 
 TESTS = $(check_PROGRAMS)
-

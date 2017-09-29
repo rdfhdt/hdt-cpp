@@ -7,7 +7,6 @@
 
 #include <RDFParser.hpp>
 #include <HDTEnums.hpp>
-#include "../src/rdf/RDFParserRaptorCallback.hpp"
 #include "../src/util/StopWatch.hpp"
 
 
@@ -45,6 +44,3 @@ int main(int argc, char **argv) {
 
 	delete parser;
 }
-
-
-

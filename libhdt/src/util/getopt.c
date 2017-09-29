@@ -1,4 +1,4 @@
-/* 
+/*
  * Public Domain getopt - history below
  *
  */
@@ -10,10 +10,10 @@
 
 /*
  * getopt -- public domain version of standard System V routine
- * 
+ *
  * Strictly enforces the System V Command Syntax Standard; provided by D A
  * Gwyn of BRL for generic ANSI C implementations
- * 
+ *
  * #define STRICT to prevent acceptance of clustered options with arguments
  * and ommision of whitespace between option and arg.
  */
@@ -30,8 +30,6 @@
  *   Ran through "indent getopt.c -gnu" then fixed up the mess
  *   Removed register - compilers are smart these days
  *   ANSI-fied the declarations
- *   Prefixed with raptor_ so that it doesn't clash with any getopt
- *   linked in later.
  */
 
 
@@ -39,7 +37,6 @@
 #include <string.h>
 
 #ifdef WIN32
-#include <raptor_getopt.h>
 
 int opterr;		/* error => print message */
 int optind;		/* next argv[] index */
@@ -114,7 +111,7 @@ getopt (int argc, char * const argv[], const char *optstring)
       sp = 1;			/* beginning of next argument */
     }
 
-  if(c == ':' 
+  if(c == ':'
       || c == '?'	/* optstring syntax conflict */
       || (cp = strchr (optstring, c)) == NULL) /* not found */
     {

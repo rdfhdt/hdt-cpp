@@ -48,11 +48,9 @@ src/libdcs/fmindex/SSA.cpp \
 src/libdcs/fmindex/SuffixArray.cpp \
 src/rdf/RDFParser.cpp \
 src/rdf/RDFParserNtriples.cpp \
-src/rdf/RDFParserRaptorCallback.cpp \
 src/rdf/RDFParserSerd.cpp \
 src/rdf/RDFSerializer.cpp \
 src/rdf/RDFSerializerNTriples.cpp \
-src/rdf/RDFSerializerRaptor.cpp \
 src/rdf/RDFSerializerSerd.cpp \
 src/sequence/AdjacencyList.cpp \
 src/sequence/ArraySequence.cpp \
@@ -123,10 +121,8 @@ src/hdt/HDTFactory.hpp\
 src/hdt/TripleIDStringIterator.hpp\
 src/header/PlainHeader.hpp\
 src/rdf/RDFParserNtriples.hpp\
-src/rdf/RDFParserRaptorCallback.hpp\
 src/rdf/RDFParserSerd.hpp\
 src/rdf/RDFSerializerNTriples.hpp\
-src/rdf/RDFSerializerRaptor.hpp\
 src/rdf/RDFSerializerSerd.hpp\
 src/sequence/AdjacencyList.hpp\
 src/sequence/ArraySequence.hpp\
@@ -164,12 +160,11 @@ third/fdstream.hpp
 
 AM_CPPFLAGS = $(WARN_CFLAGS) \
 -I$(top_builddir)/lib -I$(builddir)/include \
-$(RAPTOR2_HDR) $(RAPTOR2_CFLAGS) \
 $(KYOTO_HDR) $(KYOTO_CFLAGS) \
 $(SERD_HDR) $(SERD_CFLAGS) \
 $(ZLIB_CFLAGS)
 
-AM_LDFLAGS = $(RAPTOR2_LIB) $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
+AM_LDFLAGS = $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
 
 if WANTS_LIBCDS
 AM_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include

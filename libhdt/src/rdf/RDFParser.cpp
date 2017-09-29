@@ -9,9 +9,6 @@
 #ifdef HAVE_SERD
 #include "RDFParserSerd.hpp"
 #endif
-#ifdef HAVE_RAPTOR
-#include "RDFParserRaptorCallback.hpp"
-#endif
 
 namespace hdt {
 
@@ -20,9 +17,6 @@ RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
     if(notation==TURTLE || notation==NTRIPLES) {
         return new RDFParserSerd();
     }
-#endif
-#ifdef HAVE_RAPTOR
-		return new RDFParserRaptorCallback();
 #else
 		throw ParseException("No Parser available for input RDF Format");
 #endif
