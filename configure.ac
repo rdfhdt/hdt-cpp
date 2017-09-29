@@ -39,13 +39,11 @@ AM_COND_IF([WANTS_Z],
     [AC_DEFINE([HAVE_LIBZ],[1],[zlib available])
   ])])
 
-AC_ARG_WITH([kyoto-prefix],
-  AS_HELP_STRING([--with-kyoto-prefix=DIR], [Enables kyoto library]),
-  [AC_SUBST(KYOTO_HDR, "-I$with_kyoto_prefix/include")
-   AC_SUBST(KYOTO_LIB, "-L$with_kyoto_prefix/lib -lkyotocabinet")
-   AC_SUBST(KYOTO_CFLAGS, "-DHAVE_KYOTO")
-   AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
-   AC_MSG_NOTICE([KYOTO enabled])])
+AC_ARG_WITH([kyoto],
+  AS_HELP_STRING([--with-kyoto], [Enables kyoto library]),
+  [PKG_CHECK_MODULES([KYOTO], [kyotocabinet],
+     [AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
+  ])])
 
 AC_ARG_WITH([serd],
   AS_HELP_STRING([--with-serd], [Enables Serd library]),

@@ -160,11 +160,11 @@ third/fdstream.hpp
 
 AM_CPPFLAGS = $(WARN_CFLAGS) \
 -I$(top_builddir)/lib -I$(builddir)/include \
-$(KYOTO_HDR) $(KYOTO_CFLAGS) \
+$(KYOTO_CFLAGS) \
 $(SERD_CFLAGS) \
 $(ZLIB_CFLAGS)
 
-AM_LDFLAGS = $(SERD_LIBS) $(ZLIB_LIBS) $(KYOTO_LIB)
+AM_LDFLAGS = $(SERD_LIBS) $(ZLIB_LIBS) $(KYOTO_LIBS)
 
 if WANTS_LIBCDS
 AM_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
