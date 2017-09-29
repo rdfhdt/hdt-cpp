@@ -35,7 +35,7 @@ wav
 AM_DEFAULT_SOURCE_EXT = .cpp
 
 AM_CPPFLAGS = -I@top_srcdir@/libhdt/include $(WARN_CFLAGS)
-AM_LDFLAGS = $(SERD_LIB) $(ZLIB_LIB) $(KYOTO_LIB)
+AM_LDFLAGS = $(SERD_LIBS) $(ZLIB_LIB) $(KYOTO_LIB)
 LDADD = ../libhdt.la
 
 if WANTS_LIBCDS

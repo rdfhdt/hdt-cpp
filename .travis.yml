@@ -43,7 +43,7 @@ before_install:
 script:
   # Build standalone binaries
   - ./autogen.sh
-  - ./configure --with-serd-prefix=$HOME/local --prefix=$HOME CXX=$HDT_CPP
+  - PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig ./configure --with-serd --prefix=$HOME CXX=$HDT_CPP
   - make -j2
   # Make and run selected tests. Most tests in HDT are failing
   - TESTS=$TESTS_CDS make -e check -j2 -C libcds || ( cat libcds/tests/test-suite.log && exit -1)

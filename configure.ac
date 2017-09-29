@@ -48,13 +48,11 @@ AC_ARG_WITH([kyoto-prefix],
    AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
    AC_MSG_NOTICE([KYOTO enabled])])
 
-AC_ARG_WITH([serd-prefix],
-  AS_HELP_STRING([--with-serd-prefix=DIR], [Enables serd library]),
-  [AC_SUBST(SERD_HDR,"-I$with_serd_prefix/include")
-   AC_SUBST(SERD_LIB,"-L$with_serd_prefix/lib -lserd-0")
-   AC_SUBST(SERD_CFLAGS, "-DHAVE_SERD")
-   AC_DEFINE([HAVE_SERD],[1],[serd available])
-   AC_MSG_NOTICE([SERD enabled])])
+AC_ARG_WITH([serd],
+  AS_HELP_STRING([--with-serd], [Enables Serd library]),
+  [PKG_CHECK_MODULES([SERD], [serd-0],
+    [AC_DEFINE([HAVE_SERD],[1],[Serd available])
+  ])])
 
 # Check for typedefs, structures, and compiler characteristics
 AC_HEADER_STDBOOL
