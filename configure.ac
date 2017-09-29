@@ -14,7 +14,7 @@ AC_PROG_INSTALL
 AC_PROG_CPP
 AM_PROG_AR
 LT_INIT([shared static])
-AX_CXX_COMPILE_STDCXX_11(,[mandatory])
+AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
 
 # Friendly optimisations
 AC_MSG_CHECKING(whether to enable optimizations)
