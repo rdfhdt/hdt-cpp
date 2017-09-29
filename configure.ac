@@ -5,7 +5,9 @@ AC_CONFIG_HEADERS([build/config.h])
 AM_INIT_AUTOMAKE([foreign])
 AM_SILENT_RULES([yes])
 
-CXXFLAGS="$CXXFLAGS -g -O2 -std=c++0x"
+# CXXFLAGS is cleaned with user-defined flags.
+# configure includes by default some flags. 
+AC_SUBST(CXXFLAGS,$CXXFLAGS)
 AC_PROG_CXX
 gl_EARLY
 AC_LANG([C++])
@@ -13,21 +15,41 @@ AC_PROG_INSTALL
 AC_PROG_CPP
 AM_PROG_AR
 LT_INIT([shared static])
+AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
+
+# Friendly optimisations
+# When --enable-optiization is set, CXXFLAGS includes -g -O2 and the flags
+# defined by the user.
+# If --disable-optimization is set, then CXXFLAGS is taken directly from the
+# user. 
+AC_MSG_CHECKING(whether to enable optimizations)
+AC_ARG_ENABLE([optimization], 
+  AS_HELP_STRING([--enable-optimization],[Turn on optimization [default=yes]]),
+  [case "${enableval}" in
+    yes) CXXFLAGS="${CXXFLAGS} -g -O2" ;;
+    no) ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-optimization]) ;;
+    esac
+    AC_MSG_RESULT(${enableval})],
+  [CXXFLAGS="${CXXFLAGS} -g -O2"]
+  [AC_MSG_RESULT(yes)])
 
 # Checks for libraries
+AC_MSG_CHECKING(whether to enable libcds)
 AC_ARG_ENABLE([libcds],
-  AS_HELP_STRING([--enable-libcds],[Turn on libcds [default: yes]]),
+  AS_HELP_STRING([--enable-libcds],[Turn on libcds [default=yes]]),
   [case "${enableval}" in
     yes) wants_cds=true ;;
     no)  wants_cds=false ;;
     *) AC_MSG_ERROR([bad value ${enableval} for --enable-libcds]) ;;
-   esac],[wants_cds=true])
+   esac
+   AC_MSG_RESULT(${enableval})],
+ [wants_cds=true]
+ [AC_MSG_RESULT(yes)])
 AM_CONDITIONAL([WANTS_LIBCDS], [test x$wants_cds = xtrue])
-AM_COND_IF([WANTS_LIBCDS],
-  AC_MSG_NOTICE([LIBCDS enabled]))
 
 AC_ARG_ENABLE([zlib],
-  AS_HELP_STRING([--enable-zlib], [Turn on z library (default: yes) ]),
+  AS_HELP_STRING([--enable-zlib], [Turn on z library [default=yes] ]),
   [case "${enableval}" in
     yes) wants_z=true ;;
     no)  wants_z=false ;;
@@ -35,26 +57,21 @@ AC_ARG_ENABLE([zlib],
    esac],[wants_z=true])
 AM_CONDITIONAL([WANTS_Z], [test x$wants_z = xtrue])
 AM_COND_IF([WANTS_Z],
-  [PKG_CHECK_MODULES([zlib],[zlib],
-    AC_SUBST(ZLIB_LIB,"-lz")
-    AC_SUBST(HAVE_ZLIB,"-DHAVE_LIBZ"))
-   AC_MSG_NOTICE([ZLIB enabled])])
+  [PKG_CHECK_MODULES([ZLIB],[zlib],
+    [AC_DEFINE([HAVE_LIBZ],[1],[zlib available])
+  ])])
 
-AC_ARG_WITH([kyoto-prefix],
-  AS_HELP_STRING([--with-kyoto-prefix=DIR], [Enables kyoto library]),
-  [AC_SUBST(KYOTO_HDR, "-I$with_kyoto_prefix/include")
-   AC_SUBST(KYOTO_LIB, "-L$with_kyoto_prefix/lib -lkyotocabinet")
-   AC_SUBST(KYOTO_CFLAGS, "-DHAVE_KYOTO")
-   AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
-   AC_MSG_NOTICE([KYOTO enabled])])
+AC_ARG_WITH([kyoto],
+  AS_HELP_STRING([--with-kyoto], [Enables kyoto library]),
+  [PKG_CHECK_MODULES([KYOTO], [kyotocabinet],
+     [AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
+  ])])
 
-AC_ARG_WITH([serd-prefix],
-  AS_HELP_STRING([--with-serd-prefix=DIR], [Enables serd library]),
-  [AC_SUBST(SERD_HDR,"-I$with_serd_prefix/include")
-   AC_SUBST(SERD_LIB,"-L$with_serd_prefix/lib -lserd-0")
-   AC_SUBST(SERD_CFLAGS, "-DHAVE_SERD")
-   AC_DEFINE([HAVE_SERD],[1],[serd available])
-   AC_MSG_NOTICE([SERD enabled])])
+AC_ARG_WITH([serd],
+  AS_HELP_STRING([--with-serd], [Enables Serd library]),
+  [PKG_CHECK_MODULES([SERD], [serd-0],
+    [AC_DEFINE([HAVE_SERD],[1],[Serd available])
+  ])])
 
 # Check for typedefs, structures, and compiler characteristics
 AC_HEADER_STDBOOL
