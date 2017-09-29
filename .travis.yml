@@ -1,6 +1,7 @@
 language: cpp
 env:
   global:
+    - LOCAL=$HOME/local
     - TESTS_HDT="bit375 bitutiltest listener logarr streamtest testmax"
     - TESTS_CDS="testArray testBitSequence testHuffman testLCP testNPR testSequence testSuffixTree testTextIndex timeSequence toArray2 toArray"
 matrix:
@@ -36,34 +37,37 @@ before_install:
   # Download and install Serd
   # - curl -s http://download.drobilla.net/serd-0.24.0.tar.bz2 | tar -xj
   - git clone https://github.com/drobilla/serd.git
-  - pushd serd* && ./waf configure --prefix=$HOME/local && ./waf && ./waf install && popd
+  - pushd serd* && ./waf configure --prefix=$LOCAL && ./waf && ./waf install && popd
   # Set up build environment
   - $HDT_CPP --version
   - popd
 script:
   # Build standalone binaries
   - ./autogen.sh
-  - PKG_CONFIG_PATH=$HOME/local/lib/pkgconfig ./configure --with-serd --prefix=$HOME CXX=$HDT_CPP
+  - export PKG_CONFIG_PATH=$LOCAL/lib/pkgconfig
+  - export LD_LIBRARY_PATH=$LOCAL/lib
+  - export PATH=$LOCAL/bin:$PATH
+  - ./configure --with-serd --prefix=$LOCAL CXX=$HDT_CPP
   - make -j2
   # Make and run selected tests. Most tests in HDT are failing
   - TESTS=$TESTS_CDS make -e check -j2 -C libcds || ( cat libcds/tests/test-suite.log && exit -1)
-  - TESTS=$TESTS_HDT LD_LIBRARY_PATH=$HOME/local/lib make -e check -j2 -C libhdt || ( cat libhdt/tests/test-suite.log && exit -1)
+  - TESTS=$TESTS_HDT make -e check -j2 -C libhdt || ( cat libhdt/tests/test-suite.log && exit -1)
   # Install
   - make install
-  - LD_LIBRARY_PATH=$HOME/local/lib $HOME/bin/hdtSearch -q 0 libhdt/data/literals.hdt
+  - hdtSearch -q 0 libhdt/data/literals.hdt
   # Test installation files
-  - test -f $HOME/bin/hdt2rdf
-  - test -f $HOME/bin/hdtInfo
-  - test -f $HOME/bin/hdtSearch
-  - test -f $HOME/bin/modifyHeader
-  - test -f $HOME/bin/rdf2hdt
-  - test -f $HOME/bin/replaceHeader
-  - test -f $HOME/bin/searchHeader
-  - test -f $HOME/lib/libhdt.la
-  - test -f $HOME/lib/libcds.la
-  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $HOME/lib/libhdt.so; fi"
-  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $HOME/lib/libcds.so; fi"
-  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $HOME/lib/libhdt.dylib; fi"
-  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $HOME/lib/libcds.dylib; fi"
-  - test -f $HOME/lib/pkgconfig/hdt.pc
-  - test -f $HOME/lib/pkgconfig/cds.pc
+  - test -f $LOCAL/bin/hdt2rdf
+  - test -f $LOCAL/bin/hdtInfo
+  - test -f $LOCAL/bin/hdtSearch
+  - test -f $LOCAL/bin/modifyHeader
+  - test -f $LOCAL/bin/rdf2hdt
+  - test -f $LOCAL/bin/replaceHeader
+  - test -f $LOCAL/bin/searchHeader
+  - test -f $LOCAL/lib/libhdt.la
+  - test -f $LOCAL/lib/libcds.la
+  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $LOCAL/lib/libhdt.so; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $LOCAL/lib/libcds.so; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $LOCAL/lib/libhdt.dylib; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $LOCAL/lib/libcds.dylib; fi"
+  - test -f $LOCAL/lib/pkgconfig/hdt.pc
+  - test -f $LOCAL/lib/pkgconfig/cds.pc
