@@ -8,7 +8,6 @@ To compile the library run `make` under the directory `hdt-lib`, this will gener
 
 The implementation has the following dependencies:
 - [Serd](http://drobilla.net/software/serd/) This enables importing RDF data in the Turtle and N-Triples serialization formats specifically. The dependency is activated by default; to deactivate it, comment out the line `SERD_SUPPORT=true` in the `Makefile`.
-- [Raptor RDF Parser Library 2.x](http://librdf.org/raptor/) (optional) This enables importing RDF data in many serialization formats, e.g., RDF/XML, Turtle, N3, etc. The dependency is activated by default; to deactivate it, comment out the line `RAPTOR_SUPPORT=true` in the `Makefile`. If Raptor or Serd is not used, the library will only be able to load RDF data in N-Triples format.
 - [libz](http://www.zlib.net/) (optional) Enables loading N-Triples files compressed with GZIP (e.g., `file.nt.gz`) and gzipped HDTs (`file.hdt.gz`). The dependency is activated by default; to deactivate it, comment out the line `LIBZ_SUPPORT=true` in the `Makefile`.
 - [Kyoto Cabinet](http://fallabs.com/kyotocabinet/) (optional) Enables generating big RDF datasets on machines without much RAM memory, by creating a temporary Kyoto Cabinet database. The dependency is deactivated by default; to activate it, uncomment the line `KYOTO_SUPPORT=true` in the `Makefile` and edit the library include path (`INCLUDES=`) as needed.
 
@@ -36,12 +35,12 @@ Open a terminal to search triple patterns within an HDT file:
     http://example.org/uri1 http://example.org/predicate2 http://example.org/uriA3
     http://example.org/uri2 http://example.org/predicate1 "literal1"
     9 results shown.
- 
+
     >> http://example.org/uri3 ? ?
     http://example.org/uri3 http://example.org/predicate3 http://example.org/uri4
     http://example.org/uri3 http://example.org/predicate3 http://example.org/uri5
     2 results shown.
- 
+
     >> exit
 
 Extract the Header of an HDT file:
