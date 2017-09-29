@@ -158,17 +158,14 @@ src/util/StopWatch.hpp\
 src/util/unicode.hpp\
 third/fdstream.hpp
 
-AM_CPPFLAGS = $(WARN_CFLAGS) \
--I$(top_builddir)/lib -I$(builddir)/include \
-$(KYOTO_CFLAGS) \
-$(SERD_CFLAGS) \
-$(ZLIB_CFLAGS)
-
-AM_LDFLAGS = $(SERD_LIBS) $(ZLIB_LIBS) $(KYOTO_LIBS)
+libhdt_la_CPPFLAGS = $(WARN_CFLAGS) -I$(top_builddir)/lib -I$(builddir)/include \
+$(KYOTO_CFLAGS) $(SERD_CFLAGS) $(ZLIB_CFLAGS)
+libhdt_la_LDFLAGS = $(SERD_LIBS) $(ZLIB_LIBS) $(KYOTO_LIBS)
+libhdt_la_LIBADD =
 
 if WANTS_LIBCDS
-AM_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
-libhdt_la_LIBADD = $(top_builddir)/libcds/libcds.la
+libhdt_la_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
+libhdt_la_LIBADD += $(top_builddir)/libcds/libcds.la
 endif
 
 pkgconfigdir = $(libdir)/pkgconfig

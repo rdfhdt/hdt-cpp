@@ -5,7 +5,8 @@ AC_CONFIG_HEADERS([build/config.h])
 AM_INIT_AUTOMAKE([foreign])
 AM_SILENT_RULES([yes])
 
-CXXFLAGS="$CXXFLAGS -g -O2 -std=c++0x"
+#CXXFLAGS="$CXXFLAGS -g -O2 -std=c++0x"
+AC_SUBST(CXXFLAGS,$CXXFLAGS)
 AC_PROG_CXX
 gl_EARLY
 AC_LANG([C++])
@@ -13,21 +14,37 @@ AC_PROG_INSTALL
 AC_PROG_CPP
 AM_PROG_AR
 LT_INIT([shared static])
+AX_CXX_COMPILE_STDCXX_11(,[mandatory])
+
+# Friendly optimisations
+AC_MSG_CHECKING(whether to enable optimizations)
+AC_ARG_ENABLE([optimization], 
+  AS_HELP_STRING([--enable-optimization],[Turn on optimization [default=yes]]),
+  [case "${enableval}" in
+    yes) CXXFLAGS="${CXXFLAGS} -g -O2" ;;
+    no) ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-optimization]) ;;
+    esac
+    AC_MSG_RESULT(${enableval})],
+  [CXXFLAGS="${CXXFLAGS} -g -O2"]
+  [AC_MSG_RESULT(yes)])
 
 # Checks for libraries
+AC_MSG_CHECKING(whether to enable libcds)
 AC_ARG_ENABLE([libcds],
-  AS_HELP_STRING([--enable-libcds],[Turn on libcds [default: yes]]),
+  AS_HELP_STRING([--enable-libcds],[Turn on libcds [default=yes]]),
   [case "${enableval}" in
     yes) wants_cds=true ;;
     no)  wants_cds=false ;;
     *) AC_MSG_ERROR([bad value ${enableval} for --enable-libcds]) ;;
-   esac],[wants_cds=true])
+   esac
+   AC_MSG_RESULT(${enableval})],
+ [wants_cds=true]
+ [AC_MSG_RESULT(yes)])
 AM_CONDITIONAL([WANTS_LIBCDS], [test x$wants_cds = xtrue])
-AM_COND_IF([WANTS_LIBCDS],
-  AC_MSG_NOTICE([LIBCDS enabled]))
 
 AC_ARG_ENABLE([zlib],
-  AS_HELP_STRING([--enable-zlib], [Turn on z library [default: yes] ]),
+  AS_HELP_STRING([--enable-zlib], [Turn on z library [default=yes] ]),
   [case "${enableval}" in
     yes) wants_z=true ;;
     no)  wants_z=false ;;
