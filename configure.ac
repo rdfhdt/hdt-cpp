@@ -5,7 +5,8 @@ AC_CONFIG_HEADERS([build/config.h])
 AM_INIT_AUTOMAKE([foreign])
 AM_SILENT_RULES([yes])
 
-#CXXFLAGS="$CXXFLAGS -g -O2 -std=c++0x"
+# CXXFLAGS is cleaned with user-defined flags.
+# configure includes by default some flags. 
 AC_SUBST(CXXFLAGS,$CXXFLAGS)
 AC_PROG_CXX
 gl_EARLY
@@ -17,6 +18,10 @@ LT_INIT([shared static])
 AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
 
 # Friendly optimisations
+# When --enable-optiization is set, CXXFLAGS includes -g -O2 and the flags
+# defined by the user.
+# If --disable-optimization is set, then CXXFLAGS is taken directly from the
+# user. 
 AC_MSG_CHECKING(whether to enable optimizations)
 AC_ARG_ENABLE([optimization], 
   AS_HELP_STRING([--enable-optimization],[Turn on optimization [default=yes]]),
