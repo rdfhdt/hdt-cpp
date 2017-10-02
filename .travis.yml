@@ -47,7 +47,7 @@ script:
   - export PKG_CONFIG_PATH=$LOCAL/lib/pkgconfig
   - export LD_LIBRARY_PATH=$LOCAL/lib
   - export PATH=$LOCAL/bin:$PATH
-  - ./configure --with-serd --prefix=$LOCAL CXX=$HDT_CPP
+  - ./configure --prefix=$LOCAL CXX=$HDT_CPP
   - make -j2
   # Make and run selected tests. Most tests in HDT are failing
   - TESTS=$TESTS_CDS make -e check -j2 -C libcds || ( cat libcds/tests/test-suite.log && exit -1)
