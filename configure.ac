@@ -21,56 +21,47 @@ AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
 # When --enable-optiization is set, CXXFLAGS includes -g -O2 and the flags
 # defined by the user.
 # If --disable-optimization is set, then CXXFLAGS is taken directly from the
-# user. 
+# user.
+
+# Building options 
 AC_MSG_CHECKING(whether to enable optimizations)
 AC_ARG_ENABLE([optimization], 
-  AS_HELP_STRING([--enable-optimization],[Turn on optimization [default=yes]]),
-  [case "${enableval}" in
-    yes) CXXFLAGS="${CXXFLAGS} -g -O2" ;;
-    no) ;;
-    *) AC_MSG_ERROR([bad value ${enableval} for --enable-optimization]) ;;
-    esac
-    AC_MSG_RESULT(${enableval})],
+  AS_HELP_STRING([--enable-optimization],[Build library with optimization parameters [default=yes]]),
+  [AC_MSG_RESULT(${enableval})],
   [CXXFLAGS="${CXXFLAGS} -g -O2"]
   [AC_MSG_RESULT(yes)])
 
-# Checks for libraries
-AC_MSG_CHECKING(whether to enable libcds)
+AC_MSG_CHECKING(whether to build libcds)
 AC_ARG_ENABLE([libcds],
-  AS_HELP_STRING([--enable-libcds],[Turn on libcds [default=yes]]),
-  [case "${enableval}" in
-    yes) wants_cds=true ;;
-    no)  wants_cds=false ;;
-    *) AC_MSG_ERROR([bad value ${enableval} for --enable-libcds]) ;;
-   esac
-   AC_MSG_RESULT(${enableval})],
- [wants_cds=true]
- [AC_MSG_RESULT(yes)])
-AM_CONDITIONAL([WANTS_LIBCDS], [test x$wants_cds = xtrue])
+  AS_HELP_STRING([--enable-libcds],[Build libcds [default=yes]]),
+  [AC_MSG_RESULT(${enableval})], 
+  [enable_cds=yes]
+  [AC_MSG_RESULT(yes)])
+AM_CONDITIONAL([WANTS_LIBCDS], [test x$enable_cds != xno])
 
-AC_ARG_ENABLE([zlib],
-  AS_HELP_STRING([--enable-zlib], [Turn on z library [default=yes] ]),
-  [case "${enableval}" in
-    yes) wants_z=true ;;
-    no)  wants_z=false ;;
-    *) AC_MSG_ERROR([bad value ${enableval} for --enable-zlib]) ;;
-   esac],[wants_z=true])
-AM_CONDITIONAL([WANTS_Z], [test x$wants_z = xtrue])
-AM_COND_IF([WANTS_Z],
+# Dependencies 
+AC_ARG_WITH([zlib],
+  AS_HELP_STRING([--with-zlib], [Use z library [default=yes] ]),
+   [],[with_zlib=true])
+AS_IF([test x$with_zlib != xno],
   [PKG_CHECK_MODULES([ZLIB],[zlib],
     [AC_DEFINE([HAVE_LIBZ],[1],[zlib available])
   ])])
 
-AC_ARG_WITH([kyoto],
-  AS_HELP_STRING([--with-kyoto], [Enables kyoto library]),
-  [PKG_CHECK_MODULES([KYOTO], [kyotocabinet],
-     [AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
-  ])])
-
 AC_ARG_WITH([serd],
-  AS_HELP_STRING([--with-serd], [Enables Serd library]),
+  AS_HELP_STRING([--with-serd], [Use serd library [default=yes] ]),
+  [],[with_serd=true])
+AS_IF([test x$with_serd != xno],
   [PKG_CHECK_MODULES([SERD], [serd-0],
     [AC_DEFINE([HAVE_SERD],[1],[Serd available])
+  ])])
+
+AC_ARG_WITH([kyoto],
+  AS_HELP_STRING([--with-kyoto], [Use kyoto library [default=no]]),
+  [], [with_kyoto=no])
+AS_IF([test x$with_kyoto != xno],
+  [PKG_CHECK_MODULES([KYOTO], [kyotocabinet],
+     [AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
   ])])
 
 # Check for typedefs, structures, and compiler characteristics
