@@ -159,7 +159,7 @@ src/util/unicode.hpp\
 third/fdstream.hpp
 
 libhdt_la_CPPFLAGS = $(WARN_CFLAGS) -I$(top_builddir)/lib -I$(builddir)/include \
-$(KYOTO_CFLAGS) $(SERD_CFLAGS) $(ZLIB_CFLAGS)
+$(KYOTO_CFLAGS) $(SERD_CFLAGS) $(ZLIB_CFLAGS) $(EXTRAFLAGS)
 libhdt_la_LDFLAGS = $(SERD_LIBS) $(ZLIB_LIBS) $(KYOTO_LIBS)
 libhdt_la_LIBADD =
 

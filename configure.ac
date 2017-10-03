@@ -45,24 +45,30 @@ AC_ARG_WITH([zlib],
    [],[with_zlib=true])
 AS_IF([test x$with_zlib != xno],
   [PKG_CHECK_MODULES([ZLIB],[zlib],
-    [AC_DEFINE([HAVE_LIBZ],[1],[zlib available])
-  ])])
+    [AC_DEFINE([HAVE_LIBZ],[1],[zlib available])]
+    [EXTRAFLAGS="${EXTRAFLAGS} -DHAVE_LIBZ"]
+    [AC_SUBST(EXTRAFLAGS)])
+  ])
 
 AC_ARG_WITH([serd],
   AS_HELP_STRING([--with-serd], [Use serd library [default=yes] ]),
   [],[with_serd=true])
 AS_IF([test x$with_serd != xno],
   [PKG_CHECK_MODULES([SERD], [serd-0],
-    [AC_DEFINE([HAVE_SERD],[1],[Serd available])
-  ])])
+    [AC_DEFINE([HAVE_SERD],[1],[Serd available])]
+    [EXTRAFLAGS="${EXTRAFLAGS} -DHAVE_SERD"]
+    [AC_SUBST(EXTRAFLAGS)])
+  ])
 
 AC_ARG_WITH([kyoto],
   AS_HELP_STRING([--with-kyoto], [Use kyoto library [default=no]]),
   [], [with_kyoto=no])
 AS_IF([test x$with_kyoto != xno],
   [PKG_CHECK_MODULES([KYOTO], [kyotocabinet],
-     [AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])
-  ])])
+     [AC_DEFINE([HAVE_KYOTO],[1],[kyoto available])]
+     [EXTRAFLAGS="${EXTRAFLAGS} -DHAVE_KYOTO"]
+     [AC_SUBST(EXTRAFLAGS)])
+  ])
 
 # Check for typedefs, structures, and compiler characteristics
 AC_HEADER_STDBOOL

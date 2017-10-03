@@ -3,7 +3,7 @@
 
 #ifdef HAVE_SERD
 
-#include <serd-0/serd/serd.h>
+#include <serd/serd.h>
 
 #include "RDFSerializer.hpp"
 

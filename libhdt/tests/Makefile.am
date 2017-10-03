@@ -28,13 +28,14 @@ opendic \
 parse \
 patsearch \
 popcnt \
+serd \
 streamtest \
 testmax \
 wav
 
 AM_DEFAULT_SOURCE_EXT = .cpp
 
-AM_CPPFLAGS = -I@top_srcdir@/libhdt/include $(WARN_CFLAGS)
+AM_CPPFLAGS = -I@top_srcdir@/libhdt/include $(WARN_CFLAGS) $(EXTRAFLAGS)
 AM_LDFLAGS = $(SERD_LIBS) $(ZLIB_LIBS) $(KYOTO_LIBS)
 LDADD = ../libhdt.la
 
