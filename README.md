@@ -10,9 +10,19 @@ The implementation has the following dependencies:
 - [libz](http://www.zlib.net/) Enables loading N-Triples files compressed with GZIP (e.g., `file.nt.gz`) and gzipped HDTs (`file.hdt.gz`). The dependency is activated by default.
 - [Kyoto Cabinet](http://fallabs.com/kyotocabinet/) (optional) Enables generating big RDF datasets on machines without much RAM memory, by creating a temporary Kyoto Cabinet database. The dependency is deactivated by default; to activate it, call `configure` with `--with-kyoto=yes` flag during installation.
 
+The installation process has the following dependencies:
+- [autoconf](https://www.gnu.org/software/autoconf/autoconf.html)
+
+- [libtool](https://www.gnu.org/software/libtool/)
+
+The following commands should install both packages:
+```
+sudo apt-get update
+sudo apt-get install autoconf libtool
+```
 
 ### Installing
-To compile and install run the following commands under the directory `hdt-cpp`. This will generate the library and tools.
+To compile and install, run the following commands under the directory `hdt-cpp`. This will generate the library and tools.
 
 First run the following script to generate all necessary installation files with autotools:
 
