@@ -13,14 +13,14 @@ The distribution provides two components:
 
 The tool provides three main command line tools:
 
-- The tool `rdf2hdt` converts an RDF file to HDT format. The format of the input file will be NTriples by default, although it can be set by using the "-f" (format) flag. It is also possible to fine tune the internal format of the HDT file using a configfile. Several configfile examples are provided under the directory "presets" of the distribution.
+- The tool `rdf2hdt` converts an RDF file to HDT format. The format of the input file will be NTriples by default, although it can be set by using the `-f` (format) flag. It is also possible to fine tune the internal format of the HDT file using a configfile. Several configfile examples are provided under the directory "presets" of the distribution.
 ```
 $ rdf2hdt [options] <RDF input file> <HDT output file>
-	-h					This help
-	-i					Also generate index to solve all triple patterns.
+	-h			This help
+	-i			Also generate index to solve all triple patterns.
 	-c	<configfile>	HDT Config options file
-	-o	<options>	   HDT Additional options (option1=value1;option2=value2;...)
-	-f	<format>		Format of the RDF input (ntriples, nquad, n3, turtle, rdfxml)
+	-o	<options>	HDT Additional options (option1=value1;option2=value2;...)
+	-f	<format>	Format of the RDF input (ntriples, nquad, n3, turtle, rdfxml)
 	-B	"<base URI>"	Base URI of the dataset.
 	-V	Prints the HDT version number.
 	-p	Prints a progress indicator.
@@ -30,8 +30,8 @@ $ rdf2hdt [options] <RDF input file> <HDT output file>
 - The tool `hdt2rdf` converts an HDT file back to RDF in the specified format. If not format specified, NTriples will be used.
 ```
 $ hdt2rdf [options] <HDT input file> <RDF output file>
-	-h					This help
-	-f	<format>		RDF Format of the output
+	-h			This help
+	-f	<format>	RDF Format of the output
 	-V	Prints the HDT version number.
 	-p	Prints a progress indicator.
 	-v	Verbose output
@@ -40,10 +40,10 @@ $ hdt2rdf [options] <HDT input file> <RDF output file>
 - The tool `hdtSearch` allows to search triple patterns against an HDT file. For example, to list all patterns, one can use the `? ? ?` query. To search all information about <myns:subject1> one can use `<myns:subject1> ? ?`.
 ```
 $ hdtSearch [options] <hdtfile>
-	-h					This help
-	-q	<query>		 Launch query and exit.
-	-o	<output>		Save query output to file.
-	-m					Do not show results, just measure query time.
+	-h			This help
+	-q	<query>		Launch query and exit.
+	-o	<output>	Save query output to file.
+	-m			Do not show results, just measure query time.
 	-V	Prints the HDT version number.
 ```
 Search prompt:
@@ -55,40 +55,33 @@ Search prompt:
 - The tool `hdtInfo` extracts the header from an HDT file.
 ```
 $ hdtInfo [options] <hdtFile>
-	-h					This help
-	-o	<output>		Save query output to file.
+	-h			This help
+	-o	<output>	Save query output to file.
 ```
 
 - The tool `replaceHeader` replaces the header of an HDT with the supplied one. You can use hdtInfo to extract the existing one, edit it, and then use replaceHeader to update to the new one. Note: you need to specify a different input and output HDT file.
-
 ```
 $ replaceHeader <originalHDTfile> <newHDTfile> <newHeader>
 ```
 
-## Usage example
+## Usage examples
 
-
-
-#### rdf2hdt
-This creates the HDT representation
+- ####  rdf2hdt
+This creates the HDT representation:
 ```bash
 $ tools/rdf2hdt data/test.nt data/test.hdt
 ```
-
-#### hdt2rdf
-This converts back the HDT to RDF.
+- #### hdt2rdf
+This converts back the HDT to RDF:
 ```bash
 $ tools/hdt2rdf data/test.hdt data/test.hdtexport.nt
 ```
-#### hdtSearch
-- This allows browsing a dataset interactively. It will create a file data/test.hdt.index with an additional index to perform all kind of queries efficiently. The following times it will use this file.
-
+- #### hdtSearch
+This allows browsing a dataset interactively. It will create a file data/test.hdt.index with an additional index to perform all kind of queries efficiently. The following times it will use this file:
 ```bash
 $ tools/hdtSearch data/test.hdt
 ```
-
-an example browsing upon this dataset is:
-
+An example browsing upon this dataset is:
 ```
 >> ? ? ?
 http://example.org/uri3 http://example.org/predicate3 http://example.org/uri4
@@ -101,27 +94,22 @@ http://example.org/uri1 http://example.org/predicate2 http://example.org/uri3
 http://example.org/uri1 http://example.org/predicate2 http://example.org/uriA3
 http://example.org/uri2 http://example.org/predicate1 "literal1"
 9 results shown.
-
 >> http://example.org/uri3 ? ?
 http://example.org/uri3 http://example.org/predicate3 http://example.org/uri4
 http://example.org/uri3 http://example.org/predicate3 http://example.org/uri5
 2 results shown.
-
 >> exit
 ```
-
-- You can also dump the results of a query to a file
+You can also dump the results of a query to a file:
 ```
 $ tools/hdtSearch -q "? http://example.org/predicate1 ?" data/test.hdt > output.txt
 ```
-
-#### hdtInfo
-
+- #### hdtInfo
 To browse the header of an HDT file:
 ```
 $ tools/hdtInfo data/test.hdt
 ```
-#### replaceHeader
+- #### replaceHeader
 To replace the Header of an HDT file with a new one. For example by editing the existing one as extracted using hdtInfo:
 ```
 $ tools/replaceHeader data/test.hdt data/testOutput.hdt newHeader.nt
