@@ -3,13 +3,41 @@
 
 # C++ library for the HDT triple format
 HDT keeps big RDF datasets compressed while maintaining efficient search and browse operations.
-
-To compile the library run `make` under the directory `hdt-lib`, this will generate the library and tools.
-
+## Getting Started
+### Prerequisites
 The implementation has the following dependencies:
-- [Serd](http://drobilla.net/software/serd/) This enables importing RDF data in the Turtle and N-Triples serialization formats specifically. The dependency is activated by default; to deactivate it, comment out the line `SERD_SUPPORT=true` in the `Makefile`.
-- [libz](http://www.zlib.net/) (optional) Enables loading N-Triples files compressed with GZIP (e.g., `file.nt.gz`) and gzipped HDTs (`file.hdt.gz`). The dependency is activated by default; to deactivate it, comment out the line `LIBZ_SUPPORT=true` in the `Makefile`.
-- [Kyoto Cabinet](http://fallabs.com/kyotocabinet/) (optional) Enables generating big RDF datasets on machines without much RAM memory, by creating a temporary Kyoto Cabinet database. The dependency is deactivated by default; to activate it, uncomment the line `KYOTO_SUPPORT=true` in the `Makefile` and edit the library include path (`INCLUDES=`) as needed.
+- [Serd](http://drobilla.net/software/serd/) This enables importing RDF data in the Turtle and N-Triples serialization formats specifically. The dependency is activated by default.
+- [libz](http://www.zlib.net/) Enables loading N-Triples files compressed with GZIP (e.g., `file.nt.gz`) and gzipped HDTs (`file.hdt.gz`). The dependency is activated by default.
+- [Kyoto Cabinet](http://fallabs.com/kyotocabinet/) (optional) Enables generating big RDF datasets on machines without much RAM memory, by creating a temporary Kyoto Cabinet database. The dependency is deactivated by default; to activate it, call `configure` with `--with-kyoto=yes` flag during installation.
+
+The installation process has the following dependencies:
+- [autoconf](https://www.gnu.org/software/autoconf/autoconf.html)
+
+- [libtool](https://www.gnu.org/software/libtool/)
+
+The following commands should install both packages:
+```
+sudo apt-get update
+sudo apt-get install autoconf libtool
+```
+
+### Installing
+To compile and install, run the following commands under the directory `hdt-cpp`. This will generate the library and tools.
+
+First run the following script to generate all necessary installation files with autotools:
+
+```
+./autogen.sh
+```
+
+Then, run:
+```
+./configure
+
+make -j2
+```
+
+## Running
 
 After building, these are the typical operations that you will perform:
 Create the HDT representation of your RDF data:
