@@ -1,6 +1,4 @@
-========================
- HDT Library and Tools.
-========================
+= HDT Library and Tools.
 
 Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
 All rights reserved.
@@ -28,7 +26,7 @@ Contacting the authors:
 
 
 Overview
-=================
+
 
 HDT-lib is a C++ library that implements the W3C Submission (http://www.w3.org/Submission/2011/03/) of the RDF HDT (Header-Dictionary-Triples) binary format for publishing and exchanging RDF data at large scale. Its compact representation allows storing RDF in fewer space, while providing direct access to the stored information. This is achieved by depicting the RDF graph in terms of three main components: Header, Dictionary and Triples. The Header includes extensible metadata required to describe the RDF data set and details of its internals. The Dictionary organizes the vocabulary of strings present in the RDF graph by assigning numerical IDs to each different string. The Triples component depicts the structure of the underlying graph in a compressed form.
 
@@ -41,7 +39,7 @@ Compiling
 =================
 Dependencies: 
 	*Libcds (http://libcds.recoded.cl/) We use a modified fork of libcds that is included with the distribution.
-	*(Optional) Raptor RDF Parser Library Version 2+  (for more information see: http://http://librdf.org/raptor/)
+	*(Optional) Raptor RDF Parser Library Version 2+  (for more information see: http://librdf.org/raptor/)
 		Note: Without Raptor the library is only capable of importing and exporting RDF in NTriples format.
 	*(Optional) Kyoto Cabinet. Allows to convert very big RDF files on machines with limited amount of main memory.
 	*(Optional) Libz. Allows to load files in ntriples compressed with GZIP (i.e. file.nt.gz) and compressed HDTs (file.hdt.gz)
