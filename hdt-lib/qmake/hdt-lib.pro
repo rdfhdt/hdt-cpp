@@ -220,3 +220,8 @@ win32-g++:contains(QMAKE_HOST.arch, x86_64):{
 # Windows Visual Studio
 
 win32:INCLUDEPATH += "F:\git\zlib\bin"
+
+
+target.path = $${INSTALL_ROOT}/bin
+
+INSTALLS += target
