@@ -39,6 +39,13 @@ make -j2
 
 ## Running
 
+# Building and Install on Mac OS X using brew
+
+```bash
+brew install the-alchemist/taps/hdt-cpp
+```
+
+# Other Information
 After building, these are the typical operations that you will perform:
 Create the HDT representation of your RDF data:
 
