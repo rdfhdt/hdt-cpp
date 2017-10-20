@@ -32,6 +32,7 @@
 #include <HDTVersion.hpp>
 #include <HDT.hpp>
 #include <HDTManager.hpp>
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 #include <iostream>
@@ -138,22 +139,47 @@ int main(int argc, char **argv) {
 		baseUri="<file://"+inputFile+">";
 	}
 
-	if(rdfFormat!="") {
-		if(rdfFormat=="ntriples") {
-			notation = NTRIPLES;
-		} else if(rdfFormat=="nquad") {
-			notation = NQUAD;
-		} else if(rdfFormat=="n3") {
-			notation = N3;
-		} else if(rdfFormat=="turtle") {
-			notation = TURTLE;
-		} else if(rdfFormat=="rdfxml") {
-			notation = XML;
-		} else {
+	// If -f flag (input format) was not specified
+	if (rdfFormat == "")
+    {
+        // Try to guess it...
+        
+        size_t dot_position = inputFile.rfind ('.', inputFile.length ());
+        
+        if (dot_position != string::npos)
+        {
+            string file_extension = inputFile.substr (dot_position + 1, string::npos);
+            
+            // Lower case
+            transform (file_extension.begin (), file_extension.end (), file_extension.begin (), ::tolower);
+            
+            // Guess
+            if (file_extension == "xml" || file_extension == "rdf" || file_extension == "rdfxml")
+                notation = XML;
+            else if (file_extension == "nt")
+                notation = NTRIPLES;
+            else if (file_extension == "nq")
+                notation = NQUAD;
+            else if (file_extension == "n3")
+                notation = N3;
+            else if (file_extension == "ttl" || file_extension == "turtle")
+                notation = TURTLE;
+        }
+    
+    // If -f flag was specified, read it
+    } else {
+        
+		if      (rdfFormat == "ntriples") notation = NTRIPLES;
+		else if (rdfFormat == "nquad")    notation = NQUAD;
+		else if (rdfFormat == "n3")       notation = N3;
+		else if (rdfFormat == "turtle")   notation = TURTLE;
+		else if (rdfFormat == "rdfxml")   notation = XML;
+		else {
 			cerr << "ERROR: The RDF input format must be one of: (ntriples, nquad, n3, turtle, rdfxml)" << endl;
 			help();
 			return 1;
 		}
+		
 		vout << "RDF format: " << rdfFormat << endl;
 	}
 
