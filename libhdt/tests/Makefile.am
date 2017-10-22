@@ -28,6 +28,7 @@ opendic \
 parse \
 patsearch \
 popcnt \
+randomSolution \
 serd \
 streamtest \
 testmax \
