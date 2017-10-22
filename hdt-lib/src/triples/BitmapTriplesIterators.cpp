@@ -452,7 +452,29 @@ void MiddleWaveletIterator::goTo(unsigned int pos) {
 }
 
 void MiddleWaveletIterator::skip(unsigned int pos) {
-   goTo(predicateOcurrence+pos);
+	//goTo(predicateOcurrence+pos);
+
+	int numJumps = 0;
+	while ((numJumps<pos)&&(posZ<maxZ)){
+		if((posZ+pos)>nextZ) {
+			 numJumps += (nextZ-posZ)+1; // count current jump
+			 predicateOcurrence++; // jump to the next occurrence
+			 if (predicateOcurrence<=numOcurrences){
+				 posY = predicateIndex->getAppearance(patY, predicateOcurrence);
+				 posZ = prevZ = adjZ.find(posY);
+				 nextZ = adjZ.last(posY);
+			 }
+
+		} else {
+			posZ=(posZ+pos);
+			numJumps=pos;
+		}
+	}
+	if (numJumps>0){
+		x = adjY.findListIndex(posY)+1;
+		y = adjY.get(posY);
+		z = adjZ.get(posZ);
+	}
 }
 
 size_t MiddleWaveletIterator::estimatedNumResults()
