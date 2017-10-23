@@ -263,7 +263,7 @@ void BitmapTriplesSearchIterator::goTo(size_t pos) {
 	goToY(); // go to the correct Y
 }
 
-void BitmapTriplesSearchIterator::skip(unsigned int pos) {
+void BitmapTriplesSearchIterator::skip(size_t pos) {
 	goTo(posZ+pos);
 }
 
@@ -434,7 +434,7 @@ bool MiddleWaveletIterator::canGoTo() {
     return true;
 }
 
-void MiddleWaveletIterator::goTo(unsigned int pos) {
+void MiddleWaveletIterator::goTo(size_t pos) {
     if ((pos) >= maxZ) {
 			throw std::runtime_error("Cannot goTo on this pattern.");
 	}
@@ -451,7 +451,7 @@ void MiddleWaveletIterator::goTo(unsigned int pos) {
     z = adjZ.get(posZ);
 }
 
-void MiddleWaveletIterator::skip(unsigned int pos) {
+void MiddleWaveletIterator::skip(size_t pos) {
 	//goTo(predicateOcurrence+pos);
 
 	int numJumps = 0;
@@ -946,7 +946,7 @@ void ObjectIndexIterator::goTo(size_t pos)
     posIndex = pos;
 }
 
-void ObjectIndexIterator::skip(unsigned int pos)
+void ObjectIndexIterator::skip(size_t pos)
 {
 	goTo(minIndex+pos);
 }
