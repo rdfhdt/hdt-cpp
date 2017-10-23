@@ -6,7 +6,7 @@ AM_INIT_AUTOMAKE([foreign])
 AM_SILENT_RULES([yes])
 
 # CXXFLAGS is cleaned with user-defined flags.
-# configure includes by default some flags. 
+# configure includes by default some flags.
 AC_SUBST(CXXFLAGS,$CXXFLAGS)
 AC_PROG_CXX
 gl_EARLY
@@ -23,23 +23,23 @@ AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
 # If --disable-optimization is set, then CXXFLAGS is taken directly from the
 # user.
 
-# Building options 
+# Building options
 AC_MSG_CHECKING(whether to enable optimizations)
-AC_ARG_ENABLE([optimization], 
+AC_ARG_ENABLE([optimization],
   AS_HELP_STRING([--enable-optimization],[Build library with optimization parameters [default=yes]]),
   [AC_MSG_RESULT(${enableval})],
-  [CXXFLAGS="${CXXFLAGS} -g -O2"]
+  [CXXFLAGS="${CXXFLAGS} -g -O2 -std=c++11"]
   [AC_MSG_RESULT(yes)])
 
 AC_MSG_CHECKING(whether to build libcds)
 AC_ARG_ENABLE([libcds],
   AS_HELP_STRING([--enable-libcds],[Build libcds [default=yes]]),
-  [AC_MSG_RESULT(${enableval})], 
+  [AC_MSG_RESULT(${enableval})],
   [enable_cds=yes]
   [AC_MSG_RESULT(yes)])
 AM_CONDITIONAL([WANTS_LIBCDS], [test x$enable_cds != xno])
 
-# Dependencies 
+# Dependencies
 AC_ARG_WITH([zlib],
   AS_HELP_STRING([--with-zlib], [Use z library [default=yes] ]),
    [],[with_zlib=true])
