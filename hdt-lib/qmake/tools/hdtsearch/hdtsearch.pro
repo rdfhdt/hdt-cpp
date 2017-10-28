@@ -13,3 +13,7 @@ TEMPLATE = app
 
 
 SOURCES += ../../../tools/hdtSearch.cpp
+
+target.path = $${INSTALL_ROOT}/bin
+
+INSTALLS += target
