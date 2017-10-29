@@ -32,6 +32,7 @@
 #include <HDTVersion.hpp>
 #include <HDT.hpp>
 #include <HDTManager.hpp>
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 #include <iostream>
@@ -45,16 +46,16 @@ using namespace hdt;
 using namespace std;
 
 void help() {
-	cout << "$ rdf2hdt [options] <rdf input file> <hdt output file> " << endl;
-	cout << "\t-h\t\t\tThis help" << endl;
-	cout << "\t-i\t\t\tAlso generate index to solve all triple patterns." << endl;
-	cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
-	cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
-	cout << "\t-f\t<format>\tFormat of the RDF input (ntriples, nquad, n3, turtle, rdfxml)" << endl;
-	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
-	cout << "\t-V\tPrints the HDT version number." << endl;
-	cout << "\t-p\tPrints a progress indicator." << endl;
-	cout << "\t-v\tVerbose output" << endl;
+    cout << "$ rdf2hdt [options] <rdf input file> <hdt output file> " << endl;
+    cout << "\t-h\t\t\tThis help" << endl;
+    cout << "\t-i\t\t\tAlso generate index to solve all triple patterns." << endl;
+    cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
+    cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
+    cout << "\t-f\t<format>\tFormat of the RDF input (n3, ntriples or nt, nquads or nq, rdfxml or xml, turtle or ttl)" << endl;
+    cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
+    cout << "\t-V\tPrints the HDT version number." << endl;
+    cout << "\t-p\tPrints a progress indicator." << endl;
+    cout << "\t-v\tVerbose output" << endl;
 }
 
 int main(int argc, char **argv) {
@@ -68,41 +69,52 @@ int main(int argc, char **argv) {
 	string rdfFormat;
 	string baseUri;
 
-	RDFNotation notation = NTRIPLES;
+    /**
+     * Input file format. If no -f is specified and we can't guess which
+     * format it is, we will use NTRIPLES by default.
+     */
+    RDFNotation notation = NTRIPLES;
 
-	int c;
-	while( (c = getopt(argc,argv,"c:o:vpf:B:iV"))!=-1) {
-		switch(c) {
-		case 'c':
-			configFile = optarg;
-			break;
-		case 'o':
-			options = optarg;
-			break;
-		case 'v':
-			verbose = true;
-			break;
-		case 'p':
-			showProgress = true;
-			break;
-		case 'f':
-			rdfFormat = optarg;
-			break;
-		case 'B':
-			baseUri = optarg;
-			break;
-		case 'i':
-			generateIndex=true;
-			break;
-		case 'V':
-			cout << HDTVersion::get_version_string(".") << endl;
-			return 0;
-		default:
-			cerr << "ERROR: Unknown option" << endl;
-			help();
-			return 1;
-		}
-	}
+    int flag;
+    while ((flag = getopt (argc, argv, "c:o:vpf:B:iVh")) != -1)
+    {
+        switch (flag)
+        {
+            case 'c':
+                configFile = optarg;
+                break;
+            case 'o':
+                options = optarg;
+                break;
+            case 'v':
+                verbose = true;
+                break;
+            case 'p':
+                showProgress = true;
+                break;
+            case 'f':
+                rdfFormat = optarg;
+                break;
+            case 'B':
+                baseUri = optarg;
+                break;
+            case 'i':
+                generateIndex=true;
+                break;
+            case 'V':
+                cout << HDTVersion::get_version_string(".") << endl;
+                return 0;
+            case 'h':
+                help();
+                return 0;
+            default:
+                cerr << "ERROR: Unknown option" << endl;
+                
+                help();
+                
+                return 1;
+        }
+    }
 
 #define vout if (!verbose) {} else std::cerr /* Verbose output */
 
@@ -138,24 +150,58 @@ int main(int argc, char **argv) {
 		baseUri="<file://"+inputFile+">";
 	}
 
-	if(rdfFormat!="") {
-		if(rdfFormat=="ntriples") {
-			notation = NTRIPLES;
-		} else if(rdfFormat=="nquad") {
-			notation = NQUAD;
-		} else if(rdfFormat=="n3") {
-			notation = N3;
-		} else if(rdfFormat=="turtle") {
-			notation = TURTLE;
-		} else if(rdfFormat=="rdfxml") {
-			notation = XML;
-		} else {
-			cerr << "ERROR: The RDF input format must be one of: (ntriples, nquad, n3, turtle, rdfxml)" << endl;
-			help();
-			return 1;
-		}
-		vout << "RDF format: " << rdfFormat << endl;
-	}
+    /**
+     * If -f flag (input format) was not specified, we try to guess it
+     * by reading the file extension.
+     */
+    if (rdfFormat == "")
+    {
+        vout << "Input format not given. Guessing from file extension..." << endl;
+        
+        // Get position of right-most '.' to find file extension.
+        size_t dot_position = inputFile.rfind ('.', inputFile.length ());
+        
+        if (dot_position != string::npos)
+            // Extract extension from file name
+            rdfFormat = inputFile.substr (dot_position + 1, string::npos);
+    }
+
+    // Lower-case rdfFormat
+    transform (rdfFormat.begin (), rdfFormat.end (), rdfFormat.begin (), ::tolower);
+
+    // Detect input format
+    if (rdfFormat == "n3")
+        notation = N3;
+    else if (rdfFormat == "ntriples" || rdfFormat == "nt")
+        notation = NTRIPLES;
+    else if (rdfFormat == "nquads" || rdfFormat == "nq")
+        notation = NQUAD;
+    else if (rdfFormat == "turtle" || rdfFormat == "ttl")
+        notation = TURTLE;
+    else if (rdfFormat == "rdfxml" || rdfFormat == "xml")
+        notation = XML;
+    
+    /**
+     * If rdfFormat is still "", it means -f was not specified and the file
+     * didn't have any extension. The default format is defined at the top
+     * of this file: RDFNotation notation = NTRIPLES;
+     */
+    else if (rdfFormat == "")
+        vout << "No input format detected. Using default: NTRIPLES." << endl;
+    
+    // -f or file extension detected, but didn't match any valid format.
+    else {
+        cerr << "ERROR: Detected \"" << rdfFormat << "\" input format. Must be one of:" << endl
+             << "\t- n3" << endl
+             << "\t- ntriples or nt" << endl
+             << "\t- nquads or nq" << endl
+             << "\t- rdfxml or xml" << endl
+             << "\t- turtle or ttl" << endl;
+
+        return 1;
+    }
+
+    vout << "Detected RDF input format: " << rdfFormat << endl;
 
 	// Process
 	HDTSpecification spec(configFile);
