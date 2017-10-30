@@ -87,4 +87,4 @@ Contributions and PRs should be sent to the `develop` branch, and not to `master
 
 ## License
 
-`hdt-cpp` is free software licensed as GNU Affero General Public License, either version 2 or (at your option) any later version.
+`hdt-cpp` is free software licensed as GNU Lesser General Public License. See `libhdt/COPYRIGHT`
