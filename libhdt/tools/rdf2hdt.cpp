@@ -164,8 +164,21 @@ int main(int argc, char **argv) {
         if (dot_position != string::npos)
             // Extract extension from file name
             rdfFormat = inputFile.substr (dot_position + 1, string::npos);
+        
+        /**
+         * If rdfFormat is still "", it means -f was not specified and the file
+         * didn't have any extension. The default format is defined at the top
+         * of this file: RDFNotation notation = NTRIPLES;
+         */
+        if (rdfFormat == "")
+        {
+            rdfFormat = "nt";
+            vout << "No input format detected. Using default: NTRIPLES." << endl;
+        }
     }
-
+    
+    // ASSERT: here rdfFormat must be != ""
+    
     // Lower-case rdfFormat
     transform (rdfFormat.begin (), rdfFormat.end (), rdfFormat.begin (), ::tolower);
 
@@ -180,15 +193,6 @@ int main(int argc, char **argv) {
         notation = TURTLE;
     else if (rdfFormat == "rdfxml" || rdfFormat == "xml")
         notation = XML;
-    
-    /**
-     * If rdfFormat is still "", it means -f was not specified and the file
-     * didn't have any extension. The default format is defined at the top
-     * of this file: RDFNotation notation = NTRIPLES;
-     */
-    else if (rdfFormat == "")
-        vout << "No input format detected. Using default: NTRIPLES." << endl;
-    
     // -f or file extension detected, but didn't match any valid format.
     else {
         cerr << "ERROR: Detected \"" << rdfFormat << "\" input format. Must be one of:" << endl
