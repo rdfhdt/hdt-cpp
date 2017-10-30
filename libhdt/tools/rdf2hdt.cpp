@@ -51,7 +51,7 @@ void help() {
     cout << "\t-i\t\t\tAlso generate index to solve all triple patterns." << endl;
     cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
     cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
-    cout << "\t-f\t<format>\tFormat of the RDF input (n3, ntriples or nt, nquads or nq, rdfxml or xml, turtle or ttl)" << endl;
+    cout << "\t-f\t<format>\tFormat of the RDF input (n3, ntriples or nt, nquads or nq, turtle or ttl)" << endl;
     cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
     cout << "\t-V\tPrints the HDT version number." << endl;
     cout << "\t-p\tPrints a progress indicator." << endl;
@@ -191,15 +191,12 @@ int main(int argc, char **argv) {
         notation = NQUAD;
     else if (rdfFormat == "turtle" || rdfFormat == "ttl")
         notation = TURTLE;
-    else if (rdfFormat == "rdfxml" || rdfFormat == "xml")
-        notation = XML;
     // -f or file extension detected, but didn't match any valid format.
     else {
         cerr << "ERROR: Detected \"" << rdfFormat << "\" input format. Must be one of:" << endl
              << "\t- n3" << endl
              << "\t- ntriples or nt" << endl
              << "\t- nquads or nq" << endl
-             << "\t- rdfxml or xml" << endl
              << "\t- turtle or ttl" << endl;
 
         return 1;

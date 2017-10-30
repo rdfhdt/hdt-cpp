@@ -79,10 +79,8 @@ int main(int argc, char **argv) {
 			notation = N3;
 		} else if(rdfFormat=="turtle") {
 			notation = TURTLE;
-		} else if(rdfFormat=="rdfxml") {
-			notation = XML;
 		} else {
-			cout << "ERROR: The RDF output format must be one of: (ntriples, n3, turtle, rdfxml)" << endl;
+			cout << "ERROR: The RDF output format must be one of: (ntriples, n3, turtle)" << endl;
 			help();
 			return 1;
 		}
