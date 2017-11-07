@@ -29,6 +29,7 @@
  *
  */
 #include <stdexcept>
+#include <stdint.h>
 #include <HDTVocabulary.hpp>
 
 #include "TriplesList.hpp"
@@ -91,7 +92,7 @@ void TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 	controlInformation.setUint("order", order);
 	controlInformation.save(output);
 
-	for( unsigned int i = 0; i < arrayOfTriples.size(); i++ ) {
+	for(std::vector<TripleID>::size_type i = 0; i < arrayOfTriples.size(); i++ ) {
 		if ( arrayOfTriples[i].isValid() ) {
 			output.write((char *)&arrayOfTriples[i], sizeof(TripleID));
 			NOTIFYCOND(listener, "TriplesList saving", i, arrayOfTriples.size())
@@ -107,9 +108,9 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 	}
 
 	order = (TripleComponentOrder) controlInformation.getUint("order");
-	unsigned int totalTriples = controlInformation.getUint("numTriples");
+	uint64_t totalTriples = controlInformation.getUint("numTriples");
 
-	unsigned int numRead=0;
+	uint64_t numRead=0;
 	TripleID readTriple;
 
 	while(input.good() && numRead<totalTriples) {
@@ -231,7 +232,7 @@ void TriplesList::insert(IteratorTripleID *triples)
 bool TriplesList::remove(TripleID &pattern)
 {
 	bool removed=false;
-	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
+	for(std::vector<TripleID>::size_type i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
 		if (tid->match(pattern)) {
 			tid->clear();
@@ -251,7 +252,7 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 		allPat.push_back(*pattern->next());
 	}
 
-	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
+	for(std::vector<TripleID>::size_type i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
         for(size_t j=0; j<allPat.size(); j++) {
 			if (tid->match(allPat[i])) {
@@ -284,7 +285,7 @@ void TriplesList::setOrder(TripleComponentOrder order)
 
 }
 
-TripleID* TriplesList::getTripleID(unsigned int i)
+TripleID* TriplesList::getTripleID(size_t i)
 {
     return &ptr[i];
     //return &this->arrayOfTriples[i];
@@ -299,10 +300,10 @@ void TriplesList::removeDuplicates(ProgressListener *listener) {
 		throw std::runtime_error("Cannot remove duplicates on unordered triples");
 	}
 
-	unsigned int j = 0;
+	std::vector<TripleID>::size_type j = 0;
 	StopWatch st;
 
-	for(unsigned int i=1; i<arrayOfTriples.size(); i++) {
+	for(std::vector<TripleID>::size_type i=1; i<arrayOfTriples.size(); i++) {
         if(!arrayOfTriples[i].isValid()) {
             cerr << "WARNING: Triple with null component: " << arrayOfTriples[i] << endl;
         }
@@ -1016,7 +1017,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 	cout << "Number of Elements:" << getNumberOfElements() << endl;
 //	cout << "Predicate rdf:type ID:" << rdftypeID << endl;
 	fflush(stdout);
-	for (unsigned int i = 1; i < getNumberOfElements(); i++) {
+	for (std::vector<TripleID>::size_type i = 1; i < getNumberOfElements(); i++) {
 		if (i % 1000000 == 0) {
 			cout << i << " triples" << endl;
 		}
