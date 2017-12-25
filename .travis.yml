@@ -1,4 +1,9 @@
 language: cpp
+env:
+  global:
+    - LOCAL=$HOME/local
+    - TESTS_HDT="bit375 bitutiltest listener logarr serd streamtest testmax"
+    - TESTS_CDS="testArray testBitSequence testHuffman testLCP testNPR testSequence testSuffixTree testTextIndex timeSequence toArray2 toArray"
 matrix:
   include:
     - os: osx
@@ -32,25 +37,37 @@ before_install:
   # Download and install Serd
   # - curl -s http://download.drobilla.net/serd-0.24.0.tar.bz2 | tar -xj
   - git clone https://github.com/drobilla/serd.git
-  - pushd serd* && ./waf configure --prefix=$HOME/local && ./waf && ./waf install && popd
-  # Download and install Raptor
-  - curl -s http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar -xz
-  - pushd raptor2-* && ./configure --prefix=$HOME/local && make -j2 && make install && popd
+  - pushd serd* && ./waf configure --prefix=$LOCAL && ./waf && ./waf install && popd
   # Set up build environment
   - $HDT_CPP --version
-  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/local/lib"
-  - export HDT_LDFLAGS="-I$HOME/local/include -L$HOME/local/lib"
   - popd
 script:
   # Build standalone binaries
-  - cd hdt-lib
-  - make -j2       CPP=$HDT_CPP LDFLAGS="$HDT_LDFLAGS"
-  # Make and run selected tests
-  - make -j2 tests CPP=$HDT_CPP LDFLAGS="$HDT_LDFLAGS"
-  - tests/bit375 > /dev/null
-  - tests/bitutiltest > /dev/null
-  - tests/listener > /dev/null
-  - tests/logarr > /dev/null
-  - tests/streamtest > /dev/null
-  - tests/testmax > /dev/null
-  - tools/hdtSearch -q 0 data/literals.hdt
+  - ./autogen.sh
+  - export PKG_CONFIG_PATH=$LOCAL/lib/pkgconfig
+  - export LD_LIBRARY_PATH=$LOCAL/lib
+  - export PATH=$LOCAL/bin:$PATH
+  - ./configure --prefix=$LOCAL CXX=$HDT_CPP
+  - make -j2
+  # Make and run selected tests. Most tests in HDT are failing
+  - TESTS=$TESTS_CDS make -e check -j2 -C libcds || ( cat libcds/tests/test-suite.log && exit -1)
+  - TESTS=$TESTS_HDT make -e check -j2 -C libhdt || ( cat libhdt/tests/test-suite.log && exit -1)
+  # Install
+  - make install
+  - hdtSearch -q 0 libhdt/data/literals.hdt
+  # Test installation files
+  - test -f $LOCAL/bin/hdt2rdf
+  - test -f $LOCAL/bin/hdtInfo
+  - test -f $LOCAL/bin/hdtSearch
+  - test -f $LOCAL/bin/modifyHeader
+  - test -f $LOCAL/bin/rdf2hdt
+  - test -f $LOCAL/bin/replaceHeader
+  - test -f $LOCAL/bin/searchHeader
+  - test -f $LOCAL/lib/libhdt.la
+  - test -f $LOCAL/lib/libcds.la
+  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $LOCAL/lib/libhdt.so; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $LOCAL/lib/libcds.so; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $LOCAL/lib/libhdt.dylib; fi"
+  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $LOCAL/lib/libcds.dylib; fi"
+  - test -f $LOCAL/lib/pkgconfig/hdt.pc
+  - test -f $LOCAL/lib/pkgconfig/cds.pc
