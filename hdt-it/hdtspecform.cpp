@@ -39,12 +39,6 @@ void HDTSpecForm::on_triplesTypeCombo_currentIndexChanged(int index)
         ui->streamYcombo->setEnabled(true);
         ui->streamZcombo->setEnabled(true);
         break;
-    case 3:
-        // CompactTriples
-        ui->streamXcombo->setEnabled(false);
-        ui->streamYcombo->setEnabled(true);
-        ui->streamZcombo->setEnabled(true);
-        break;
     case 4:
         // FoQTriples
         ui->streamXcombo->setEnabled(false);
@@ -145,10 +139,6 @@ void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
     case 2:
         // PlainTriples
         hdt.set("triples.type", hdt::HDTVocabulary::TRIPLES_TYPE_PLAIN);
-        break;
-    case 3:
-        // CompactTriples
-        hdt.set("triples.type", hdt::HDTVocabulary::TRIPLES_TYPE_COMPACT);
         break;
     }
 
