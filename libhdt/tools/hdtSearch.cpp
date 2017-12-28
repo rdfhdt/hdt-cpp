@@ -38,6 +38,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <string>
+#include <cstdint>
 #include <iostream>
 #include <fstream>
 #include "../src/util/StopWatch.hpp"
@@ -57,8 +58,9 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-q\t<query>\t\tLaunch query and exit." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
+    cout << "\t-f\t<offset>\tLimit the result list to the number given by the offset." << endl;
 	cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
-	cout << "\t-V\tPrints the HDT version number." << endl;
+	cout << "\t-V\t\t\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
@@ -109,9 +111,11 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
+    stringstream sstream;
+    uint64_t offset;
 	bool measure = false;
 
-	while( (c = getopt(argc,argv,"hq:o:m:V"))!=-1) {
+	while( (c = getopt(argc,argv,"hq:o:f:mV"))!=-1) {
 		switch(c) {
 		case 'h':
 			help();
@@ -122,6 +126,10 @@ int main(int argc, char **argv) {
 		case 'o':
 			outputFile = optarg;
 			break;
+        case 'f':
+            sstream << optarg;
+            sstream >> offset;
+            break;
 		case 'm':
 			measure = true;
 			break;
