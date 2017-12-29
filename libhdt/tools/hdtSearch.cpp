@@ -58,13 +58,13 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-q\t<query>\t\tLaunch query and exit." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
-    cout << "\t-f\t<offset>\tLimit the result list to the number given by the offset." << endl;
+    cout << "\t-f\t<offset>\tLimit the result list starting at the offset." << endl;
 	cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
 	cout << "\t-V\t\t\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
-void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
+void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset) {
 	TripleString tripleString;
 	tripleString.read(query);
 
@@ -91,6 +91,14 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 		IteratorTripleString *it = hdt->search(subj, pred, obj);
 
 		StopWatch st;
+
+        // Go to the right offset.
+		while(offset && it->hasNext()) {
+			it->next();
+			offset--;
+		}
+
+        // Get results.
 		unsigned int numTriples=0;
 		while(it->hasNext() && interruptSignal==0) {
 			TripleString *ts = it->next();
@@ -112,7 +120,7 @@ int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
     stringstream sstream;
-    uint64_t offset;
+    uint32_t offset = 0;
 	bool measure = false;
 
 	while( (c = getopt(argc,argv,"hq:o:f:mV"))!=-1) {
@@ -168,7 +176,7 @@ int main(int argc, char **argv) {
 
 		if(query!="") {
 			// Supplied query, search and exit.
-			iterate(hdt, (char*)query.c_str(), *out, measure);
+			iterate(hdt, (char*)query.c_str(), *out, measure, offset);
 		} else {
 			// No supplied query, show terminal.
 			char line[1024*10];
@@ -187,7 +195,7 @@ int main(int argc, char **argv) {
 					continue;
 				}
 
-				iterate(hdt, line, *out, measure);
+				iterate(hdt, line, *out, measure, offset);
 
 				cerr << ">> ";
 			}
