@@ -93,10 +93,23 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
 		StopWatch st;
 
         // Go to the right offset.
-		while(offset && it->hasNext()) {
-			it->next();
-			offset--;
-		}
+        if(it->canGoTo()) {
+            try {
+                it->skip(offset);
+                offset = 0;
+            }
+            catch (const runtime_error error) {
+                /*invalid offset*/
+                it->skip(it->estimatedNumResults()-1);
+                it->next();
+            }
+        }
+        else {
+            while(offset && it->hasNext()) {
+                it->next();
+                offset--;
+            }
+        }
 
         // Get results.
 		unsigned int numTriples=0;

@@ -255,6 +255,9 @@ public:
 	}
 	virtual void goToStart() {
 	}
+    virtual bool canGoTo(){
+        return false;
+    }
 	virtual size_t estimatedNumResults() {
 		return 0;
 	}
