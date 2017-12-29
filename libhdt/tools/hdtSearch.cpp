@@ -58,7 +58,7 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-q\t<query>\t\tLaunch query and exit." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
-    cout << "\t-f\t<offset>\tLimit the result list starting at the offset." << endl;
+    cout << "\t-f\t<offset>\tLimit the result list starting after the offset." << endl;
 	cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
 	cout << "\t-V\t\t\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
