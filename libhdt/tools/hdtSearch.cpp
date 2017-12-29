@@ -100,8 +100,6 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
             }
             catch (const runtime_error error) {
                 /*invalid offset*/
-                it->skip(it->estimatedNumResults()-1);
-                it->next();
             }
         }
         else {
