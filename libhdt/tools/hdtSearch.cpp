@@ -100,6 +100,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
             }
             catch (const runtime_error error) {
                 /*invalid offset*/
+                interruptSignal = 1;
             }
         }
         else {
@@ -147,7 +148,7 @@ int main(int argc, char **argv) {
 			break;
         case 'f':
             sstream << optarg;
-            sstream >> offset;
+            if(!(sstream >> offset)) offset=0;
             break;
 		case 'm':
 			measure = true;
