@@ -108,7 +108,6 @@ namespace HDTVocabulary {
 	const std::string TRIPLES_TYPE_TRIPLESLIST = HDT_TRIPLES_BASE+"List>";
 	const std::string TRIPLES_TYPE_TRIPLESLISTDISK = HDT_TRIPLES_BASE+"ListDisk>";
 	const std::string TRIPLES_TYPE_PLAIN = HDT_TRIPLES_BASE+"Plain>";
-	const std::string TRIPLES_TYPE_COMPACT = HDT_TRIPLES_BASE+"Compact>";
 	const std::string TRIPLES_TYPE_BITMAP = HDT_TRIPLES_BASE+"Bitmap>";
 	const std::string TRIPLES_TYPE_KYOTO = HDT_TRIPLES_BASE+"KYOTO>";
 

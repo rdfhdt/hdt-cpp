@@ -271,11 +271,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="hdtspecform.ui" line="179"/>
-        <source>CompactTriples</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="hdtspecform.ui" line="188"/>
         <source>SPO</source>
         <translation type="unfinished"></translation>

@@ -58,7 +58,6 @@
 #endif
 
 #include "../triples/PlainTriples.hpp"
-#include "../triples/CompactTriples.hpp"
 #include "../triples/BitmapTriples.hpp"
 #include "../triples/TripleOrderConvert.hpp"
 
@@ -126,8 +125,6 @@ void BasicHDT::createComponents() {
 	}
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		triples = new BitmapTriples(spec);
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_COMPACT) {
-		triples = new CompactTriples(spec);
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
 		triples = new PlainTriples(spec);
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
