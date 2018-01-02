@@ -455,18 +455,23 @@ void MiddleWaveletIterator::skip(unsigned int pos) {
 	//goTo(predicateOcurrence+pos);
 
 	int numJumps = 0;
+    unsigned int posLeft = pos;
 	while ((numJumps<pos)&&(posZ<maxZ)){
-		if((posZ+pos)>nextZ) {
+		if((posZ+posLeft)>nextZ) {
 			 numJumps += (nextZ-posZ)+1; // count current jump
 			 predicateOcurrence++; // jump to the next occurrence
+             posLeft = pos-numJumps; // set remaining offset
 			 if (predicateOcurrence<=numOcurrences){
 				 posY = predicateIndex->getAppearance(patY, predicateOcurrence);
 				 posZ = prevZ = adjZ.find(posY);
 				 nextZ = adjZ.last(posY);
 			 }
+            else {
+                 throw std::runtime_error("Cannot goTo on this pattern.");
+             }
 
 		} else {
-			posZ=(posZ+pos);
+			posZ=(posZ+posLeft);
 			numJumps=pos;
 		}
 	}
