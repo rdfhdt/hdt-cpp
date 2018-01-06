@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
          * didn't have any extension. The default format is defined at the top
          * of this file: RDFNotation notation = NTRIPLES;
          */
-        if (rdfFormat == "")
+        if (rdfFormat == "" || rdfFormat == "gz")
         {
             rdfFormat = "nt";
             vout << "No input format detected. Using default: NTRIPLES." << endl;
