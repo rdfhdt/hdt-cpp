@@ -51,7 +51,7 @@ void help() {
     cout << "\t-i\t\t\tAlso generate index to solve all triple patterns." << endl;
     cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
     cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
-    cout << "\t-f\t<format>\tFormat of the RDF input (n3, ntriples or nt, nquads or nq, turtle or ttl)" << endl;
+    cout << "\t-f\t<format>\tFormat of the RDF input (nquads,nq,ntriples,nt,trig,turtle,ttl)" << endl;
     cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
     cout << "\t-V\tPrints the HDT version number." << endl;
     cout << "\t-p\tPrints a progress indicator." << endl;
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
         if (rdfFormat == "" || rdfFormat == "gz")
         {
             rdfFormat = "nt";
-            vout << "No input format detected. Using default: NTRIPLES." << endl;
+            vout << "No input format detected: using N-Triples by default." << endl;
         }
     }
     
@@ -183,22 +183,22 @@ int main(int argc, char **argv) {
     transform (rdfFormat.begin (), rdfFormat.end (), rdfFormat.begin (), ::tolower);
 
     // Detect input format
-    if (rdfFormat == "n3")
-        notation = N3;
-    else if (rdfFormat == "ntriples" || rdfFormat == "nt")
+    if (rdfFormat=="nquads" || rdfFormat=="nq") {
+        notation = NQUADS;
+    } else if (rdfFormat== "ntriples" || rdfFormat=="nt") {
         notation = NTRIPLES;
-    else if (rdfFormat == "nquads" || rdfFormat == "nq")
-        notation = NQUAD;
-    else if (rdfFormat == "turtle" || rdfFormat == "ttl")
+    } else if (rdfFormat=="trig") {
+        notation = TRIG;
+    } else if (rdfFormat=="turtle" || rdfFormat=="ttl") {
         notation = TURTLE;
     // -f or file extension detected, but didn't match any valid format.
-    else {
-        cerr << "ERROR: Detected \"" << rdfFormat << "\" input format. Must be one of:" << endl
-             << "\t- n3" << endl
-             << "\t- ntriples or nt" << endl
-             << "\t- nquads or nq" << endl
-             << "\t- turtle or ttl" << endl;
-
+    } else {
+        cerr << "ERROR: Input format `" << rdfFormat << "' is not supported.\n"
+             << "Use either of the following:\n"
+             << "\t- `ntriples' or `nt' for N-Triples\n"
+             << "\t- `nquads' or `nq' for N-Quads\n"
+             << "\t- `turtle' or `ttl' for Turtle\n"
+             << "\t- `trig' for TriG" << endl;
         return 1;
     }
 

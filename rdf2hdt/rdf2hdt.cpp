@@ -51,7 +51,7 @@ void help() {
     cout << "\t-i\t\tAlso generate index to solve all triple patterns." << endl;
     cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
     cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
-    cout << "\t-f\t<format>\tFormat of the RDF input (ntriples, nquad, n3, turtle, rdfxml)" << endl;
+    cout << "\t-f\t<format>\tFormat of the RDF input (nquads,nq,ntriples,nt,trig,turtle,ttl)" << endl;
     cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
     cout << "\t-V\tPrints the HDT version number." << endl;
     //cout << "\t-v\tVerbose output" << endl;
@@ -129,18 +129,21 @@ int main(int argc, char **argv) {
     }
 
     if(rdfFormat!="") {
-        if(rdfFormat=="ntriples") {
+        if(rdfFormat=="nquads" || rdfFormat=="nq") {
+            notation = NQUADS;
+        } else if(rdfFormat=="ntriples" || rdfFormat=="nt") {
             notation = NTRIPLES;
-        } else if(rdfFormat=="nquad") {
-            notation = NQUAD;
-        } else if(rdfFormat=="n3") {
-            notation = N3;
-        } else if(rdfFormat=="turtle") {
+        } else if(rdfFormat=="trig") {
+            notation = TRIG;
+        } else if(rdfFormat=="turtle" || rdfFormat=="ttl") {
             notation = TURTLE;
-        } else if(rdfFormat=="rdfxml") {
-            notation = XML;
         } else {
-            cout << "ERROR: The RDF input format must be one of: (ntriples, nquad, n3, turtle, rdfxml)" << endl;
+            cerr << "ERROR: Input format `" << rdfFormat << "' is not supported.\n"
+                 << "Use either of the following:\n"
+                 << "\t- `ntriples' or `nt' for N-Triples\n"
+                 << "\t- `nquads' or `nq' for N-Quads\n"
+                 << "\t- `turtle' or `ttl' for Turtle\n"
+                 << "\t- `trig' for TriG" << endl;
             help();
             return 1;
         }
