@@ -41,7 +41,9 @@ TripleString *TripleIDStringIterator::previous() {
 void TripleIDStringIterator::goToStart() {
 	iterator->goToStart();
 }
-
+bool TripleIDStringIterator::canGoTo() {
+	return iterator->canGoTo();
+}
 size_t TripleIDStringIterator::estimatedNumResults() {
 	return iterator->estimatedNumResults();
 }

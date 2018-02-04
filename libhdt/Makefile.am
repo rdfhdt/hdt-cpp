@@ -67,7 +67,6 @@ src/sparql/SortBinding.cpp \
 src/sparql/TriplePatternBinding.cpp \
 src/triples/BitmapTriples.cpp \
 src/triples/BitmapTriplesIterators.cpp \
-src/triples/CompactTriples.cpp \
 src/triples/PlainTriples.cpp \
 src/triples/predicateindex.cpp \
 src/triples/TripleIterators.cpp \
@@ -143,7 +142,6 @@ src/sparql/TriplePatternBinding.hpp\
 src/sparql/VarBindingInterface.hpp\
 src/sparql/VarFilterBinding.hpp\
 src/triples/BitmapTriples.hpp\
-src/triples/CompactTriples.hpp\
 src/triples/PlainTriples.hpp\
 src/triples/predicateindex.hpp\
 src/triples/TripleIterators.hpp\

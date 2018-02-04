@@ -26,6 +26,7 @@ public:
 	TripleString *next();
 	bool hasPrevious();
 	TripleString *previous();
+	bool canGoTo();
 	void goToStart();
 	size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();

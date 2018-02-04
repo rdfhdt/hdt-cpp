@@ -54,7 +54,7 @@ AC_ARG_WITH([serd],
   AS_HELP_STRING([--with-serd], [Use serd library [default=yes] ]),
   [],[with_serd=true])
 AS_IF([test x$with_serd != xno],
-  [PKG_CHECK_MODULES([SERD], [serd-0],
+  [PKG_CHECK_MODULES([SERD], [serd-0 >= 0.28.0],
     [AC_DEFINE([HAVE_SERD],[1],[Serd available])]
     [EXTRAFLAGS="${EXTRAFLAGS} -DHAVE_SERD"]
     [AC_SUBST(EXTRAFLAGS)])

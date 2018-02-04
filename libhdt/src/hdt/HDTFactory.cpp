@@ -46,7 +46,6 @@
 #include "../triples/TripleListDisk.hpp"
 #endif
 #include "../triples/PlainTriples.hpp"
-#include "../triples/CompactTriples.hpp"
 #include "../triples/BitmapTriples.hpp"
 
 
@@ -84,8 +83,6 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		return new BitmapTriples();
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_COMPACT) {
-		return new CompactTriples();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
 		return new PlainTriples();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {

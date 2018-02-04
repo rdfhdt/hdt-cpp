@@ -38,6 +38,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <string>
+#include <cstdint>
 #include <iostream>
 #include <fstream>
 #include "../src/util/StopWatch.hpp"
@@ -57,12 +58,13 @@ void help() {
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-q\t<query>\t\tLaunch query and exit." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
+    cout << "\t-f\t<offset>\tLimit the result list starting after the offset." << endl;
 	cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
-	cout << "\t-V\tPrints the HDT version number." << endl;
+	cout << "\t-V\t\t\tPrints the HDT version number." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
-void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
+void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset) {
 	TripleString tripleString;
 	tripleString.read(query);
 
@@ -89,6 +91,26 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 		IteratorTripleString *it = hdt->search(subj, pred, obj);
 
 		StopWatch st;
+
+        // Go to the right offset.
+        if(it->canGoTo()) {
+            try {
+                it->skip(offset);
+                offset = 0;
+            }
+            catch (const runtime_error error) {
+                /*invalid offset*/
+                interruptSignal = 1;
+            }
+        }
+        else {
+            while(offset && it->hasNext()) {
+                it->next();
+                offset--;
+            }
+        }
+
+        // Get results.
 		size_t numTriples=0;
 		while(it->hasNext() && interruptSignal==0) {
 			TripleString *ts = it->next();
@@ -109,9 +131,11 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure) {
 int main(int argc, char **argv) {
 	int c;
 	string query, inputFile, outputFile;
+    stringstream sstream;
+    uint32_t offset = 0;
 	bool measure = false;
 
-	while( (c = getopt(argc,argv,"hq:o:m:V"))!=-1) {
+	while( (c = getopt(argc,argv,"hq:o:f:mV"))!=-1) {
 		switch(c) {
 		case 'h':
 			help();
@@ -122,6 +146,10 @@ int main(int argc, char **argv) {
 		case 'o':
 			outputFile = optarg;
 			break;
+        case 'f':
+            sstream << optarg;
+            if(!(sstream >> offset)) offset=0;
+            break;
 		case 'm':
 			measure = true;
 			break;
@@ -160,7 +188,7 @@ int main(int argc, char **argv) {
 
 		if(query!="") {
 			// Supplied query, search and exit.
-			iterate(hdt, (char*)query.c_str(), *out, measure);
+			iterate(hdt, (char*)query.c_str(), *out, measure, offset);
 		} else {
 			// No supplied query, show terminal.
 			char line[1024*10];
@@ -179,7 +207,7 @@ int main(int argc, char **argv) {
 					continue;
 				}
 
-				iterate(hdt, line, *out, measure);
+				iterate(hdt, line, *out, measure, offset);
 
 				cerr << ">> ";
 			}
