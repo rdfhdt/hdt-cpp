@@ -50,7 +50,7 @@ size_t TripleIDStringIterator::estimatedNumResults() {
 ResultEstimationType TripleIDStringIterator::numResultEstimation() {
 	return iterator->numResultEstimation();
 }
-void TripleIDStringIterator::skip(unsigned int pos) {
+void TripleIDStringIterator::skip(size_t pos) {
 	iterator->skip(pos);
 }
 

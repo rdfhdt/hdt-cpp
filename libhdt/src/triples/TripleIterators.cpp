@@ -149,13 +149,13 @@ size_t SequentialSearchIteratorTripleID::estimatedNumResults()
 bool SequentialSearchIteratorTripleID::canGoTo(){
 	return true;
 }
-void SequentialSearchIteratorTripleID::goTo(unsigned int pos){
+void SequentialSearchIteratorTripleID::goTo(size_t pos){
 	iterator->goToStart();
 	for (int i=0;i<=pos;i++){
 		doFetchNext();
 	}
 }
-void SequentialSearchIteratorTripleID::skip(unsigned int pos){
+void SequentialSearchIteratorTripleID::skip(size_t pos){
 	for (int i=0;i<pos;i++){
 		doFetchNext();
 	}

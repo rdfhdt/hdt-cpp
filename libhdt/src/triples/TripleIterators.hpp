@@ -71,8 +71,8 @@ public:
 	~SequentialSearchIteratorTripleID();
 	size_t estimatedNumResults();
 	bool canGoTo();
-	void goTo(unsigned int pos);
-	void skip(unsigned int pos);
+	void goTo(size_t pos);
+	void skip(size_t pos);
 
 	bool hasNext();
 	TripleID *next();
