@@ -261,7 +261,10 @@ public:
 
 		while (((idInBlock < pfc->blocksize) && (pos < pfc->bytes) && !terminate) && !hasNext()) {
 			// Decode the prefix
-			pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, &delta);
+            if(sizeof(delta) == 8)
+                pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, (uint64_t*) &delta);
+            else
+                pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, (uint32_t*) &delta);
 
 			// Guess suffix size
 			slen = strlen((char*) pfc->text + pos) + 1;
@@ -395,7 +398,10 @@ public:
 
 		while (((idInBlock < pfc->blocksize) && (pos < pfc->bytes) && !terminate) && !hasNext()) {
 			// Decode the prefix
-			pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, &delta);
+            if(sizeof(delta) == 8)
+                pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, (uint64_t*) &delta);
+            else
+                pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, (uint32_t*) &delta);
 
 			// Guess suffix size
 			slen = strlen((char*) pfc->text + pos) + 1;

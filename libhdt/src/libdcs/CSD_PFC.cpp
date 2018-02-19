@@ -302,7 +302,11 @@ size_t CSD_PFC::load(unsigned char *ptr, unsigned char *ptrMax) {
 	if(ptr[count++] != PFC)
 		throw std::runtime_error("Trying to read a CSD_PFC but type does not match");
 
-	count += VByte::decode(&ptr[count], ptrMax, &numstrings);
+	if(sizeof(numstrings) == 8)
+		count += VByte::decode(&ptr[count], ptrMax, (uint64_t*) &numstrings);
+	else
+		count += VByte::decode(&ptr[count], ptrMax, (uint32_t*) &numstrings);
+
 	count += VByte::decode(&ptr[count], ptrMax, &bytes);
 	count += VByte::decode(&ptr[count], ptrMax, &blocksize);
 
@@ -541,7 +545,10 @@ void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int ma
 		while ( (idInBlock<blocksize) && (pos<bytes) && !terminate)
 		{
 			// Decode the prefix
-			pos += VByte::decode(text+pos, text+bytes, &delta);
+			if(sizeof(delta) == 8)
+				pos += VByte::decode(text+pos, text+bytes, (uint64_t*) &delta);
+			else
+				pos += VByte::decode(text+pos, text+bytes, (uint32_t*) &delta);
 
 			// Guess suffix size
 			slen = strlen((char*)text+pos)+1;
