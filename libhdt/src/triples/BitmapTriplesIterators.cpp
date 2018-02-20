@@ -785,7 +785,7 @@ void ObjectIndexIterator::updateOutput() {
 
 bool ObjectIndexIterator::hasNext()
 {
-    return posIndex <= maxIndex;
+    return posIndex <= maxIndex && maxIndex >= 0;
 }
 
 TripleID *ObjectIndexIterator::next()
