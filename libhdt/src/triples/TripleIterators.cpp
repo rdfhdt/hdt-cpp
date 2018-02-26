@@ -151,12 +151,12 @@ bool SequentialSearchIteratorTripleID::canGoTo(){
 }
 void SequentialSearchIteratorTripleID::goTo(unsigned int pos){
 	iterator->goToStart();
-	for (int i=0;i<=pos;i++){
+	for (size_t i=0;i<=pos;i++){
 		doFetchNext();
 	}
 }
 void SequentialSearchIteratorTripleID::skip(unsigned int pos){
-	for (int i=0;i<pos;i++){
+	for (size_t i=0;i<pos;i++){
 		doFetchNext();
 	}
 }

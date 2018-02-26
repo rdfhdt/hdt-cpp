@@ -333,7 +333,7 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 	const int nbins = 1000000;
 	map<int, Histogram*> hDegreePartialPerPredicate;
 
-	for (int i=1;i<=numPredicates;i++){
+	for (size_t i=1;i<=numPredicates;i++){
 		 Histogram* hDegreePart = new Histogram(0, maxval, nbins);
 		 hDegreePartialPerPredicate[i]=hDegreePart;
 	}
@@ -743,7 +743,7 @@ void TriplesList::calculateMinStats(string path, unsigned int numPredicates) {
 	const int nbins = 1000000;
 	map<int, Histogram*> hDegreePartialPerPredicate;
 
-	for (int i=1;i<=numPredicates;i++){
+	for (size_t i=1;i<=numPredicates;i++){
 		 Histogram* hDegreePart = new Histogram(0, maxval, nbins);
 		 hDegreePartialPerPredicate[i]=hDegreePart;
 	}
@@ -1068,7 +1068,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 						listsofPredicates[listPredicates] + 1;
 
 				//register the number of lists per class
-				for (int k = 0; k < listClasses.size(); k++) {
+				for (size_t k = 0; k < listClasses.size(); k++) {
 					string concatenationClassPred = "c"; //to concanetate something different from an ID
 					std::stringstream ss;
 					ss << (unsigned int) (listClasses[k]);
@@ -1083,7 +1083,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 					listofClassesPredicates[concatenationClassPred] =
 							listofClassesPredicates[concatenationClassPred] + 1;
 				}
-				for (int k = 0; k < pendingpartialycounts.size(); k++) {
+				for (size_t k = 0; k < pendingpartialycounts.size(); k++) {
 					hDegreePartial.add(pendingpartialycounts[k]);
 				}
 			}
@@ -1175,7 +1175,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 				+ 1;
 
 		//register the number of lists per class
-		for (int k = 0; k < listClasses.size(); k++) {
+		for (size_t k = 0; k < listClasses.size(); k++) {
 			string concatenationClassPred = "c"; //to concanetate something different from an ID
 			std::stringstream ss;
 			ss << (unsigned int) (listClasses[k]);
@@ -1197,7 +1197,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 		//cout << "\tpartial degree: " << ycount << endl;
 		hDegreePartial.add(ycount);
 
-		for (int k = 0; k < pendingpartialycounts.size(); k++) {
+		for (size_t k = 0; k < pendingpartialycounts.size(); k++) {
 			hDegreePartial.add(pendingpartialycounts[k]);
 		}
 
