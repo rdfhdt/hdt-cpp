@@ -27,17 +27,17 @@ dependencies installed:
 - [GNU zip (gzip)](http://www.zlib.net/) Allows GNU zipped RDF input
   files to be ingested, and allows GNU zipped HDT files to be loaded.
 
-  - `sudo apt install gzip` on Debian-based distros (e.g., Ubuntu).
-  - `sudo dnf install gzip` in Red Hat-based distros (e.g., Fedora).
+  - `sudo apt install gzip` on Debian-based distros (e.g., Ubuntu)
+  - `sudo dnf install gzip` in Red Hat-based distros (e.g., Fedora)
 
 - [Serd v0.28+](https://github.com/drobilla/serd) The default parser
   that is used to process RDF input files.  It supports the N-Quads,
   N-Triples, TriG, and Turtle serialization formats.
 
   - `sudo apt install libserd-0-0 libserd-dev` on Debian-based distros
-    (e.g., Ubuntu).
+    (e.g., Ubuntu)
   - `sudo dnf install serd serd-devel` on Red Hat-based distros (e.g.,
-    Fedora).
+    Fedora)
 
 ### Installation
 
