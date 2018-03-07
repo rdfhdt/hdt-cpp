@@ -44,25 +44,25 @@ After building, these are the typical operations that you will perform:
     NB: the input stream is assumed to be valid RDF, so you should validate your data before feeding it into rdf2hdt.
 
     ```
-    $ tools/rdf2hdt data/test.nt data/test.hdt
+    $ libhdt/tools/rdf2hdt data/test.nt data/test.hdt
     ```
 
 - Create only the index of an HDT file:
 
     ```
-    $ tools/hdtSearch -q 0 data/test.hdt
+    $ libhdt/tools/hdtSearch -q 0 data/test.hdt
     ```
 
 - Convert an HDT to another RDF serialization format, such as N-Triples:
 
     ```
-    $ tools/hdt2rdf data/test.hdt data/test.hdtexport.nt
+    $ libhdt/tools/hdt2rdf data/test.hdt data/test.hdtexport.nt
     ```
 
 - Open a terminal to search triple patterns within an HDT file:
 
     ```
-    $ tools/hdtSearch data/test.hdt
+    $ libhdt/tools/hdtSearch data/test.hdt
     >> ? ? ?
     http://example.org/uri3 http://example.org/predicate3 http://example.org/uri4
     http://example.org/uri3 http://example.org/predicate3 http://example.org/uri5
@@ -87,13 +87,13 @@ After building, these are the typical operations that you will perform:
 - Extract the Header of an HDT file:
 
     ```
-    $ tools/hdtInfo data/test.hdt > header.nt
+    $ libhdt/tools/hdtInfo data/test.hdt > header.nt
     ```
 
 - Replace the Header of an HDT file with a new one. For example, by editing the existing one as extracted using `hdtInfo`:
 
     ```
-    $ tools/replaceHeader data/test.hdt data/testOutput.hdt newHeader.nt
+    $ libhdt/tools/replaceHeader data/test.hdt data/testOutput.hdt newHeader.nt
     ```
 
 ## Contributing
