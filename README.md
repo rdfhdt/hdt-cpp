@@ -11,7 +11,6 @@ HDT keeps big RDF datasets compressed while maintaining efficient search and bro
 The implementation has the following dependencies:
 - [Serd v0.28+](http://drobilla.net/software/serd/) This enables importing RDF data in the Turtle and N-Triples serialization formats specifically. The dependency is activated by default.
 - [libz](http://www.zlib.net/) Enables loading N-Triples files compressed with GZIP (e.g., `file.nt.gz`) and gzipped HDTs (`file.hdt.gz`). The dependency is activated by default.
-- [Kyoto Cabinet](http://fallabs.com/kyotocabinet/) (optional) Enables generating big RDF datasets on machines without much RAM memory, by creating a temporary Kyoto Cabinet database. The dependency is deactivated by default; to activate it, call `configure` with `--with-kyoto=yes` flag during installation.
 
 The installation process has the following dependencies:
 
@@ -41,9 +40,9 @@ Then, run:
 After building, these are the typical operations that you will perform:
 
 - Convert your RDF data to HDT:
-    
+
     NB: the input stream is assumed to be valid RDF, so you should validate your data before feeding it into rdf2hdt.
-    
+
     ```
     $ tools/rdf2hdt data/test.nt data/test.hdt
     ```
