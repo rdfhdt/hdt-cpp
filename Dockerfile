@@ -26,7 +26,7 @@ RUN wget https://github.com/drobilla/serd/archive/v0.28.0.tar.gz \
 RUN cd hdt-cpp && ./autogen.sh && ./configure && make -j2
 
 # Expose binaries
-ENV PATH /usr/local/src/hdt-cpp/hdt-lib/tools:$PATH
+ENV PATH /usr/local/src/hdt-cpp/libhdt/tools:$PATH
 
 # reset WORKDIR
 WORKDIR /

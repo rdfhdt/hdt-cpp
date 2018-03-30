@@ -51,38 +51,6 @@ make -j2
 sudo make install
 ```
 
-### Complications
-
-Here we record complications, and possible workarounds, that people
-have found while performing the standard installation documented
-above.
-
-#### `./configure` cannot find Serd
-
-While running `./configure` you get a message similar to the
-following:
-
-```
-Package 'serd-0', required by 'virtual:world', not found
-```
-
-This means that `./configure` cannot find the location of the
-`serd-0.pc` file on your computer.  You have to find this location
-yourself, e.g., in the following way:
-
-```
-find /usr/ -name serd-0.pc
-```
-
-Once you have found the directory containing the `serd-0.pc` file, you
-have to inform the `./configure` script about this location by setting
-the following environment variable (where directory
-`/usr/local/lib/pkgconfig/` is adapted to your situation):
-
-```
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig/
-```
-
 ## Using HDT
 
 After compiling and installing, you can use the handy tools that are
