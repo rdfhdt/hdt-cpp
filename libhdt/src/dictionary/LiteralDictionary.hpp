@@ -40,89 +40,87 @@
 
 namespace hdt {
 
-class LiteralDictionary : public Dictionary {
-private:
-	csd::CSD *subjects;
-	csd::CSD *predicates;
-	csd::CSD *objectsNotLiterals;
-	csd::CSD *objectsLiterals;
-	csd::CSD *shared;
+	class LiteralDictionary : public Dictionary {
+		private:
+			csd::CSD *subjects;
+			csd::CSD *predicates;
+			csd::CSD *objectsNotLiterals;
+			csd::CSD *objectsLiterals;
+			csd::CSD *shared;
 
-	unsigned int mapping;
-	uint64_t sizeStrings;
-	uint32_t blocksize;
+			unsigned int mapping;
+			uint64_t sizeStrings;
+			uint32_t blocksize;
 
-	//ControlInformation controlInformation;
-	HDTSpecification spec;
+			//ControlInformation controlInformation;
+			HDTSpecification spec;
 
-public:
-	LiteralDictionary();
-	LiteralDictionary(HDTSpecification &spec);
-	~LiteralDictionary();
+		public:
+			LiteralDictionary();
+			LiteralDictionary(HDTSpecification &spec);
+			~LiteralDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(const std::string &str, TripleComponentRole position);
+			std::string idToString(unsigned int id, TripleComponentRole position);
+			unsigned int stringToId(const std::string &str, TripleComponentRole position);
 
-	/** Returns the number of IDs that contain s[1,..len] as a substring. It also
-	 * return in occs the IDs. Otherwise return 0.
-	 *  @s: the substring to be located.
-	 *  @len: the length (in characters) of the string s.
-	 *  @occs: pointer where the ID located will be stored.
-	 * */
-	uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t **occs);
-    uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t offset, uint32_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ);
+			/** Returns the number of IDs that contain s[1,..len] as a substring. It also
+			*  return in occs the IDs. Otherwise return 0.
+			*  @s: the substring to be located.
+			*  @len: the length (in characters) of the string s.
+			*  @occs: pointer where the ID located will be stored.
+			**/
+			uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t **occs);
+			uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t offset, uint32_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ);
 
-    size_t getNumberOfElements();
+			size_t getNumberOfElements();
 
-    uint64_t size();
+			uint64_t size();
 
-	unsigned int getNsubjects();
-	unsigned int getNpredicates();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+			unsigned int getNsubjects();
+			unsigned int getNpredicates();
+			unsigned int getNobjects();
+			unsigned int getNshared();
+			unsigned int getNobjectsNotLiterals();
+			unsigned int getNobjectsLiterals();
+			unsigned int getMaxID();
+			unsigned int getMaxSubjectID();
+			unsigned int getMaxPredicateID();
+			unsigned int getMaxObjectID();
 
-	unsigned int getNobjectsNotLiterals();
-	unsigned int getNobjectsLiterals();
+			void populateHeader(Header &header, string rootNode);
+			void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
+			void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
-	unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxPredicateID();
-	unsigned int getMaxObjectID();
+			size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
-	void populateHeader(Header &header, string rootNode);
-	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
-	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
+			void import(Dictionary *other, ProgressListener *listener=NULL);
 
-	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+			IteratorUCharString *getSubjects();
+			IteratorUCharString *getPredicates();
+			IteratorUCharString *getObjects();
+			IteratorUCharString *getShared();
 
-    void import(Dictionary *other, ProgressListener *listener=NULL);
+			unsigned int insert(const std::string &str, TripleComponentRole position);
 
-    IteratorUCharString *getSubjects();
-    IteratorUCharString *getPredicates();
-    IteratorUCharString *getObjects();
-    IteratorUCharString *getShared();
+			void startProcessing(ProgressListener *listener = NULL);
+			void stopProcessing(ProgressListener *listener = NULL);
 
-	unsigned int insert(const std::string &str, TripleComponentRole position);
+			string getType();
+			unsigned int getMapping();
 
-	void startProcessing(ProgressListener *listener = NULL);
-	void stopProcessing(ProgressListener *listener = NULL);
+			void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
-	string getType();
-	unsigned int getMapping();
-
-	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
-
-    hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
-    hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
+			hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+			hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 
-private:
-	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
-};
+		private:
+			csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);
+			unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
+			unsigned int getGlobalId(unsigned int id, DictionarySection position);
+			unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
+			unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+	};
 
 }
 
