@@ -9,6 +9,7 @@ convert \
 conwav \
 csd \
 dic \
+dictionaries \
 filterSearch \
 genCache \
 genIndex \

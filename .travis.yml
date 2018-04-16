@@ -2,7 +2,7 @@ language: cpp
 env:
   global:
     - LOCAL=$HOME/local
-    - TESTS_HDT="bit375 bitutiltest listener logarr serd streamtest testmax"
+    - TESTS_HDT="bit375 bitutiltest listener logarr serd streamtest testmax dictionaries"
     - TESTS_CDS="testArray testBitSequence testHuffman testLCP testNPR testSequence testSuffixTree testTextIndex timeSequence toArray2 toArray"
 matrix:
   include:
