@@ -378,6 +378,12 @@ unsigned int FourSectionDictionary::getNpredicates(){
 unsigned int FourSectionDictionary::getNobjects(){
 	return shared->getLength()+objects->getLength();
 }
+unsigned int FourSectionDictionary::getNobjectsLiterals() {
+	throw std::logic_error("Not implemented");
+}
+unsigned int FourSectionDictionary::getNobjectsNotLiterals() {
+	throw std::logic_error("Not implemented");
+}
 unsigned int FourSectionDictionary::getNshared(){
 	return shared->getLength();
 }

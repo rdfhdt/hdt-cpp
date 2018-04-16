@@ -40,70 +40,72 @@
 
 namespace hdt {
 
-class FourSectionDictionary : public Dictionary {
-private:
-	csd::CSD *subjects;
-	csd::CSD *predicates;
-	csd::CSD *objects;
-	csd::CSD *shared;
+	class FourSectionDictionary : public Dictionary {
+		private:
+			csd::CSD *subjects;
+			csd::CSD *predicates;
+			csd::CSD *objects;
+			csd::CSD *shared;
 
-	unsigned int mapping;
-	uint64_t sizeStrings;
-	uint32_t blocksize;
+			unsigned int mapping;
+			uint64_t sizeStrings;
+			uint32_t blocksize;
 
-	//ControlInformation controlInformation;
-	HDTSpecification spec;
+			//ControlInformation controlInformation;
+			HDTSpecification spec;
 
-public:
-	FourSectionDictionary();
-	FourSectionDictionary(HDTSpecification &spec);
-	~FourSectionDictionary();
+		public:
+			FourSectionDictionary();
+			FourSectionDictionary(HDTSpecification &spec);
+			~FourSectionDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(const std::string &str, TripleComponentRole position);
+			std::string idToString(unsigned int id, TripleComponentRole position);
+			unsigned int stringToId(const std::string &str, TripleComponentRole position);
 
-    size_t getNumberOfElements();
+			size_t getNumberOfElements();
 
-    uint64_t size();
+			uint64_t size();
 
-	unsigned int getNsubjects();
-	unsigned int getNpredicates();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+			unsigned int getNsubjects();
+			unsigned int getNpredicates();
+			unsigned int getNobjects();
+			unsigned int getNobjectsLiterals();
+			unsigned int getNobjectsNotLiterals();
+			unsigned int getNshared();
 
-	unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxPredicateID();
-	unsigned int getMaxObjectID();
+			unsigned int getMaxID();
+			unsigned int getMaxSubjectID();
+			unsigned int getMaxPredicateID();
+			unsigned int getMaxObjectID();
 
-	void populateHeader(Header &header, string rootNode);
-	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
-	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
+			void populateHeader(Header &header, string rootNode);
+			void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
+			void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
-	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+			size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
-    void import(Dictionary *other, ProgressListener *listener=NULL);
+			void import(Dictionary *other, ProgressListener *listener=NULL);
 
-    IteratorUCharString *getSubjects();
-    IteratorUCharString *getPredicates();
-    IteratorUCharString *getObjects();
-    IteratorUCharString *getShared();
+			IteratorUCharString *getSubjects();
+			IteratorUCharString *getPredicates();
+			IteratorUCharString *getObjects();
+			IteratorUCharString *getShared();
 
-	string getType();
-	unsigned int getMapping();
+			string getType();
+			unsigned int getMapping();
 
-    void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
-    hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
-    hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
+			void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
+			hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+			hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 
-private:
-	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
-};
+		private:
+			csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);
+			unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
+			unsigned int getGlobalId(unsigned int id, DictionarySection position);
+			unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
+			unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+	};
 
 }
 

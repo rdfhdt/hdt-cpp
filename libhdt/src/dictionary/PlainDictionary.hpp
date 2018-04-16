@@ -67,149 +67,151 @@ namespace std { using namespace __gnu_cxx; }
 
 namespace hdt {
 
-struct DictionaryEntry {
-public:
-	unsigned int id;
-	char *str;
+	struct DictionaryEntry {
+		public:
+			unsigned int id;
+			char *str;
 
-	bool static cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2);
-	bool static cmpID(DictionaryEntry *c1, DictionaryEntry *c2);
-};
+			bool static cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2);
+			bool static cmpID(DictionaryEntry *c1, DictionaryEntry *c2);
+	};
 
-struct str_cmp {
-	bool operator()(const char* s1, const char* s2) const {
-		return strcmp(s1, s2) == 0;
-	}
-};
+	struct str_cmp {
+		bool operator()(const char* s1, const char* s2) const {
+			return strcmp(s1, s2) == 0;
+		}
+	};
 
-typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
+	typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 
 #ifdef GOOGLE_HASH 
-typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
+	typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
 
 #ifdef WIN32
-/*typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;*/
-typedef unordered_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
+	/*typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;*/
+	typedef unordered_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
-typedef std::hash_map<const char *, DictionaryEntry *, __gnu_cxx::hash<const char *>, str_cmp> DictEntryHash;
+	typedef std::hash_map<const char *, DictionaryEntry *, __gnu_cxx::hash<const char *>, str_cmp> DictEntryHash;
 
 #endif
 #endif
 
-typedef DictEntryHash::const_iterator DictEntryIt;
+	typedef DictEntryHash::const_iterator DictEntryIt;
 
 
-class PlainDictionary : public ModifiableDictionary {
-private:
-	std::vector<DictionaryEntry*> predicates;
-	std::vector<DictionaryEntry*> shared;
-	std::vector<DictionaryEntry*> subjects;
-	std::vector<DictionaryEntry*> objects;
-	DictEntryHash hashSubject;
-	DictEntryHash hashPredicate;
-	DictEntryHash hashObject;
-	unsigned int mapping;
-	uint64_t sizeStrings;
+	class PlainDictionary : public ModifiableDictionary {
+		private:
+			std::vector<DictionaryEntry*> predicates;
+			std::vector<DictionaryEntry*> shared;
+			std::vector<DictionaryEntry*> subjects;
+			std::vector<DictionaryEntry*> objects;
+			DictEntryHash hashSubject;
+			DictEntryHash hashPredicate;
+			DictEntryHash hashObject;
+			unsigned int mapping;
+			uint64_t sizeStrings;
 
-	//ControlInformation controlInformation;
-	HDTSpecification spec;
+			//ControlInformation controlInformation;
+			HDTSpecification spec;
 
-// Public Interface
-public:
-	PlainDictionary();
-	PlainDictionary(HDTSpecification &spec);
-	~PlainDictionary();
+			// Public Interface
+		public:
+			PlainDictionary();
+			PlainDictionary(HDTSpecification &spec);
+			~PlainDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(const std::string &str, TripleComponentRole position);
+			std::string idToString(unsigned int id, TripleComponentRole position);
+			unsigned int stringToId(const std::string &str, TripleComponentRole position);
 
-    size_t getNumberOfElements();
+			size_t getNumberOfElements();
 
-    uint64_t size();
+			uint64_t size();
 
-	unsigned int getNsubjects();
-	unsigned int getNpredicates();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+			unsigned int getNsubjects();
+			unsigned int getNpredicates();
+			unsigned int getNobjects();
+			unsigned int getNobjectsLiterals();
+			unsigned int getNobjectsNotLiterals();
+			unsigned int getNshared();
 
-	unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxPredicateID();
-	unsigned int getMaxObjectID();
+			unsigned int getMaxID();
+			unsigned int getMaxSubjectID();
+			unsigned int getMaxPredicateID();
+			unsigned int getMaxObjectID();
 
-	void populateHeader(Header &header, string rootNode);
-	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
-	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
+			void populateHeader(Header &header, string rootNode);
+			void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
+			void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 
-	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+			size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
-    void import(Dictionary *other, ProgressListener *listener=NULL);
+			void import(Dictionary *other, ProgressListener *listener=NULL);
 
-    IteratorUCharString *getSubjects();
-    IteratorUCharString *getPredicates();
-    IteratorUCharString *getObjects();
-    IteratorUCharString *getShared();
+			IteratorUCharString *getSubjects();
+			IteratorUCharString *getPredicates();
+			IteratorUCharString *getObjects();
+			IteratorUCharString *getShared();
 
-// ModifiableDictionary
-	unsigned int insert(const std::string &str, TripleComponentRole position);
+			// ModifiableDictionary
+			unsigned int insert(const std::string &str, TripleComponentRole position);
 
-	void startProcessing(ProgressListener *listener = NULL);
-	void stopProcessing(ProgressListener *listener = NULL);
+			void startProcessing(ProgressListener *listener = NULL);
+			void stopProcessing(ProgressListener *listener = NULL);
 
-	string getType();
-	unsigned int getMapping();
+			string getType();
+			unsigned int getMapping();
 
-	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
+			void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
-    hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+			hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
 
-    hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
+			hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
-// Private methods
-private:
-	void insert(std::string entry, DictionarySection pos);
+			// Private methods
+		private:
+			void insert(std::string entry, DictionarySection pos);
 
-	void split(ProgressListener *listener = NULL);
-	void lexicographicSort(ProgressListener *listener = NULL);
-	void idSort();
-	void updateIDs();
+			void split(ProgressListener *listener = NULL);
+			void lexicographicSort(ProgressListener *listener = NULL);
+			void idSort();
+			void updateIDs();
 
-	std::vector<DictionaryEntry*> &getDictionaryEntryVector(unsigned int id, TripleComponentRole position);
+			std::vector<DictionaryEntry*> &getDictionaryEntryVector(unsigned int id, TripleComponentRole position);
 
-public:
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+		public:
+			unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
+			unsigned int getGlobalId(unsigned int id, DictionarySection position);
+			unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
+			unsigned int getLocalId(unsigned int id, TripleComponentRole position);
 
-	void convertMapping(unsigned int mapping);
-	void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);
-};
+			void convertMapping(unsigned int mapping);
+			void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);
+	};
 
 
-class DictIterator : public IteratorUCharString {
-private:
-	std::vector<DictionaryEntry *> &vector;
-    size_t pos;
-public:
-	DictIterator(std::vector<DictionaryEntry *> &vector) : vector(vector), pos(0){
+	class DictIterator : public IteratorUCharString {
+		private:
+			std::vector<DictionaryEntry *> &vector;
+			size_t pos;
+		public:
+			DictIterator(std::vector<DictionaryEntry *> &vector) : vector(vector), pos(0){
 
-	}
-	virtual ~DictIterator() { }
+			}
+			virtual ~DictIterator() { }
 
-	virtual bool hasNext() {
-		return pos<vector.size();
-	}
+			virtual bool hasNext() {
+				return pos<vector.size();
+			}
 
-	virtual unsigned char *next() {
-		return (unsigned char*)vector[pos++]->str;
-	}
+			virtual unsigned char *next() {
+				return (unsigned char*)vector[pos++]->str;
+			}
 
-    virtual size_t getNumberOfElements() {
-		return vector.size();
-	}
-};
+			virtual size_t getNumberOfElements() {
+				return vector.size();
+			}
+	};
 
 
 }
