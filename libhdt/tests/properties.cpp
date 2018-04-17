@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
+#include <tuple>
 #include <HDTManager.hpp>
 #include "../src/hdt/HDTFactory.hpp"
 
@@ -159,7 +160,7 @@ read_hdt_file(const std::string& hdt_file_path)
 {
 	int error = 0;
 	try {
-		HDT *hdt = HDTManager::mapIndexedHDT(hdt_file_path.c_str(), nullptr);
+		HDT *hdt = HDTManager::mapIndexedHDT(hdt_file_path.c_str(), NULL);
 		// search everything
 		IteratorTripleString *it = hdt ->search("", "", "");
 		while (it ->hasNext() )
@@ -190,7 +191,7 @@ int
 main(int argc, char** argv)
 {
 	// Given these configuration files
-	std::list<std::string> elem {"../data/example1.conf", "../data/example2.conf", "../data/example3.conf"};
+	std::list<std::string> elem = {"../data/example1.conf", "../data/example2.conf", "../data/example3.conf"};
 	std::string nt_file_path = "../data/test.nt";
 	std::string hdt_file_path = "./test.hdt";
 	int err_creations = 0;
