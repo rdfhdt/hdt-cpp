@@ -4,13 +4,13 @@ testBitSequence \
 testHuffman \
 testLCP \
 testNPR \
-testQuantile \
 testSequence \
 testSuffixTree \
 testTextIndex \
 timeSequence \
 toArray2 \
 toArray
+#testQuantile
 
 AM_DEFAULT_SOURCE_EXT = .cpp
 AM_CPPFLAGS = -I@top_srcdir@/libcds/include $(WARN_CFLAGS)
