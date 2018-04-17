@@ -28,6 +28,7 @@ opendic \
 parse \
 patsearch \
 popcnt \
+properties \
 randomSolution \
 serd \
 streamtest \
