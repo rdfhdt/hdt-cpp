@@ -1,6 +1,7 @@
 check_PROGRAMS = \
 bit375 \
 bitutiltest \
+c11 \
 listener \
 logarr \
 serd \
