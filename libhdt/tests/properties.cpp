@@ -141,6 +141,7 @@ check_header(const std::string& hdt_file_path, const std::string& config_file_pa
 				std::string value = get_header_property(hdt_file_path, subject, predicate);
 				// This is necessary for literals.
 				value.erase( std::remove(value.begin(), value.end(), '"'), value.end() );
+				std::cerr << first << "," << last << "," << value << std::endl;
 				if ( last != value )
 				{
 					std::cerr << "Property '" << first << "' does not match. " << last << "(expected) != " << value << "(actual)" << std::endl;
@@ -191,7 +192,7 @@ int
 main(int argc, char** argv)
 {
 	// Given these configuration files
-	std::list<std::string> elem = {"../data/example1.conf", "../data/example2.conf", "../data/example3.conf"};
+	std::list<std::string> elem = {"../presets/bitmaphuff.hdtcfg"};//, "../data/example2.conf", "../data/example3.conf"};
 	std::string nt_file_path = "../data/test.nt";
 	std::string hdt_file_path = "./test.hdt";
 	int err_creations = 0;
