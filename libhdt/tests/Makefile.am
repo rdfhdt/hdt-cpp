@@ -4,6 +4,7 @@ bitutiltest \
 c11 \
 listener \
 logarr \
+properties \
 serd \
 streamtest \
 testmax

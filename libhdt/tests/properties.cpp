@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
-#include <list>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -141,7 +140,6 @@ check_header(const std::string& hdt_file_path, const std::string& config_file_pa
 				std::string value = get_header_property(hdt_file_path, subject, predicate);
 				// This is necessary for literals.
 				value.erase( std::remove(value.begin(), value.end(), '"'), value.end() );
-				std::cerr << first << "," << last << "," << value << std::endl;
 				if ( last != value )
 				{
 					std::cerr << "Property '" << first << "' does not match. " << last << "(expected) != " << value << "(actual)" << std::endl;
@@ -192,7 +190,7 @@ int
 main(int argc, char** argv)
 {
 	// Given these configuration files
-	std::list<std::string> elem = {"../presets/bitmaphuff.hdtcfg"};//, "../data/example2.conf", "../data/example3.conf"};
+	std::vector<std::string> elem = {"../presets/dictionaryfour.hdtcfg", "../presets/dictionaryliteral.hdtcfg", "../presets/ops.hdtcfg"};
 	std::string nt_file_path = "../data/test.nt";
 	std::string hdt_file_path = "./test.hdt";
 	int err_creations = 0;
@@ -202,7 +200,7 @@ main(int argc, char** argv)
 	//  1. HDT is created
 	//  2. Header has same properties
 	//  3. Iterate triples
-	for (std::list<std::string>::const_iterator iter = elem.begin(); iter != elem.end(); ++iter)
+	for (std::vector<std::string>::const_iterator iter = elem.begin(); iter != elem.end(); ++iter)
 	{
 		err_creations += create_hdt_file(nt_file_path, *iter, hdt_file_path);
 		err_checking += check_header(hdt_file_path, *iter);
