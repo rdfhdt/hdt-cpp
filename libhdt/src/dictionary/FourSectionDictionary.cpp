@@ -58,7 +58,7 @@ FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksiz
 
 	string blockSizeStr = "";
 	try{
-		spec.get("dict.block.size");
+		blockSizeStr = spec.get("dict.block.size");
 	}catch(exception& e){}
 
 	if(blockSizeStr!=""){
