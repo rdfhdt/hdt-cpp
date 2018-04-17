@@ -6,6 +6,7 @@
 #include <vector>
 #include <iterator>
 #include <tuple>
+#include <algorithm>
 #include <HDTManager.hpp>
 #include "../src/hdt/HDTFactory.hpp"
 
@@ -105,9 +106,9 @@ split(const std::string &s, char delim)
  */
 std::map<std::string, std::tuple<std::string, std::string>> queries =
 {
-	{ "dictionary.type", {"_:dictionary", "<http://purl.org/dc/terms/format>"}},
-	{ "triples.type", {"_:triples", "<http://purl.org/dc/terms/format>"}},
-	{ "triplesOrder", {"_:triples", "<http://purl.org/HDT/hdt#triplesOrder>"}}
+	{ "dictionary.type", std::make_tuple("_:dictionary", "<http://purl.org/dc/terms/format>")},
+	{ "triples.type", std::make_tuple("_:triples", "<http://purl.org/dc/terms/format>")},
+	{ "triplesOrder", std::make_tuple("_:triples", "<http://purl.org/HDT/hdt#triplesOrder>")}
 };
 
 /*
