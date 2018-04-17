@@ -2,8 +2,6 @@ language: cpp
 env:
   global:
     - LOCAL=$HOME/local
-    - TESTS_HDT="bit375 bitutiltest listener logarr serd streamtest testmax"
-    - TESTS_CDS="testArray testBitSequence testHuffman testLCP testNPR testSequence testSuffixTree testTextIndex timeSequence toArray2 toArray"
 matrix:
   include:
     - os: osx
@@ -50,8 +48,8 @@ script:
   - ./configure --prefix=$LOCAL CXX=$HDT_CPP
   - make -j2
   # Make and run selected tests. Most tests in HDT are failing
-  - TESTS=$TESTS_CDS make -e check -j2 -C libcds || ( cat libcds/tests/test-suite.log && exit -1)
-  - TESTS=$TESTS_HDT make -e check -j2 -C libhdt || ( cat libhdt/tests/test-suite.log && exit -1)
+  - make check -j2 -C libcds || ( cat libcds/tests/test-suite.log && exit -1)
+  - make check -j2 -C libhdt || ( cat libhdt/tests/test-suite.log && exit -1)
   # Install
   - make install
   - hdtSearch -q 0 libhdt/data/literals.hdt
