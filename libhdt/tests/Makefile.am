@@ -1,39 +1,40 @@
 check_PROGRAMS = \
 bit375 \
 bitutiltest \
-cmp \
-confm \
-conops \
-conpfc \
-convert \
-conwav \
-csd \
-dic \
-dictionaries \
-filterSearch \
-genCache \
-genIndex \
-getobj \
-hdt2rdfNotMapping \
-hdtExtract \
-iter \
-joinsearch \
-jointest \
-kyoto \
+c11 \
 listener \
 logarr \
-mergeHDT \
-mincor \
-naiveComplete \
-opendic \
-parse \
-patsearch \
-popcnt \
-randomSolution \
+properties \
 serd \
 streamtest \
-testmax \
-wav
+testmax
+#cmp \
+#confm \
+#conops \
+#conpfc \
+#convert \
+#conwav \
+#csd \
+#dic \
+#filterSearch \
+#genCache \
+#genIndex \
+#getobj \
+#hdt2rdfNotMapping \
+#hdtExtract \
+#iter \
+#joinsearch \
+#jointest \
+#kyoto \
+#mergeHDT \
+#mincor \
+#naiveComplete \
+#opendic \
+#parse \
+#patsearch \
+#popcnt \
+#randomSolution \
+#wav
 
 AM_DEFAULT_SOURCE_EXT = .cpp
 
