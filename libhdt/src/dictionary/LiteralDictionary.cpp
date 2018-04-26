@@ -430,7 +430,7 @@ uint32_t LiteralDictionary::substringToId(unsigned char *s, uint32_t len, uint32
 
 	if(fmIndex!=NULL) {
 		uint32_t ret = fmIndex->locate_substring(s, len, offset, limit, deduplicate, occs, num_occ);
-		for (int i=0;i<*num_occ;i++){
+		for (size_t i=0;i<*num_occ;i++){
 			(*occs)[i] = this->getGlobalId((*occs)[i], NOT_SHARED_OBJECT);
 		}
 		return ret;
@@ -706,7 +706,7 @@ void LiteralDictionary::getSuggestions(const char *base, hdt::TripleComponentRol
 	merge(v1.begin(), v1.end(), v2.begin(), v2.end(), std::back_inserter(out));
 
 	// Remove possible extra items
-	if (out.size() > maxResults) {
+	if ((maxResults >= 0) && (out.size() > static_cast<size_t>(maxResults))) {
 		out.resize(maxResults);
 	}
 }

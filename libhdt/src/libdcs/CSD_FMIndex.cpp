@@ -445,9 +445,9 @@ void csd::CSD_FMIndex::fillSuggestions(const char *base,
     uint32_t *results = NULL;
     size_t numresults = this->locate_substring(n_s, len + 1, &results);
     int maxIter = maxResults;
-    if (numresults < maxIter)
+    if (maxIter >= 0 && numresults < static_cast<size_t>(maxIter))
         maxIter = numresults;
-    for (int i = 0; i < numresults; i++) {
+    for (size_t i = 0; i < numresults; i++) {
         out.push_back((char*) (this->extract(results[i])));
     }
 }

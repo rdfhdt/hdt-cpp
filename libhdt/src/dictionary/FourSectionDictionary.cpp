@@ -582,7 +582,7 @@ void FourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponen
 	merge(v1.begin(),v1.end(), v2.begin(), v2.end(), std::back_inserter(out));
 
 	// Remove possible extra items
-	if(out.size()>maxResults) {
+	if((maxResults>=0) && (out.size()>static_cast<size_t>(maxResults))) {
 		out.resize(maxResults);
 	}
 }

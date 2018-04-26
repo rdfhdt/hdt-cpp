@@ -528,7 +528,7 @@ void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int ma
 		int cmp = strncmp(base, tmpStr.c_str(), baselen);
 		if(cmp==0) {
 			out.push_back(tmpStr);
-			if(out.size()>=maxResults) {
+			if(maxResults<0 || out.size()>=static_cast<size_t>(maxResults)) {
 				terminate=true;
 			}
 		} else if(cmp<0) {
@@ -552,7 +552,7 @@ void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int ma
 			int cmp = strncmp(base, tmpStr.c_str(), baselen);
 			if(cmp==0) {
 				out.push_back(tmpStr);
-				if(out.size()>=maxResults) {
+				if(maxResults<0 || out.size()>=static_cast<size_t>(maxResults)) {
 					terminate=true;
 				}
 			} else if(cmp<0) {
