@@ -17,11 +17,12 @@ The installation process has the following dependencies:
 
 - [autoconf](https://www.gnu.org/software/autoconf/autoconf.html)
 - [libtool](https://www.gnu.org/software/libtool/)
+- [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/)
 
-The following commands should install both packages:
+The following commands should install all packages:
 
     sudo apt-get update
-    sudo apt-get install autoconf libtool
+    sudo apt-get install autoconf libtool pkg-config
 
 ### Installing
 
