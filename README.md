@@ -35,6 +35,14 @@ Then, run:
     ./configure
     make -j2
 
+If you get the error `No package 'serd-0' found` with `./configure`, you must install Serd manually (the last command may require `sudo`):
+
+```shell
+wget https://github.com/drobilla/serd/archive/v0.28.0.tar.gz &&\
+tar -xvzf *.tar.gz && rm *.tar.gz && cd serd-* &&\
+./waf configure && ./waf &&\
+./waf install
+```
 ## Running
 
 After building, these are the typical operations that you will perform:
