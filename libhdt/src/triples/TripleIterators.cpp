@@ -151,7 +151,7 @@ bool SequentialSearchIteratorTripleID::canGoTo(){
 }
 void SequentialSearchIteratorTripleID::goTo(size_t pos){
 	iterator->goToStart();
-	for (int i=0;i<=pos;i++){
+	for (size_t i=0;i<=pos;i++){
 		doFetchNext();
 	}
 }

@@ -488,7 +488,7 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
 
 		//cerr << "Item " << i << " in adjlist " << adjZlist << endl;
 		unsigned int pred = arrayY->get(adjZlist);
-		maxpred = pred>maxpred ? pred : maxpred;
+		maxpred = ((maxpred<0) || (pred>static_cast<size_t>(maxpred))) ? pred : maxpred;
 
         index[val-1].push_back(std::make_pair(adjZlist, pred));
 		NOTIFYCOND(&iListener, "Generating Object lists", i, arrayZ->getNumberOfElements());

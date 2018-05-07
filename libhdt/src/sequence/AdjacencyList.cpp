@@ -233,7 +233,7 @@ size_t AdjacencyList::findNextAppearance(size_t oldpos, size_t element) {
 
 size_t AdjacencyList::findPreviousAppearance(size_t oldpos, size_t element) {
 	long long old=oldpos;
-    if(oldpos==-1 || element==0) {
+    if(oldpos==(size_t)-1 || element==0) {
         return -1;
     }
 

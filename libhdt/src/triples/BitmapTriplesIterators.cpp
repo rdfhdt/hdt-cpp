@@ -456,7 +456,7 @@ void MiddleWaveletIterator::skip(size_t pos) {
 
 	int numJumps = 0;
     unsigned int posLeft = pos;
-	while ((numJumps<pos)&&(posZ<maxZ)){
+	while ((numJumps<0 || static_cast<size_t>(numJumps)<pos)&&(posZ<maxZ)){
 		if((posZ+posLeft)>nextZ) {
 			 numJumps += (nextZ-posZ)+1; // count current jump
 			 predicateOcurrence++; // jump to the next occurrence
@@ -611,7 +611,7 @@ void IteratorY::updateOutput() {
 
 bool IteratorY::hasNext()
 {
-    return nextY!=-1 || posZ<=nextZ;
+    return nextY!=(size_t)-1 || posZ<=nextZ;
 }
 
 TripleID *IteratorY::next()
@@ -639,7 +639,7 @@ TripleID *IteratorY::next()
 
 bool IteratorY::hasPrevious()
 {
-	return prevY!=-1 || posZ>=prevZ;
+	return prevY!=(size_t)-1 || posZ>=prevZ;
 }
 
 TripleID *IteratorY::previous()
@@ -785,7 +785,7 @@ void ObjectIndexIterator::updateOutput() {
 
 bool ObjectIndexIterator::hasNext()
 {
-    return posIndex <= maxIndex && maxIndex >= 0;
+    return maxIndex >= 0 && posIndex <= static_cast<size_t>(maxIndex);
 }
 
 TripleID *ObjectIndexIterator::next()
@@ -804,7 +804,7 @@ TripleID *ObjectIndexIterator::next()
 
 bool ObjectIndexIterator::hasPrevious()
 {
-    return posIndex>minIndex;
+    return minIndex<0 || posIndex>static_cast<size_t>(minIndex);
 }
 
 TripleID *ObjectIndexIterator::previous()
