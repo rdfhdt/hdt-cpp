@@ -28,7 +28,15 @@ dependencies installed:
   files to be ingested, and allows GNU zipped HDT files to be loaded.
 
   - `sudo apt install gzip` on Debian-based distros (e.g., Ubuntu)
-  - `sudo dnf install gzip` in Red Hat-based distros (e.g., Fedora)
+  - `sudo dnf install gzip` on Red Hat-based distros (e.g., Fedora)
+
+- [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/)
+  A helper tool for compiling applications and libraries.
+
+  - `sudo apt install pkg-config` on Debian-based distros (e.g.,
+    Ubuntu)
+  - `sudo dnf install pkgconf-pkg-config` on Red Hat-based distros
+    (e.g., Fedora)
 
 - [Serd v0.28+](https://github.com/drobilla/serd) The default parser
   that is used to process RDF input files.  It supports the N-Quads,
