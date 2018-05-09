@@ -184,7 +184,7 @@ public:
 	 * @param i
 	 * @return
 	 */
-	TripleID *getTripleID(unsigned int i);
+	TripleID *getTripleID(size_t i);
 
 	friend class TriplesListIterator;
 };
