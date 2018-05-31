@@ -43,9 +43,9 @@ namespace cds_static
 			/** Builds the DArray */
 			BitSequenceDArray(uint * buff, size_t len);
 			virtual ~BitSequenceDArray();
-			virtual size_t select1(size_t i) const;
-			virtual size_t rank0(size_t i) const;
-			virtual size_t rank1(size_t i) const;
+                        virtual size_t select1(const size_t i) const;
+                        virtual size_t rank0(const size_t i) const;
+                        virtual size_t rank1(const size_t i) const;
 			virtual size_t getSize() const;
 			virtual void save(ostream & fp) const;
 			static BitSequenceDArray * load(istream & fp);

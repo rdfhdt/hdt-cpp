@@ -30,8 +30,8 @@ private:
 	VarBindingID *varID;
 	Dictionary *dict;
 
-	unsigned int getVarIndex(const char *varName) {
-        for(unsigned int i=0;i<getNumVars();i++) {
+    size_t getVarIndex(const char *varName) {
+        for(size_t i=0;i<getNumVars();i++) {
 			if(strcmp(getVarName(i), varName)==0) {
 				return i;
 			}
@@ -56,21 +56,21 @@ public:
 		return varID->findNext();
 	}
 
-	virtual unsigned int getNumVars() {
+    virtual size_t getNumVars() {
 		return varID->getNumVars();
 	}
-	virtual string getVar(unsigned int numvar) {
-		unsigned int id = varID->getVarValue(numvar);
+	virtual string getVar(size_t numvar) {
+		size_t id = varID->getVarValue(numvar);
 
 		return dict->idToString(id, varRole.find(getVarName(numvar))->second);
 	}
-	virtual const char *getVarName(unsigned int numvar) {
+    virtual const char *getVarName(size_t numvar) {
 		return varID->getVarName(numvar);
 	}
         virtual void goToStart() {
             return varID->goToStart();
         }
-        virtual unsigned int estimatedNumResults() {
+        virtual size_t estimatedNumResults() {
             return varID->estimatedNumResults();
         }
 };

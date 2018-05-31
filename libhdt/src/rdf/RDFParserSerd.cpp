@@ -152,14 +152,18 @@ RDFParserSerd::~RDFParserSerd() {
 
 SerdSyntax RDFParserSerd::getParserType(RDFNotation notation) {
 	switch(notation){
+	case NQUAD: // Deprecated: use `NQUADS' instead.
+		return SERD_NQUADS;
+	case NQUADS:
+		return SERD_NQUADS;
 	case NTRIPLES:
 		return SERD_NTRIPLES;
-	case NQUAD:
-		return SERD_NQUADS;
+	case TRIG:
+		return SERD_TRIG;
 	case TURTLE:
 		return SERD_TURTLE;
 	default:
-		throw ParseException("Serd parser only supports ntriples, nquads, and turtle.");
+		throw ParseException("Serd parser only supports N-Triples, N-Quads, TriG, and Turtle.");
 	}
 }
 

@@ -53,9 +53,9 @@ namespace hdt {
 class TripleID
 {
 protected:
-	unsigned int subject;
-	unsigned int predicate;
-	unsigned int object;
+    size_t subject;
+    size_t predicate;
+    size_t object;
 
 public:
 
@@ -73,7 +73,7 @@ public:
 	 * @param object
 	 * @return
 	 */
-	TripleID(unsigned int subject, unsigned int predicate, unsigned int object) {
+    TripleID(size_t subject, size_t predicate, size_t object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;
@@ -86,7 +86,7 @@ public:
 	 * Get the Subject component of this tripleID.
 	 * @return
 	 */
-	inline unsigned int getSubject() const {
+    inline size_t getSubject() const {
 		return subject;
 	}
 
@@ -94,7 +94,7 @@ public:
 	 * Set the Subject component of this tripleID.
 	 * @return
 	 */
-	inline void setSubject(unsigned int subject) {
+    inline void setSubject(size_t subject) {
 		this->subject = subject;
 	}
 
@@ -102,7 +102,7 @@ public:
 	 * Get the Predicate component of this tripleID.
 	 * @return
 	 */
-	inline unsigned getPredicate() const {
+    inline size_t getPredicate() const {
 		return this->predicate;
 	}
 
@@ -110,7 +110,7 @@ public:
 	 * Set the Predicate component of this tripleID.
 	 * @return
 	 */
-	inline void setPredicate(unsigned int predicate) {
+    inline void setPredicate(size_t predicate) {
 		this->predicate = predicate;
 	}
 
@@ -118,7 +118,7 @@ public:
 	 * Get the Object component of this tripleID.
 	 * @return
 	 */
-	inline unsigned int getObject() const {
+    inline size_t getObject() const {
 		return this->object;
 	}
 
@@ -126,11 +126,11 @@ public:
 	 * Set the Object component of this tripleID.
 	 * @return
 	 */
-	inline void setObject(unsigned int object) {
+    inline void setObject(size_t object) {
 		this->object = object;
 	}
 
-	inline void setAll(unsigned int subject, unsigned int predicate, unsigned int object) {
+    inline void setAll(size_t subject, size_t predicate, size_t object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;
@@ -198,17 +198,28 @@ public:
 	 * @return
 	 */
 	int compare(TripleID &other) {
-		int result = this->subject - other.subject;
+        int64_t result = (int64_t)(this->subject - other.subject);
 
 		if(result==0) {
-			result = this->predicate - other.predicate;
+            result = this->predicate - other.predicate;
 			if(result==0) {
-				return this->object - other.object;
-			} else {
-				return result;
+                result = this->object - other.object;
+                if(result>0){
+                    return 1;
+                } else if(result<0){
+                    return -1;
+                } else {
+                    return 0;
+                }
+            } else if(result>0) {
+                return 1;
+            } else {
+                return -1;
 			}
-		} else {
-			return result;
+        } else if(result>0) {
+            return +1;
+        } else {
+            return -1;
 		}
 	}
 
@@ -220,9 +231,9 @@ public:
 	 * @return boolean
 	 */
 	inline bool match(TripleID &pattern) {
-		unsigned int subject = pattern.getSubject();
-		unsigned int predicate = pattern.getPredicate();
-                unsigned int object = pattern.getObject();
+        size_t subject = pattern.getSubject();
+        size_t predicate = pattern.getPredicate();
+                size_t object = pattern.getObject();
 
 		if (subject == 0 || subject == this->subject) {
                     if (predicate == 0 || predicate == this->predicate) {
@@ -489,12 +500,12 @@ public:
     virtual ~VarBindingID() { }
 
     virtual void goToStart()=0;
-    virtual unsigned int estimatedNumResults()=0;
+    virtual size_t estimatedNumResults()=0;
     virtual bool findNext()=0;
 
-    virtual unsigned int getNumVars()=0;
-    virtual const char *getVarName(unsigned int numvar)=0;
-    virtual unsigned int getVarValue(unsigned int numvar)=0;
+    virtual size_t getNumVars()=0;
+    virtual const char *getVarName(size_t numvar)=0;
+    virtual size_t getVarValue(size_t numvar)=0;
 };
 
 class VarBindingString {
@@ -502,10 +513,10 @@ public:
 	virtual ~VarBindingString() { }
 
 	virtual bool findNext()=0;
-	virtual unsigned int getNumVars()=0;
-	virtual string getVar(unsigned int numvar)=0;
-	virtual const char *getVarName(unsigned int numvar)=0;
-	virtual unsigned int estimatedNumResults()=0;
+    virtual size_t getNumVars()=0;
+    virtual string getVar(size_t numvar)=0;
+    virtual const char *getVarName(size_t numvar)=0;
+    virtual size_t estimatedNumResults()=0;
 	virtual void goToStart()=0;
 };
 
@@ -514,16 +525,16 @@ public:
 	bool findNext() {
 	    return false;
 	}
-	unsigned int getNumVars() {
+    size_t getNumVars() {
 	    return 0;
 	}
-	string getVar(unsigned int /*numvar*/) {
+    string getVar(size_t /*numvar*/) {
 	    throw std::runtime_error("No such variable");
 	}
-	const char *getVarName(unsigned int /*numvar*/) {
+    const char *getVarName(size_t /*numvar*/) {
 	    throw std::runtime_error("No such variable");
 	}
-	unsigned int estimatedNumResults() {
+    size_t estimatedNumResults() {
 	    return 0;
 	}
 	void goToStart() {

@@ -14,9 +14,9 @@ using namespace std;
 class Histogram {
 private:
 	double Start, nBins_by_interval;
-	unsigned int nBins;
-	unsigned int number;
-	unsigned int* freq;
+    size_t nBins;
+    size_t number;
+    size_t* freq;
 	double minValue, maxValue, mean, deviation, total;
 public:
 	/** Constructor
@@ -28,13 +28,13 @@ public:
 
 	Histogram() :
 			Start(0), nBins_by_interval(0), nBins(0),
-					freq(new unsigned int[0]) {
+                    freq(new size_t[0]) {
 			reset();
 		}
 
-	Histogram(const double& Start, const double& End, const unsigned int& nBins) :
+    Histogram(const double& Start, const double& End, const size_t& nBins) :
 		Start(Start), nBins_by_interval(nBins / (End - Start)), nBins(nBins),
-				freq(new unsigned int[nBins]) {
+                freq(new size_t[nBins]) {
 		reset();
 	}
 
@@ -44,8 +44,8 @@ public:
 	 */
 	Histogram(const Histogram& other) :
 		Start(other.Start), nBins_by_interval(other.nBins_by_interval), nBins(
-				other.nBins), freq(new unsigned int[nBins]) {
-		for (unsigned int i(0); i < nBins; ++i)
+                other.nBins), freq(new size_t[nBins]) {
+        for (size_t i(0); i < nBins; ++i)
 			freq[i] = other.freq[i];
 	}
 
@@ -56,7 +56,7 @@ public:
 	 * @return void
 	 */
 	void reset() {
-		for (unsigned int i(0); i < nBins; ++i)
+        for (size_t i(0); i < nBins; ++i)
 			freq[i] = 0U;
 		number = total = mean = deviation = 0;
 		minValue = std::numeric_limits<double>::max();
@@ -81,9 +81,9 @@ public:
 			if (nBins != other.nBins) {
 				nBins = other.nBins;
 				delete[] freq;
-				freq = new unsigned int[nBins];
+                freq = new size_t[nBins];
 			}
-			for (unsigned int i(0); i < nBins; ++i)
+            for (size_t i(0); i < nBins; ++i)
 				freq[i] = other.freq[i];
 		}
 		return *this;
@@ -102,7 +102,7 @@ public:
 		minValue = min(minValue, x);
 		maxValue = max(maxValue, x);
 
-		const unsigned int i(static_cast<unsigned int> ((x - Start)
+        const size_t i(static_cast<size_t> ((x - Start)
 				* nBins_by_interval));
 
 		if (i < nBins) {
@@ -134,8 +134,8 @@ public:
 	 * @return void
 	 */
 	void dumpStr(ostream &outfile, bool fullStats=true) {
-        unsigned int maxfreq = 0;
-		for (unsigned int i = 0; i < nBins && i <= maxValue; i++) {
+        size_t maxfreq = 0;
+        for (size_t i = 0; i < nBins && i <= maxValue; i++) {
 			if (fullStats)
 				outfile << i << "  " << freq[i] << endl;
 			maxfreq = freq[i] > maxfreq ? freq[i] : maxfreq;
@@ -147,8 +147,8 @@ public:
 		outfile << "# Min: " << minValue << endl;
 		outfile << "# Max: " << maxValue << endl;
 
-		unsigned int max = 15;
-		for (unsigned int i = maxValue < nBins ? maxValue : nBins; i > 15; i--) {
+        size_t max = 15;
+        for (size_t i = maxValue < nBins ? maxValue : nBins; i > 15; i--) {
 			if (freq[i] > maxfreq / 10000) {
 				max = i;
 				break;
@@ -180,9 +180,9 @@ public:
 	 * Get the sum of all counts in the histogram.
 	 * @return The expected result.
 	 */
-        unsigned int getTotalCount() {
-		unsigned int c(0U);
-		for (unsigned int i(0); i < nBins; ++i)
+        size_t getTotalCount() {
+        size_t c(0U);
+        for (size_t i(0); i < nBins; ++i)
 			c += freq[i];
 		return c;
 	}
@@ -219,11 +219,11 @@ public:
 		this->minValue = minValue;
 	}
 
-	unsigned int getNumber() const {
+    size_t getNumber() const {
 		return number;
 	}
 
-	void setNumber(unsigned int number) {
+    void setNumber(size_t number) {
 		this->number = number;
 	}
 };

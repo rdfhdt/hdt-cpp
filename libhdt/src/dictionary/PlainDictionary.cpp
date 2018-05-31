@@ -67,7 +67,7 @@ PlainDictionary::PlainDictionary(HDTSpecification &specification) : spec(specifi
 }
 
 PlainDictionary::~PlainDictionary() {
-	unsigned int i;
+    size_t i;
 
 	for(i=0;i<shared.size();i++) {
         	delete [] shared[i]->str;
@@ -91,11 +91,11 @@ PlainDictionary::~PlainDictionary() {
 
 }
 
-std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole position)
+std::string PlainDictionary::idToString(size_t id, TripleComponentRole position)
 {
 	vector<DictionaryEntry*> &vector = getDictionaryEntryVector(id, position);
 
-	unsigned int localid = getLocalId(id, position);
+    size_t localid = getLocalId(id, position);
 
 	if(localid<vector.size()) {
 		DictionaryEntry *entry = vector[localid];
@@ -105,7 +105,7 @@ std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole pos
 	return std::string();
 }
 
-unsigned int PlainDictionary::stringToId(const std::string &key, TripleComponentRole position)
+size_t PlainDictionary::stringToId(const std::string &key, TripleComponentRole position)
 {
 	DictEntryIt ret;
 
@@ -156,8 +156,8 @@ void PlainDictionary::save(std::ostream &output, ControlInformation &controlInfo
 
 	controlInformation.save(output);
 
-	unsigned int i = 0;
-	unsigned int counter=0;
+    size_t i = 0;
+    size_t counter=0;
 	const char marker = '\1';
 
 	//shared subjects-objects from subjects
@@ -215,8 +215,8 @@ void PlainDictionary::load(std::istream & input, ControlInformation &ci, Progres
 
 	this->mapping = ci.getUint("mapping");
 	this->sizeStrings = ci.getUint("sizeStrings");
-	unsigned int numElements = ci.getUint("numEntries");
-	unsigned int numLine = 0;
+    size_t numElements = ci.getUint("numEntries");
+    size_t numLine = 0;
 
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,25);
@@ -280,7 +280,7 @@ uint64_t PlainDictionary::size()
 }
 
 
-unsigned int PlainDictionary::insert(const std::string & str, TripleComponentRole pos)
+size_t PlainDictionary::insert(const std::string & str, TripleComponentRole pos)
 {
 	if(str=="") return 0;
 
@@ -403,8 +403,8 @@ void PlainDictionary::split(ProgressListener *listener) {
 	shared.clear();
 	objects.clear();
 
-	unsigned int total = hashSubject.size()+hashObject.size();
-	unsigned int count = 0;
+    size_t total = hashSubject.size()+hashObject.size();
+    size_t count = 0;
 
 	for(DictEntryIt subj_it = hashSubject.begin(); subj_it!=hashSubject.end() && subj_it->first; subj_it++) {
 		//cout << "Check Subj: " << subj_it->first << endl;
@@ -493,7 +493,7 @@ void PlainDictionary::idSort() {
  * @return void
  */
 void PlainDictionary::updateIDs() {
-	unsigned int i;
+    size_t i;
 
 	for (i = 0; i < shared.size(); i++) {
 		shared[i]->id = getGlobalId(i, SHARED_SUBJECT);
@@ -513,7 +513,7 @@ void PlainDictionary::updateIDs() {
 }
 
 
-void PlainDictionary::convertMapping(unsigned int mapping) {
+void PlainDictionary::convertMapping(size_t mapping) {
 	switch(mapping) {
 	case MAPPING1:
 		this->mapping = mapping;
@@ -528,7 +528,7 @@ void PlainDictionary::convertMapping(unsigned int mapping) {
 	}
 }
 
-vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) {
+vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(size_t id, TripleComponentRole position) {
 	switch (position) {
 	case SUBJECT:
 		if(id<= shared.size()) {
@@ -551,7 +551,7 @@ vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int PlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+size_t PlainDictionary::getGlobalId(size_t mapping, size_t id, DictionarySection position) {
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
 			return shared.size()+id+1;
@@ -575,11 +575,11 @@ unsigned int PlainDictionary::getGlobalId(unsigned int mapping, unsigned int id,
 }
 
 
-unsigned int PlainDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+size_t PlainDictionary::getGlobalId(size_t id, DictionarySection position) {
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+size_t PlainDictionary::getLocalId(size_t mapping, size_t id, TripleComponentRole position) {
 	switch (position) {
 		case SUBJECT:
 			if(id<=shared.size()) {
@@ -606,7 +606,7 @@ unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, 
 		throw std::runtime_error("Item not found");
 }
 
-unsigned int PlainDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+size_t PlainDictionary::getLocalId(size_t id, TripleComponentRole position) {
 	return getLocalId(mapping,id,position);
 }
 
@@ -615,11 +615,11 @@ unsigned int PlainDictionary::getLocalId(unsigned int id, TripleComponentRole po
 /** Get Max Id
  * @return The expected result
  */
-unsigned int PlainDictionary::getMaxID() {
-	unsigned int s = subjects.size();
-	unsigned int o = objects.size();
-	unsigned int nshared = shared.size();
-	unsigned int max = s>o ? s : o;
+size_t PlainDictionary::getMaxID() {
+    size_t s = subjects.size();
+    size_t o = objects.size();
+    size_t nshared = shared.size();
+    size_t max = s>o ? s : o;
 
 	if(mapping ==MAPPING2) {
 		return nshared+max;
@@ -628,21 +628,21 @@ unsigned int PlainDictionary::getMaxID() {
 	}
 }
 
-unsigned int PlainDictionary::getMaxSubjectID() {
-	unsigned int nshared = shared.size();
-	unsigned int s = subjects.size();
+size_t PlainDictionary::getMaxSubjectID() {
+    size_t nshared = shared.size();
+    size_t s = subjects.size();
 
 	return nshared+s;
 }
 
-unsigned int PlainDictionary::getMaxPredicateID() {
+size_t PlainDictionary::getMaxPredicateID() {
 	return predicates.size();
 }
 
-unsigned int PlainDictionary::getMaxObjectID() {
-	unsigned int nshared = shared.size();
-	unsigned int s = subjects.size();
-	unsigned int o = objects.size();
+size_t PlainDictionary::getMaxObjectID() {
+    size_t nshared = shared.size();
+    size_t s = subjects.size();
+    size_t o = objects.size();
 
 	if(mapping ==MAPPING2) {
 		return nshared+o;
@@ -651,25 +651,25 @@ unsigned int PlainDictionary::getMaxObjectID() {
 	}
 }
 
-unsigned int PlainDictionary::getNsubjects() {
+size_t PlainDictionary::getNsubjects() {
 	return shared.size()+subjects.size();
 }
 
-unsigned int PlainDictionary::getNpredicates() {
+size_t PlainDictionary::getNpredicates() {
 	return predicates.size();
 }
 
-unsigned int PlainDictionary::getNobjects() {
+size_t PlainDictionary::getNobjects() {
 	return shared.size()+objects.size();
 }
 
-unsigned int PlainDictionary::getNshared() {
+size_t PlainDictionary::getNshared() {
 	return shared.size();
 }
 
 
 
-void PlainDictionary::updateID(unsigned int oldid, unsigned int newid, DictionarySection position) {
+void PlainDictionary::updateID(size_t oldid, size_t newid, DictionarySection position) {
 	switch (position) {
 	case SHARED_SUBJECT:
 	case SHARED_OBJECT:
@@ -705,7 +705,7 @@ string PlainDictionary::getType() {
 	return HDTVocabulary::DICTIONARY_TYPE_PLAIN;
 }
 
-unsigned int PlainDictionary::getMapping() {
+size_t PlainDictionary::getMapping() {
 	return mapping;
 }
 

@@ -53,14 +53,14 @@ CSD_Cache2::~CSD_Cache2()
 	delete child;
 }
 
-uint32_t CSD_Cache2::locate(const unsigned char *s, uint32_t len)
+size_t CSD_Cache2::locate(const unsigned char *s, size_t len)
 {
 	// FIXME: Not implemented
 	return child->locate(s, len);
 }
 
 
-unsigned char* CSD_Cache2::extract(uint32_t id)
+unsigned char* CSD_Cache2::extract(size_t id)
 {
 	if(id<1 || id>array.size()) {
 		return NULL;

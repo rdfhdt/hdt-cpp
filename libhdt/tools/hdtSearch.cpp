@@ -111,11 +111,11 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
         }
 
         // Get results.
-		unsigned int numTriples=0;
+		size_t numTriples=0;
 		while(it->hasNext() && interruptSignal==0) {
 			TripleString *ts = it->next();
 			if(!measure)
-				out << *ts << endl;
+				out << *ts << '\n';
 			numTriples++;
 		}
 		cerr << numTriples << " results in " << st << endl;

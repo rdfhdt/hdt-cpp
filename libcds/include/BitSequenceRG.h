@@ -87,9 +87,9 @@ namespace cds_static
 								 // gives the smallest index i>=start such that IsBitSet(i)=true
 			virtual size_t selectNext1(const size_t start) const;
 								 // gives the position of the x:th 1.
-			virtual size_t select0(size_t x) const;
+                        virtual size_t select0(const size_t x) const;
 								 // gives the position of the x:th 1.
-			virtual size_t select1(size_t x) const;
+                        virtual size_t select1(const size_t x) const;
 			virtual size_t getSize() const;
 
 			/*load-save functions*/

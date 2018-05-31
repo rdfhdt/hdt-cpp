@@ -17,7 +17,7 @@ HeaderModel::~HeaderModel()
 int HeaderModel::rowCount(const QModelIndex &parent) const
 {
     if(hdtController->hasHDT()) {
-        return hdtController->getHDT()->getHeader()->getNumberOfElements();
+        return (int)hdtController->getHDT()->getHeader()->getNumberOfElements();
     }
     return 0;
 }

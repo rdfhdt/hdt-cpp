@@ -218,13 +218,13 @@ public:
 	virtual bool canGoTo() {
 		return false;
 	}
-	virtual void goTo(unsigned int /*pos*/) {
+	virtual void goTo(size_t /*pos*/) {
 	/* Absolute repositioning of index: ie. go to the index set in the given argument (pos) */
 	}
-	virtual void skip(unsigned int /*pos*/) {
+	virtual void skip(size_t /*pos*/) {
 	/* Relative repositioning of index: ie. skip index by given argument places */
 	}
-	virtual bool findNextOccurrence(unsigned int /*value*/, unsigned char /*component*/) {
+    virtual bool findNextOccurrence(size_t /*value*/, unsigned char /*component*/) {
 		return false;
 	}
 	virtual TripleComponentOrder getOrder() {
@@ -264,7 +264,7 @@ public:
 	virtual ResultEstimationType numResultEstimation() {
 		return UNKNOWN;
 	}
-	virtual void skip(unsigned int /*pos*/) {
+	virtual void skip(size_t /*pos*/) {
 	/* Relative repositioning of index: ie. skip index by given argument places */
 	}
 };
@@ -277,7 +277,7 @@ public:
 		return false;
 	}
 
-	virtual unsigned int next() {
+	virtual size_t next() {
 		return 0;
 	}
 
@@ -292,10 +292,10 @@ class SequentialIteratorUInt: public IteratorUInt {
 private:
 	IteratorUInt* it1;
 	IteratorUInt* it2;
-	unsigned int offset; //the offset to apply to it2
+	size_t offset; //the offset to apply to it2
 
 public:
-	SequentialIteratorUInt(IteratorUInt* iterator1, IteratorUInt* iterator2, unsigned int offsetIt2):it1(iterator1), it2(iterator2), offset(offsetIt2){
+	SequentialIteratorUInt(IteratorUInt* iterator1, IteratorUInt* iterator2, size_t offsetIt2):it1(iterator1), it2(iterator2), offset(offsetIt2){
 	}
 	virtual ~SequentialIteratorUInt() { }
 
@@ -303,7 +303,7 @@ public:
 		return (it1->hasNext() || it2->hasNext());
 	}
 
-	unsigned int next() {
+	size_t next() {
 		if (it1->hasNext()){
 			return it1->next();
 		}

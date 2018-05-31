@@ -15,7 +15,7 @@ private:
     vector<int> varIds;
 public:
     VarFilterBinding(VarBindingInterface *child, set<string> neededVars) : child(child) {
-    for(unsigned int i=0;i<child->getNumVars();i++) {
+    for(size_t i=0;i<child->getNumVars();i++) {
 	    const char *varName = child->getVarName(i);
 
 	    if(neededVars.size()==0 || neededVars.find(varName)!=neededVars.end()) {
@@ -29,11 +29,11 @@ public:
 	delete child;
     }
 
-    unsigned int isOrdered(unsigned int numvar) {
+    size_t isOrdered(size_t numvar) {
 	return child->isOrdered(numvar);
     }
 
-    unsigned int estimatedNumResults() {
+    size_t estimatedNumResults() {
 	return child->estimatedNumResults();
     }
 
@@ -45,33 +45,33 @@ public:
 	return child->findNext();
     }
 
-    bool findNext(const char *varName, unsigned int value=0) {
+    bool findNext(const char *varName, size_t value=0) {
 	return child->findNext(varName,value);
     }
 
-    unsigned int getNumVars() {
+    size_t getNumVars() {
 	return varNames.size();
     }
 
-    unsigned int getVarValue(const char *varName) {
+    size_t getVarValue(const char *varName) {
 	return getVarValue(getVarIndex(varName));
     }
 
-    unsigned int getVarValue(unsigned int numvar) {
+    size_t getVarValue(size_t numvar) {
 	if(numvar>varIds.size()) {
 	    throw std::runtime_error("No such variable");
 	}
 	return child->getVarValue(varIds[numvar]);
     }
 
-    const char *getVarName(unsigned int numvar) {
+    const char *getVarName(size_t numvar) {
 	if(numvar>varIds.size()) {
 	    throw std::runtime_error("No such variable");
 	}
 	return varNames[numvar].c_str();
     }
 
-    void searchVar(unsigned int numvar, unsigned int value) {
+    void searchVar(size_t numvar, size_t value) {
 	return child->searchVar(varIds[numvar], value);
     }
 

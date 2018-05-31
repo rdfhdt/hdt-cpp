@@ -19,13 +19,13 @@ class VarBindingInterface : public VarBindingID {
 public:
 	virtual ~VarBindingInterface() { }
 
-	virtual unsigned int isOrdered(unsigned int numvar)=0;
+    virtual size_t isOrdered(size_t numvar)=0;
 
-	virtual unsigned int estimatedNumResults()=0;
+    virtual size_t estimatedNumResults()=0;
 	virtual ResultEstimationType estimationAccuracy()=0;
 
 	virtual bool findNext()=0;
-	virtual bool findNext(const char *varName, unsigned int value=0) {
+    virtual bool findNext(const char *varName, size_t value=0) {
 		while(findNext()) {
 			if(getVarValue(varName)==value) {
 				return true;
@@ -33,7 +33,7 @@ public:
 		}
 		return false;
 	}
-	virtual bool findNext(unsigned int varIndex, unsigned int value=0) {
+    virtual bool findNext(size_t varIndex, size_t value=0) {
 		while(findNext()) {
 			if(getVarValue(varIndex)==value) {
 				return true;
@@ -41,10 +41,10 @@ public:
 		}
 		return false;
 	}
-	virtual unsigned int getNumVars()=0;
-	virtual unsigned int getVarValue(const char *varName)=0;
-	virtual unsigned int getVarValue(unsigned int numvar)=0;
-	virtual unsigned int getVarIndex(const char *varName) {
+    virtual size_t getNumVars()=0;
+    virtual size_t getVarValue(const char *varName)=0;
+    virtual size_t getVarValue(size_t numvar)=0;
+    virtual size_t getVarIndex(const char *varName) {
 		for(int i=0;i<getNumVars();i++) {
 			if(strcmp(getVarName(i), varName)==0) {
 				return i;
@@ -53,8 +53,8 @@ public:
 		cerr << "Var name: " << varName << " not found" << endl;
 		throw std::runtime_error("Var name does not exist");
 	}
-	virtual const char *getVarName(unsigned int numvar)=0;
-	virtual void searchVar(unsigned int numvar, unsigned int value)=0;
+    virtual const char *getVarName(size_t numvar)=0;
+    virtual void searchVar(size_t numvar, size_t value)=0;
 };
 
 }

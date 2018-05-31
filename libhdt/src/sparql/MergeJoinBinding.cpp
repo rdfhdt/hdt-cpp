@@ -27,7 +27,7 @@ MergeJoinBinding::~MergeJoinBinding() {
 
 }
 
-unsigned int MergeJoinBinding::isOrdered(unsigned int numvar) {
+size_t MergeJoinBinding::isOrdered(size_t numvar) {
     if(numvar==0) {
 	// Join var is always sorted
 	return true;
@@ -36,14 +36,14 @@ unsigned int MergeJoinBinding::isOrdered(unsigned int numvar) {
     return false;
 }
 
-unsigned int MergeJoinBinding::estimatedNumResults() {
+size_t MergeJoinBinding::estimatedNumResults() {
     return left->estimatedNumResults()*right->estimatedNumResults();
 }
 ResultEstimationType MergeJoinBinding::estimationAccuracy() {
     return UNKNOWN;
 }
 
-bool MergeJoinBinding::findNext(const char *varName, unsigned int value) {
+bool MergeJoinBinding::findNext(const char *varName, size_t value) {
     throw std::logic_error("Unsupported");
 }
 
@@ -91,16 +91,16 @@ bool MergeJoinBinding::findNext() {
     // We found the same.
     if(s==r) {
 	//cout << "Same value left and right: " << s << endl;
-	unsigned int currentr = r;
-	unsigned int currents = s;
+    size_t currentr = r;
+    size_t currents = s;
 
 	// Save all entries of the left.
 	leftOperands.clear();
-	unsigned int count  = 0;
+    size_t count  = 0;
 	while( (s=left->getVarValue(bindingVarPosLeft))==currentr) {
 	    leftOperands.resize(count+1);
 	    leftOperands[count].resize(left->getNumVars());
-	    for(unsigned int i=0;i<left->getNumVars();i++) {
+        for(size_t i=0;i<left->getNumVars();i++) {
 		leftOperands[count][i] = left->getVarValue(i);
 	    }
 	    count++;
@@ -117,7 +117,7 @@ bool MergeJoinBinding::findNext() {
 	while( (r = right->getVarValue(bindingVarPosRight))==currents) {
 	    rightOperands.resize(count+1);
 	    rightOperands[count].resize(right->getNumVars());
-	    for(unsigned int i=0;i<right->getNumVars();i++) {
+        for(size_t i=0;i<right->getNumVars();i++) {
 		rightOperands[count][i] = right->getVarValue(i);
 	    }
 	    count++;
@@ -138,7 +138,7 @@ bool MergeJoinBinding::findNext() {
     return false;
 }
 
-//virtual void findNext(unsigned int numvar, unsigned int value=0);
+//virtual void findNext(size_t numvar, size_t value=0);
 void MergeJoinBinding::goToStart() {
     left->goToStart();
     right->goToStart();
@@ -159,7 +159,7 @@ void MergeJoinBinding::goToStart() {
     }
 }
 
-unsigned int MergeJoinBinding::getVarValue(unsigned int numvar) {
+size_t MergeJoinBinding::getVarValue(size_t numvar) {
     if(numvar>=getNumVars()) {
 	throw std::out_of_range("Accessing out of bound variable");
     }
@@ -179,7 +179,7 @@ unsigned int MergeJoinBinding::getVarValue(unsigned int numvar) {
     }
 }
 
-void MergeJoinBinding::searchVar(unsigned int numvar, unsigned int value) {
+void MergeJoinBinding::searchVar(size_t numvar, size_t value) {
     throw std::logic_error("Unsupported");
 }
 

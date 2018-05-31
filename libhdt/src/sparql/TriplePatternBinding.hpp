@@ -31,23 +31,23 @@ public:
 
 	virtual ~TriplePatternBinding();
 
-	unsigned int isOrdered(unsigned int numvar);
+    size_t isOrdered(size_t numvar);
 
-	unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
 	ResultEstimationType estimationAccuracy();
 	bool findNext();
 
 #if 0
 	// Use TriplePattern to jump to next occurence.
-	bool findNext(const char *varName, unsigned int value=0);
+    bool findNext(const char *varName, size_t value=0);
 #endif
 
 	void goToStart();
-	unsigned int getNumVars();
-	unsigned int getVarValue(unsigned int numvar);
-	unsigned int getVarValue(const char *varname);
-	const char *getVarName(unsigned int numvar);
-	void searchVar(unsigned int numvar, unsigned int value);
+    size_t getNumVars();
+    size_t getVarValue(size_t numvar);
+    size_t getVarValue(const char *varname);
+    const char *getVarName(size_t numvar);
+    void searchVar(size_t numvar, size_t value);
 
 };
 

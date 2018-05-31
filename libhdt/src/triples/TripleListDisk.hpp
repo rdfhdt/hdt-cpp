@@ -54,9 +54,9 @@ private:
 	void unmapFile();
 	void getFileSize();
 	void increaseSize();
-	void ensureSize(unsigned int size);
+    void ensureSize(size_t size);
 
-	TripleID *getTripleID(unsigned int num);
+    TripleID *getTripleID(size_t num);
 
     bool isIndexed() const {
         return false;

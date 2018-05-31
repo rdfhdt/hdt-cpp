@@ -22,19 +22,19 @@ IndexJoinBinding::~IndexJoinBinding() {
     // Left & Right Already deleted by parent.
 }
 
-unsigned int IndexJoinBinding::isOrdered(unsigned int numvar) {
+size_t IndexJoinBinding::isOrdered(size_t numvar) {
 	// FIXME: TEST
 	return false;
 }
 
-unsigned int IndexJoinBinding::estimatedNumResults() {
+size_t IndexJoinBinding::estimatedNumResults() {
             return left->estimatedNumResults()*right->estimatedNumResults();
 }
 ResultEstimationType IndexJoinBinding::estimationAccuracy() {
 	return UNKNOWN;
 }
 
-bool IndexJoinBinding::findNext(const char *varName, unsigned int value) {
+bool IndexJoinBinding::findNext(const char *varName, size_t value) {
 	throw std::logic_error("Unsupported");
 }
 
@@ -59,7 +59,7 @@ bool IndexJoinBinding::findNext() {
 	return false;
 }
 
-//virtual void findNext(unsigned int numvar, unsigned int value=0);
+//virtual void findNext(size_t numvar, size_t value=0);
 void IndexJoinBinding::goToStart() {
     left->goToStart();
     right->goToStart();
@@ -73,7 +73,7 @@ void IndexJoinBinding::goToStart() {
     }
 }
 
-void IndexJoinBinding::searchVar(unsigned int numvar, unsigned int value) {
+void IndexJoinBinding::searchVar(size_t numvar, size_t value) {
 	throw std::logic_error("Unsupported");
 }
 

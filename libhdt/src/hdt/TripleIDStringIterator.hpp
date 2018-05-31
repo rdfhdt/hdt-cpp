@@ -30,7 +30,7 @@ public:
 	void goToStart();
 	size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
-	void skip(unsigned int pos);
+	void skip(size_t pos);
 };
 
 } /* namespace hdt */

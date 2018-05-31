@@ -48,7 +48,7 @@ protected:
 public:
 	RDFSerializer(RDFNotation notation) : notation(notation) { }
 	virtual ~RDFSerializer() { }
-	virtual void serialize(IteratorTripleString *it, ProgressListener *listener=NULL, unsigned int totalTriples=0)=0;
+    virtual void serialize(IteratorTripleString *it, ProgressListener *listener=NULL, size_t totalTriples=0)=0;
 
 	static RDFSerializer *getSerializer(const char *fileName, RDFNotation notation);
 	static RDFSerializer *getSerializer(std::ostream &output, RDFNotation notation);

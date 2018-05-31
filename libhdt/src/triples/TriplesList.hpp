@@ -172,10 +172,10 @@ public:
 	 */
 	void setOrder(TripleComponentOrder order);
 
-	 void calculateDegree(string path, unsigned int numPredicates,unsigned int maxID=0);
-	 void calculateMinStats(string path, unsigned int numPredicates);
-	 void calculateDegreeType(string path, unsigned int rdftypeID);
-     void calculateDegrees(string path,unsigned int maxSOID=0,unsigned int numPredicates=0,unsigned int rdftypeID=0,bool allStats=false);
+     void calculateDegree(string path, size_t numPredicates,size_t maxID=0);
+     void calculateMinStats(string path, size_t numPredicates);
+     void calculateDegreeType(string path, size_t rdftypeID);
+     void calculateDegrees(string path,size_t maxSOID=0,size_t numPredicates=0,size_t rdftypeID=0,bool allStats=false);
 
 	// Others
 
@@ -184,7 +184,7 @@ public:
 	 * @param i
 	 * @return
 	 */
-	TripleID *getTripleID(unsigned int i);
+    TripleID *getTripleID(size_t i);
 
 	friend class TriplesListIterator;
 };

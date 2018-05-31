@@ -27,12 +27,12 @@ bool varbind_cmp(VarBindingInterface* a, VarBindingInterface* b) {
 set<string> getCommonVars(VarBindingInterface& a, VarBindingInterface& b) {
 	set<string> output, varsa;
 	// Insert all A variables into a set.
-	for (unsigned int i = 0; i < a.getNumVars(); i++) {
+    for (size_t i = 0; i < a.getNumVars(); i++) {
 		const char* varname = a.getVarName(i);
 		varsa.insert(varname);
 	}
 	// Do intersection, going through B, searching in A.
-	for (unsigned int i = 0; i < b.getNumVars(); i++) {
+    for (size_t i = 0; i < b.getNumVars(); i++) {
 		string var(b.getVarName(i));
 		if (varsa.find(var) != varsa.end()) {
 			output.insert(var);
@@ -127,7 +127,7 @@ VarBindingString* QueryProcessor::searchJoin(vector<TripleString>& patterns, set
 		// Construct left-recursive tree by bottom-up composition.
 		list<VarBindingInterface*> items;
 
-		for (unsigned int i = 0; i < bindings.size(); i++) {
+        for (size_t i = 0; i < bindings.size(); i++) {
 			items.push_back(bindings[i]);
 		}
 

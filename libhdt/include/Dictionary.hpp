@@ -61,7 +61,7 @@ public:
     * @param role Triple Role (Subject, Predicate, Object) to be fetched.
     * @return The string associated to that ID.
     */
-    virtual std::string idToString(unsigned int id, TripleComponentRole role)=0;
+    virtual std::string idToString(size_t id, TripleComponentRole role)=0;
 
     /**
     * Fetch the ID assigned to the supplied string as the triple role.
@@ -70,7 +70,7 @@ public:
     * @param role Triple Role (Subject, Predicate, Object) to be fetched.
     * @return ID of the specified String
     */
-    virtual unsigned int stringToId(const std::string &str, TripleComponentRole role)=0;
+    virtual size_t stringToId(const std::string &str, TripleComponentRole role)=0;
 
     /**
     * Convert a TripleString object to a TripleID, using the dictionary to perform the conversion.
@@ -108,28 +108,28 @@ public:
     virtual uint64_t size()=0;
 
     /* Return the number of different subjects of the current dictionary. */
-    virtual unsigned int getNsubjects()=0;
+    virtual size_t getNsubjects()=0;
 
     /* Return the number of diferent predicates of the current dictionary */
-    virtual unsigned int getNpredicates()=0;
+    virtual size_t getNpredicates()=0;
 
     /* Return the number of different objects of the current dictionary */
-    virtual unsigned int getNobjects()=0;
+    virtual size_t getNobjects()=0;
 
     /* Return the number of shared subjects-objects of the current dictionary */
-    virtual unsigned int getNshared()=0;
+    virtual size_t getNshared()=0;
 
     /* Return the maximum id assigned to the overall dictionary. */
-    virtual unsigned int getMaxID()=0;
+    virtual size_t getMaxID()=0;
 
     /* Return the maximum subject ID of the dictionary. */
-    virtual unsigned int getMaxSubjectID()=0;
+    virtual size_t getMaxSubjectID()=0;
 
     /* Return the maximum predicate ID of the dictionary. */
-    virtual unsigned int getMaxPredicateID()=0;
+    virtual size_t getMaxPredicateID()=0;
 
     /* Return the maximum object ID of the dictionary. */
-    virtual unsigned int getMaxObjectID()=0;
+    virtual size_t getMaxObjectID()=0;
 
     virtual void import(Dictionary *other, ProgressListener *listener=NULL)=0;
 
@@ -162,7 +162,7 @@ public:
     virtual size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
 
     virtual string getType()=0;
-	virtual unsigned int getMapping()=0;
+    virtual size_t getMapping()=0;
 
     virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)=0;
 
@@ -179,7 +179,7 @@ public:
     * @param str
     * @param role
     */
-    virtual unsigned int insert(const std::string &str, TripleComponentRole role)=0;
+    virtual size_t insert(const std::string &str, TripleComponentRole role)=0;
 
     /**
     * Function to be called before starting inserting entries to the dictionary to perform an initialization.

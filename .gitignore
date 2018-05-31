@@ -54,8 +54,11 @@ stamp-h1
 
 *.hdt
 *.hdt.index
+*.nq
 *.nt
 *.rdf
+*.trig
+*.ttl
 *.a
 **/examples/*
 **/tests/*

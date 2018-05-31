@@ -126,10 +126,10 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 	LogSequence2 *vectorY = new LogSequence2(bits(triples.getNumberOfElements()));
 	LogSequence2 *vectorZ = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
 
-	unsigned int lastX=0, lastY=0, lastZ=0;
-	unsigned int x, y, z;
+	size_t lastX=0, lastY=0, lastZ=0;
+	size_t x, y, z;
 
-	unsigned int numTriples=0;
+    size_t numTriples=0;
 
 	while(it->hasNext()) {
 		TripleID *triple = it->next();

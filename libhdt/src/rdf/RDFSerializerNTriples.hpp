@@ -17,7 +17,7 @@ public:
 	RDFSerializerNTriples(std::ostream &s, RDFNotation notation);
 	RDFSerializerNTriples(const char *fileName, RDFNotation notation);
 	virtual ~RDFSerializerNTriples();
-	void serialize(IteratorTripleString *it, ProgressListener *listener=NULL, unsigned int totalTriples=0);
+    void serialize(IteratorTripleString *it, ProgressListener *listener=NULL, size_t totalTriples=0);
 };
 
 }

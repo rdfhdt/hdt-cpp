@@ -69,22 +69,22 @@ public:
 	KyotoDictionary(HDTSpecification &spec);
 	~KyotoDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(const std::string &str, TripleComponentRole position);
+    std::string idToString(size_t id, TripleComponentRole position);
+    size_t stringToId(const std::string &str, TripleComponentRole position);
 
 	size_t getNumberOfElements();
 
     uint64_t size();
 
-	unsigned int getNsubjects();
-	unsigned int getNpredicates();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+    size_t getNsubjects();
+    size_t getNpredicates();
+    size_t getNobjects();
+    size_t getNshared();
 
-	unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxPredicateID();
-	unsigned int getMaxObjectID();
+    size_t getMaxID();
+    size_t getMaxSubjectID();
+    size_t getMaxPredicateID();
+    size_t getMaxObjectID();
 
 	void populateHeader(Header &header, string rootNode);
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
@@ -99,13 +99,13 @@ public:
     IteratorUCharString *getObjects();
     IteratorUCharString *getShared();
 
-	unsigned int insert(const std::string &str, TripleComponentRole position);
+    size_t insert(const std::string &str, TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
 
 	string getType();
-	unsigned int getMapping();
+    unsigned int getMapping();
 
     void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
@@ -118,10 +118,10 @@ private:
     void updateIDs(DB *db);
 
 public:
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+    size_t getGlobalId(unsigned int mapping, size_t id, DictionarySection position);
+    size_t getGlobalId(size_t id, DictionarySection position);
+    size_t getLocalId(size_t mapping, size_t id, TripleComponentRole position);
+    size_t getLocalId(size_t id, TripleComponentRole position);
 
 	void dumpSizes(std::ostream &out);
 

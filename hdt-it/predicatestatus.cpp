@@ -5,22 +5,22 @@ PredicateStatus::PredicateStatus(HDTController *manager) :
 {
 }
 
-unsigned int PredicateStatus::getMinimumPredicateCount()
+size_t PredicateStatus::getMinimumPredicateCount()
 {
     return minPredicateCount;
 }
 
-unsigned int PredicateStatus::getMaximumPredicateCount()
+size_t PredicateStatus::getMaximumPredicateCount()
 {
     return maxPredicateCount;
 }
 
-bool PredicateStatus::isPredicateActive(int i)
+bool PredicateStatus::isPredicateActive(size_t i)
 {
     return activePredicate[i];
 }
 
-void PredicateStatus::setPredicateActive(int i, bool b)
+void PredicateStatus::setPredicateActive(size_t i, bool b)
 {
     if(activePredicate[i]!=b) {
         activePredicate[i] = b;
@@ -42,7 +42,7 @@ void PredicateStatus::refreshAll()
 void PredicateStatus::selectAllPredicates()
 {
 //    cout << "selectAllPredicates" << endl;
-    for(unsigned int i=0;i<activePredicate.size();i++) {
+    for(size_t i=0;i<activePredicate.size();i++) {
         activePredicate[i] = true;
     }
     emit predicatesChanged(0, activePredicate.size());
@@ -52,21 +52,21 @@ void PredicateStatus::selectAllPredicates()
 void PredicateStatus::selectNonePredicates()
 {
 //    cout << "selectNonePredicates" << endl;
-    for(unsigned int i=0;i<activePredicate.size();i++) {
+    for(size_t i=0;i<activePredicate.size();i++) {
         activePredicate[i] = false;
     }
     emit predicatesChanged(0, activePredicate.size());
     setMinimumPredicateCountInternal(0);
 }
 
-void PredicateStatus::selectPredicate(unsigned int pred)
+void PredicateStatus::selectPredicate(size_t pred)
 {
     if(pred==0) {
         selectAllPredicates();
         return;
     }
 
-    for(unsigned int i=0;i<activePredicate.size();i++) {
+    for(size_t i=0;i<activePredicate.size();i++) {
         activePredicate[i] = i==(pred-1);
     }
     emit predicatesChanged(0, activePredicate.size());
@@ -88,8 +88,8 @@ void PredicateStatus::setMinimumPredicateCount(int count)
 {
     if(count!=minPredicateCount) {
         minPredicateCount = count;
-        for(unsigned int i=0;i<activePredicate.size();i++) {
-	    activePredicate[i] = controller->getHDTCachedInfo()->getPredicateUsages(i)>=(unsigned int)count;
+        for(size_t i=0;i<activePredicate.size();i++) {
+        activePredicate[i] = controller->getHDTCachedInfo()->getPredicateUsages(i)>=(size_t)count;
         }
         emit predicatesChanged(0, activePredicate.size());
         emit minimumPredicateCountChanged(count);

@@ -17,22 +17,22 @@ class CachedBinding : public VarBindingInterface {
 private:
 	//VarBindingInterface *child;
 	vector<string> varnames;
-	vector<vector <unsigned int> > values;
+    vector<vector <size_t> > values;
 	vector<bool> varSorted;
-	//unsigned int numRows;
-	unsigned int readPos;
+    //size_t numRows;
+    size_t readPos;
 
 public:
 	CachedBinding(VarBindingInterface *child) : /*child(child), numRows(0),*/ readPos(0) {
 
-		for(unsigned int i=0;i<child->getNumVars();i++) {
+        for(size_t i=0;i<child->getNumVars();i++) {
 			varnames.push_back(child->getVarName(i));
 			varSorted.push_back(child->isOrdered(i));
 		}
 
 		while(child->findNext()) {
-			vector<unsigned int> inner;
-			for(unsigned int i=0;i<child->getNumVars();i++) {
+            vector<size_t> inner;
+            for(size_t i=0;i<child->getNumVars();i++) {
 				inner.push_back(child->getVarValue(i));
 			}
 			values.push_back(inner);
@@ -47,11 +47,11 @@ public:
 	}
 
 	struct Sorter {
-		unsigned int field;
-		bool operator() (const vector<unsigned int> &i, const vector<unsigned int> &j) { return (i[field]<j[field]);}
+        size_t field;
+        bool operator() (const vector<size_t> &i, const vector<size_t> &j) { return (i[field]<j[field]);}
 	};
 
-	virtual void sortBy(unsigned int numvar){
+    virtual void sortBy(size_t numvar){
 		if(!varSorted[numvar]) {
 
 			Sorter sorter;
@@ -62,7 +62,7 @@ public:
 		}
 	}
 
-	unsigned int estimatedNumResults(){
+    size_t estimatedNumResults(){
 		return values.size();
 	}
 	ResultEstimationType estimationAccuracy(){
@@ -77,19 +77,19 @@ public:
 		return false;
 	}
 
-	unsigned int getNumVars(){
+    size_t getNumVars(){
 		return varnames.size();
 	}
-	unsigned int getVarValue(const char *varName){
+    size_t getVarValue(const char *varName){
 		return getVarValue(getVarIndex(varName));
 	}
-	unsigned int getVarValue(unsigned int numvar){
+    size_t getVarValue(size_t numvar){
 		return values[readPos][numvar];
 	}
-	const char *getVarName(unsigned int numvar){
+    const char *getVarName(size_t numvar){
 		return varnames[numvar].c_str();
 	}
-	void searchVar(unsigned int numvar, unsigned int value) {
+    void searchVar(size_t numvar, size_t value) {
 		throw std::logic_error("Unsupported");
 	}
 
