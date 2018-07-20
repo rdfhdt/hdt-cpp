@@ -1,70 +1,82 @@
-# Others
-*~
-# vim
-*.swp
-
-# C++ builds
-*.o
-*.so
-*.a
-*.out
-*.lo
-*.la
-.dirstamp
-
-# Executables
-hdt2rdf
-hdtInfo
-hdtSearch
-rdf2hdt
-replaceHeader
-libhdt/examples/*
-libhdt/.libs
-libcds/.libs
-
-# Autotools 
-m4/
+# Autotools
 *.pc
-build/
+aclocal.m4
 autom4te.cache/
+build/
 config.log
 config.status
 configure
+m4/
 Makefile
 Makefile.in
-libtool
-aclocal.m4
 
-.DS_Store
-*.pro.user
+# C++ builds
+*.a
+*.la
+*.lo
 *.o
-unix
-macx
-win32
-delete_me
-Makefile
-README
-autom4te.cache/
-config.h
-*~
-config.log
-config.status
-stamp-h1
-.deps/
+*.out
+*.so
 
+# Data files
 *.hdt
 *.hdt.index
 *.nq
+*.nq.gz
 *.nt
+*.nt.gz
 *.rdf
+*.rdf.gz
 *.trig
+*.trig.gz
 *.ttl
-*.a
+*.ttl.gz
+
+# Project-specific executables
+hdt2rdf
+hdtInfo
+hdtSearch
+libhdt/examples/*
+rdf2hdt
+replaceHeader
+
+% libtool
+libcds/.libs
+libhdt/.libs
+libhdt/tools/.libs/
+libtool
+
+# macOS backup files?
+.DS_Store
+
+# Temporary files
+*~
+*.log
+*.swp #Vim
+
+
+
+# Unknown patterns
+#
+# Please document these in case you know what they mean.
+#
+# Please remove these in case you know them to be superfluous.
+#
+# (Notice that you can add Git ignore patterns that only apply to your
+# local installation / that are not generic enough to be used by
+# others in `.git/info/exclude'.)
 **/examples/*
 **/tests/*
-libcds-v1.0.12/includes
 !**/examples/*.cpp
 !**/tests/*.cpp
-*.o
-*.lo
+*.pro.user
 .deps
+.deps/
+.dirstamp
+delete_me
+libcds-v1.0.12/includes
+macx
+README
+stamp-h1
+unix
+win32
