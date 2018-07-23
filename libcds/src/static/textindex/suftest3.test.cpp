@@ -379,21 +379,50 @@ namespace cds_static
 	char * error_index(int e) {
 		char *error = new char[50];
 		switch(e) {
-			case 0:  printf(error, "No error"); break;
-			case 1:  printf(error, "Out of memory"); break;
-			case 2:  printf(error, "The text must end with a \\0"); break;
-			case 5:  printf(error, "You can't free the text if you don't copy it"); break;
-			case 20: printf(error, "Cannot create files"); break;
-			case 21: printf(error, "Error writing the index"); break;
-			case 22: printf(error, "Error writing the index"); break;
-			case 23: printf(error, "Cannot open index; break");
-			case 24: printf(error, "Cannot open text; break");
-			case 25: printf(error, "Error reading the index"); break;
-			case 26: printf(error, "Error reading the index"); break;
-			case 27: printf(error, "Error reading the text"); break;
-			case 28: printf(error, "Error reading the text"); break;
-			case 99: printf(error, "Not implemented"); break;
-			default: printf(error, "Unknown error");
+		case 0:
+			printf(error, "No error");
+			break;
+		case 1:
+			printf(error, "Out of memory");
+			break;
+		case 2:
+			printf(error, "The text must end with a \\0");
+			break;
+		case 5:
+			printf(error, "You can't free the text if you don't copy it");
+			break;
+		case 20:
+			printf(error, "Cannot create files");
+			break;
+		case 21:
+			printf(error, "Error writing the index");
+			break;
+		case 22:
+			printf(error, "Error writing the index");
+			break;
+		case 23:
+			printf(error, "Cannot open index");
+			break;
+		case 24:
+			printf(error, "Cannot open text");
+			break;
+		case 25:
+			printf(error, "Error reading the index");
+			break;
+		case 26:
+			printf(error, "Error reading the index");
+			break;
+		case 27:
+			printf(error, "Error reading the text");
+			break;
+		case 28:
+			printf(error, "Error reading the text");
+			break;
+		case 99:
+			printf(error, "Not implemented");
+			break;
+		default:
+			printf(error, "Unknown error");
 		}
 		return error;
 	}
