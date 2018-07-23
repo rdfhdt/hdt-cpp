@@ -394,8 +394,7 @@ namespace cds_static
 
 	BitSequenceRRR * BitSequenceRRR::load(istream & f) {
 		BitSequenceRRR * ret = NULL;
-		try
-		{
+		try {
 			ret = new BitSequenceRRR();
 			uchar type = loadValue<uchar>(f);
 			// TODO:throw an exception!
@@ -421,8 +420,7 @@ namespace cds_static
 			ret->O = loadValue<uint>(f,ret->O_len);
 			ret->create_sampling(ret->sample_rate);
 			return ret;
-		}
-		catch(exception e) {
+		} catch(const std::exception &e) {
 			delete ret;
 		}
 		return NULL;

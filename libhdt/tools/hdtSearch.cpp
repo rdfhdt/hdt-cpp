@@ -97,8 +97,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
             try {
                 it->skip(offset);
                 offset = 0;
-            }
-            catch (const runtime_error error) {
+            } catch (const std::runtime_error& error) {
                 /*invalid offset*/
                 interruptSignal = 1;
             }
@@ -122,7 +121,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
 		delete it;
 
 		interruptSignal=0;	// Interrupt caught, enable again.
-	} catch (std::exception& e) {
+	} catch (const std::exception& e) {
 		cerr << e.what() << endl;
 	}
 
@@ -218,7 +217,7 @@ int main(int argc, char **argv) {
 		}
 
 		delete hdt;
-	} catch (std::exception& e) {
+	} catch (const std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
 		return 1;
 	}
