@@ -52,7 +52,7 @@ void help() {
 	cout
 			<< "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)"
 			<< endl;
-	cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
+	cout << "\t-B\t<base-uri>\tBase URI of the dataset." << endl;
 	//cout << "\t-v\tVerbose output" << endl;
 }
 
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (baseUri == "") {
-		baseUri = "<file://" + outputFile + ">";
+		baseUri = "file://" + outputFile;
 	}
 
 #if 0
@@ -136,7 +136,9 @@ int main(int argc, char **argv) {
 		// Read Input Files
 		BasicHDT hdt(spec);
 		hdt.loadFromSeveralHDT((const char **) &argv[optind + 1],
-				argc - optind - 1, baseUri, &progress);
+							   argc-optind-1,
+							   baseUri.c_str(),
+							   &progress);
 
 		hdt.saveToHDT(outputFile.c_str(), &progress);
 

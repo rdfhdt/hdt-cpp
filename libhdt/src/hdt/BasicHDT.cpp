@@ -225,7 +225,7 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		DictionaryLoader dictLoader(dict, &iListener);
 
 		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation);
-        parser->doParse(fileName, baseUri, notation, true, &dictLoader);
+		parser->doParse(fileName, baseUri, notation, true, &dictLoader);
 		delete parser;
 
 		iListener.setRange(80, 90);
@@ -348,7 +348,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 	//cerr << triples->getNumberOfElements() << " triples added in " << st << endl << endl;
 }
 
-void BasicHDT::fillHeader(const string& baseUri) {
+void BasicHDT::fillHeader(const char* baseUri) {
 	string formatNode = "_:format";
 	string dictNode = "_:dictionary";
 	string triplesNode = "_:triples";
@@ -399,22 +399,16 @@ void BasicHDT::fillHeader(const string& baseUri) {
 	header->insert(publicationInfoNode, HDTVocabulary::DUBLIN_CORE_ISSUED, date);
 }
 
-void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener)
+void BasicHDT::loadFromRDF(const char *fileName, const char* baseUri, RDFNotation notation, ProgressListener *listener)
 {
 	try {
-		// Make sure that URI starts and ends with <>
-		if(baseUri.at(0)!='<')
-			baseUri = '<'+baseUri;
-		if(baseUri.at(baseUri.length()-1)!='>')
-			baseUri.append(">");
-
 		IntermediateListener iListener(listener);
 
 		iListener.setRange(0,50);
-		loadDictionary(fileName, baseUri.c_str(), notation, &iListener);
+		loadDictionary(fileName, baseUri, notation, &iListener);
 
 		iListener.setRange(50,99);
-		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
+		loadTriples(fileName, baseUri, notation, &iListener);
 
 		fillHeader(baseUri);
 
@@ -637,22 +631,16 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 
 }
 
-void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, string baseUri, ProgressListener *listener)
+void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, const char* baseUri, ProgressListener *listener)
 {
 	try {
-		// Make sure that URI starts and ends with <>
-		if(baseUri.at(0)!='<')
-			baseUri = '<'+baseUri;
-		if(baseUri.at(baseUri.length()-1)!='>')
-			baseUri.append(">");
-
 		IntermediateListener iListener(listener);
 
 		iListener.setRange(0,50);
-		loadDictionaryFromHDTs(fileNames, numFiles, baseUri.c_str(), &iListener);
+		loadDictionaryFromHDTs(fileNames, numFiles, baseUri, &iListener);
 
 		iListener.setRange(50,99);
-		loadTriplesFromHDTs(fileNames, numFiles, baseUri.c_str(), &iListener);
+		loadTriplesFromHDTs(fileNames, numFiles, baseUri, &iListener);
 
 		fillHeader(baseUri);
 

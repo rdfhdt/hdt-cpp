@@ -52,7 +52,7 @@ void help() {
     cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
     cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
     cout << "\t-f\t<format>\tFormat of the RDF input (nquads,nq,ntriples,nt,trig,turtle,ttl)" << endl;
-    cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
+    cout << "\t-B\t<base-uri>\tBase URI of the dataset." << endl;
     cout << "\t-V\tPrints the HDT version number." << endl;
     cout << "\t-p\tPrints a progress indicator." << endl;
     cout << "\t-v\tVerbose output" << endl;
@@ -109,9 +109,9 @@ int main(int argc, char **argv) {
                 return 0;
             default:
                 cerr << "ERROR: Unknown option" << endl;
-                
+
                 help();
-                
+
                 return 1;
         }
     }
@@ -146,8 +146,8 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	if(baseUri=="") {
-		baseUri="<file://"+inputFile+">";
+	if (baseUri == "") {
+		baseUri = "file://" + inputFile;
 	}
 
     /**
@@ -157,14 +157,14 @@ int main(int argc, char **argv) {
     if (rdfFormat == "")
     {
         vout << "Input format not given. Guessing from file extension..." << endl;
-        
+
         // Get position of right-most '.' to find file extension.
         size_t dot_position = inputFile.rfind ('.', inputFile.length ());
-        
+
         if (dot_position != string::npos)
             // Extract extension from file name
             rdfFormat = inputFile.substr (dot_position + 1, string::npos);
-        
+
         /**
          * If rdfFormat is still "", it means -f was not specified and the file
          * didn't have any extension. The default format is defined at the top
@@ -176,9 +176,9 @@ int main(int argc, char **argv) {
             vout << "No input format detected: using N-Triples by default." << endl;
         }
     }
-    
+
     // ASSERT: here rdfFormat must be != ""
-    
+
     // Lower-case rdfFormat
     transform (rdfFormat.begin (), rdfFormat.end (), rdfFormat.begin (), ::tolower);
 

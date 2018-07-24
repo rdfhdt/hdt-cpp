@@ -59,7 +59,7 @@ private:
 	void loadDictionaryFromHDTs(const char** fileName, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
 	void loadTriplesFromHDTs(const char** fileNames, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
 
-	void fillHeader(const string &baseUri);
+	void fillHeader(const char* baseUri);
 
     size_t loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
     size_t loadMMapIndex(ProgressListener *listener=NULL);
@@ -86,7 +86,7 @@ public:
 	 */
 	Triples *getTriples();
 
-	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
+	void loadFromRDF(const char *fileName, const char* baseUri, RDFNotation notation, ProgressListener *listener = NULL);
 
 	/**
 	 * @param input
@@ -100,7 +100,7 @@ public:
 
 	void loadHeader(const char *fileName, ProgressListener *listener);
 
-	void loadFromSeveralHDT(const char **fileNames, size_t numFiles, string baseUri, ProgressListener *listener=NULL);
+	void loadFromSeveralHDT(const char **fileNames, size_t numFiles, const char* baseUri, ProgressListener *listener=NULL);
 
     /**
      * Load an HDT from a file, using memory mapping

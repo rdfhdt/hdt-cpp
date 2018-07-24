@@ -52,7 +52,7 @@ void help() {
     cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
     cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
     cout << "\t-f\t<format>\tFormat of the RDF input (nquads,nq,ntriples,nt,trig,turtle,ttl)" << endl;
-    cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
+    cout << "\t-B\t<base-uri>\tBase URI of the dataset." << endl;
     cout << "\t-V\tPrints the HDT version number." << endl;
     //cout << "\t-v\tVerbose output" << endl;
 }
@@ -69,46 +69,6 @@ int main(int argc, char **argv) {
 
     RDFNotation notation = NTRIPLES;
 
-//    int c;
-//    while( (c = getopt(argc,argv,"c:o:vf:B:i:V"))!=-1) {
-//        switch(c) {
-//        case 'c':
-//            configFile = optarg;
-//            cout << "Configfile: " << configFile << endl;
-//            break;
-//        case 'o':
-//            options = optarg;
-//            cout << "Options: " << options << endl;
-//            break;
-//        case 'v':
-//            verbose = true;
-//            break;
-//        case 'f':
-//            rdfFormat = optarg;
-//            cout << "RDF format: " << rdfFormat << endl;
-//            break;
-//        case 'B':
-//            baseUri = optarg;
-//            break;
-//        case 'i':
-//            generateIndex=true;
-//            break;
-//        case 'V':
-//            cout << HDTVersion::get_version_string(".") << endl;
-//            return 0;
-//        default:
-//            cout << "ERROR: Unknown option" << endl;
-//            help();
-//            return 1;
-//        }
-//    }
-
-//    if(argc-optind<2) {
-//        cout << "ERROR: You must supply an input and output" << endl << endl;
-//        help();
-//        return 1;
-//    }
-
     inputFile = argv[1];
     outputFile = argv[2];
 
@@ -124,8 +84,8 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    if(baseUri=="") {
-        baseUri="<file://"+inputFile+">";
+    if (baseUri == "") {
+        baseUri = "file://" + inputFile;
     }
 
     if(rdfFormat!="") {
@@ -161,11 +121,7 @@ int main(int argc, char **argv) {
 
         cout << "HERE: " << endl;
 
-        const char * a = inputFile.c_str();
-        const char * b = baseUri.c_str();
-
         HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, NULL);
-        //HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, &progress);
 
         ofstream out;
 

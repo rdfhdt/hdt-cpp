@@ -55,7 +55,7 @@ public:
 
 	Triples *getTriples();
 
-	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
+	void loadFromRDF(const char *fileName, const char* baseUri, RDFNotation notation, ProgressListener *listener = NULL);
 
 	void loadFromHDT(std::istream &input, ProgressListener *listener = NULL);
 

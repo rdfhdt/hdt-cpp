@@ -75,9 +75,9 @@ HDT *HDTManager::indexedHDT(HDT *hdt, ProgressListener *listener){
 	return bhdt;
 }
 
-HDT *HDTManager::generateHDT(const char *rdfFileName, const char *baseURI, RDFNotation rdfNotation, HDTSpecification &hdtFormat, ProgressListener *listener){
+HDT *HDTManager::generateHDT(const char *rdfFileName, const char* baseUri, RDFNotation rdfNotation, HDTSpecification &hdtFormat, ProgressListener *listener){
 	BasicHDT *hdt = new BasicHDT(hdtFormat);
-	hdt->loadFromRDF(rdfFileName, baseURI, rdfNotation, listener);
+	hdt->loadFromRDF(rdfFileName, baseUri, rdfNotation, listener);
 	return hdt;
 }
 

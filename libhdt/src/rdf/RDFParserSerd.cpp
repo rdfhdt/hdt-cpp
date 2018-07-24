@@ -1,5 +1,7 @@
 #ifdef HAVE_SERD
 
+#include <serd/serd.h>
+#include <string>
 #ifdef HAVE_LIBZ
 #include <zlib.h>
 #endif
@@ -9,13 +11,14 @@
 #include "RDFParser.hpp"
 
 namespace hdt {
-
-string RDFParserSerd::getString(const SerdNode *term) {
-	string out;
+std::string RDFParserSerd::getString(const SerdNode* term) {
+	std::string out;
 	out.reserve(term->n_bytes + 2);
-
 	if(term->type==SERD_URI) {
-		out.append((const char *)term->buf, term->n_bytes);
+	  SerdURI baseUri;
+	  serd_env_get_base_uri(env, &baseUri);
+	  SerdNode abs {serd_node_new_uri_from_node(term, &baseUri, nullptr)};
+	  out.append((const char*)abs.buf, abs.n_bytes);
 	} else if(term->type==SERD_BLANK) {
 		out.append("_:");
 		out.append((const char *)term->buf, term->n_bytes);
@@ -30,14 +33,14 @@ string RDFParserSerd::getString(const SerdNode *term) {
 	return out;
 }
 
-string RDFParserSerd::getStringObject(const SerdNode *term,
-                                      const SerdNode *dataType,
-                                      const SerdNode *lang) {
+std::string RDFParserSerd::getStringObject(const SerdNode *term,
+                                           const SerdNode *dataType,
+                                           const SerdNode *lang) {
 	if(term->type!=SERD_LITERAL) {
 		return getString(term);
 	}
 
-	string out;
+	std::string out;
 	out.reserve(term->n_bytes + 2 +
 	            (dataType ? dataType->n_bytes + 4 : 0) +
 	            (lang     ? lang->n_bytes + 1     : 0));
@@ -167,13 +170,17 @@ SerdSyntax RDFParserSerd::getParserType(RDFNotation notation) {
 	}
 }
 
-void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback) {
+void RDFParserSerd::doParse(const char *fileName, const char *baseStr, RDFNotation notation, bool ignoreErrors, RDFCallback *callback) {
 	this->callback = callback;
 	this->numByte = fileUtil::getSize(fileName);
 
-	// Create Base URI and environment
-	SerdURI  base_uri = SERD_URI_NULL;
-	SerdNode base = serd_node_new_file_uri((const uint8_t *)fileName, NULL, &base_uri, false);
+	// Set the base URI in the environment.
+	//
+	// TBD: “If the base URI is obtained from a URI reference, then
+	// that reference must be converted to absolute form and stripped
+	// of any fragment component prior to its use as a base URI.”
+	SerdURI baseUri {SERD_URI_NULL};
+	SerdNode base {serd_node_new_uri_from_string((const uint8_t*)baseStr, nullptr, &baseUri)};
 	env = serd_env_new(&base);
 
 	SerdReader* reader = serd_reader_new(

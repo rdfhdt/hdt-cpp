@@ -21,7 +21,7 @@ $ rdf2hdt [options] <RDF input file> <HDT output file>
 	-c	<configfile>	HDT Config options file
 	-o	<options>	HDT Additional options (option1=value1;option2=value2;...)
 	-f	<format>	Format of the RDF input (ntriples, nquad, n3, turtle, rdfxml)
-	-B	"<base URI>"	Base URI of the dataset.
+	-B	<base-uri>	Base URI of the dataset.
 	-V	Prints the HDT version number.
 	-p	Prints a progress indicator.
 	-v	Verbose output

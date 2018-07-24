@@ -79,7 +79,7 @@ VarBindingString *BasicModifiableHDT::searchJoin(vector<TripleString> &patterns,
 	throw std::logic_error("Not Implemented");
 }
 
-void BasicModifiableHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener)
+void BasicModifiableHDT::loadFromRDF(const char *fileName, const char* baseUri, RDFNotation notation, ProgressListener *listener)
 {
 
 }
