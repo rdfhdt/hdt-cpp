@@ -256,6 +256,10 @@ void PlainDictionary::import(Dictionary *other, ProgressListener *listener) {
 	throw std::logic_error("Not implemented import");
 }
 
+void PlainDictionary::import(Dictionary *other, ModifiableTriples *triplesList,  ProgressListener *listener) {
+	throw std::logic_error("Not implemented import");
+}
+
 IteratorUCharString *PlainDictionary::getSubjects() {
 	return new DictIterator(this->subjects);
 }

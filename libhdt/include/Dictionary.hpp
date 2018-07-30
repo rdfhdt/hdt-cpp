@@ -132,6 +132,7 @@ public:
     virtual size_t getMaxObjectID()=0;
 
     virtual void import(Dictionary *other, ProgressListener *listener=NULL)=0;
+    virtual void import(Dictionary *other, ModifiableTriples *triplesList, ProgressListener *listener=NULL)=0;
 
     virtual IteratorUCharString *getSubjects()=0;
     virtual IteratorUCharString *getPredicates()=0;

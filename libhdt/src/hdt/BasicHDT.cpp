@@ -1006,7 +1006,7 @@ void BasicHDT::loadOnePass(const char* fileName, const char* baseUri, RDFNotatio
 
 		// Convert to final format
 		if (dictionary->getType()!=HDTVocabulary::DICTIONARY_TYPE_PLAIN){
-			dictionary->import(dict);
+			dictionary->import(dict, triplesList);
 			
 			//TODO: Update Ids triples according to new ID.
 

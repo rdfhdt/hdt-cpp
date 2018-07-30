@@ -307,6 +307,21 @@ void FourSectionDictionary::import(Dictionary *other, ProgressListener *listener
 	}
 }
 
+void FourSectionDictionary::import(Dictionary *other, ModifiableTriples *triplesList,  ProgressListener *listener) {
+
+	this->import(other, listener);
+
+	// Update all IDs according to new dictionary
+	IteratorTripleID *it = triplesList->searchAll();
+	while(it->hasNext()){
+		TripleID *tripleID = it->next();
+		TripleString *triple = new TripleString();
+		other->tripleIDtoTripleString(*tripleID, *triple);
+		this->tripleStringtoTripleID(*triple, *tripleID);
+		delete triple;
+	}
+}
+
 IteratorUCharString *FourSectionDictionary::getSubjects() {
 	return subjects->listAll();
 }
