@@ -52,6 +52,7 @@ void help() {
     cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
     cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
     cout << "\t-f\t<format>\tFormat of the RDF input (nquads,nq,ntriples,nt,trig,turtle,ttl)" << endl;
+    cout << "\t-l\t<loaderType>\tIndicate whether 1 or 2 passes are used to create the HDT (default 2)" << endl;
     cout << "\t-B\t\"<base URI>\"\tBase URI of the dataset." << endl;
     cout << "\t-V\tPrints the HDT version number." << endl;
     cout << "\t-p\tPrints a progress indicator." << endl;
@@ -68,15 +69,17 @@ int main(int argc, char **argv) {
 	string options;
 	string rdfFormat;
 	string baseUri;
+    string lType;
 
     /**
      * Input file format. If no -f is specified and we can't guess which
      * format it is, we will use NTRIPLES by default.
      */
     RDFNotation notation = NTRIPLES;
+    LoaderType loaderType = TWO_PASS;
 
     int flag;
-    while ((flag = getopt (argc, argv, "c:o:vpf:B:iVh")) != -1)
+    while ((flag = getopt (argc, argv, "c:o:vpfl:B:iVh")) != -1)
     {
         switch (flag)
         {
@@ -94,6 +97,9 @@ int main(int argc, char **argv) {
                 break;
             case 'f':
                 rdfFormat = optarg;
+                break;
+            case 'l':
+                lType = optarg;
                 break;
             case 'B':
                 baseUri = optarg;
@@ -204,6 +210,12 @@ int main(int argc, char **argv) {
 
     vout << "Detected RDF input format: " << rdfFormat << endl;
 
+    // Detect loader type 
+    if (lType == "1")
+        loaderType = ONE_PASS;
+
+    vout << "Detected Loader type: " << (loaderType + 1) << endl;
+
 	// Process
 	HDTSpecification spec(configFile);
 
@@ -214,7 +226,7 @@ int main(int argc, char **argv) {
 		StopWatch globalTimer;
 
 		ProgressListener* progress = showProgress ? new StdoutProgressListener() : NULL;
-		HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, progress);
+		HDT *hdt = HDTManager::generateHDT(inputFile.c_str(), baseUri.c_str(), notation, spec, progress, loaderType);
 
 		ofstream out;
 

@@ -98,7 +98,7 @@ void BasicHDT::createComponents() {
 
 	std::string dictType = "";
 	try{
-		spec.get("dictionary.type");
+		dictType = spec.get("dictionary.type");
 	}
 	catch (std::exception& e){
 	}
@@ -399,7 +399,7 @@ void BasicHDT::fillHeader(const string& baseUri) {
 	header->insert(publicationInfoNode, HDTVocabulary::DUBLIN_CORE_ISSUED, date);
 }
 
-void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener)
+void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener, LoaderType loaderType)
 {
 	try {
 		// Make sure that URI starts and ends with <>
@@ -410,11 +410,20 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 
 		IntermediateListener iListener(listener);
 
-		iListener.setRange(0,50);
-		loadDictionary(fileName, baseUri.c_str(), notation, &iListener);
+		switch(loaderType) {
+			case ONE_PASS: 
+			iListener.setRange(0,99);
+			loadOnePass(fileName, baseUri.c_str(), notation, &iListener);
+			break;
+			
+			case TWO_PASS:
+			default:
+			iListener.setRange(0,50);
+			loadDictionary(fileName, baseUri.c_str(), notation, &iListener);
 
-		iListener.setRange(50,99);
-		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
+			iListener.setRange(50,99);
+			loadTriples(fileName, baseUri.c_str(), notation, &iListener);
+		}
 
 		fillHeader(baseUri);
 
@@ -963,5 +972,106 @@ void BasicHDT::saveIndex(ProgressListener *listener) {
 	triples->saveIndex(out, ci, listener);
 	out.close();
 }
+
+/* ONE PASS logic */
+
+void BasicHDT::loadOnePass(const char* fileName, const char* baseUri, RDFNotation notation, ProgressListener* listener) {
+
+	StopWatch st;
+	IntermediateListener iListener(listener);
+
+	// Create temporary dictionary
+	ModifiableDictionary *dict = getLoadDictionary();
+	ModifiableTriples* triplesList = new TriplesList(spec);
+
+	try {
+		NOTIFY(listener, "Loading Dictionary & Triples", 0, 100);
+		iListener.setRange(0, 80);
+
+		dict->startProcessing();
+		triplesList->startProcessing();
+
+		// Load data
+		OnePassLoader loader(dict, triplesList, &iListener);
+
+		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation);
+        parser->doParse(fileName, baseUri, notation, true, &loader);
+		delete parser;
+
+		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, loader.getSize());
+		iListener.setRange(80, 90);
+
+		dict->stopProcessing(&iListener);
+		triplesList->stopProcessing(&iListener);
+
+		// Convert to final format
+		if (dictionary->getType()!=HDTVocabulary::DICTIONARY_TYPE_PLAIN){
+			dictionary->import(dict);
+			
+			//TODO: Update Ids triples according to new ID.
+
+			delete dict;
+		}
+		else{
+			dictionary = dict;
+		}
+#ifndef WIN32
+	} catch (char *e) {
+		cout << "Catch exception dictionary/triples: " << e << endl;
+		delete dict;
+		delete triplesList;
+		throw e;
+#else
+	} catch(exception& e) {
+		cerr << "caught here??" << endl;
+		delete dict;
+		delete triplesList;
+		throw;
+#endif
+	}
+
+	if (triples->getType() == triplesList->getType()) {
+		delete triples;
+		triples = triplesList;
+	} else {
+		iListener.setRange(90, 100);
+		try {
+			triples->load(*triplesList, &iListener);
+		} catch (std::exception& e) {
+			delete triplesList;
+			throw;
+		}
+		delete triplesList;
+	}
+}
+
+void OnePassLoader::processTriple(const hdt::TripleString& triple, unsigned long long pos) {
+
+	TripleID ti = TripleID(
+		dictionary->insert(triple.getSubject(), SUBJECT),
+		dictionary->insert(triple.getPredicate(), PREDICATE),
+		dictionary->insert(triple.getObject(), OBJECT)
+	);
+
+	if (ti.isValid()) {
+		triples->insert(ti);
+	} else {
+		stringstream msg;
+		msg << "ERROR: Could not convert triple to IDS! " << endl << triple << endl << ti;
+		throw ParseException(msg.str());
+	}
+	//cerr << "TripleID: " << ti << endl;
+	char str[100];
+	if ((listener != NULL) && (count % 100000) == 0) {
+		sprintf(str, "Generating Triples: %lld K triples processed.", count / 1000);
+		listener->notifyProgress(0, str);
+	}
+	count++;
+	if(pos>sizeBytes) {
+		sizeBytes = pos;
+	}
+}
+
+
 
 }

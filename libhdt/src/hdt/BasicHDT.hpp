@@ -54,6 +54,7 @@ private:
 
 	void loadDictionary(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
 	void loadTriples(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
+	void loadOnePass(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
 
 	void addDictionaryFromHDT(const char *fileName, ModifiableDictionary *dict, ProgressListener *listener=NULL);
 	void loadDictionaryFromHDTs(const char** fileName, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
@@ -86,7 +87,7 @@ public:
 	 */
 	Triples *getTriples();
 
-	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL);
+	void loadFromRDF(const char *fileName, string baseUri, RDFNotation notation, ProgressListener *listener = NULL, LoaderType loaderType = LoaderType::TWO_PASS);
 
 	/**
 	 * @param input
@@ -166,6 +167,24 @@ public:
 	void processTriple(const TripleString &triple, unsigned long long pos);
 	uint64_t getSize() {
 		return sizeBytes;
+	}
+};
+
+class OnePassLoader : public RDFCallback {
+private:
+	ModifiableDictionary *dictionary;
+	ModifiableTriples *triples;
+	ProgressListener *listener;
+	unsigned long long count;
+	uint64_t sizeBytes;
+public:
+	OnePassLoader(ModifiableDictionary *dictionary, ModifiableTriples *triples, ProgressListener *listener) : dictionary(dictionary), triples(triples), listener(listener), count(0), sizeBytes(0) { }
+	void processTriple(const TripleString &triple, unsigned long long pos);
+	uint64_t getSize() {
+		return sizeBytes;
+	}
+	inline unsigned long long getCount() {
+		return count;
 	}
 };
 
