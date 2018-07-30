@@ -76,7 +76,6 @@ int main(int argc, char **argv) {
      * format it is, we will use NTRIPLES by default.
      */
     RDFNotation notation = NTRIPLES;
-    LoaderType loaderType = TWO_PASS;
 
     int flag;
     while ((flag = getopt (argc, argv, "c:o:vpfl:B:iVh")) != -1)
@@ -211,10 +210,8 @@ int main(int argc, char **argv) {
     vout << "Detected RDF input format: " << rdfFormat << endl;
 
     // Detect loader type 
-    if (lType == "1")
-        loaderType = ONE_PASS;
-
-    vout << "Detected Loader type: " << (loaderType + 1) << endl;
+    LoaderType loaderType = lType == "1" ? ONE_PASS : TWO_PASS;
+    vout << "Detected Loader type: " << (loaderType + 1) << "-pass" << endl;
 
 	// Process
 	HDTSpecification spec(configFile);
