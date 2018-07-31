@@ -27,7 +27,7 @@ dependencies installed:
 - [GNU zip (gzip)](http://www.zlib.net/) Allows GNU zipped RDF input
   files to be ingested, and allows GNU zipped HDT files to be loaded.
 
-  - `sudo apt install gzip` on Debian-based distros (e.g., Ubuntu)
+  - `sudo apt install zlib1g zlib1g-dev` on Debian-based distros (e.g., Ubuntu)
   - `sudo dnf install gzip` on Red Hat-based distros (e.g., Fedora)
 
 - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/)
