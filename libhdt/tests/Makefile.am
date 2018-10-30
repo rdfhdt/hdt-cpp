@@ -2,6 +2,7 @@ check_PROGRAMS = \
 bit375 \
 bitutiltest \
 c11 \
+dictionaries \
 listener \
 logarr \
 properties \
