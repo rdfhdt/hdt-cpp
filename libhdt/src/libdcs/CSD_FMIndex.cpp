@@ -70,7 +70,7 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence, 
 	size_t total = 1;
 
 	unsigned char *currentStr = NULL;
-	uint currentLength = 0;
+    size_t currentLength = 0;
 
 	while (it->hasNext()) {
 		currentStr = it->next();
@@ -182,11 +182,11 @@ CSD_FMIndex::~CSD_FMIndex() {
 			delete separators;
 }
 
-uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len) {
+size_t CSD_FMIndex::locate(const unsigned char *s, size_t len) {
 	unsigned char *n_s = new unsigned char[len + 2];
 	uint o;
 	n_s[0] = '\1';
-	for (uint32_t i = 1; i <= len; i++)
+    for (size_t i = 1; i <= len; i++)
 		n_s[i] = s[i - 1];
 	n_s[len + 1] = '\1';
 	o = fm_index->locate_id(n_s, len + 2);
@@ -196,19 +196,19 @@ uint32_t CSD_FMIndex::locate(const unsigned char *s, uint32_t len) {
 	return 0;
 }
 
-uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint32_t **occs) {
-    uint dummy;
+size_t CSD_FMIndex::locate_substring(unsigned char *s, size_t len, uint32_t **occs) {
+    uint32_t dummy;
     return this->locate_substring(s, len, 0, 0, true, occs, &dummy);
 }
 
-uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint offset, uint limit, bool deduplicate, uint32_t **occs, uint* num_occ) {
+size_t CSD_FMIndex::locate_substring(unsigned char *s, size_t len, size_t offset, size_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ) {
 	if (!use_sampling) {
 		*occs = NULL;
 		return 0;
 	}
 	uint matches, i;
-	uint32_t res = 0;
-	uint32_t temp;
+    size_t res = 0;
+    size_t temp;
 	matches = fm_index->locate(s, (uint) len, offset, limit, occs, num_occ);
 	if (*num_occ > 0) {
 		// TODO: another reason not to combine limit/offset with deduplicate
@@ -230,7 +230,7 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint offs
 	return matches;
 }
 
-unsigned char * CSD_FMIndex::extract(uint32_t id) {
+unsigned char * CSD_FMIndex::extract(size_t id) {
 	if (id == 0 || id > numstrings)
 		return NULL;
 	uint i;
@@ -445,9 +445,9 @@ void csd::CSD_FMIndex::fillSuggestions(const char *base,
     uint32_t *results = NULL;
     size_t numresults = this->locate_substring(n_s, len + 1, &results);
     int maxIter = maxResults;
-    if (numresults < maxIter)
+    if (maxIter >= 0 && numresults < static_cast<size_t>(maxIter))
         maxIter = numresults;
-    for (int i = 0; i < numresults; i++) {
+    for (size_t i = 0; i < numresults; i++) {
         out.push_back((char*) (this->extract(results[i])));
     }
 }

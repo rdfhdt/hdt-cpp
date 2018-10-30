@@ -90,7 +90,7 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize, hdt::Progress
             // Regular string
 
             // Calculate the length of the common prefix
-            unsigned int delta = longest_common_prefix((unsigned char *)previousStr.c_str(), currentStr, previousStr.length(), currentLength);
+            size_t delta = longest_common_prefix((unsigned char *)previousStr.c_str(), currentStr, previousStr.length(), currentLength);
 
             // The prefix is differentially encoded
             bytes += VByte::encode(text+bytes, delta);
@@ -134,7 +134,7 @@ CSD_PFC::~CSD_PFC()
 		delete blocks;
 }
 
-uint32_t CSD_PFC::locate(const unsigned char *s, uint32_t len)
+size_t CSD_PFC::locate(const unsigned char *s, size_t len)
 {
 	if(!text || !blocks)
 		return 0;
@@ -150,7 +150,7 @@ uint32_t CSD_PFC::locate(const unsigned char *s, uint32_t len)
 		return (block*blocksize)+1;
 	} else {
 		// The block is sequentially scanned to find the URI
-        unsigned int idblock = locateInBlock(block, s, len);
+        size_t idblock = locateInBlock(block, s, len);
 
 		// If idblock = 0, the URI is not in the dictionary
 		if (idblock != 0) {
@@ -161,7 +161,7 @@ uint32_t CSD_PFC::locate(const unsigned char *s, uint32_t len)
 	}
 }
 
-unsigned char* CSD_PFC::extract(uint32_t id)
+unsigned char* CSD_PFC::extract(size_t id)
 {
 	if(!text || !blocks) {
 		return NULL;
@@ -170,8 +170,8 @@ unsigned char* CSD_PFC::extract(uint32_t id)
 	if ((id > 0) && (id <= numstrings))
 	{
         // Calculate block and offset
-		unsigned int block = (id-1)/blocksize;
-		unsigned int offset = (id-1)%blocksize;
+        size_t block = (id-1)/blocksize;
+        size_t offset = (id-1)%blocksize;
 
 		unsigned char *s = extractInBlock(block, offset);
 
@@ -240,9 +240,9 @@ CSD* CSD_PFC::load(istream & fp)
 
 	// Load variables
 	dicc->type = PFC;   // Type already read by CSD
-	dicc->numstrings = (uint32_t) VByte::decode(fp);
+    dicc->numstrings = VByte::decode(fp);
 	dicc->bytes = VByte::decode(fp);
-	dicc->blocksize = (uint32_t) VByte::decode(fp);
+    dicc->blocksize = VByte::decode(fp);
 
 	// Calculate variables CRC
 	crch.update(&dicc->type, sizeof(dicc->type));
@@ -266,7 +266,7 @@ CSD* CSD_PFC::load(istream & fp)
 	// Load strings
 	if(dicc->bytes && dicc->numstrings) {
 		dicc->text = (unsigned char *)malloc(dicc->bytes);
-		const unsigned int blocksize = 8192;
+        const size_t blocksize = 8192;
 		uint64_t counter=0;
 		unsigned char *ptr = (unsigned char *)dicc->text;
 		while(counter<dicc->bytes && fp.good()) {
@@ -302,7 +302,11 @@ size_t CSD_PFC::load(unsigned char *ptr, unsigned char *ptrMax) {
 	if(ptr[count++] != PFC)
 		throw std::runtime_error("Trying to read a CSD_PFC but type does not match");
 
-	count += VByte::decode(&ptr[count], ptrMax, &numstrings);
+	if(sizeof(numstrings) == 8)
+		count += VByte::decode(&ptr[count], ptrMax, (uint64_t*) &numstrings);
+	else
+		count += VByte::decode(&ptr[count], ptrMax, (uint32_t*) &numstrings);
+
 	count += VByte::decode(&ptr[count], ptrMax, &bytes);
 	count += VByte::decode(&ptr[count], ptrMax, &blocksize);
 
@@ -380,22 +384,22 @@ bool CSD_PFC::locateBlock(const unsigned char *s, size_t *block)
 			*block = 0;
 	}
 
-	/*if(*block == (unsigned int)-1) {
+	/*if(*block == (size_t)-1) {
 		*block = 0;
 	}*/
 
 	return false;
 }
 
-unsigned int CSD_PFC::locateInBlock(size_t block, const unsigned char *str, unsigned int len)
+size_t CSD_PFC::locateInBlock(size_t block, const unsigned char *str, size_t len)
 {
 	if(block>=nblocks){
 		return 0;
 	}
 
     uint64_t delta = 0;
-	unsigned int idInBlock = 0;
-	unsigned int commonPrefix = 0;
+    size_t idInBlock = 0;
+    size_t commonPrefix = 0;
 
 	size_t pos = blocks->get(block);
 
@@ -443,7 +447,7 @@ unsigned int CSD_PFC::locateInBlock(size_t block, const unsigned char *str, unsi
 	return 0;
 }
 
-unsigned char *CSD_PFC::extractInBlock(unsigned int block, unsigned int o)
+unsigned char *CSD_PFC::extractInBlock(size_t block, size_t o)
 {
 	size_t pos = blocks->get(block);
     uint64_t delta = 0;
@@ -452,7 +456,7 @@ unsigned char *CSD_PFC::extractInBlock(unsigned int block, unsigned int o)
 	string tmpStr((char*)(text+pos));
 	pos += tmpStr.length()+1;
 
-	for (unsigned int j=0; j<o; j++)
+    for (size_t j=0; j<o; j++)
 	{
 		// Decode the prefix
 		pos += VByte::decode(text+pos, text+bytes, &delta);
@@ -509,20 +513,20 @@ void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int ma
 	}
 
 	string tmpStr;
-    unsigned int baselen = strlen(base);
+    size_t baselen = strlen(base);
 	bool terminate = false;
 
 	while(block<nblocks && !terminate) {
         size_t pos = blocks->get(block);
 
-		unsigned int delta = 0;
-		unsigned int idInBlock = 0;
+        size_t delta = 0;
+        size_t idInBlock = 0;
 
 		// Read the first string
 		tmpStr.clear();
 		tmpStr.append((char*)(text+pos));
 
-        unsigned int slen = tmpStr.length()+1;
+        size_t slen = tmpStr.length()+1;
 		pos+=slen;
 
 		int cmp = strncmp(base, tmpStr.c_str(), baselen);
@@ -541,7 +545,10 @@ void CSD_PFC::fillSuggestions(const char *base, vector<std::string> &out, int ma
 		while ( (idInBlock<blocksize) && (pos<bytes) && !terminate)
 		{
 			// Decode the prefix
-			pos += VByte::decode(text+pos, text+bytes, &delta);
+			if(sizeof(delta) == 8)
+				pos += VByte::decode(text+pos, text+bytes, (uint64_t*) &delta);
+			else
+				pos += VByte::decode(text+pos, text+bytes, (uint32_t*) &delta);
 
 			// Guess suffix size
 			slen = strlen((char*)text+pos)+1;

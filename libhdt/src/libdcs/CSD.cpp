@@ -88,7 +88,7 @@ CSD *CSD::create(unsigned char type)
     return NULL;
 }
 
-uint32_t CSD::getLength()
+size_t CSD::getLength()
 {
 	return numstrings;
 }

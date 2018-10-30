@@ -7,16 +7,16 @@ namespace hdt {
     vector<string> varnames;
     int table[][];
     char *joinVar;
-    unsigned int joinVarPos;
-    unsigned int numRows;
-    unsigned int numCols;
-    unsigned int currentRow;
+    size_t joinVarPos;
+    size_t numRows;
+    size_t numCols;
+    size_t currentRow;
     */
 
 int compareRow(const void * a, const void * b)
 {
-    unsigned int *pa = (unsigned int *)a;
-    unsigned int *pb = (unsigned int *)b;
+    size_t *pa = (size_t *)a;
+    size_t *pb = (size_t *)b;
     return pa[0]-pb[0];
 }
 
@@ -34,10 +34,10 @@ SortBinding::SortBinding(char *var, VarBindingInterface *child) {
     numCols = child->getNumVars();
 
     // Reserve space
-    table = new unsigned int[numRows*numCols];
+    table = new size_t[numRows*numCols];
 
     // Copy
-    unsigned int row=0;
+    size_t row=0;
     while(child->findNext()) {
 	for(int i=0;i<numCols;i++) {
 	    table[row*numCols+i] = child->getVarValue(i);
@@ -46,18 +46,18 @@ SortBinding::SortBinding(char *var, VarBindingInterface *child) {
     }
 
     // Sort
-    //qsort(table, numRows, numCols*sizeof(unsigned int), compare);
+    //qsort(table, numRows, numCols*sizeof(size_t), compare);
 }
 
 SortBinding::~SortBinding(){
 
 }
 
-unsigned int SortBinding::isOrdered(unsigned int numvar) {
+size_t SortBinding::isOrdered(size_t numvar) {
 	throw std::logic_error("Not Implemented");
 }
 
-unsigned int SortBinding::estimatedNumResults() {
+size_t SortBinding::estimatedNumResults() {
 	throw std::logic_error("Not Implemented");
 }
 
@@ -65,7 +65,7 @@ ResultEstimationType SortBinding::estimationAccuracy() {
 	throw std::logic_error("Not Implemented");
 }
 
-bool SortBinding::findNext(const char *varName, unsigned int value) {
+bool SortBinding::findNext(const char *varName, size_t value) {
 	throw std::logic_error("Not Implemented");
 }
 
@@ -73,16 +73,16 @@ bool SortBinding::findNext() {
 	throw std::logic_error("Not Implemented");
 }
 
-//virtual void findNext(unsigned int numvar, unsigned int value=0);
+//virtual void findNext(size_t numvar, size_t value=0);
 void SortBinding::goToStart() {
 
 }
 
-unsigned int SortBinding::getVarValue(unsigned int numvar) {
+size_t SortBinding::getVarValue(size_t numvar) {
 	throw std::logic_error("Not Implemented");
 }
 
-void SortBinding::searchVar(unsigned int numvar, unsigned int value){
+void SortBinding::searchVar(size_t numvar, size_t value){
 
 }
 

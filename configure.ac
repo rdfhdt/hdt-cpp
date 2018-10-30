@@ -28,7 +28,7 @@ AC_MSG_CHECKING(whether to enable optimizations)
 AC_ARG_ENABLE([optimization],
   AS_HELP_STRING([--enable-optimization],[Build library with optimization parameters [default=yes]]),
   [AC_MSG_RESULT(${enableval})],
-  [CXXFLAGS="${CXXFLAGS} -g -O2"]
+  [CXXFLAGS="${CXXFLAGS} -g -O2 -std=c++11"]
   [AC_MSG_RESULT(yes)])
 
 AC_MSG_CHECKING(whether to build libcds)

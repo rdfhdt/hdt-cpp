@@ -17,15 +17,15 @@ private:
     vector<hdt::TripleID> triples;
 
     vector<Color> predicateColors;
-    unsigned int maxPredicateCount;
-    vector<unsigned int> predicateCount;
+    size_t maxPredicateCount;
+    vector<size_t> predicateCount;
 
 public:
     HDTCachedInfo(hdt::HDT *hdt);
 
-    Color *getPredicateColor(unsigned int npred);
-    unsigned int getPredicateUsages(unsigned int predicate);
-    unsigned int getMaxPredicateCount();
+    Color *getPredicateColor(size_t npred);
+    size_t getPredicateUsages(size_t predicate);
+    size_t getMaxPredicateCount();
     vector<hdt::TripleID> &getTriples();
 
     void generateGeneralInfo(hdt::ProgressListener *listener=NULL);

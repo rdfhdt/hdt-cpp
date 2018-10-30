@@ -62,12 +62,12 @@ public:
 	 @s: the string to be located.
 	 @len: the length (in characters) of the string s.
 	 */
-	uint32_t locate(const unsigned char *s, uint32_t len);
+	size_t locate(const unsigned char *s, size_t len);
 
 	/** Returns the string identified by id.
 	 @id: the identifier to be extracted.
 	 */
-	unsigned char * extract(uint32_t id);
+	unsigned char * extract(size_t id);
 
 	void freeString(const unsigned char *str);
 
@@ -76,7 +76,7 @@ public:
 	 @dict: the plain uncompressed dictionary.
 	 @return: number of total symbols in the dictionary.
 	 */
-	unsigned int decompress(unsigned char **dict);
+	size_t decompress(unsigned char **dict);
 
 	/** Returns the size of the structure in bytes. */
 	uint64_t getSize();
@@ -129,15 +129,15 @@ protected:
 	 @len: the length (in characters) of the string s.
 	 @return: the ID for 's' or 0 if it is not exist.
 	 */
-	unsigned int locateInBlock(size_t block, const unsigned char *s,
-			unsigned int len);
+	size_t locateInBlock(size_t block, const unsigned char *s,
+			size_t len);
 
 	/** Extracts the o-th string in the given 'block'.
 	 @block: block to be accesed.
 	 @o: internal offset for the required string in the block.
 	 @return: the extracted string.
 	 */
-	unsigned char *extractInBlock(unsigned int block, unsigned int o);
+	unsigned char *extractInBlock(size_t block, size_t o);
 
 	/** Obtains the length of the long common prefix (lcp) of str1 and str2.
 	 @str1: first string in the comparison.
@@ -194,11 +194,11 @@ private:
 	string tmpStr;
 	size_t block;
 	bool terminate;
-	unsigned int idInBlock;
-	unsigned int delta;
+	size_t idInBlock;
+	size_t delta;
 	size_t pos;
-	unsigned int slen;
-	unsigned int prefixlen;
+	size_t slen;
+	size_t prefixlen;
 public:
 
 	PFCSuggestionIterator(CSD_PFC *pfc, const char *prefix) :
@@ -261,7 +261,10 @@ public:
 
 		while (((idInBlock < pfc->blocksize) && (pos < pfc->bytes) && !terminate) && !hasNext()) {
 			// Decode the prefix
-			pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, &delta);
+            if(sizeof(delta) == 8)
+                pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, (uint64_t*) &delta);
+            else
+                pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, (uint32_t*) &delta);
 
 			// Guess suffix size
 			slen = strlen((char*) pfc->text + pos) + 1;
@@ -328,11 +331,11 @@ private:
 	string tmpStr;
 	size_t block;
 	bool terminate;
-	unsigned int idInBlock;
-	unsigned int delta;
+	size_t idInBlock;
+	size_t delta;
 	size_t pos;
-	unsigned int slen;
-	unsigned int prefixlen;
+	size_t slen;
+	size_t prefixlen;
 public:
 
 	PFCSuggestionIDIterator(CSD_PFC *pfc, const char *prefix) :
@@ -395,7 +398,10 @@ public:
 
 		while (((idInBlock < pfc->blocksize) && (pos < pfc->bytes) && !terminate) && !hasNext()) {
 			// Decode the prefix
-			pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, &delta);
+            if(sizeof(delta) == 8)
+                pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, (uint64_t*) &delta);
+            else
+                pos += VByte::decode(pfc->text + pos, pfc->text + pfc->bytes, (uint32_t*) &delta);
 
 			// Guess suffix size
 			slen = strlen((char*) pfc->text + pos) + 1;
@@ -427,8 +433,8 @@ public:
 			return hasnext;
 	}
 
-	unsigned int next() {
-		unsigned int currentSolution = (block*pfc->blocksize)+idInBlock;
+	size_t next() {
+		size_t currentSolution = (block*pfc->blocksize)+idInBlock;
 		// prepare for the following solution
 		hasnext=false;
 		while (!hasnext&&!terminate){

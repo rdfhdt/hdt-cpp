@@ -14,7 +14,11 @@ namespace hdt {
 
 RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
 #ifdef HAVE_SERD
-    if(notation==TURTLE || notation==NTRIPLES  || notation==NQUAD) {
+    if(notation==NQUAD || // Deprecated: use `NQUADS' instead.
+       notation==NQUADS ||
+       notation==NTRIPLES ||
+       notation==TRIG ||
+       notation==TURTLE) {
         return new RDFParserSerd();
     }
 #else

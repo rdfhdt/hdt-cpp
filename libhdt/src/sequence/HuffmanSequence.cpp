@@ -72,8 +72,8 @@ void HuffmanSequence::add(IteratorUInt &elements)
 void HuffmanSequence::load(std::istream & input)
 {
 	huffman = URICompressed::Huffman::load(input);
-	unsigned int numElements;
-	unsigned int encEntries;
+    size_t numElements;
+    size_t encEntries;
 	size_t pos = 0;
 
 	input.read((char *)&numElements, sizeof(unsigned int));
@@ -84,7 +84,7 @@ void HuffmanSequence::load(std::istream & input)
 
 	input.read((char*)encV, encEntries*sizeof(unsigned int));
 
-	for(unsigned int i=0;i<numElements;i++) {
+    for(size_t i=0;i<numElements;i++) {
 		pos = huffman->decode(&vectorPlain[i], encV, pos);
 	}
     delete encV;
@@ -113,16 +113,16 @@ void HuffmanSequence::save(std::ostream & output)
 
 	// Encode stream
 	size_t pos = 0;
-	for(unsigned int i=0;i<vectorPlain.size();i++){
+    for(size_t i=0;i<vectorPlain.size();i++){
 		pos = huffman->encode(vectorPlain[i], &vectorEncoded[0], pos );
 	}
 
 	// Calculate size
-	unsigned int numElements = vectorPlain.size();
-	unsigned int encodedEntries = 1+pos/(sizeof(unsigned int)*8);
+    size_t numElements = vectorPlain.size();
+    size_t encodedEntries = 1+pos/(sizeof(unsigned int)*8);
 
 #if 0
-	unsigned int bytes = 1+pos/8;
+    size_t bytes = 1+pos/8;
 	cout << "Total bits: " << pos << endl;
 	cout << "Total entries: " << encodedEntries << endl;
 	cout << "Total bytes: " << bytes << endl;

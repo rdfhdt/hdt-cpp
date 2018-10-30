@@ -41,7 +41,7 @@ class PlainHeader : public Header {
 private:
 	HDTSpecification spec;
 	vector<TripleString> triples;
-	unsigned int anonCounter;
+    size_t anonCounter;
 
 public:
 	PlainHeader();
@@ -99,7 +99,7 @@ class PlainHeaderIteratorTripleString : public IteratorTripleString {
 
 private:
         PlainHeader *header;
-        unsigned int pos;
+        size_t pos;
         TripleString nextTriple, pattern, returnTriple;
         bool hasMoreTriples;
 

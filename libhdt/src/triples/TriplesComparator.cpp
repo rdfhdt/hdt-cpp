@@ -54,7 +54,7 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 	﻿ * Components of the triple. Meaning will be given based on the order
 	﻿ * variable, see below
 	﻿ */
-	unsigned int x1, y1, z1, x2, y2, z2;
+    size_t x1, y1, z1, x2, y2, z2;
 
 	// Some calculations...
 	switch( this->order) {

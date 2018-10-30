@@ -13,26 +13,26 @@
 namespace hdt {
 
 class MergeJoinBinding : public BaseJoinBinding {
-	unsigned int s, r;
-	vector< vector<unsigned int> > leftOperands, rightOperands;
-	unsigned int leftCount, rightCount;
+    size_t s, r;
+    vector< vector<size_t> > leftOperands, rightOperands;
+    size_t leftCount, rightCount;
 	bool hasMoreOperands;
 public:
 	MergeJoinBinding(char *var, VarBindingInterface *left, VarBindingInterface *right);
 	virtual ~MergeJoinBinding();
 
-	unsigned int isOrdered(unsigned int numvar);
+    size_t isOrdered(size_t numvar);
 
-	unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
 	ResultEstimationType estimationAccuracy();
-	bool findNext(const char *varName, unsigned int value=0);
+    bool findNext(const char *varName, size_t value=0);
 
 	bool findNext();
-	//virtual void findNext(unsigned int numvar, unsigned int value=0);
+    //virtual void findNext(size_t numvar, size_t value=0);
 	void goToStart();
 
-	unsigned int getVarValue(unsigned int numvar);
-	void searchVar(unsigned int numvar, unsigned int value);
+    size_t getVarValue(size_t numvar);
+    void searchVar(size_t numvar, size_t value);
 };
 
 }

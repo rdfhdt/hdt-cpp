@@ -64,7 +64,7 @@ static const crc16_t crc16_table[256] = {
  *****************************************************************************/
 crc16_t crc16_reflect(crc16_t data, size_t data_len)
 {
-    unsigned int i;
+    size_t i;
     crc16_t ret;
 
     ret = data & 0x01;

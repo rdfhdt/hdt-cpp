@@ -288,7 +288,8 @@ BitSequence375 * BitSequence375::load(istream & in)
 	// Read array from file, byte-aligned.
 	size_t bytes = ret->numBytes(ret->numbits);
 	in.read((char*)&ret->data[0], bytes);
-	if(in.gcount()!=bytes) {
+	streamsize gc = in.gcount();
+	if(gc < 0 || static_cast<size_t>(gc)!=bytes) {
 		throw std::runtime_error("BitSequence375 error reading array of bits.");
 	}
 

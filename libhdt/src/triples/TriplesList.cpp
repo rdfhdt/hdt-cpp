@@ -91,7 +91,7 @@ void TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 	controlInformation.setUint("order", order);
 	controlInformation.save(output);
 
-	for( unsigned int i = 0; i < arrayOfTriples.size(); i++ ) {
+    for( size_t i = 0; i < arrayOfTriples.size(); i++ ) {
 		if ( arrayOfTriples[i].isValid() ) {
 			output.write((char *)&arrayOfTriples[i], sizeof(TripleID));
 			NOTIFYCOND(listener, "TriplesList saving", i, arrayOfTriples.size())
@@ -107,9 +107,9 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 	}
 
 	order = (TripleComponentOrder) controlInformation.getUint("order");
-	unsigned int totalTriples = controlInformation.getUint("numTriples");
+    size_t totalTriples = controlInformation.getUint("numTriples");
 
-	unsigned int numRead=0;
+    size_t numRead=0;
 	TripleID readTriple;
 
 	while(input.good() && numRead<totalTriples) {
@@ -231,7 +231,7 @@ void TriplesList::insert(IteratorTripleID *triples)
 bool TriplesList::remove(TripleID &pattern)
 {
 	bool removed=false;
-	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
+    for(size_t i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
 		if (tid->match(pattern)) {
 			tid->clear();
@@ -251,7 +251,7 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 		allPat.push_back(*pattern->next());
 	}
 
-	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
+    for(size_t i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
         for(size_t j=0; j<allPat.size(); j++) {
 			if (tid->match(allPat[i])) {
@@ -284,7 +284,7 @@ void TriplesList::setOrder(TripleComponentOrder order)
 
 }
 
-TripleID* TriplesList::getTripleID(unsigned int i)
+TripleID* TriplesList::getTripleID(size_t i)
 {
     return &ptr[i];
     //return &this->arrayOfTriples[i];
@@ -299,10 +299,10 @@ void TriplesList::removeDuplicates(ProgressListener *listener) {
 		throw std::runtime_error("Cannot remove duplicates on unordered triples");
 	}
 
-	unsigned int j = 0;
+    size_t j = 0;
 	StopWatch st;
 
-	for(unsigned int i=1; i<arrayOfTriples.size(); i++) {
+    for(size_t i=1; i<arrayOfTriples.size(); i++) {
         if(!arrayOfTriples[i].isValid()) {
             cerr << "WARNING: Triple with null component: " << arrayOfTriples[i] << endl;
         }
@@ -328,12 +328,12 @@ const string vocabPredicate = "http://purl.org/HDT/hdt#";
  * @param maxSO Maximum SO in the dictionary.
  * @return void
  */
-void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsigned int maxSO) {
+void TriplesList::calculateDegree(string path, size_t numPredicates,size_t maxSO) {
 	const int maxval = 1000000;
 	const int nbins = 1000000;
 	map<int, Histogram*> hDegreePartialPerPredicate;
 
-	for (int i=1;i<=numPredicates;i++){
+	for (size_t i=1;i<=numPredicates;i++){
 		 Histogram* hDegreePart = new Histogram(0, maxval, nbins);
 		 hDegreePartialPerPredicate[i]=hDegreePart;
 	}
@@ -365,7 +365,7 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 	}
 
 	std::stringstream ss;
-	ss << (unsigned int) (currentTriple.getPredicate());
+    ss << (size_t) (currentTriple.getPredicate());
 	listPredicates = ss.str(); // The resulting string
 	numberofYs++;
 
@@ -447,7 +447,7 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 				}
 				if (maxSO == 0 || currentTriple.getSubject() <= maxSO) {
 					std::stringstream ss;
-					ss << (unsigned int) (currentTriple.getPredicate());
+                    ss << (size_t) (currentTriple.getPredicate());
 					listPredicates = ss.str(); // The resulting string
 					numberofYs++;
 				} else {
@@ -460,7 +460,7 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 
 					if (order == SPO) { //save list of Predicates
 						std::stringstream ss;
-						ss << (unsigned int) (currentTriple.getPredicate());
+                        ss << (size_t) (currentTriple.getPredicate());
 						listPredicates = listPredicates + "+" + ss.str(); // The resulting string
 					}
 					numberofYs++;
@@ -738,12 +738,12 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
  * @param maxSO Maximum SO in the dictionary.
  * @return void
  */
-void TriplesList::calculateMinStats(string path, unsigned int numPredicates) {
+void TriplesList::calculateMinStats(string path, size_t numPredicates) {
 	const int maxval = 1000000;
 	const int nbins = 1000000;
 	map<int, Histogram*> hDegreePartialPerPredicate;
 
-	for (int i=1;i<=numPredicates;i++){
+	for (size_t i=1;i<=numPredicates;i++){
 		 Histogram* hDegreePart = new Histogram(0, maxval, nbins);
 		 hDegreePartialPerPredicate[i]=hDegreePart;
 	}
@@ -771,7 +771,7 @@ void TriplesList::calculateMinStats(string path, unsigned int numPredicates) {
 
 
 	std::stringstream ss;
-	ss << (unsigned int) (currentTriple.getPredicate());
+    ss << (size_t) (currentTriple.getPredicate());
 	listPredicates = ss.str(); // The resulting string
 	numberofYs++;
 
@@ -971,7 +971,7 @@ void TriplesList::calculateMinStats(string path, unsigned int numPredicates) {
  * @rdftypeID The ID of the rdf:type predicate
  * @return void
  */
-void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
+void TriplesList::calculateDegreeType(string path, size_t rdftypeID) {
 	const int maxval = 1000000;
 	const int nbins = 1000000;
 
@@ -996,9 +996,9 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 	currentTriple = arrayOfTriples[0];
 	swapComponentOrder(&currentTriple, SPO, order);
 
-	unsigned int x = currentTriple.getSubject();
-	unsigned int y = currentTriple.getPredicate();
-	unsigned int z = currentTriple.getObject();
+    size_t x = currentTriple.getSubject();
+    size_t y = currentTriple.getPredicate();
+    size_t z = currentTriple.getObject();
 
 	vector<int> pendingpartialycounts;
 	pendingpartialycounts.clear();
@@ -1008,7 +1008,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 		listClasses.push_back(z);
 	}
 	std::stringstream ss;
-	ss << (unsigned int) (currentTriple.getPredicate());
+    ss << (size_t) (currentTriple.getPredicate());
 	listPredicates = ss.str(); // The resulting string
 	numberofYs++;
 
@@ -1016,7 +1016,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 	cout << "Number of Elements:" << getNumberOfElements() << endl;
 //	cout << "Predicate rdf:type ID:" << rdftypeID << endl;
 	fflush(stdout);
-	for (unsigned int i = 1; i < getNumberOfElements(); i++) {
+    for (size_t i = 1; i < getNumberOfElements(); i++) {
 		if (i % 1000000 == 0) {
 			cout << i << " triples" << endl;
 		}
@@ -1068,10 +1068,10 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 						listsofPredicates[listPredicates] + 1;
 
 				//register the number of lists per class
-				for (int k = 0; k < listClasses.size(); k++) {
+				for (size_t k = 0; k < listClasses.size(); k++) {
 					string concatenationClassPred = "c"; //to concanetate something different from an ID
 					std::stringstream ss;
-					ss << (unsigned int) (listClasses[k]);
+                    ss << (size_t) (listClasses[k]);
 					concatenationClassPred = concatenationClassPred + ss.str()
 							+ "+" + listPredicates;
 					if (listofClassesPredicates[concatenationClassPred] == 0) {
@@ -1083,7 +1083,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 					listofClassesPredicates[concatenationClassPred] =
 							listofClassesPredicates[concatenationClassPred] + 1;
 				}
-				for (int k = 0; k < pendingpartialycounts.size(); k++) {
+				for (size_t k = 0; k < pendingpartialycounts.size(); k++) {
 					hDegreePartial.add(pendingpartialycounts[k]);
 				}
 			}
@@ -1102,7 +1102,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 			//cout << "listPredicates:" << listPredicates << endl;
 
 			std::stringstream ss;
-			ss << (unsigned int) (currentTriple.getPredicate());
+            ss << (size_t) (currentTriple.getPredicate());
 			listPredicates = ss.str(); // The resulting string
 			numberofYs++;
 		} else {
@@ -1111,7 +1111,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 			if (y != currentTriple.getPredicate()) {
 
 				std::stringstream ss;
-				ss << (unsigned int) (currentTriple.getPredicate());
+                ss << (size_t) (currentTriple.getPredicate());
 				listPredicates = listPredicates + "+" + ss.str(); // The resulting string
 
 				numberofYs++;
@@ -1175,10 +1175,10 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 				+ 1;
 
 		//register the number of lists per class
-		for (int k = 0; k < listClasses.size(); k++) {
+		for (size_t k = 0; k < listClasses.size(); k++) {
 			string concatenationClassPred = "c"; //to concanetate something different from an ID
 			std::stringstream ss;
-			ss << (unsigned int) (listClasses[k]);
+            ss << (size_t) (listClasses[k]);
 			concatenationClassPred = concatenationClassPred + ss.str() + "+"
 					+ listPredicates;
 			if (listofClassesPredicates[concatenationClassPred] == 0) {
@@ -1197,7 +1197,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 		//cout << "\tpartial degree: " << ycount << endl;
 		hDegreePartial.add(ycount);
 
-		for (int k = 0; k < pendingpartialycounts.size(); k++) {
+		for (size_t k = 0; k < pendingpartialycounts.size(); k++) {
 			hDegreePartial.add(pendingpartialycounts[k]);
 		}
 
@@ -1302,8 +1302,8 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
  * @param path Description of the param.
  * @return void
  */
-void TriplesList::calculateDegrees(string path, unsigned int maxSO,unsigned int numPredicates,
-		unsigned int rdftypeID, bool allStats) {
+void TriplesList::calculateDegrees(string path, size_t maxSO,size_t numPredicates,
+        size_t rdftypeID, bool allStats) {
 
 	StopWatch st;
 

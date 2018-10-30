@@ -53,7 +53,7 @@ size_t AdjacencyList::find(size_t x) {
 		return 0;
 	}
 #ifdef OLD_BITMAP
-	unsigned int first1 = bitmap->select1(x);
+    size_t first1 = bitmap->select1(x);
 	return bitmap->rank0(first1);
 #else
 	return bitmap->select1(x)+1;
@@ -129,7 +129,7 @@ size_t AdjacencyList::countItemsY(size_t x) {
 	return last(x)-find(x)+1;
 }
 
-size_t AdjacencyList::search(unsigned int element, size_t begin, size_t end) {
+size_t AdjacencyList::search(size_t element, size_t begin, size_t end) {
 	if(end-begin>10) {
 		return binSearch(element,begin,end);
 	} else {
@@ -137,11 +137,11 @@ size_t AdjacencyList::search(unsigned int element, size_t begin, size_t end) {
 	}
 }
 
-size_t AdjacencyList::binSearch(unsigned int element, size_t begin, size_t end) {
+size_t AdjacencyList::binSearch(size_t element, size_t begin, size_t end) {
 	while (begin <= end) {
 		int mid = (begin + end) / 2;
 
-		unsigned int read = elements->get(mid);
+        size_t read = elements->get(mid);
 
 		if (element > read)
 			begin = mid + 1;
@@ -153,9 +153,9 @@ size_t AdjacencyList::binSearch(unsigned int element, size_t begin, size_t end) 
 	throw std::runtime_error("Not found");
 }
 
-size_t AdjacencyList::linSearch(unsigned int element, size_t begin, size_t end) {
+size_t AdjacencyList::linSearch(size_t element, size_t begin, size_t end) {
 	while (begin <= end) {
-		unsigned int read = elements->get(begin);
+        size_t read = elements->get(begin);
 		//cout << "\t\tPos: " << begin << " Compare " << element << " with " << read << endl;
 
 		if (element == read)
@@ -167,7 +167,7 @@ size_t AdjacencyList::linSearch(unsigned int element, size_t begin, size_t end) 
 }
 
 
-unsigned int AdjacencyList::get(size_t pos) {
+size_t AdjacencyList::get(size_t pos) {
 	return elements->get(pos);
 }
 
@@ -176,9 +176,9 @@ size_t AdjacencyList::getSize() {
 }
 
 void AdjacencyList::dump() {
-	for(unsigned int i=0; i<countListsX() && i<100; i++) {
+    for(size_t i=0; i<countListsX() && i<100; i++) {
 		cerr << " [";
-		for(unsigned int j=0; j<countItemsY(i) && i<100; j++) {
+        for(size_t j=0; j<countItemsY(i) && i<100; j++) {
 			cerr << get(find(i)+j);
 
 			if(j!=countItemsY(i)-1)
@@ -191,9 +191,9 @@ void AdjacencyList::dump() {
 #if 0
 	cout << "List has " << getSize() << " elements in " << countListsX() << " lists" << endl;
 
-	for(unsigned int i=0; i<countListsX(); i++) {
+    for(size_t i=0; i<countListsX(); i++) {
 		cout << "List " << i << " [" << find(i) << ", " << last(i) << "] (" << countItemsY(i)<< ") "<< endl;
-		for(unsigned int j=0; j<countItemsY(i); j++) {
+        for(size_t j=0; j<countItemsY(i); j++) {
 			cout << "\tItem " << i << ", "<< j << " => " << get(find(i)+j) << " Found pos: " << find(i, get(find(i)+j)) << " Found list: " << findListIndex(find(i)+j) << endl;
 		}
 	}
@@ -201,7 +201,7 @@ void AdjacencyList::dump() {
 }
 
 
-size_t AdjacencyList::findNextAppearance(size_t oldpos, unsigned int element) {
+size_t AdjacencyList::findNextAppearance(size_t oldpos, size_t element) {
 	// Keep doing binary search within each list until we find it.
 //		while(true) {
 //			long next = bitmap.selectNext1(oldpos+1);
@@ -231,9 +231,9 @@ size_t AdjacencyList::findNextAppearance(size_t oldpos, unsigned int element) {
 	return -1;
 }
 
-size_t AdjacencyList::findPreviousAppearance(size_t oldpos, unsigned int element) {
+size_t AdjacencyList::findPreviousAppearance(size_t oldpos, size_t element) {
 	long long old=oldpos;
-    if(oldpos==-1 || element==0) {
+    if(oldpos==(size_t)-1 || element==0) {
         return -1;
     }
 

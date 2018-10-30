@@ -61,15 +61,15 @@ size_t LogSequence::get(size_t position)
 
 void LogSequence::add(IteratorUInt &elements)
 {
-	std::vector<unsigned int> vector;
-	unsigned int max = 0;
+    std::vector<size_t> vector;
+    size_t max = 0;
 
 	while(elements.hasNext()) {
 		size_t element = elements.next();
 		if(element>((size_t)-1)) {
 			throw std::out_of_range("Error, saving a value out of range");
 		}
-		vector.push_back((unsigned int)element);
+        vector.push_back(element);
 		max = element > max ? element : max;
 	}
 

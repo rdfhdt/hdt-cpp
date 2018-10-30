@@ -9,28 +9,28 @@ class PredicateStatus : public QObject
     Q_OBJECT
 private:
     vector<bool> activePredicate;
-    int minPredicateCount;
-    int maxPredicateCount;
+    size_t minPredicateCount;
+    size_t maxPredicateCount;
     HDTController *controller;
 
     void setMinimumPredicateCountInternal(int count);
 public:
     explicit PredicateStatus(HDTController *controller);
 
-    unsigned int getMinimumPredicateCount();
-    unsigned int getMaximumPredicateCount();
+    size_t getMinimumPredicateCount();
+    size_t getMaximumPredicateCount();
 
-    bool isPredicateActive(int i);
-    void setPredicateActive(int i, bool b);
+    bool isPredicateActive(size_t i);
+    void setPredicateActive(size_t i, bool b);
 
 signals:
-    void predicatesChanged(unsigned int min, unsigned int max);
-    void minimumPredicateCountChanged(int newval);
-    void predicateSelected(int npred);
+    void predicatesChanged(size_t min, size_t max);
+    void minimumPredicateCountChanged(size_t newval);
+    void predicateSelected(size_t npred);
 
 public slots:
     void refreshAll();
-    void selectPredicate(unsigned int pred);
+    void selectPredicate(size_t pred);
     void selectAllPredicates();
     void selectNonePredicates();
     void setMinimumPredicateCount(int count);

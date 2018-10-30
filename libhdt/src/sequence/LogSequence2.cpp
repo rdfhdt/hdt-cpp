@@ -208,7 +208,7 @@ void LogSequence2::load(std::istream & input)
 
 	// Read numentries
 	uint64_t numentries64 = csd::VByte::decode(input);
-	unsigned int pos = csd::VByte::encode(buf, numentries64);
+    size_t pos = csd::VByte::encode(buf, numentries64);
 	crch.update(buf, pos);
 
 	// Validate Checksum Header
@@ -296,7 +296,7 @@ void LogSequence2::save(std::ostream & out)
 	CRC8 crch;
 	CRC32 crcd;
 	unsigned char data[9];
-	unsigned int len;
+    size_t len;
 
 	// Write type
 	uint8_t type = TYPE_SEQLOG;

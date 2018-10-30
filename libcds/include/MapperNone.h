@@ -41,8 +41,8 @@ namespace cds_static
 		public:
 			MapperNone();
 			virtual ~MapperNone() {}
-			virtual uint map(const uint s) const;
-			virtual uint unmap(const uint s) const;
+                        virtual uint map(uint s) const;
+                        virtual uint unmap(uint s) const;
 			virtual size_t getSize() const;
 			virtual void save(ostream & out) const;
 			static MapperNone * load(istream & input);

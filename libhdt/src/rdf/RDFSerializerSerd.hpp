@@ -23,7 +23,7 @@ public:
 
 	void serialize(IteratorTripleString *it,
 	               ProgressListener *listener=NULL,
-	               unsigned int totalTriples=0);
+	               size_t totalTriples=0);
 };
 
 }

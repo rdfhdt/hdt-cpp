@@ -73,7 +73,7 @@ namespace csd{
 			 * @s: the string to be located.
 			 * @len: the length (in characters) of the string s.
 			 * */
-			uint32_t locate(const unsigned char *s, uint32_t len);
+            size_t locate(const unsigned char *s, size_t len);
 
 			/** Returns the number of IDs that contain s[1,..len] as a substring. It also 
 			 * return in occs the IDs. Otherwise return 0.
@@ -81,13 +81,13 @@ namespace csd{
 			 *  @len: the length (in characters) of the string s.
 			 *  @occs: pointer where the ID located will be stored.
 			 * */
-			uint32_t locate_substring(unsigned char *s, uint32_t len, uint32_t **occs);
-            uint32_t locate_substring(unsigned char *s, uint32_t len, uint offset, uint limit, bool deduplicate, uint32_t **occs, uint* num_occ);
+            size_t locate_substring(unsigned char *s, size_t len, uint32_t **occs);
+            size_t locate_substring(unsigned char *s, size_t len, size_t offset, size_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ);
 
 			/** Returns the string identified by id.
 			 * @id: the identifier to be extracted.
 			 **/
-			unsigned char * extract(uint32_t id);
+            unsigned char * extract(size_t id);
 
 			void freeString(const unsigned char *str);
 

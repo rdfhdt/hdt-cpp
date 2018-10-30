@@ -61,12 +61,12 @@ class CSD
 	@s: the string to be located.
 	@len: the length (in characters) of the string s.
     */
-    virtual uint32_t locate(const unsigned char *s, uint32_t len)=0;
+    virtual size_t locate(const unsigned char *s, size_t len)=0;
 
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    virtual unsigned char * extract(uint32_t id)=0;
+    virtual unsigned char * extract(size_t id)=0;
 
     /**
      * Free the string returned by extract()
@@ -79,7 +79,7 @@ class CSD
     virtual hdt::IteratorUCharString *listAll()=0;
 
     /** Returns the number of strings in the dictionary. */
-    uint32_t getLength();
+    size_t getLength();
 
     // Search for terms by prefix. It returns a vector of a given maximum size "maxResults"
     virtual void fillSuggestions(const char *prefix, vector<string> &out, int maxResults)=0;
@@ -105,8 +105,8 @@ class CSD
 		
   protected:
     unsigned char type; 	//! Dictionary type.
-    uint32_t tlength;	//! Original Tdict size.
-    uint32_t numstrings;	//! Number of elements in the dictionary.
+    size_t tlength;	//! Original Tdict size.
+    size_t numstrings;	//! Number of elements in the dictionary.
   };
 
 }

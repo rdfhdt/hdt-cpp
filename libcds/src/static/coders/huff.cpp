@@ -235,7 +235,7 @@ namespace cds_static
 		if (!enc) {
 			H.fst = new uint[H.depth+1];
 			H.fst[H.depth] = 0; dold = 0;
-			for (d=H.depth-1;d>=0;d--) {
+			for (d=H.depth-1;d!=(uint)-1;d--) {
 				dact = H.num[d+1];
 				H.fst[d] = (H.fst[d+1]+dact) >> 1;
 				H.num[d+1] = dold;

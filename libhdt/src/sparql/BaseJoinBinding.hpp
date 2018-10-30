@@ -35,7 +35,7 @@ public:
 		varOperand.push_back(0);
 
 		// Add all from left that are not the join variable.
-		for(unsigned int i=0;i<left->getNumVars();i++) {
+        for(size_t i=0;i<left->getNumVars();i++) {
 			const char *varName = left->getVarName(i);
 
 			if(strcmp(varName, var)!=0) {
@@ -46,7 +46,7 @@ public:
 		}
 
 		// Add all from right that are not the join variable.
-		for(unsigned int i=0;i<right->getNumVars();i++) {
+        for(size_t i=0;i<right->getNumVars();i++) {
 			const char *varName = right->getVarName(i);
 
 			if(strcmp(varName, var)!=0) {
@@ -65,23 +65,23 @@ public:
 		delete right;
 	}
 
-	virtual unsigned int isOrdered(unsigned int numvar)=0;
+    virtual size_t isOrdered(size_t numvar)=0;
 
-	virtual unsigned int estimatedNumResults()=0;
+    virtual size_t estimatedNumResults()=0;
 	virtual ResultEstimationType estimationAccuracy()=0;
 
 	virtual bool findNext()=0;
-	virtual bool findNext(const char *varName, unsigned int value=0)=0;
+    virtual bool findNext(const char *varName, size_t value=0)=0;
 
-	unsigned int getNumVars() {
+    size_t getNumVars() {
 		return varnames.size();
 	}
 
-	virtual unsigned int getVarValue(const char *varName) {
+    virtual size_t getVarValue(const char *varName) {
 		return getVarValue(getVarIndex(varName));
 	}
 
-	unsigned int getVarValue(unsigned int numvar) {
+    size_t getVarValue(size_t numvar) {
 		if(numvar>vars.size()) {
 			throw std::out_of_range("Accessing out of bound variable");
 		}
@@ -93,14 +93,14 @@ public:
 			return right->getVarValue(vars[numvar]);
 		}
 	}
-	const char *getVarName(unsigned int numvar) {
+    const char *getVarName(size_t numvar) {
 		if(numvar>vars.size()){
 			throw std::runtime_error("Variable not available");
 		}
 		return varnames[numvar].c_str();
 	}
 
-	virtual void searchVar(unsigned int numvar, unsigned int value)=0;
+    virtual void searchVar(size_t numvar, size_t value)=0;
 };
 
 

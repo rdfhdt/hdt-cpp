@@ -9,29 +9,29 @@ class SortBinding : public VarBindingInterface
 {
 private:
     vector<string> varnames;
-    unsigned int *table;
+    size_t *table;
     //char *joinVar;
-    //unsigned int joinVarPos;
-    unsigned int numRows;
-    unsigned int numCols;
-    //unsigned int currentRow;
+    //size_t joinVarPos;
+    size_t numRows;
+    size_t numCols;
+    //size_t currentRow;
 public:
     // Sort all of the child by var
     SortBinding(char *var, VarBindingInterface *child);
     virtual ~SortBinding();
 
-    unsigned int isOrdered(unsigned int numvar);
+    size_t isOrdered(size_t numvar);
 
-    unsigned int estimatedNumResults();
+    size_t estimatedNumResults();
     ResultEstimationType estimationAccuracy();
-    bool findNext(const char *varName, unsigned int value=0);
+    bool findNext(const char *varName, size_t value=0);
 
     bool findNext();
-    //virtual void findNext(unsigned int numvar, unsigned int value=0);
+    //virtual void findNext(size_t numvar, size_t value=0);
     void goToStart();
 
-    unsigned int getVarValue(unsigned int numvar);
-    void searchVar(unsigned int numvar, unsigned int value);
+    size_t getVarValue(size_t numvar);
+    void searchVar(size_t numvar, size_t value);
 };
 
 }

@@ -36,7 +36,7 @@ namespace hdt {
 static char TripleComponentOrderStr[7][4] = { "Unk", "SPO", "SOP", "PSO", "POS", "OSP", "OPS" };
 
 TripleComponentOrder parseOrder(const char *str){
-	for(unsigned int i=0;i<7;i++) {
+    for(size_t i=0;i<7;i++) {
 		if(strcmp(TripleComponentOrderStr[i], str)==0) {
 			return (TripleComponentOrder)(i);
             }
@@ -56,7 +56,7 @@ const char *getOrderStr(TripleComponentOrder order) {
  */
     inline void swap(char & a, char & b)
     {
-        unsigned int tmp;
+        size_t tmp;
         tmp = a;
         a = b;
         b = tmp;
@@ -67,10 +67,10 @@ const char *getOrderStr(TripleComponentOrder order) {
  * @param b Description of the param.
  * @return void
  */
-    inline void swap(unsigned int & a, unsigned int & b)
+    inline void swap(size_t & a, size_t & b)
     {
     	cout << "\tSWAP: " << a << ", " << b << endl;
-        unsigned int tmp;
+        size_t tmp;
         tmp = a;
         a = b;
         b = tmp;
@@ -185,19 +185,19 @@ void swapComponentOrder(TripleID *triple, TripleComponentOrder from, TripleCompo
     bool swap2 = swap2tab[from - 1][to - 1];
     bool swap3 = swap3tab[from - 1][to - 1];
     if(swap1){
-    	unsigned int tmp = triple->getSubject();
+        size_t tmp = triple->getSubject();
     	triple->setSubject(triple->getPredicate());
     	triple->setPredicate(tmp);
         //swap(triple->x, triple->y);
     }
     if(swap2){
-    	unsigned int tmp = triple->getSubject();
+        size_t tmp = triple->getSubject();
     	triple->setSubject(triple->getObject());
     	triple->setObject(tmp);
         //swap(triple->x, triple->z);
     }
     if(swap3){
-    	unsigned int tmp = triple->getPredicate();
+        size_t tmp = triple->getPredicate();
     	triple->setPredicate(triple->getObject());
     	triple->setObject(tmp);
         //swap(triple->y, triple->z);

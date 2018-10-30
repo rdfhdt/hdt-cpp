@@ -144,13 +144,13 @@ class BitmapTriplesSearchIterator : public IteratorTripleID {
 private:
 	BitmapTriples *triples;
 	TripleID pattern, returnTriple;
-	unsigned int patX, patY, patZ;
+    size_t patX, patY, patZ;
 
 	AdjacencyList adjY, adjZ;
     size_t posY, posZ;
     size_t minY, maxY, minZ, maxZ;
     size_t nextY, nextZ, prevY, prevZ;
-	unsigned int x, y, z;
+    size_t x, y, z;
 
 	void findRange();
 	void getNextTriple();
@@ -170,9 +170,9 @@ public:
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool canGoTo();
-	void goTo(unsigned int pos);
-	void skip(unsigned int pos);
-	bool findNextOccurrence(unsigned int value, unsigned char component);
+	void goTo(size_t pos);
+	void skip(size_t pos);
+	bool findNextOccurrence(size_t value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };
 
@@ -183,12 +183,12 @@ private:
 
 	AdjacencyList adjY, adjZ;
     PredicateIndex *predicateIndex;
-	unsigned int patX, patY, patZ;
-	unsigned int posY, posZ;
-	unsigned int predicateOcurrence, numOcurrences;
-	unsigned int prevZ, nextZ;
-	unsigned int maxZ;
-	unsigned int x, y, z;
+    size_t patX, patY, patZ;
+    size_t posY, posZ;
+    size_t predicateOcurrence, numOcurrences;
+    size_t prevZ, nextZ;
+    size_t maxZ;
+    size_t x, y, z;
 
 	void updateOutput();
 public:
@@ -203,9 +203,9 @@ public:
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool canGoTo();
-	void goTo(unsigned int pos);
-	void skip(unsigned int pos);
-	bool findNextOccurrence(unsigned int value, unsigned char component);
+	void goTo(size_t pos);
+	void skip(size_t pos);
+	bool findNextOccurrence(size_t value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };
 
@@ -234,7 +234,7 @@ public:
     size_t estimatedNumResults();
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
-	bool findNextOccurrence(unsigned int value, unsigned char component);
+    bool findNextOccurrence(size_t value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };
 
@@ -244,16 +244,16 @@ private:
 	TripleID pattern, returnTriple;
 
 	AdjacencyList adjY, adjZ, adjIndex;
-	unsigned int patX, patY, patZ;
+    size_t patX, patY, patZ;
     size_t posIndex;
     //size_t predicateOcurrence, numOcurrences;
 	long long minIndex, maxIndex;
-	unsigned int x, y, z;
+    size_t x, y, z;
 
 	void updateOutput();
 	void calculateRange();
-	unsigned int getPosZ(unsigned int index);
-	unsigned int getY(unsigned int index);
+    size_t getPosZ(size_t index);
+    size_t getY(size_t index);
 public:
 	ObjectIndexIterator(BitmapTriples *triples, TripleID &pat);
 
@@ -266,9 +266,9 @@ public:
 	ResultEstimationType numResultEstimation();
 	TripleComponentOrder getOrder();
 	bool canGoTo();
-	void goTo(unsigned int pos);
-	void skip(unsigned int pos);
-	bool findNextOccurrence(unsigned int value, unsigned char component);
+	void goTo(size_t pos);
+	void skip(size_t pos);
+	bool findNextOccurrence(size_t value, unsigned char component);
 	bool isSorted(TripleComponentRole role);
 };
 

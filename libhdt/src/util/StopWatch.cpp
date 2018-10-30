@@ -163,7 +163,7 @@ std::ostream &operator<<(std::ostream &stream, StopWatch &sw) {
 }
 
 std::string StopWatch::toHuman(unsigned long long time) {
-	unsigned int tot_secs = time/1000000;
+    uint64_t tot_secs = time/1000000;
 
 	unsigned int hours = tot_secs/3600;
 	unsigned int mins = (tot_secs/60) % 60;

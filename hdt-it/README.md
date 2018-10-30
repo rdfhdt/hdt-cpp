@@ -1,4 +1,4 @@
-﻿# HDT-it! GUI tool for the HDT triple format
+# HDT-it! GUI tool for the HDT triple format
 
 Overview
 =================

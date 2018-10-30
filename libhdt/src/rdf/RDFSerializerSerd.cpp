@@ -11,14 +11,18 @@ namespace hdt {
 
 static SerdSyntax getType(RDFNotation notation) {
 	switch (notation) {
+	case NQUAD: // Deprecated: use `NQUADS' instead.
+		return SERD_NQUADS;
+	case NQUADS:
+		return SERD_NQUADS;
 	case NTRIPLES:
 		return SERD_NTRIPLES;
-	case NQUAD:
-		return SERD_NQUADS;
+	case TRIG:
+		return SERD_TRIG;
 	case TURTLE:
 		return SERD_TURTLE;
 	default:
-		throw std::runtime_error("Serd seriaizer only supports ntriples, nquads, and turtle.");
+		throw std::runtime_error("Serd seriaizer only supports N-Quads, N-Triples, TriG, and Turtle.");
 	}
 }
 
@@ -107,7 +111,7 @@ SerdNode getTerm(const string &str, SerdNode* datatype, SerdNode* lang)
 
 void RDFSerializerSerd::serialize(IteratorTripleString *it,
                                   ProgressListener     *listener,
-                                  unsigned int          totalTriples)
+                                  size_t          totalTriples)
 {
 	for (unsigned n = 0; it->hasNext(); ++n) {
 		const TripleString *ts = it->next();

@@ -137,7 +137,7 @@ void TripleListDisk::increaseSize() {
     ensureSize(capacity+(1024*1024));
 }
 
-void TripleListDisk::ensureSize(unsigned int newsize) {
+void TripleListDisk::ensureSize(size_t newsize) {
 	if(capacity>=newsize) {
 		return;
 	}
@@ -166,7 +166,7 @@ void TripleListDisk::ensureSize(unsigned int newsize) {
 	mapFile();
 }
 
-TripleID *TripleListDisk::getTripleID(unsigned int num) {
+TripleID *TripleListDisk::getTripleID(size_t num) {
 	if(num>numTotalTriples || arrayTriples==NULL) {
 		return NULL;
 	}
@@ -194,7 +194,7 @@ void TripleListDisk::load(std::istream & input, ControlInformation &controlInfor
 	}
 	this->ensureSize(numTotalTriples);
 
-	unsigned int numRead=0;
+    size_t numRead=0;
 	while(input.good() && numRead<numTotalTriples) {
 		input.read((char *)&arrayTriples[numRead], sizeof(TripleID));
 		numRead++;
@@ -213,7 +213,7 @@ void TripleListDisk::save(std::ostream & output, ControlInformation &controlInfo
 	controlInformation.setFormat(getType());
 	controlInformation.save(output);
 
-	for(unsigned int i=0; i<numTotalTriples; i++) {
+    for(size_t i=0; i<numTotalTriples; i++) {
 		TripleID *tid = getTripleID(i);
 		if(tid->isValid()) {
 			//cout << "Write: " << tid << " " << *tid << endl;
@@ -360,16 +360,16 @@ bool TripleListDisk::remove(IteratorTripleID *triples)
 
 #if 0
 // Not used yet
-void radixSort(unsigned int *a, size_t size, int bits) {
-	unsigned int mask;
-	unsigned int rshift=0u;
-	unsigned int *p, *b, *b_orig;
-	unsigned int i;
-	unsigned int key;
+void radixSort(size_t *a, size_t size, int bits) {
+    size_t mask;
+    size_t rshift=0u;
+    size_t *p, *b, *b_orig;
+    size_t i;
+    size_t key;
 	int cntsize;
 	int *cntarray;
 
-	b=b_orig=(unsigned int *)malloc(size*sizeof(unsigned int));
+    b=b_orig=(size_t *)malloc(size*sizeof(size_t));
 
 	cntsize=1u<<bits;
 	cntarray=(int *)calloc(cntsize, sizeof(int));
@@ -397,7 +397,7 @@ void radixSort(unsigned int *a, size_t size, int bits) {
 	}
 
 
-	if(a==b_orig) memcpy(b, a, size*sizeof(unsigned int));
+    if(a==b_orig) memcpy(b, a, size*sizeof(size_t));
 
 	free(b_orig);
 	free(cntarray);
@@ -434,10 +434,10 @@ void TripleListDisk::removeDuplicates(ProgressListener *listener) {
 	    throw std::runtime_error("Cannot remove duplicates on unordered triples");
     }
 
-    unsigned int j = 0;
+    size_t j = 0;
     //StopWatch st;
 
-    for(unsigned int i=1; i<numTotalTriples; i++) {
+    for(size_t i=1; i<numTotalTriples; i++) {
 	    if(arrayTriples[i] != arrayTriples[j]) {
 		    j++;
 		    arrayTriples[j] = arrayTriples[i];

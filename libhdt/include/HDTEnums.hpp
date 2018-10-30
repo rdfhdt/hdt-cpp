@@ -108,37 +108,14 @@ TripleComponentOrder parseOrder(const char *str);
 const char *getOrderStr(TripleComponentOrder order);
 
 enum RDFNotation {
-	/**
-	 * XML notation
-	 *
-	 * @see <a href="http://en.wikipedia.org/wiki/RDF/XML">Wikipedia</a>
-	 */
-	XML,
-	/**
-	 * N-TRIPLES notation
-	 *
-	 * @see <a href="http://en.wikipedia.org/wiki/N-Triples">Wikipedia</a>
-	 */
+	XML, // No longer supported.
 	NTRIPLES,
-	/**
-	 * TURTLE notation
-	 *
-	 * @see <a href="http://en.wikipedia.org/wiki/Turtle_(syntax)">Wikipedia</a>
-	 */
 	TURTLE,
-	/**
-	 * Notation 3 notation
-	 *
-	 * @see <a href="http://en.wikipedia.org/wiki/Notation_3">Wikipedia</a>
-	 */
-	N3,
-	/**
-	 * NQUAD notation
-	 *
-	 * @see <a href="http://sw.deri.org/2008/07/n-quads/">Wikipedia</a>
-	 */
-	NQUAD,
-	JSON,
+	N3, // Not supported.
+	NQUAD, // Deprecated: use `NQUADS' instead.
+	JSON, // Not supported.
+	NQUADS,
+	TRIG,
 };
 
 enum ResultEstimationType {

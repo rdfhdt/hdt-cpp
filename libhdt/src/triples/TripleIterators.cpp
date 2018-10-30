@@ -149,13 +149,13 @@ size_t SequentialSearchIteratorTripleID::estimatedNumResults()
 bool SequentialSearchIteratorTripleID::canGoTo(){
 	return true;
 }
-void SequentialSearchIteratorTripleID::goTo(unsigned int pos){
+void SequentialSearchIteratorTripleID::goTo(size_t pos){
 	iterator->goToStart();
-	for (int i=0;i<=pos;i++){
+	for (size_t i=0;i<=pos;i++){
 		doFetchNext();
 	}
 }
-void SequentialSearchIteratorTripleID::skip(unsigned int pos){
+void SequentialSearchIteratorTripleID::skip(size_t pos){
 	for (int i=0;i<pos;i++){
 		doFetchNext();
 	}
@@ -203,7 +203,7 @@ void SequentialSearchIteratorTripleID::goToStart()
 
 
 
-TripleID *RandomAccessIterator::get(unsigned int idx)
+TripleID *RandomAccessIterator::get(size_t idx)
 {
 //	cout << "RandomAccessIterator: " << currentIdx << "/" << idx << " PREV/NEXT: "<< it->hasPrevious() << ", " << it->hasNext() << endl;
 	while(currentIdx > idx && it->hasPrevious()) {
@@ -234,7 +234,7 @@ TripleID *RandomAccessIterator::get(unsigned int idx)
 
 
 
-unsigned int RandomAccessIterator::getNumElements()
+size_t RandomAccessIterator::getNumElements()
 {
 	return numElements;
 }
