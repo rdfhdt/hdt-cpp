@@ -61,8 +61,13 @@ FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksiz
 		blockSizeStr = spec.get("dict.block.size");
 	}catch(exception& e){}
 
-	if(!blockSizeStr.empty() && (blockSizeStr.find_first_not_of("0123456789") == string::npos) && blockSizeStr != "0"){
-		//blocksize = atoi((const char*)blockSizeStr.c_str());
+	if(!blockSizeStr.empty() && (blockSizeStr.find_first_not_of("0123456789") == string::npos))
+	{
+		blocksize = std::stoi( blockSizeStr );
+		if ( blocksize <= 0 )
+		{
+			throw std::runtime_error("blocksize must be greater than 0");
+		}
 	}
 }
 

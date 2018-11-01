@@ -107,6 +107,7 @@ split(const std::string &s, char delim)
 std::map<std::string, std::tuple<std::string, std::string>> queries =
 {
 	{ "dictionary.type", std::make_tuple("_:dictionary", "<http://purl.org/dc/terms/format>")},
+	{ "dict.block.size", std::make_tuple("_:dictionary", "<http://purl.org/HDT/hdt#dictionaryblockSize>")},
 	{ "triples.type", std::make_tuple("_:triples", "<http://purl.org/dc/terms/format>")},
 	{ "triplesOrder", std::make_tuple("_:triples", "<http://purl.org/HDT/hdt#triplesOrder>")}
 };
@@ -191,7 +192,10 @@ int
 main(int argc, char** argv)
 {
 	// Given these configuration files
-	std::vector<std::string> elem = {"../presets/dictionaryfour.hdtcfg", "../presets/dictionaryliteral.hdtcfg", "../presets/ops.hdtcfg"};
+	std::vector<std::string> elem = {
+		"../presets/dictionaryfour.hdtcfg",
+		"../presets/dictionaryliteral.hdtcfg",
+		"../presets/ops.hdtcfg"};
 	std::string nt_file_path = "../data/test.nt";
 	std::string hdt_file_path = "./test.hdt";
 	int err_creations = 0;
@@ -213,6 +217,23 @@ main(int argc, char** argv)
 	std::cout << "Readings: " << err_readings << std::endl;
 	// If some error, fail test
 	if ( err_creations > 0 || err_readings > 0 || err_checking > 0)
+		return 1;
+
+	// For wrong files, make sure creation fails
+	std::vector<std::string> wrong_files = {
+		"../presets/wrong_dictionaryfour.hdtcfg"
+	};
+	err_creations = 0;
+	for (std::vector<std::string>::const_iterator iter = wrong_files.begin();
+			iter != wrong_files.end();
+			++iter)
+	{
+		err_creations += create_hdt_file(nt_file_path, *iter, hdt_file_path);
+	}
+	std::cout << "Expected fails: " << wrong_files.size()
+		<< ", Actual fails: " << err_creations << std::endl;
+	// If expected fails not equal to actual fails, then fail test
+	if ( err_creations != wrong_files.size() )
 		return 1;
 	return 0;
 }
