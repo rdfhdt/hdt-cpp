@@ -61,7 +61,7 @@ FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksiz
 		blockSizeStr = spec.get("dict.block.size");
 	}catch(exception& e){}
 
-	if(blockSizeStr!=""){
+	if(!blockSizeStr.empty() && (blockSizeStr.find_first_not_of("0123456789") == string::npos) && blockSizeStr != "0"){
 		//blocksize = atoi((const char*)blockSizeStr.c_str());
 	}
 }
