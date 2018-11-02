@@ -506,6 +506,13 @@ size_t LiteralDictionary::getNshared() {
 	return shared->getLength();
 }
 
+size_t LiteralDictionary::getNobjectsLiterals() {
+	return objectsLiterals -> getLength();
+}
+
+size_t LiteralDictionary::getNobjectsNotLiterals() {
+	return objectsNotLiterals -> getLength();
+}
 size_t LiteralDictionary::getMaxID() {
     size_t s = subjects->getLength();
     size_t o = objectsLiterals->getLength()+objectsNotLiterals->getLength();

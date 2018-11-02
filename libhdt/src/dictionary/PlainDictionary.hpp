@@ -131,6 +131,8 @@ public:
     size_t getNsubjects();
     size_t getNpredicates();
     size_t getNobjects();
+    size_t getNobjectsLiterals();
+    size_t getNobjectsNotLiterals();
     size_t getNshared();
 
     size_t getMaxID();

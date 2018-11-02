@@ -58,11 +58,16 @@ FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksiz
 
 	string blockSizeStr = "";
 	try{
-		spec.get("dict.block.size");
+		blockSizeStr = spec.get("dict.block.size");
 	}catch(exception& e){}
 
-	if(blockSizeStr!=""){
-		//blocksize = atoi((const char*)blockSizeStr.c_str());
+	if(!blockSizeStr.empty() && (blockSizeStr.find_first_not_of("0123456789") == string::npos))
+	{
+		blocksize = std::stoi( blockSizeStr );
+		if ( blocksize <= 0 )
+		{
+			throw std::runtime_error("blocksize must be greater than 0");
+		}
 	}
 }
 
@@ -377,6 +382,12 @@ size_t FourSectionDictionary::getNpredicates(){
 }
 size_t FourSectionDictionary::getNobjects(){
 	return shared->getLength()+objects->getLength();
+}
+size_t FourSectionDictionary::getNobjectsLiterals() {
+	throw std::logic_error("Not implemented");
+}
+size_t FourSectionDictionary::getNobjectsNotLiterals() {
+	throw std::logic_error("Not implemented");
 }
 size_t FourSectionDictionary::getNshared(){
 	return shared->getLength();

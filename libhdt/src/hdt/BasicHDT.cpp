@@ -98,7 +98,7 @@ void BasicHDT::createComponents() {
 
 	std::string dictType = "";
 	try{
-		spec.get("dictionary.type");
+		dictType = spec.get("dictionary.type");
 	}
 	catch (std::exception& e){
 	}

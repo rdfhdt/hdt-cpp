@@ -663,6 +663,14 @@ size_t PlainDictionary::getNobjects() {
 	return shared.size()+objects.size();
 }
 
+size_t PlainDictionary::getNobjectsLiterals() {
+	throw std::logic_error("Not implemented");
+}
+
+size_t PlainDictionary::getNobjectsNotLiterals() {
+	throw std::logic_error("Not implemented");
+}
+
 size_t PlainDictionary::getNshared() {
 	return shared.size();
 }

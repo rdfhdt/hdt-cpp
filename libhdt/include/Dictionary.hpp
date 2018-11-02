@@ -116,6 +116,12 @@ public:
     /* Return the number of different objects of the current dictionary */
     virtual size_t getNobjects()=0;
 
+    /* return the number of different literal objects of the current dictionary*/
+    virtual size_t getNobjectsLiterals()=0;
+
+    /* return the number of different non-literal objects of the current dictionary*/
+    virtual size_t getNobjectsNotLiterals()=0;
+
     /* Return the number of shared subjects-objects of the current dictionary */
     virtual size_t getNshared()=0;
 
