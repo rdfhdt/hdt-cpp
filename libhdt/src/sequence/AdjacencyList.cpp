@@ -139,7 +139,7 @@ size_t AdjacencyList::search(size_t element, size_t begin, size_t end) {
 
 size_t AdjacencyList::binSearch(size_t element, size_t begin, size_t end) {
 	while (begin <= end) {
-		int mid = (begin + end) / 2;
+        size_t mid {begin+(end-begin)/2};
 
         size_t read = elements->get(mid);
 
