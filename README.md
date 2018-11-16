@@ -69,6 +69,13 @@ Sometimes, the above instructions do not result in a working HDT
 installation.  This section enumerates common issues and their
 workaround.
 
+#### Package requirements (serd-0 >= 0.28.0) were not met
+When getting 
+
+    Package requirements (serd-0 >= 0.28.0) were not met: Requested 'serd-0 >= 0.28.0' but version of Serd is 0.X
+
+Serd is not 0.28+, probably because of the package manager. Built it manually at https://github.com/drobilla/serd.
+
 #### `./configure` cannot find Serd
 
 While running `./configure` you get a message similar to the
