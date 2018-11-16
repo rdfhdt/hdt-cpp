@@ -46,6 +46,10 @@ dependencies installed:
     (e.g., Ubuntu)
   - `sudo dnf install serd serd-devel` on Red Hat-based distros (e.g.,
     Fedora)
+    
+  Sometimes the version of Serd that is distributed by package managers
+  is too old.  In that case, Serd can also be built manually: see
+  https://github.com/drobilla/serd for the installation instructions.
 
 ### Installation
 
@@ -64,12 +68,6 @@ sudo make install
 Sometimes, the above instructions do not result in a working HDT
 installation.  This section enumerates common issues and their
 workaround.
-
-#### My version of Serd is too old
-
-Sometimes the version of Serd that is distributed by package managers
-is too old.  In that case, Serd can also be built manually: see
-https://github.com/drobilla/serd for the installation instructions.
 
 #### `./configure` cannot find Serd
 
