@@ -45,7 +45,9 @@ namespace hdt {
 #define IS_VARIABLE(a) ( (a).size()>0 && (a).at(0)=='?')
 #define IS_URI(a) ( (a).size()>0 && (a).at(0)!='<' && (a).at(0)!='_')
 #define IS_LITERAL(a) ( (a).size()>0 && (a).at(0)=='"')
+#define IS_SIMPLELITERAL(a) ( (a).size()>0 && (a).at(0)=='"' && (a).at((a).size() - 1)=='"')
 
+const std::string postfix = "^^<http://www.w3.org/2001/XMLSchema#string>";
 /**
  * Represents a single triple, where the subject, predicate, and object components are
  * represented using integer IDs after applying the dictionary conversion.
@@ -316,20 +318,20 @@ public:
 	TripleString(std::string subject, std::string predicate, std::string object) {
 		this->subject = subject;
 		this->predicate = predicate;
-		this->object = object;
+		this->setObject(object);
 	}
 
 	TripleString(const TripleString &other) {
 		this->subject = other.subject;
 		this->predicate = other.predicate;
-		this->object = other.object;
+		this->setObject(other.object);
 	}
 
 	TripleString & operator=(const TripleString &other) {
 		if(this!=&other) {
 			this->subject = other.subject;
 			this->predicate = other.predicate;
-			this->object = other.object;
+			this->setObject(other.object);
 		}
 		return *this;
 	}
@@ -360,7 +362,7 @@ public:
 	inline void setAll(const std::string &subject, const std::string &predicate, const std::string &object) {
 		this->subject = subject;
 		this->predicate = predicate;
-		this->object = object;
+		this->setObject(object);
 	}
 
 	/**
@@ -393,6 +395,14 @@ public:
 	 */
 	void setObject(const std::string &object) {
 		this->object = object;
+
+		// Normalize xsd:strings to simple literals
+		size_t oSize = object.length();
+		size_t pfSize = postfix.length();
+
+		if (oSize > 0 && oSize >= pfSize && object.compare(oSize - pfSize, pfSize, postfix) == 0) {
+			this->object.erase(oSize - pfSize);
+		}
 	}
 
 	/**
@@ -489,7 +499,7 @@ public:
 		pos_a = pos_b + 1;
 
 		// Reads the object
-		object = line.substr(pos_a);
+		setObject(line.substr(pos_a));
 		//if(object[0]=='?') object = "";
 		pos_a = pos_b;
 	}
