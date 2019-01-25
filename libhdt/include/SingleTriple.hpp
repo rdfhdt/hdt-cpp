@@ -394,7 +394,15 @@ public:
 	 * @param object
 	 */
 	void setObject(const std::string &object) {
-		this->object = IS_SIMPLELITERAL(object) ? object + postfix : object;
+		this->object = object;
+
+		// Normalize xsd:strings to simple literals
+		size_t oSize = object.length();
+		size_t pfSize = postfix.length();
+
+		if (oSize > 0 && oSize >= pfSize && object.compare(oSize - pfSize, pfSize, postfix) == 0) {
+			this->object.erase(oSize - pfSize);
+		}
 	}
 
 	/**
