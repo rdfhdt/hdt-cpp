@@ -75,7 +75,10 @@ The support for Kyoto Cabinet was never finished and is currently suspended. It 
 
 Common error: 
   
-    error: conflicting return type specified for ‘virtual unsigned int hdt::KyotoDictionary::getMapping()’
+    In file included from src/dictionary/KyotoDictionary.cpp:38:0:
+    src/dictionary/KyotoDictionary.hpp:108:18: error: conflicting return type specified for 'virtual unsigned int hdt::KyotoDictionary::getMapping()'
+     unsigned int getMapping();
+                  ^
 
 #### Package requirements (serd-0 >= 0.28.0) were not met
 When getting 
