@@ -107,6 +107,7 @@ src/util/crc8.h\
 src/util/filemap.h\
 src/util/Histogram.h\
 src/util/lru_cache.h\
+src/util/lrucache.hpp\
 src/util/mygetopt.h\
 src/util/propertyutil.h\
 third/gzstream.h\
