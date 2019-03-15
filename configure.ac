@@ -1,4 +1,4 @@
-AC_INIT([libhdt], [1.1.2], [some@email.com], [hdt], [https://github.com/rdfhdt/hdt-cpp])
+AC_INIT([libhdt], [1.3.3], [some@email.com], [hdt], [https://github.com/rdfhdt/hdt-cpp])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_HEADERS([build/config.h])
