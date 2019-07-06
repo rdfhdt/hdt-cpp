@@ -18,17 +18,20 @@ dependencies installed:
   - `sudo apt install autoconf` on Debian-based distros (e.g., Ubuntu)
   - `sudo dnf install autoconf` on Red Hat-based distros (e.g.,
     Fedora)
+  - `brew install autoconf` on macOS/OSX
 
 - [GNU Libtool](https://www.gnu.org/software/libtool/)
 
   - `sudo apt install libtool` on Debian-based distros (e.g., Ubuntu)
   - `sudo dnf install libtool` on Red Hat-based distros (e.g., Fedora)
+  - `brew install libtool` on macOS/OSX
 
 - [GNU zip (gzip)](http://www.zlib.net/) Allows GNU zipped RDF input
   files to be ingested, and allows GNU zipped HDT files to be loaded.
 
   - `sudo apt install zlib1g zlib1g-dev` on Debian-based distros (e.g., Ubuntu)
   - `sudo dnf install gzip` on Red Hat-based distros (e.g., Fedora)
+  - zlib is already included as part of macOS/OSX
 
 - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/)
   A helper tool for compiling applications and libraries.
@@ -37,6 +40,7 @@ dependencies installed:
     Ubuntu)
   - `sudo dnf install pkgconf-pkg-config` on Red Hat-based distros
     (e.g., Fedora)
+  - `brew install pkg-config` on macOS/OSX
 
 - [Serd v0.28+](https://github.com/drobilla/serd) The default parser
   that is used to process RDF input files.  It supports the N-Quads,
@@ -46,7 +50,8 @@ dependencies installed:
     (e.g., Ubuntu)
   - `sudo dnf install serd serd-devel` on Red Hat-based distros (e.g.,
     Fedora)
-    
+  - `brew install serd` on macOS/OSX
+
   Sometimes the version of Serd that is distributed by package managers
   is too old.  In that case, Serd can also be built manually: see
   https://github.com/drobilla/serd for the installation instructions.
@@ -73,15 +78,15 @@ workaround.
 
 The support for Kyoto Cabinet was never finished and is currently suspended. It is for the time being not possible to compile HDT with KyotoCabinet.
 
-Common error: 
-  
+Common error:
+
     In file included from src/dictionary/KyotoDictionary.cpp:38:0:
     src/dictionary/KyotoDictionary.hpp:108:18: error: conflicting return type specified for 'virtual unsigned int hdt::KyotoDictionary::getMapping()'
      unsigned int getMapping();
                   ^
 
 #### Package requirements (serd-0 >= 0.28.0) were not met
-When getting 
+When getting
 
     Package requirements (serd-0 >= 0.28.0) were not met: Requested 'serd-0 >= 0.28.0' but version of Serd is 0.X
 
