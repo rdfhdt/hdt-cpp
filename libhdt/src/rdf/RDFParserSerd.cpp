@@ -222,8 +222,10 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 	serd_sink_set_prefix_func(sink, (SerdPrefixFunc)hdtserd_on_prefix);
 	serd_sink_set_statement_func(sink, (SerdStatementFunc)hdtserd_on_statement);
 
+	SerdSink* normaliser = serd_normaliser_new(sink);
+
 	SerdReader* reader = serd_reader_new(
-		world, getParserType(notation), 0, sink, 4096);
+		world, getParserType(notation), 0, normaliser, 4096);
 
 	serd_world_set_message_func(world, hdtserd_on_message, NULL);
 
@@ -261,6 +263,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 		fclose(in_fd);
 	}
 
+	serd_sink_free(normaliser);
 	serd_sink_free(sink);
 	serd_reader_free(reader);
 
