@@ -22,7 +22,7 @@ RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
         return new RDFParserSerd();
     }
 #else
-		throw ParseException("No Parser available for input RDF Format");
+	throw ParseException("No Parser available for input RDF Format");
 #endif
 }
 
