@@ -16,13 +16,14 @@ namespace hdt {
 class RDFParserSerd : public RDFParserCallback {
 
 private:
+	SerdWorld *world;
 	SerdEnv *env;
 	RDFCallback *callback;
 	string error;
 	uint64_t numByte;
 
 	string getString(const SerdNode *term);
-	string getStringObject(const SerdNode *term, const SerdNode *dataType, const SerdNode *lang);
+	string getStringObject(const SerdNode *term);
 	SerdSyntax getParserType(RDFNotation notation);
 
 public:
@@ -31,21 +32,23 @@ public:
 
 	void doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback);
 
-	friend SerdStatus hdtserd_on_statement(void               *handle,
-	                                       SerdStatementFlags  flags,
-	                                       const SerdNode     *graph,
-	                                       const SerdNode     *subject,
-	                                       const SerdNode     *predicate,
-	                                       const SerdNode     *object,
-	                                       const SerdNode     *datatype,
-	                                       const SerdNode     *lang);
+	friend SerdStatus hdtserd_on_statement(void                *handle,
+	                                       SerdStatementFlags   flags,
+	                                       const SerdStatement *statement);
 
 	friend SerdStatus hdtserd_on_prefix(void           *handle,
 	                                    const SerdNode *name,
 	                                    const SerdNode *uri);
 
 	friend SerdStatus hdtserd_on_base(void *handle, const SerdNode *uri);
-	friend SerdStatus hdtserd_on_error(void *handle, const SerdError *e);
+
+	friend SerdStatus hdtserd_on_message(void*               handle,
+	                                     const char*         domain,
+	                                     SerdLogLevel        level,
+	                                     const SerdLogField* fields,
+	                                     size_t              n_fields,
+	                                     const char*         fmt,
+	                                     va_list             args);
 };
 
 }

@@ -12,6 +12,7 @@ namespace hdt {
 class RDFSerializerSerd : public RDFSerializer {
 private:
 	FILE       *file;
+	SerdWorld  *world;
 	SerdEnv    *env;
 	SerdWriter *writer;
 

@@ -1,5 +1,6 @@
 #ifdef HAVE_SERD
 
+#include <cassert>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -26,27 +27,23 @@ static SerdSyntax getType(RDFNotation notation) {
 	}
 }
 
-static size_t file_sink(const void* buf, size_t len, void* stream)
-{
-	return fwrite(buf, len, 1, reinterpret_cast<FILE*>(stream));
-}
-
 RDFSerializerSerd::RDFSerializerSerd(const char *fileName,
                                      RDFNotation notation)
 	: RDFSerializer(notation)
 	, file(fopen(fileName, "w"))
+	, world(serd_world_new())
 	, env(serd_env_new(NULL))
-	, writer(serd_writer_new(getType(notation), SERD_STYLE_ASCII,
-	                         env, NULL, file_sink, file))
+	, writer(serd_writer_new(world, getType(notation), 0,
+	                         env, (SerdWriteFunc)fwrite, file))
 {
 }
 
-static size_t stream_sink(const void* buf, size_t len, void* stream)
+static size_t stream_sink(const void* buf, size_t size, size_t nmemb, void* stream)
 {
 	std::ostream *out = reinterpret_cast<std::ostream *>(stream);
 	if (out->good()) {
-		out->write((const char *)buf, len);
-		return len;
+		out->write((const char *)buf, nmemb);
+		return nmemb;
 	}
 	return 0;
 }
@@ -55,8 +52,8 @@ RDFSerializerSerd::RDFSerializerSerd(std::ostream &s, RDFNotation notation)
 	: RDFSerializer(notation)
 	, file(NULL)
 	, env(serd_env_new(NULL))
-	, writer(serd_writer_new(getType(notation), SERD_STYLE_ASCII,
-	                         env, NULL, stream_sink, &s))
+	, writer(serd_writer_new(world, getType(notation), 0,
+	                         env, (SerdWriteFunc)stream_sink, &s))
 {
 }
 
@@ -64,68 +61,65 @@ RDFSerializerSerd::~RDFSerializerSerd()
 {
 	serd_writer_finish(writer);
 	serd_writer_free(writer);
+	serd_env_free(env);
+	serd_world_free(world);
 	if (file) {
 		fclose(file);
 	}
 }
 
-SerdNode getTerm(const string &str, SerdNode* datatype, SerdNode* lang)
+static SerdNode* getTerm(const string &str)
 {
 	if (str.empty()) {
 		throw std::runtime_error("Empty Value on triple!");
 	}
 
-	const uint8_t *const buf = (const uint8_t*)str.c_str();
-	const size_t         len = str.length();
+	const char* const buf = str.c_str();
+	const size_t      len = str.length();
 	if (str.at(0) == '"') {
 		const size_t endQuote = str.rfind("\"");
-		if (!strncmp((const char*)buf + endQuote, "\"^^", 3)) {
-			if (!datatype) {
-				throw std::runtime_error("Unexpected datatype");
-			}
+		if (!strncmp(buf + endQuote, "\"^^", 3)) {
+			assert(buf[endQuote + 3] == '<');
 
-			const uint8_t* datatypeStart = buf + endQuote + 3;
-			if (*datatypeStart == '<') {
-				*datatype = serd_node_from_substring(
-					SERD_URI, datatypeStart + 1, len - endQuote - 5);
-			} else {
-				*datatype = serd_node_from_string(SERD_CURIE, datatypeStart);
-			}
-		} else if (!strncmp((const char*)buf + endQuote, "\"@", 2)) {
-			if (!lang) {
-				throw std::runtime_error("Unexpected language");
-			}
+			const char*  datatypeStart = buf + endQuote + 4;
+			const size_t datatypeLen   = len - endQuote - 5;
 
-			*lang = serd_node_from_string(SERD_LITERAL, buf + endQuote + 2);
+			return serd_new_literal(
+				buf + 1, endQuote - 1, datatypeStart, datatypeLen, NULL, 0);
+		} else if (!strncmp(buf + endQuote, "\"@", 2)) {
+			const char*  langStart = buf + endQuote + 2;
+			const size_t langLen   = len - endQuote - 2;
+
+			return serd_new_literal(buf + 1, endQuote - 1, NULL, 0, langStart, langLen);
+		} else {
+			return serd_new_substring(buf + 1, endQuote - 1);
 		}
-
-		return serd_node_from_substring(SERD_LITERAL, buf + 1, endQuote - 1);
 	} else if (str.at(0) == '_') {
-		return serd_node_from_string(SERD_BLANK, buf + 2);
+		return serd_new_simple_node(SERD_BLANK, buf + 2, len - 2);
 	} else {
-		return serd_node_from_string(SERD_URI, buf);
+		return serd_new_simple_node(SERD_URI, buf, len);
 	}
 
-	return SERD_NODE_NULL;
+	return NULL;
 }
 
 void RDFSerializerSerd::serialize(IteratorTripleString *it,
                                   ProgressListener     *listener,
                                   size_t          totalTriples)
 {
+	const SerdSink* sink = serd_writer_get_sink(writer);
 	for (unsigned n = 0; it->hasNext(); ++n) {
 		const TripleString *ts = it->next();
 		if (!ts->isEmpty()) {
-			SerdNode subject   = getTerm(ts->getSubject(), NULL, NULL);
-			SerdNode predicate = getTerm(ts->getPredicate(), NULL, NULL);
-			SerdNode datatype  = SERD_NODE_NULL;
-			SerdNode lang      = SERD_NODE_NULL;
-			SerdNode object    = getTerm(ts->getObject(), &datatype, &lang);
+			SerdNode* subject   = getTerm(ts->getSubject());
+			SerdNode* predicate = getTerm(ts->getPredicate());
+			SerdNode* object    = getTerm(ts->getObject());
 
-			serd_writer_write_statement(
-				writer, 0, NULL,
-				&subject, &predicate, &object, &datatype, &lang);
+			serd_sink_write(sink, 0, subject, predicate, object, NULL);
 
+			serd_node_free(object);
+			serd_node_free(predicate);
+			serd_node_free(subject);
 			NOTIFYCOND(listener, "Exporting HDT to RDF", n, totalTriples);
 		}
 	}
