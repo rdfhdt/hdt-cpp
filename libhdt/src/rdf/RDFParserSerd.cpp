@@ -217,7 +217,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 	world = serd_world_new();
 	env = serd_env_new(base);
 
-	SerdSink* sink = serd_sink_new(this, env);
+	SerdSink* sink = serd_sink_new(this, NULL, env);
 	serd_sink_set_base_func(sink, (SerdBaseFunc)hdtserd_on_base);
 	serd_sink_set_prefix_func(sink, (SerdPrefixFunc)hdtserd_on_prefix);
 	serd_sink_set_statement_func(sink, (SerdStatementFunc)hdtserd_on_statement);
@@ -261,6 +261,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 		fclose(in_fd);
 	}
 
+	serd_sink_free(sink);
 	serd_reader_free(reader);
 
 	serd_node_free(input);
