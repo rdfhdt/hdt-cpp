@@ -24,6 +24,7 @@ RDFParserCallback *RDFParserCallback::getParserCallback(RDFNotation notation) {
 #else
 	throw ParseException("No Parser available for input RDF Format");
 #endif
+	return NULL;
 }
 
 }
