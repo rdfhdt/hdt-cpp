@@ -68,42 +68,25 @@ string RDFParserSerd::getStringObject(const SerdNode *term) {
 	return out;
 }
 
-// FIXME: Add to API?
-static const SerdLogField*
-find_field(const SerdLogField* fields, size_t n_fields, const char* key)
+SerdStatus hdtserd_on_log(void               *handle,
+                          const SerdLogEntry *entry)
 {
-	for (size_t i = 0; i < n_fields; ++i) {
-		if (!strcmp(fields[i].key, key)) {
-			return &fields[i];
-		}
+	if (entry->level >= SERD_LOG_LEVEL_ERR) {
+		return SERD_SUCCESS;
 	}
 
-	return NULL;
-}
+	const char* file = serd_log_entry_get_field(entry, "SERD_FILE");
+	const char* line = serd_log_entry_get_field(entry, "SERD_LINE");
+	const char* col  = serd_log_entry_get_field(entry, "SERD_COL");
 
-SerdStatus hdtserd_on_message(void               *handle,
-                              const char         *domain,
-                              SerdLogLevel        level,
-                              const SerdLogField *fields,
-                              size_t              n_fields,
-                              const char         *fmt,
-                              va_list             args)
-{
-	if (level <= SERD_LOG_LEVEL_ERR) {
-		const SerdLogField* file = find_field(fields, n_fields, "SERD_FILE");
-		const SerdLogField* line = find_field(fields, n_fields, "SERD_LINE");
-		const SerdLogField* col  = find_field(fields, n_fields, "SERD_COL");
-		if (file && line && col) {
-			fprintf(stderr, "error: %s:%s:%s: ",
-			        file->value, line->value, col->value);
-		} else {
-			fprintf(stderr, "error: ");
-		}
-		vfprintf(stderr, fmt, args);
-
-		throw std::runtime_error("Error parsing input.");
+	if (file && line && col) {
+		fprintf(stderr, "error: %s:%s:%s: ", file, line, col);
+	} else {
+		fprintf(stderr, "error: ");
 	}
+	vfprintf(stderr, entry->fmt, *entry->args);
 
+	throw std::runtime_error("Error parsing input.");
 	return SERD_SUCCESS;
 }
 
@@ -227,7 +210,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 	SerdReader* reader = serd_reader_new(
 		world, getParserType(notation), 0, normaliser, 4096);
 
-	serd_world_set_message_func(world, hdtserd_on_message, NULL);
+	serd_world_set_log_func(world, hdtserd_on_log, NULL);
 
 	SerdNode* input = serd_new_file_uri(fileName, NULL);
 
