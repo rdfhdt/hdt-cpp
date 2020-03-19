@@ -8,7 +8,8 @@ logarr \
 properties \
 serd \
 streamtest \
-testmax
+testmax \
+dumpDictionary
 #cmp \
 #confm \
 #conops \
