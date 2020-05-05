@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
 		string pred = hdt->getDictionary()->idToString(i+1, PREDICATE);
 
 		IteratorTripleString *it1 = hdt->search("",pred.c_str(),"");
-		int numResults = it1->estimatedNumResults();
+		size_t numResults = it1->estimatedNumResults();
 
 		// check label
                 IteratorTripleString *itlabel = hdt->search(pred.c_str(),label.c_str(),"");
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
 		string subj = hdt->getDictionary()->idToString(i, SUBJECT);
 
 		IteratorTripleString *it1 = hdt->search(subj.c_str(),"","");
-		int numResults = it1->estimatedNumResults();
+		size_t numResults = it1->estimatedNumResults();
 		if (i<hdt->getDictionary()->getNshared()){
 			IteratorTripleString* it2 = hdt->search("","",subj.c_str());
 			numResults+=it2->estimatedNumResults();
@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
 			string obj = hdt->getDictionary()->idToString(i+1, OBJECT);
 
 			IteratorTripleString *it1 = hdt->search("","",obj.c_str());
-			int numResults = it1->estimatedNumResults();
+			size_t numResults = it1->estimatedNumResults();
 			if (!onlyURIs||obj.at(0)!='"'){
 					*outT<<obj<<";"<<numResults<<endl;
 			}
