@@ -33,8 +33,7 @@ matrix:
 before_install:
   - pushd $HOME
   # Download and install Serd
-  # - curl -s http://download.drobilla.net/serd-0.24.0.tar.bz2 | tar -xj
-  - git clone https://github.com/drobilla/serd.git
+  - curl -s http://download.drobilla.net/serd-0.28.0.tar.bz2 | tar -xj
   - pushd serd* && ./waf configure --prefix=$LOCAL && ./waf && ./waf install && popd
   # Set up build environment
   - $HDT_CPP --version
