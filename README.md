@@ -198,4 +198,4 @@ branch.
 ## License
 
 `hdt-cpp` is free software licensed as GNU Lesser General Public
-License (GPL). See `libhdt/COPYRIGHT`.
+License (LGPL). See `libhdt/COPYRIGHT`.
