@@ -48,7 +48,7 @@ void HDTSpecification::setOptions(const std::string& options) {
 	std::istringstream strm(options);
 	std::string singleOption;
 	while(getline(strm, singleOption, ';') ){
-		size_t pos = singleOption.find(':');
+		size_t pos = singleOption.find('=');
 
 		if(pos!=std::string::npos) {
 			std::string property = singleOption.substr(0, pos);
