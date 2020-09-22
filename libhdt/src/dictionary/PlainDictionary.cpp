@@ -256,6 +256,10 @@ void PlainDictionary::import(Dictionary *other, ProgressListener *listener) {
 	throw std::logic_error("Not implemented import");
 }
 
+void PlainDictionary::import(Dictionary *other, ModifiableTriples *triplesList,  ProgressListener *listener) {
+	throw std::logic_error("Not implemented import");
+}
+
 IteratorUCharString *PlainDictionary::getSubjects() {
 	return new DictIterator(this->subjects);
 }
@@ -316,17 +320,22 @@ size_t PlainDictionary::insert(const std::string & str, TripleComponentRole pos)
 			DictionaryEntry *entry = new DictionaryEntry;
             		entry->str = new char [str.length()+1];
 			strcpy(entry->str, str.c_str());
+			entry->id = subjects.size()+1;
 			sizeStrings += str.length();
 
 			//cout << " Add new subject: " << str << endl;
 			hashSubject[entry->str] = entry;
+			subjects.push_back(entry);
+			return entry->id;
 		} else if(foundSubject) {
 			// Already exists in subjects.
 			//cout << "   existing subject: " << str << endl;
+			return subjectIt->second->id;
 		} else if(foundObject) {
 			// Already exists in objects.
 			//cout << "   existing subject as object: " << str << endl;
 			hashSubject[objectIt->second->str] = objectIt->second;
+			return objectIt->second->id;
 		}
 	} else if(pos==OBJECT) {
 		if(!foundSubject && !foundObject) {
@@ -334,22 +343,24 @@ size_t PlainDictionary::insert(const std::string & str, TripleComponentRole pos)
 			DictionaryEntry *entry = new DictionaryEntry;
             		entry->str = new char [str.length()+1];
 			strcpy(entry->str, str.c_str());
+			entry->id = objects.size()+1;
 			sizeStrings += str.length();
 
 			//cout << " Add new object: " << str << endl;
 			hashObject[entry->str] = entry;
+			objects.push_back(entry);
+			return entry->id;
 		} else if(foundObject) {
 			// Already exists in objects.
 			//cout << "     existing object: " << str << endl;
+			return objectIt->second->id;
 		} else if(foundSubject) {
 			// Already exists in subjects.
 			//cout << "     existing object as subject: " << str << endl;
 			hashObject[subjectIt->second->str] = subjectIt->second;
+			return subjectIt->second->id;
 		}
 	}
-
-	// FIXME: Return inserted index?
-	return 0;
 }
 
 string intToStr(int val) {

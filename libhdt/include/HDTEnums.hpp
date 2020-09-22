@@ -125,6 +125,11 @@ enum ResultEstimationType {
     EXACT
 };
 
+enum LoaderType {
+    ONE_PASS,
+	TWO_PASS
+};
+
 }
 
 #endif /* HDT_HDTENUMS_HPP_ */
