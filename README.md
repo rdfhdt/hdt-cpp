@@ -194,6 +194,40 @@ contains the new header information:
 $ ./replaceHeader old.hdt new.hdt new-header.nt
 ```
 
+## Building docker image
+
+Alternatively, the tools can be used via docker.
+
+To build the docker image (using arbitrary name `hdt`):
+
+```sh
+docker build -t hdt .
+```
+
+## Using tools via docker image
+
+Asssuming you have built docker image named `hdt`:
+
+```sh
+docker run -it --rm -v $PWD:/workdir hdt bash
+root@abcd1234:/workdir# 
+```
+This starts the docker image interactively. Listing files within running container shall show files from your current directory.
+
+To run whatever command from hdt toolset:
+
+```sh
+root@abcd1234:/workdir# rdf2hdt -f turtle input.ttl output.hdt
+```
+To quit the running container, use `exit` command.
+
+HDT commands can be also called directly from the (docker) host system:
+
+```sh
+docker run --rm -v $PWD:/workdir hdt rdf2hdt -f turtle input.ttl output.hdt
+```
+This takes `input.ttl` from current directory and create new `output.hdt` one.
+
 ## Contributing
 
 Contributions are welcome!  Please base your contributions and pull

@@ -1,10 +1,9 @@
 FROM gcc:6
 
-WORKDIR /usr/local/src
-COPY . /usr/local/src/hdt-cpp/
 
 # Install dependencies
 RUN apt-get update && apt-get -y install \
+    git \
 	build-essential \
 	libraptor2-dev \
 	#libserd-dev \
@@ -15,12 +14,20 @@ RUN apt-get update && apt-get -y install \
 	zlib1g-dev
 
 
+WORKDIR /usr/local/src
+
+ARG SERD_COMMIT=v0.30.10
+
 # Install more recent serd
-RUN wget https://github.com/drobilla/serd/archive/v0.28.0.tar.gz \
-	&& tar -xvzf *.tar.gz \
-	&& rm *.tar.gz \
-	&& cd serd-* \
-	&& ./waf configure && ./waf && ./waf install
+RUN git clone --depth 1 --branch $SERD_COMMIT https://github.com/drobilla/serd.git \
+    && cd serd/ \
+    && git submodule update --init --recursive \
+    && ./waf configure && ./waf && ./waf install \
+    && cd .. \
+    && rm -rf serd
+
+# get sources
+COPY . /usr/local/src/hdt-cpp/
 
 # Install HDT tools
 RUN cd hdt-cpp && ./autogen.sh && ./configure && make -j2
@@ -29,8 +36,7 @@ RUN cd hdt-cpp && ./autogen.sh && ./configure && make -j2
 ENV PATH /usr/local/src/hdt-cpp/libhdt/tools:$PATH
 
 # reset WORKDIR
-WORKDIR /
+WORKDIR /workdir
 
 # Default command
 CMD ["/bin/echo", "Available commands: rdf2hdt hdt2rdf hdtSearch"]
-
