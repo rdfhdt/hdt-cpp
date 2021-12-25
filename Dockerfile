@@ -1,4 +1,4 @@
-FROM gcc:6
+FROM gcc:bullseye as build
 
 WORKDIR /usr/local/src
 COPY . /usr/local/src/hdt-cpp/
