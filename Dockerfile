@@ -18,7 +18,8 @@ WORKDIR /usr/local/src/hdt-cpp
 COPY . .
 
 # Install HDT tools
-RUN cd hdt-cpp && ./autogen.sh && ./configure && make -j2
+RUN ./autogen.sh && ./configure
+RUN make -j4
 
 # Expose binaries
 ENV PATH /usr/local/src/hdt-cpp/libhdt/tools:$PATH
