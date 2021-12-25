@@ -52,4 +52,4 @@ COPY --from=build \
 # Add /usr/local/lib to LD_LIBRARY_PATH.
 ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
 
-CMD ["/bin/echo", "Available commands: rdf2hdt hdt2rdf hdtSearch"]
+CMD ["/bin/echo", "Available commands: rdf2hdt hdt2rdf hdtInfo hdtSearch modifyHeader replaceHeader searchHeader"]
