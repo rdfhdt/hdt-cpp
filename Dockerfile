@@ -20,6 +20,7 @@ COPY . .
 # Install HDT tools
 RUN ./autogen.sh && ./configure
 RUN make -j4
+RUN make install
 
 # Expose binaries
 ENV PATH /usr/local/src/hdt-cpp/libhdt/tools:$PATH
