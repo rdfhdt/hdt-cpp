@@ -1,15 +1,18 @@
 FROM gcc:bullseye as build
 
-# Install dependencies
-RUN apt-get update && apt-get -y install \
-	build-essential \
-	libraptor2-dev \
-	libserd-dev \
-	autoconf \
-	libtool \
-	liblzma-dev \
-	liblzo2-dev \
-	zlib1g-dev
+# Install build dependencies
+RUN apt update; \
+    apt install -y --no-install-recommends \
+	    autoconf \
+		build-essential \
+	    liblzma-dev \
+	    liblzo2-dev \
+	    libraptor2-dev \
+	    libserd-dev \
+	    libtool \
+	    zlib1g-dev \
+    ; \
+    rm -rf /var/lib/apt/lists/*;
 
 WORKDIR /usr/local/src/hdt-cpp
 COPY . .
