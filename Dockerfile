@@ -1,8 +1,5 @@
 FROM gcc:bullseye as build
 
-WORKDIR /usr/local/src
-COPY . /usr/local/src/hdt-cpp/
-
 # Install dependencies
 RUN apt-get update && apt-get -y install \
 	build-essential \
@@ -21,6 +18,9 @@ RUN wget https://github.com/drobilla/serd/archive/v0.28.0.tar.gz \
 	&& rm *.tar.gz \
 	&& cd serd-* \
 	&& ./waf configure && ./waf && ./waf install
+
+WORKDIR /usr/local/src/hdt-cpp
+COPY . .
 
 # Install HDT tools
 RUN cd hdt-cpp && ./autogen.sh && ./configure && make -j2
