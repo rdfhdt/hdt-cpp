@@ -1,36 +1,55 @@
-FROM gcc:6
+FROM gcc:bullseye as build
 
-WORKDIR /usr/local/src
-COPY . /usr/local/src/hdt-cpp/
+# Install build dependencies
+RUN apt update; \
+    apt install -y --no-install-recommends \
+	    autoconf \
+		build-essential \
+	    liblzma-dev \
+	    liblzo2-dev \
+	    libraptor2-dev \
+	    libserd-dev \
+	    libtool \
+	    zlib1g-dev \
+    ; \
+    rm -rf /var/lib/apt/lists/*;
 
-# Install dependencies
-RUN apt-get update && apt-get -y install \
-	build-essential \
-	libraptor2-dev \
-	#libserd-dev \
-	autoconf \
-	libtool \
-	liblzma-dev \
-	liblzo2-dev \
-	zlib1g-dev
-
-
-# Install more recent serd
-RUN wget https://github.com/drobilla/serd/archive/v0.28.0.tar.gz \
-	&& tar -xvzf *.tar.gz \
-	&& rm *.tar.gz \
-	&& cd serd-* \
-	&& ./waf configure && ./waf && ./waf install
+WORKDIR /usr/local/src/hdt-cpp
+COPY . .
 
 # Install HDT tools
-RUN cd hdt-cpp && ./autogen.sh && ./configure && make -j2
+RUN ./autogen.sh && ./configure
+RUN make -j4
+RUN make install
 
-# Expose binaries
-ENV PATH /usr/local/src/hdt-cpp/libhdt/tools:$PATH
+FROM debian:bullseye-slim
 
-# reset WORKDIR
-WORKDIR /
+# Install runtime dependencies
+RUN apt update; \
+    apt install -y --no-install-recommends \
+		libserd-0-0 \
+	; \
+	rm -rf /var/lib/apt/lists/*;
 
-# Default command
-CMD ["/bin/echo", "Available commands: rdf2hdt hdt2rdf hdtSearch"]
+# Copy in libraries and binaries from build stage.
+COPY --from=build \
+        /usr/local/lib/libcds* \
+		/usr/local/lib/libhdt* \
+		/usr/local/lib/
+COPY --from=build \
+        /usr/local/lib64/libstdc++.* \
+		/usr/local/lib64/
+COPY --from=build \
+		/usr/local/bin/hdt2rdf \
+		/usr/local/bin/hdtInfo \
+		/usr/local/bin/hdtSearch \
+		/usr/local/bin/modifyHeader \
+		/usr/local/bin/rdf2hdt \
+		/usr/local/bin/replaceHeader \
+		/usr/local/bin/searchHeader \
+		/usr/local/bin/
 
+# Add /usr/local/lib to LD_LIBRARY_PATH.
+ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
+
+CMD ["/bin/echo", "Available commands: rdf2hdt hdt2rdf hdtInfo hdtSearch modifyHeader replaceHeader searchHeader"]
