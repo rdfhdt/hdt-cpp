@@ -43,23 +43,6 @@
 #include <iostream>
 #include <unordered_map>
 
-//#define GOOGLE_HASH
-
-#ifdef GOOGLE_HASH
-#include <sparsehash/sparse_hash_map>
-
-using google::sparse_hash_map;      // namespace where class lives by default
-using __gnu_cxx::hash;  // or __gnu_cxx::hash, or maybe tr1::hash, depending on your OS
-
-#else
-
-#ifndef WIN32
-namespace std { using namespace __gnu_cxx; }
-#endif
-
-#endif
-
-
 namespace hdt {
 
 struct DictionaryEntry {
@@ -79,16 +62,9 @@ struct str_cmp {
 
 typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 
-#ifdef GOOGLE_HASH
-typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
-#else
-
-typedef unordered_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
-
-#endif
+typedef std::unordered_map<const char *, DictionaryEntry *, hash<std::string>, str_cmp> DictEntryHash;
 
 typedef DictEntryHash::const_iterator DictEntryIt;
-
 
 class PlainDictionary : public ModifiableDictionary {
 private:
