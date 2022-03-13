@@ -319,17 +319,10 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		cout << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw e;
-#ifndef WIN32
-	} catch (char *e) {
-		cout << "Catch exception triples" << e << endl;
-		delete triplesList;
-		throw e;
-#else
 	} catch (std::exception& e) {
 		// cerr << "Catch exception triples" << e << endl;
 		delete triplesList;
 		throw;
-#endif
 	}
 	if (triples->getType() == triplesList->getType()) {
 		delete triples;
