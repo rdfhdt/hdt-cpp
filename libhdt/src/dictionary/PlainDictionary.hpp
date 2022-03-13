@@ -41,12 +41,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-
-#ifndef WIN32
-#include <ext/hash_map>
-#else
 #include <unordered_map>
-#endif
 
 //#define GOOGLE_HASH
 
@@ -88,13 +83,8 @@ typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
 #else
 
-#ifdef WIN32
-/*typedef std::hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;*/
 typedef unordered_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
-#else
-typedef std::hash_map<const char *, DictionaryEntry *, __gnu_cxx::hash<const char *>, str_cmp> DictEntryHash;
 
-#endif
 #endif
 
 typedef DictEntryHash::const_iterator DictEntryIt;
