@@ -71,12 +71,16 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	if (argc < 2) {
-		cout << "ERROR: You must supply an input HDT File" << endl << endl;
-		help();
-		return 1;
-	}
-	inputFile = argv[optind];
+	// if (argc < 2) {
+	// 	cout << "ERROR: You must supply an input HDT File" << endl << endl;
+	// 	help();
+	// 	return 1;
+	// }
+	// inputFile = argv[optind];
+
+	// Input is explicitly set to the revision controlled .hdt for
+	// automated test execution.
+	inputFile = "../data/literals.hdt";
 
 	// Load HDT file
 	HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str());
