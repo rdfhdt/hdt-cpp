@@ -139,8 +139,7 @@ namespace cds_static
 		return H;
 	}
 
-	void bitzero (register uint *e, register uint p,
-	register uint len) {
+	void bitzero (uint *e, uint p, uint len) {
 
 		e += p/W; p %= W;
 		if (p+len >= W) {

@@ -103,7 +103,7 @@ namespace cds_static
 
 	uint RMQ_succinct_lcp::log2fast(uint v) {
 		uint c = 0;				 // c will be lg(v)
-		register uint t, tt;	 // temporaries
+	        uint t, tt;	 // temporaries
 
 		if ((tt = v >> 16))
 			c = (t = v >> 24) ? 24 + LogTable256[t] : 16 + LogTable256[tt & 0xFF];

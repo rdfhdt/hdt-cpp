@@ -104,7 +104,7 @@ namespace cds_static
 	unsigned int RMQ_succinct::log2fast(unsigned int v) {
 		unsigned int c = 0;		 // c will be lg(v)
 								 // temporaries
-		register unsigned int t, tt;
+		unsigned int t, tt;
 
 		if ((tt = v >> 16))
 			c = (t = v >> 24) ? 24 + LogTable256[t] : 16 + LogTable256[tt & 0xFF];

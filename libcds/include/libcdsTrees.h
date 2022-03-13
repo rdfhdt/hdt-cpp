@@ -78,7 +78,7 @@ namespace cds_utils
 	}
 
 	/* writes e[p..p+len-1] = s, len <= W*/
-	inline void bitwrite (register uint *e, register uint p, register uint len, register uint s) {
+	inline void bitwrite (uint *e, uint p, uint len, uint s) {
 		e += p/W;
 		p %= W;
 		if (len == W) {

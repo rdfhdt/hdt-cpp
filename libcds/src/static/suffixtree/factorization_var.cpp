@@ -41,7 +41,7 @@ namespace cds_static
 		uint *cont;
 		uint *contB;
 		listLength = l_Length;
-		register uint i;
+	        uint i;
 		int j, k;
 		uint value, newvalue;
 		uint bits_BS_len = 0;
@@ -171,7 +171,7 @@ namespace cds_static
 
 	uint factorization_var::access(uint param) {
 		uint mult=0;
-		register uint j;
+		uint j;
 		uint partialSum=0;
 		uint ini = param-1;
         unsigned char readByte;
@@ -200,7 +200,7 @@ namespace cds_static
 
 	uint factorization_var::access_seq(uint param, size_t *next_pos, bool dir) {
 		uint mult=0;
-		register uint j;
+		uint j;
 		uint partialSum=0;
 		uint ini = param-1;
         unsigned char readByte;

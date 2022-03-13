@@ -162,8 +162,7 @@ namespace URICompressed{
         return H;
     }
 
-    void bitzero (register uint *e, register uint64_t p,
-    register uint len) {
+    void bitzero (uint *e, uint64_t p, uint len) {
 
         e += p/W; p %= W;
         if (p+len >= W) {
