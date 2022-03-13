@@ -201,7 +201,7 @@ private:
 public:
 
 	PFCSuggestionIterator(CSD_PFC *pfc, const char *prefix) :
-			pfc(pfc), count(1), prefix(prefix) {
+			pfc(pfc), prefix(prefix) {
 		max = pfc->getLength();
 		prefixlen = strlen(prefix);
 		hasnext = false;
@@ -337,7 +337,7 @@ private:
 public:
 
 	PFCSuggestionIDIterator(CSD_PFC *pfc, const char *prefix) :
-			pfc(pfc), count(1), prefix(prefix) {
+			pfc(pfc), prefix(prefix) {
 		max = pfc->getLength();
 		prefixlen = strlen(prefix);
 		hasnext = false;
