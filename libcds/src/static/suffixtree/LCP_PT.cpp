@@ -19,7 +19,6 @@
 #include <LCP_PT.h>
 
 const int max_precomputed_cover = 8;
-const int coversizes[max_precomputed_cover+1]= {1,2,3,4,5,7,9,13,20};
 const unsigned cover0[] = {0};
 const unsigned cover1[] = {0,1};
 const unsigned cover2[] = {0,1,2};
