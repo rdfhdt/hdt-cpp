@@ -307,7 +307,6 @@ namespace cds_static
 		seqsBuilder->unuse();
 
 		this->cut = cut;
-		this->maxLen = maxLen;
 		this->sigma = sigma;
 	}
 

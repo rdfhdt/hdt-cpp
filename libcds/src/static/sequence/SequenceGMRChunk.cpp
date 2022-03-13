@@ -66,7 +66,6 @@ namespace cds_static
 		delete [] X_bitmap;
 		this->permutation = pmb->build(pi,chunk_length);
 		assert(permutation!=NULL);
-		this->sigma = sigma;
 		delete [] counter;
 		pmb->unuse();
 		bmb->unuse();
@@ -112,7 +111,6 @@ namespace cds_static
 		delete [] X_bitmap;
 		this->permutation = pmb->build(pi,chunk_length);
 		assert(permutation!=NULL);
-		this->sigma = sigma;
 		delete [] counter;
 		pmb->unuse();
 		bmb->unuse();
