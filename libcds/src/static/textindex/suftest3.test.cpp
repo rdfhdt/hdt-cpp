@@ -35,12 +35,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#if 1
-#include <sys/timeb.h>
-#else
 #include <sys/time.h>
 #include <sys/resource.h>
-#endif
 #include <comparray4.h>
 #include <limits.h>
 #include <stdbool.h>
@@ -58,20 +54,7 @@
 
 namespace cds_static
 {
-
-	#if 1
-	typedef struct timeb mytimestruct;
-	void mygettime(mytimestruct *t) {
-		ftime(t);
-	}
-	double mylaptime(mytimestruct *before,mytimestruct *after) {
-		double t;
-		t = after->time - before->time;
-		t += (double)(after->millitm - before->millitm)/1000;
-		return t;
-	}
-	#else
-	typedef mytimestruct struct rusage;
+	typedef struct rusage mytimestruct;
 	void mygettime(mytimestruct *t) {
 		getrusage(RUSAGE_SELF,t);
 	}
@@ -82,7 +65,6 @@ namespace cds_static
 			- before->ru_utime.tv_usec)/1000000;
 		return t;
 	}
-	#endif
 
 	/* Three function to variables to manage parameters */
 	static bool is_delimeter(char *delimiters, char c) {
