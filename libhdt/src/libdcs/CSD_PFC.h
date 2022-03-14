@@ -188,7 +188,6 @@ class PFCSuggestionIterator: public hdt::IteratorUCharString {
 private:
 	CSD_PFC *pfc;
 	size_t max;
-	size_t count;
 	const char *prefix;
 	bool hasnext;
 	string tmpStr;
@@ -202,7 +201,7 @@ private:
 public:
 
 	PFCSuggestionIterator(CSD_PFC *pfc, const char *prefix) :
-			pfc(pfc), count(1), prefix(prefix) {
+			pfc(pfc), prefix(prefix) {
 		max = pfc->getLength();
 		prefixlen = strlen(prefix);
 		hasnext = false;
@@ -325,7 +324,6 @@ class PFCSuggestionIDIterator: public hdt::IteratorUInt {
 private:
 	CSD_PFC *pfc;
 	size_t max;
-	size_t count;
 	const char *prefix;
 	bool hasnext;
 	string tmpStr;
@@ -339,7 +337,7 @@ private:
 public:
 
 	PFCSuggestionIDIterator(CSD_PFC *pfc, const char *prefix) :
-			pfc(pfc), count(1), prefix(prefix) {
+			pfc(pfc), prefix(prefix) {
 		max = pfc->getLength();
 		prefixlen = strlen(prefix);
 		hasnext = false;
