@@ -76,7 +76,7 @@ namespace cds_static
         uint *buffer = new uint[maxBuffer];
         hc->encode(symbol, buffer, (size_t)0);
         bool ret = bitget(buffer,l);
-        delete buffer;
+        delete[] buffer;
         return ret;
     }
 
@@ -89,7 +89,7 @@ namespace cds_static
         uint *buffer = new uint[maxBuffer];
         uint s_len = (uint)hc->encode(symbol, buffer, (size_t)0);
         bool ret =  l==s_len;
-        delete buffer;
+        delete[] buffer;
         return ret;
     }
 
