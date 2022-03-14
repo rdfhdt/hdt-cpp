@@ -152,8 +152,6 @@ void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *list
 	st.reset();
 	triples->save(output, controlInformation);
 	cerr << "Triples saved in " << st << endl;
-
-	this->fileName = fileName;
 }
 
 void BasicModifiableHDT::insert(TripleString & triple)
