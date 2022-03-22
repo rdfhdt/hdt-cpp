@@ -49,6 +49,7 @@ void help() {
     cout << "$ rdf2hdt [options] <rdf input file> <hdt output file> " << endl;
     cout << "\t-h\t\t\tThis help" << endl;
     cout << "\t-i\t\t\tAlso generate index to solve all triple patterns." << endl;
+    cout << "\t-I\t\t\tIgnore triple on error." << endl;
     cout << "\t-c\t<configfile>\tHDT Config options file" << endl;
     cout << "\t-o\t<options>\tHDT Additional options (option1=value1;option2=value2;...)" << endl;
     cout << "\t-f\t<format>\tFormat of the RDF input (nquads,nq,ntriples,nt,trig,turtle,ttl)" << endl;
@@ -62,6 +63,7 @@ int main(int argc, char **argv) {
 	string inputFile;
 	string outputFile;
 	bool verbose=false;
+    bool ignoreError=false;
 	bool showProgress=false;
 	bool generateIndex=false;
 	string configFile;
@@ -97,6 +99,9 @@ int main(int argc, char **argv) {
                 break;
             case 'B':
                 baseUri = optarg;
+                break;
+            case 'I':
+                ignoreError=true;
                 break;
             case 'i':
                 generateIndex=true;
@@ -235,8 +240,13 @@ int main(int argc, char **argv) {
 		delete hdt;
 		delete progress;
 	} catch (std::exception& e) {
-		cerr << "ERROR: " << e.what() << endl;
-		return 1;
+        if(ignoreError){
+            vout << "WARNING: " << e.what() << endl;
+        }
+        else{
+            cerr << "ERROR: " << e.what() << endl;
+		    return 1;
+        }
 	}
 
 }
