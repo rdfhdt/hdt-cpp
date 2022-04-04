@@ -66,18 +66,18 @@ inline uint32_t wordSelect1(uint64_t value, uint64_t rank) {
 #define SIZET_SIZE (sizeof(size_t)*8)
 
 /** reads bit p from e */
-inline bool bitget(size_t *e, size_t p) {
-	return (e[p/SIZET_SIZE] >> (p%SIZET_SIZE)) & 1;
+inline bool bitget(uint64_t *e, size_t p) {
+	return (e[p/64] >> (p%64)) & 1;
 }
 
 /** sets bit p in e */
-inline void bitset(size_t * e, size_t p) {
-	e[p/SIZET_SIZE] |= (((size_t)1)<<(p%SIZET_SIZE));
+inline void bitset(uint64_t * e, size_t p) {
+	e[p/64] |= (((uint64_t)1)<<(p%64));
 }
 
 /** cleans bit p in e */
-inline void bitclean(size_t * e, size_t p) {
-	e[p/SIZET_SIZE] &= ~(((size_t)1)<<(p%SIZET_SIZE));
+inline void bitclean(uint64_t * e, size_t p) {
+	e[p/64] &= ~(((size_t)1)<<(p%64));
 }
 
 
