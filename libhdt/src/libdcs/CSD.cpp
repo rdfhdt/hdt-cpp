@@ -30,13 +30,13 @@
  *   Rodrigo Canovas:  rcanovas@dcc.uchile.cl
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
-#include <stdexcept>
 #include "CSD.h"
 #include "CSD_PFC.h"
+#include <stdexcept>
 
 #ifdef HAVE_CDS
-#include "CSD_HTFC.h"
 #include "CSD_FMIndex.h"
+#include "CSD_HTFC.h"
 
 #include <libcdsBasics.h>
 
@@ -44,53 +44,47 @@ using namespace cds_utils;
 
 #endif
 
-namespace csd
-{
+namespace csd {
 
-CSD::CSD() : numstrings(0) {
+CSD::CSD() : numstrings(0) {}
 
-}
-
-CSD * CSD::load(istream & fp)
-{
-    int type = fp.get();
-    if(!fp.good()) {
-	throw std::runtime_error("Error reading stream");
-    }
-    switch(type)
-    {
-    case PFC:
-	return CSD_PFC::load(fp);
+CSD *CSD::load(istream &fp) {
+  int type = fp.get();
+  if (!fp.good()) {
+    throw std::runtime_error("Error reading stream");
+  }
+  switch (type) {
+  case PFC:
+    return CSD_PFC::load(fp);
 #ifdef HAVE_CDS
-    case FMINDEX:
-	return CSD_FMIndex::load(fp);
-    case HTFC:
-	return CSD_HTFC::load(fp);
+  case FMINDEX:
+    return CSD_FMIndex::load(fp);
+  case HTFC:
+    return CSD_HTFC::load(fp);
 #endif
-    default:
-	throw std::logic_error("No implementation for CSD");
-    }
-    return NULL;
+  default:
+    throw std::logic_error("No implementation for CSD");
+  }
+  return NULL;
 }
 
-CSD *CSD::create(unsigned char type)
-{
-    switch(type)
-    {
-    case PFC: return new CSD_PFC();
+CSD *CSD::create(unsigned char type) {
+  switch (type) {
+  case PFC:
+    return new CSD_PFC();
 #ifdef HAVE_CDS
-    case HTFC: return new CSD_HTFC();
-    case FMINDEX: return new CSD_FMIndex();
+  case HTFC:
+    return new CSD_HTFC();
+  case FMINDEX:
+    return new CSD_FMIndex();
 #endif
-    default: throw std::logic_error("No implementation for CSD");
-    }
+  default:
+    throw std::logic_error("No implementation for CSD");
+  }
 
-    return NULL;
+  return NULL;
 }
 
-size_t CSD::getLength()
-{
-	return numstrings;
-}
+size_t CSD::getLength() { return numstrings; }
 
-}
+} // namespace csd

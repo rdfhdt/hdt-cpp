@@ -28,11 +28,11 @@
 #ifndef _CSDCACHE2_H
 #define _CSDCACHE2_H
 
-#include <iostream>
 #include <cassert>
-#include <string>
-#include <string.h>
+#include <iostream>
 #include <set>
+#include <string.h>
+#include <string>
 
 using namespace std;
 
@@ -40,80 +40,80 @@ using namespace std;
 
 #include "CSD.h"
 
-namespace csd
-{
+namespace csd {
 
-class CSD_Cache2 : public CSD
-{
+class CSD_Cache2 : public CSD {
 private:
-	CSD *child;
-	vector<unsigned char *> array;
+  CSD *child;
+  vector<unsigned char *> array;
 
-  public:		
-    /** General constructor **/
-	CSD_Cache2(CSD *child);
+public:
+  /** General constructor **/
+  CSD_Cache2(CSD *child);
 
-    /** General destructor. */
-    ~CSD_Cache2();
-    
-    /** Returns the ID that identify s[1..length]. If it does not exist,
-	returns 0.
-	@s: the string to be located.
-	@len: the length (in characters) of the string s.
-    */
-    size_t locate(const unsigned char *s, size_t len);
+  /** General destructor. */
+  ~CSD_Cache2();
 
-    /** Returns the string identified by id.
-	@id: the identifier to be extracted.
-    */
-    unsigned char * extract(size_t id);
+  /** Returns the ID that identify s[1..length]. If it does not exist,
+      returns 0.
+      @s: the string to be located.
+      @len: the length (in characters) of the string s.
+  */
+  size_t locate(const unsigned char *s, size_t len);
 
-    void freeString(const unsigned char *str);
+  /** Returns the string identified by id.
+      @id: the identifier to be extracted.
+  */
+  unsigned char *extract(size_t id);
 
-    /** Obtains the original Tdict from its CSD_PFC representation. Each string is
-	separated by '\n' symbols.
-	@dict: the plain uncompressed dictionary.
-	@return: number of total symbols in the dictionary.
-    */
-    size_t decompress(unsigned char **dict);
+  void freeString(const unsigned char *str);
 
-    hdt::IteratorUCharString *listAll() { return child->listAll(); }
+  /** Obtains the original Tdict from its CSD_PFC representation. Each string is
+      separated by '\n' symbols.
+      @dict: the plain uncompressed dictionary.
+      @return: number of total symbols in the dictionary.
+  */
+  size_t decompress(unsigned char **dict);
 
-    /** Returns the size of the structure in bytes. */
-    uint64_t getSize();
+  hdt::IteratorUCharString *listAll() { return child->listAll(); }
 
-    /** Stores a CSD_PFC structure given a file pointer.
-	@fp: pointer to the file saving a CSD_PFC structure.
-    */
-    void save(ostream & fp);
+  /** Returns the size of the structure in bytes. */
+  uint64_t getSize();
 
-    size_t load(unsigned char *ptr, unsigned char *ptrMax) {
-        return child->load(ptr, ptrMax);
-    }
+  /** Stores a CSD_PFC structure given a file pointer.
+      @fp: pointer to the file saving a CSD_PFC structure.
+  */
+  void save(ostream &fp);
 
-    /** Loads a CSD_PFC structure from a file pointer.
-	@fp: pointer to the file storing a CSD_PFC structure. */
-    static CSD * load(istream & fp);
+  size_t load(unsigned char *ptr, unsigned char *ptrMax) {
+    return child->load(ptr, ptrMax);
+  }
 
-    // Search for terms by prefix. It returns a vector of a given maximum size "maxResults"
-    void fillSuggestions(const char *prefix, vector<string> &out, int maxResults) {
-    	child->fillSuggestions(prefix, out, maxResults);
-    }
+  /** Loads a CSD_PFC structure from a file pointer.
+      @fp: pointer to the file storing a CSD_PFC structure. */
+  static CSD *load(istream &fp);
 
-    // Search for terms by prefix. It returns an iterator of all results in the dictionary
-	hdt::IteratorUCharString *getSuggestions(const char *prefix){
-		return child->getSuggestions(prefix);
-	}
+  // Search for terms by prefix. It returns a vector of a given maximum size
+  // "maxResults"
+  void fillSuggestions(const char *prefix, vector<string> &out,
+                       int maxResults) {
+    child->fillSuggestions(prefix, out, maxResults);
+  }
 
-	// Search for terms by prefix. It returns an iterator of all results in the dictionary, by ID
-	hdt::IteratorUInt *getIDSuggestions(const char *prefix){
-		return child->getIDSuggestions(prefix);
-	}
+  // Search for terms by prefix. It returns an iterator of all results in the
+  // dictionary
+  hdt::IteratorUCharString *getSuggestions(const char *prefix) {
+    return child->getSuggestions(prefix);
+  }
 
-    CSD *getChild() {
-    	return child;
-    }
-  };
+  // Search for terms by prefix. It returns an iterator of all results in the
+  // dictionary, by ID
+  hdt::IteratorUInt *getIDSuggestions(const char *prefix) {
+    return child->getIDSuggestions(prefix);
+  }
+
+  CSD *getChild() { return child; }
 };
+}; // namespace csd
 
-#endif  
+#endif

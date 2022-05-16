@@ -27,74 +27,59 @@
 
 #include <stdlib.h>
 
-#include <string.h>
 #include "CSD_Cache2.h"
+#include <string.h>
 
-namespace csd
-{
-CSD_Cache2::CSD_Cache2(CSD *child) : child(child)
-{
-	assert(child);
-	numstrings = child->getLength();
+namespace csd {
+CSD_Cache2::CSD_Cache2(CSD *child) : child(child) {
+  assert(child);
+  numstrings = child->getLength();
 
-	array.resize(child->getLength(), NULL);
+  array.resize(child->getLength(), NULL);
 }
 
+CSD_Cache2::~CSD_Cache2() {
+  for (std::vector<unsigned char *>::iterator it = array.begin();
+       it != array.end(); ++it) {
+    unsigned char *value = *it;
+    if (value != NULL) {
+      child->freeString(*it);
+    }
+  }
 
-CSD_Cache2::~CSD_Cache2()
-{
-	for(std::vector<unsigned char *>::iterator it = array.begin(); it != array.end(); ++it) {
-		unsigned char *value = *it;
-		if(value!=NULL) {
-			child->freeString(*it);
-		}
-	}
-
-	delete child;
+  delete child;
 }
 
-size_t CSD_Cache2::locate(const unsigned char *s, size_t len)
-{
-	// FIXME: Not implemented
-	return child->locate(s, len);
+size_t CSD_Cache2::locate(const unsigned char *s, size_t len) {
+  // FIXME: Not implemented
+  return child->locate(s, len);
 }
 
+unsigned char *CSD_Cache2::extract(size_t id) {
+  if (id < 1 || id > array.size()) {
+    return NULL;
+  }
 
-unsigned char* CSD_Cache2::extract(size_t id)
-{
-	if(id<1 || id>array.size()) {
-		return NULL;
-	}
+  if (array[id - 1] != NULL) {
+    return array[id - 1];
+  }
 
-	if(array[id-1]!=NULL) {
-		return array[id-1];
-	}
+  // Not found, fetch and add
+  unsigned char *value = child->extract(id);
 
-	// Not found, fetch and add
-	unsigned char *value = child->extract(id);
+  array[id - 1] = value;
 
-	array[id-1] = value;
-
-	return value;
+  return value;
 }
 
 void CSD_Cache2::freeString(const unsigned char *str) {
-	// Do nothing, all freed on destruction.
+  // Do nothing, all freed on destruction.
 }
 
-uint64_t CSD_Cache2::getSize()
-{
-	return child->getSize();
-}
+uint64_t CSD_Cache2::getSize() { return child->getSize(); }
 
-void CSD_Cache2::save(ostream &fp)
-{
-	child->save(fp);
-}
+void CSD_Cache2::save(ostream &fp) { child->save(fp); }
 
-CSD* CSD_Cache2::load(istream &fp)
-{
-	throw std::logic_error("Not imlemented");
-}
+CSD *CSD_Cache2::load(istream &fp) { throw std::logic_error("Not imlemented"); }
 
-}
+} // namespace csd
