@@ -24,49 +24,46 @@
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
 
-
 #ifndef _VBYTE_H
 #define _VBYTE_H
 
-#include <stdint.h>
 #include <iostream>
+#include <stdint.h>
 using namespace std;
 
-namespace csd
-{
+namespace csd {
 
-class VByte
-{		
-  public:
-	/**
-	 * Encode value into the buffer using VByte. The caller must make sure that
-	 * at least 9 bytes are available in the buffer for writing.
-	 * Returns the number of read bytes
-	 */
-	static size_t encode(unsigned char *buffer, uint64_t value );
+class VByte {
+public:
+  /**
+   * Encode value into the buffer using VByte. The caller must make sure that
+   * at least 9 bytes are available in the buffer for writing.
+   * Returns the number of read bytes
+   */
+  static size_t encode(unsigned char *buffer, uint64_t value);
 
-	/**
-	 * Decode value from the buffer using VByte.
-	 */
-    static size_t decode(const unsigned char *buffer, const unsigned char *maxPtr, uint64_t *value);
+  /**
+   * Decode value from the buffer using VByte.
+   */
+  static size_t decode(const unsigned char *buffer, const unsigned char *maxPtr,
+                       uint64_t *value);
 
-	/**
-	 * Decode value from the buffer using VByte.
-	 */
-    static size_t decode(const unsigned char *buffer, const unsigned char *maxPtr, uint32_t *value);
+  /**
+   * Decode value from the buffer using VByte.
+   */
+  static size_t decode(const unsigned char *buffer, const unsigned char *maxPtr,
+                       uint32_t *value);
 
-    /** Encodes the integer 'c' in the sequence of bytes (uchar) 'r'.
-     * @out Output stream
-	 * @value: number to be encoded.
-     */
-    static void encode(ostream &out, uint64_t value);
+  /** Encodes the integer 'c' in the sequence of bytes (uchar) 'r'.
+   * @out Output stream
+   * @value: number to be encoded.
+   */
+  static void encode(ostream &out, uint64_t value);
 
-    /** Decodes a VByte number from an Input Stream.
-    */
-    static uint64_t decode(istream &in);
-
-
-  };
+  /** Decodes a VByte number from an Input Stream.
+   */
+  static uint64_t decode(istream &in);
 };
+}; // namespace csd
 
-#endif  /* _VBYTE_H */
+#endif /* _VBYTE_H */

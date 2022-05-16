@@ -6,7 +6,7 @@
  *
  *   ==========================================================================
  *     "Compressed String Dictionaries"
- *     Nieves R. Brisaboa, Rodrigo Canovas, Francisco Claude, 
+ *     Nieves R. Brisaboa, Rodrigo Canovas, Francisco Claude,
  *     Miguel A. Martinez-Prieto and Gonzalo Navarro.
  *     10th Symposium on Experimental Algorithms (SEA'2011), p.136-147, 2011.
  *   ==========================================================================
@@ -38,108 +38,115 @@
 
 #include "CSD.h"
 
-#include <Iterator.hpp>
-#include <SequenceBuilder.h>
-#include <Sequence.h>
-#include <BitSequenceBuilder.h>
-#include <BitSequence.h>
 #include "fmindex/SSA.h"
+#include <BitSequence.h>
+#include <BitSequenceBuilder.h>
+#include <Iterator.hpp>
+#include <Sequence.h>
+#include <SequenceBuilder.h>
 
 #include <set>
 using namespace std;
 
-namespace csd{
+namespace csd {
 
-	class CSD_FMIndex: public CSD{	
-		
-		public:
-			/** General constructor **/
-			CSD_FMIndex();
+class CSD_FMIndex : public CSD {
 
-			/** Constructor receiving Tdict as a sequence of 'tlength' uchars. Tdict
-			 * @param it: Iterator unsigned char
-			 * @param stopword: make until the prefix differs from stopword
-			 * @sparse_bitsequence: tell which rank/select implementation will be use into the FMIndex
-			 *                       false->BitSequeceRG and true->BitSequenceRRR
-			 * @bparam:  If sparce_bitsequence==false  bparam can be (2,3,4,20,40). Otherwise it is the sample rate of BitSequenceRRR
-			 * @bwt_sample: sample range that will used for the bwt
-			 * @use_sample: tell if the suffixes sampling will be stored or not.
-			 * @param listener
-			 **/
-			CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence=false, int bparam=40, size_t bwt_sample=64, bool use_sample=false, hdt::ProgressListener *listener=NULL);
+public:
+  /** General constructor **/
+  CSD_FMIndex();
 
-			/** Returns the ID that identify s[1..length]. If it does not exist, 
-			 * returns 0. 
-			 * @s: the string to be located.
-			 * @len: the length (in characters) of the string s.
-			 * */
-            size_t locate(const unsigned char *s, size_t len);
+  /** Constructor receiving Tdict as a sequence of 'tlength' uchars. Tdict
+   * @param it: Iterator unsigned char
+   * @param stopword: make until the prefix differs from stopword
+   * @sparse_bitsequence: tell which rank/select implementation will be use into
+   *the FMIndex false->BitSequeceRG and true->BitSequenceRRR
+   * @bparam:  If sparce_bitsequence==false  bparam can be (2,3,4,20,40).
+   *Otherwise it is the sample rate of BitSequenceRRR
+   * @bwt_sample: sample range that will used for the bwt
+   * @use_sample: tell if the suffixes sampling will be stored or not.
+   * @param listener
+   **/
+  CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence = false,
+              int bparam = 40, size_t bwt_sample = 64, bool use_sample = false,
+              hdt::ProgressListener *listener = NULL);
 
-			/** Returns the number of IDs that contain s[1,..len] as a substring. It also 
-			 * return in occs the IDs. Otherwise return 0.
-			 *  @s: the substring to be located.
-			 *  @len: the length (in characters) of the string s.
-			 *  @occs: pointer where the ID located will be stored.
-			 * */
-            size_t locate_substring(unsigned char *s, size_t len, uint32_t **occs);
-            size_t locate_substring(unsigned char *s, size_t len, size_t offset, size_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ);
+  /** Returns the ID that identify s[1..length]. If it does not exist,
+   * returns 0.
+   * @s: the string to be located.
+   * @len: the length (in characters) of the string s.
+   * */
+  size_t locate(const unsigned char *s, size_t len);
 
-			/** Returns the string identified by id.
-			 * @id: the identifier to be extracted.
-			 **/
-            unsigned char * extract(size_t id);
+  /** Returns the number of IDs that contain s[1,..len] as a substring. It also
+   * return in occs the IDs. Otherwise return 0.
+   *  @s: the substring to be located.
+   *  @len: the length (in characters) of the string s.
+   *  @occs: pointer where the ID located will be stored.
+   * */
+  size_t locate_substring(unsigned char *s, size_t len, uint32_t **occs);
+  size_t locate_substring(unsigned char *s, size_t len, size_t offset,
+                          size_t limit, bool deduplicate, uint32_t **occs,
+                          uint32_t *num_occ);
 
-			void freeString(const unsigned char *str);
+  /** Returns the string identified by id.
+   * @id: the identifier to be extracted.
+   **/
+  unsigned char *extract(size_t id);
 
-			/** Obtains the original Tdict from its CSD_RePairDAC representation. Each 
-			 * string is separated by '\n' symbols.
-			 * @dict: the plain uncompressed dictionary.
-			 * @return: number of total symbols in the dictionary.
-			 * */
-			uint decompress(unsigned char **dict);
+  void freeString(const unsigned char *str);
 
-			void dumpAll();
+  /** Obtains the original Tdict from its CSD_RePairDAC representation. Each
+   * string is separated by '\n' symbols.
+   * @dict: the plain uncompressed dictionary.
+   * @return: number of total symbols in the dictionary.
+   * */
+  uint decompress(unsigned char **dict);
 
-			/** Returns the size of the structure in bytes. */
-			uint64_t getSize();
+  void dumpAll();
 
-		
-			/** Stores a CSD_FMIndex structure given a file pointer.
-			 * @fp: pointer to the file saving a CSD_FMIndex structure.
-			 * */
-            void save(ostream & fp);
+  /** Returns the size of the structure in bytes. */
+  uint64_t getSize();
 
-            size_t load(unsigned char *ptr, unsigned char *ptrMax);
+  /** Stores a CSD_FMIndex structure given a file pointer.
+   * @fp: pointer to the file saving a CSD_FMIndex structure.
+   * */
+  void save(ostream &fp);
 
-			/** Loads a CSD_FMIndex structure from a file pointer.
-			 * @fp: pointer to the file storing a CSD_FMIndex structure. */
-            static CSD * load(istream & fp);
+  size_t load(unsigned char *ptr, unsigned char *ptrMax);
 
-			void fillSuggestions(const char *base, vector<string> &out, int maxResults);
+  /** Loads a CSD_FMIndex structure from a file pointer.
+   * @fp: pointer to the file storing a CSD_FMIndex structure. */
+  static CSD *load(istream &fp);
 
-			hdt::IteratorUCharString *getSuggestions(const char *prefix);
+  void fillSuggestions(const char *base, vector<string> &out, int maxResults);
 
-			hdt::IteratorUInt *getIDSuggestions(const char *prefix);
+  hdt::IteratorUCharString *getSuggestions(const char *prefix);
 
-		    hdt::IteratorUCharString *listAll() { throw std::logic_error("Not Implemented"); }
+  hdt::IteratorUInt *getIDSuggestions(const char *prefix);
 
-			/** General destructor. */
-			~CSD_FMIndex();
-		
-		protected:
-			SSA *fm_index;
-			BitSequence *separators;
-			bool use_sampling;
-			uint32_t maxlength;
+  hdt::IteratorUCharString *listAll() {
+    throw std::logic_error("Not Implemented");
+  }
 
-			void build_ssa(unsigned char *text, size_t len, bool sparse_bitsequence, int bparam, bool use_sample, size_t bwt_sample);
-			
-			void quicksort(uint32_t *occs, size_t ini, size_t len);
+  /** General destructor. */
+  ~CSD_FMIndex();
 
-			size_t get_pivot(uint32_t *occs, size_t ini, size_t end);
-	};
+protected:
+  SSA *fm_index;
+  BitSequence *separators;
+  bool use_sampling;
+  uint32_t maxlength;
 
+  void build_ssa(unsigned char *text, size_t len, bool sparse_bitsequence,
+                 int bparam, bool use_sample, size_t bwt_sample);
+
+  void quicksort(uint32_t *occs, size_t ini, size_t len);
+
+  size_t get_pivot(uint32_t *occs, size_t ini, size_t end);
 };
 
+}; // namespace csd
+
 #endif
-#endif  /* _URICDFMINDEX_H */
+#endif /* _URICDFMINDEX_H */
