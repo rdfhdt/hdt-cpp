@@ -392,6 +392,10 @@ void LiteralDictionary::import(	Dictionary *other, ProgressListener *listener) {
 	}
 }
 
+void LiteralDictionary::import(Dictionary *other, ModifiableTriples *triplesList,  ProgressListener *listener) {
+	throw std::logic_error("Not implemented import");
+}
+
 IteratorUCharString *LiteralDictionary::getSubjects() {
 	throw std::logic_error("Not implemented");
 }

@@ -89,7 +89,7 @@ public:
 	 * @throws IOException
 	 * @throws ParserException
 	 */
-	static HDT *generateHDT(const char *rdfFileName, const char *baseURI, RDFNotation rdfNotation, HDTSpecification &hdtFormat, ProgressListener *listener=NULL);
+	static HDT *generateHDT(const char *rdfFileName, const char *baseURI, RDFNotation rdfNotation, HDTSpecification &hdtFormat, ProgressListener *listener=NULL, LoaderType LoaderType = LoaderType::TWO_PASS);
 };
 }
 

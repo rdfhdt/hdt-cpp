@@ -85,6 +85,7 @@ public:
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
     void import(Dictionary *other, ProgressListener *listener=NULL);
+	void import(Dictionary *other, ModifiableTriples *triplesList, ProgressListener *listener=NULL);
 
     IteratorUCharString *getSubjects();
     IteratorUCharString *getPredicates();
