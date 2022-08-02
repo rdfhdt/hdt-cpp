@@ -6,7 +6,7 @@
  *
  *   ==========================================================================
  *     "Compressed String Dictionaries"
- *     Nieves R. Brisaboa, Rodrigo Canovas, Francisco Claude, 
+ *     Nieves R. Brisaboa, Rodrigo Canovas, Francisco Claude,
  *     Miguel A. Martinez-Prieto and Gonzalo Navarro.
  *     10th Symposium on Experimental Algorithms (SEA'2011), p.136-147, 2011.
  *   ==========================================================================
@@ -34,81 +34,83 @@
 #ifndef _COMPRESSEDSTRINGDICTIONARY_H
 #define _COMPRESSEDSTRINGDICTIONARY_H
 
-#include <stdint.h>
 #include <Iterator.hpp>
-#include <iostream>
 #include <cassert>
+#include <iostream>
+#include <stdint.h>
 #include <vector>
 using namespace std;
 
-namespace csd
-{
+namespace csd {
 static const uint32_t PFC = 2;
 static const uint32_t HTFC = 3;
 static const uint32_t FMINDEX = 4;
 static const uint32_t REPAIRDAC = 5;
 static const uint32_t HASHHUFF = 6;
 
-class CSD
-{		
-  public:
-	CSD();
-    /** General destructor */
-    virtual ~CSD() {};
+class CSD {
+public:
+  CSD();
+  /** General destructor */
+  virtual ~CSD(){};
 
-    /** Returns the ID that identify s[1..length]. If it does not exist, 
-	returns 0. 
-	@s: the string to be located.
-	@len: the length (in characters) of the string s.
-    */
-    virtual size_t locate(const unsigned char *s, size_t len)=0;
+  /** Returns the ID that identify s[1..length]. If it does not exist,
+      returns 0.
+      @s: the string to be located.
+      @len: the length (in characters) of the string s.
+  */
+  virtual size_t locate(const unsigned char *s, size_t len) = 0;
 
-    /** Returns the string identified by id.
-	@id: the identifier to be extracted.
-    */
-    virtual unsigned char * extract(size_t id)=0;
+  /** Returns the string identified by id.
+      @id: the identifier to be extracted.
+  */
+  virtual unsigned char *extract(size_t id) = 0;
 
-    /**
-     * Free the string returned by extract()
-     */
-    virtual void freeString(const unsigned char *)=0;
+  /**
+   * Free the string returned by extract()
+   */
+  virtual void freeString(const unsigned char *) = 0;
 
-    /** Returns the size of the structure in bytes. */
-    virtual uint64_t getSize()=0;
+  /** Returns the size of the structure in bytes. */
+  virtual uint64_t getSize() = 0;
 
-    virtual hdt::IteratorUCharString *listAll()=0;
+  virtual hdt::IteratorUCharString *listAll() = 0;
 
-    /** Returns the number of strings in the dictionary. */
-    size_t getLength();
+  /** Returns the number of strings in the dictionary. */
+  size_t getLength();
 
-    // Search for terms by prefix. It returns a vector of a given maximum size "maxResults"
-    virtual void fillSuggestions(const char *prefix, vector<string> &out, int maxResults)=0;
+  // Search for terms by prefix. It returns a vector of a given maximum size
+  // "maxResults"
+  virtual void fillSuggestions(const char *prefix, vector<string> &out,
+                               int maxResults) = 0;
 
-    // Search for terms by prefix. It returns an iterator of all results in the dictionary
-    virtual hdt::IteratorUCharString *getSuggestions(const char *prefix)=0;
+  // Search for terms by prefix. It returns an iterator of all results in the
+  // dictionary
+  virtual hdt::IteratorUCharString *getSuggestions(const char *prefix) = 0;
 
-    // Search for terms by prefix. It returns an iterator of all results in the dictionary, by ID
-    virtual hdt::IteratorUInt *getIDSuggestions(const char *prefix)=0;
+  // Search for terms by prefix. It returns an iterator of all results in the
+  // dictionary, by ID
+  virtual hdt::IteratorUInt *getIDSuggestions(const char *prefix) = 0;
 
-    /** Stores a CSD structure given a file pointer.
-	@fp: pointer to the file saving a CSD structure.
-    */
-    virtual void save(ostream & fp)=0;
+  /** Stores a CSD structure given a file pointer.
+      @fp: pointer to the file saving a CSD structure.
+  */
+  virtual void save(ostream &fp) = 0;
 
-    virtual size_t load(unsigned char *ptr, unsigned char *ptrMax)=0;
+  virtual size_t load(unsigned char *ptr, unsigned char *ptrMax) = 0;
 
-    /** Loads a CSD structure from a file pointer.
-	@fp: pointer to the file storing a CSD structure. */
-    static CSD * load(istream & fp);
+  /** Loads a CSD structure from a file pointer.
+      @fp: pointer to the file storing a CSD structure. */
+  static CSD *load(istream &fp);
 
-    static CSD * create(unsigned char type);
-		
-  protected:
-    unsigned char type; 	//! Dictionary type.
-    size_t tlength;	//! Original Tdict size.
-    size_t numstrings;	//! Number of elements in the dictionary.
-  };
+  static CSD *create(unsigned char type);
 
-}
+protected:
+  unsigned char type; //! Dictionary type.
+  size_t tlength;     //! Original Tdict size.
+  size_t numstrings;  //! Number of elements in the dictionary.
+};
 
-#endif  
+} // namespace csd
+
+#endif

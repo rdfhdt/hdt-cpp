@@ -27,26 +27,21 @@
 
 #include <stdlib.h>
 
-#include <string.h>
 #include "CSD_Cache.h"
+#include <string.h>
 
-namespace csd
+namespace csd {
+CSD_Cache::CSD_Cache(CSD *child)
+    : child(child) //, cacheint(65536), cachestr(1024)
 {
-CSD_Cache::CSD_Cache(CSD *child) : child(child)//, cacheint(65536), cachestr(1024)
-{
-	assert(child);
-	numstrings = child->getLength();
+  assert(child);
+  numstrings = child->getLength();
 }
 
+CSD_Cache::~CSD_Cache() { delete child; }
 
-CSD_Cache::~CSD_Cache()
-{
-	delete child;
-}
-
-size_t CSD_Cache::locate(const unsigned char *s, size_t len)
-{
-	// FIXME: Not working.
+size_t CSD_Cache::locate(const unsigned char *s, size_t len) {
+  // FIXME: Not working.
 #if 0
 	LRU_Str::const_iterator it = cachestr.find((char *)s);
 
@@ -62,50 +57,39 @@ size_t CSD_Cache::locate(const unsigned char *s, size_t len)
 		return value;
 	}
 #endif
-	return child->locate(s, len);
+  return child->locate(s, len);
 }
 
+unsigned char *CSD_Cache::extract(size_t id) {
+  return child->extract(id);
+  /*
+      try {
+          const string &value = cacheint.get(id);
+          size_t len = value.length();
+          unsigned char *ptr = (unsigned char *)malloc((1+len)*sizeof(unsigned
+     char)); strncpy((char *)ptr, (const char *)value.c_str(), len);
+          ptr[len]='\0';
+          return ptr;
+      }catch(std::range_error& e) {
+          // Key not found: compute and insert the value
+          char *value = (char *) child->extract(id);
 
-unsigned char* CSD_Cache::extract(size_t id)
-{
-	return child->extract(id);
-/*
-    try {
-        const string &value = cacheint.get(id);
-        size_t len = value.length();
-        unsigned char *ptr = (unsigned char *)malloc((1+len)*sizeof(unsigned char));
-        strncpy((char *)ptr, (const char *)value.c_str(), len);
-        ptr[len]='\0';
-        return ptr;
-    }catch(std::range_error& e) {
-        // Key not found: compute and insert the value
-        char *value = (char *) child->extract(id);
+          string str(value);
+          cacheint.put(id,str);
 
-        string str(value);
-        cacheint.put(id,str);
-
-        return (unsigned char *)value;
-    }
-*/
+          return (unsigned char *)value;
+      }
+  */
 }
 
 void CSD_Cache::freeString(const unsigned char *str) {
-	// Do nothing.
+  // Do nothing.
 }
 
-uint64_t CSD_Cache::getSize()
-{
-	return child->getSize();
-}
+uint64_t CSD_Cache::getSize() { return child->getSize(); }
 
-void CSD_Cache::save(ostream &fp)
-{
-	child->save(fp);
-}
+void CSD_Cache::save(ostream &fp) { child->save(fp); }
 
-CSD* CSD_Cache::load(istream &fp)
-{
-	throw std::logic_error("Not imlemented");
-}
+CSD *CSD_Cache::load(istream &fp) { throw std::logic_error("Not imlemented"); }
 
-}
+} // namespace csd

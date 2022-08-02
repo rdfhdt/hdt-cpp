@@ -24,110 +24,112 @@
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
 
-#include <stdexcept>
 #include "VByte.h"
+#include <stdexcept>
 
-namespace csd
-{
+namespace csd {
 
-	/**
-	 * Encode value into the buffer using VByte. The caller must make sure that
-	 * at least 10 bytes are available in the buffer for writing.
-	 * Returns the number of read bytes
-	 */
-	size_t VByte::encode(unsigned char *buffer, uint64_t value )
-	{
-		size_t i= 0;
+/**
+ * Encode value into the buffer using VByte. The caller must make sure that
+ * at least 10 bytes are available in the buffer for writing.
+ * Returns the number of read bytes
+ */
+size_t VByte::encode(unsigned char *buffer, uint64_t value) {
+  size_t i = 0;
 
-		while (value>127)
-		{
-			buffer[i] = (unsigned char)(value&127);
-			i++;
-			value>>=7;
-		}
+  while (value > 127) {
+    buffer[i] = (unsigned char)(value & 127);
+    i++;
+    value >>= 7;
+  }
 
-		buffer[i] = (unsigned char)(value|0x80);
-		i++;
+  buffer[i] = (unsigned char)(value | 0x80);
+  i++;
 
-		return i;
-	}
+  return i;
+}
 
-	/**
-	 * Decode value from the buffer using VByte.
-	 */
-    size_t VByte::decode(const unsigned char *buffer, const unsigned char *maxPtr, uint64_t *value)
-	{
-		*value = 0;
-		int i = 0;
-		int shift = 0;
+/**
+ * Decode value from the buffer using VByte.
+ */
+size_t VByte::decode(const unsigned char *buffer, const unsigned char *maxPtr,
+                     uint64_t *value) {
+  *value = 0;
+  int i = 0;
+  int shift = 0;
 
-		while ( (&buffer[i]<=maxPtr) && !(buffer[i] & 0x80) )
-		{
-		   	if(shift>50) {
-		   		cerr << "VByte.decode(uint64_t) Read too many bytes and still did not find a terminating byte" << endl;
-		   	}
+  while ((&buffer[i] <= maxPtr) && !(buffer[i] & 0x80)) {
+    if (shift > 50) {
+      cerr << "VByte.decode(uint64_t) Read too many bytes and still did not "
+              "find a terminating byte"
+           << endl;
+    }
 
-			*value |= (size_t)(buffer[i] & 127) << shift;
-			i++;
-			shift+=7;
-		}
+    *value |= (size_t)(buffer[i] & 127) << shift;
+    i++;
+    shift += 7;
+  }
 
-		*value |= (size_t)(buffer[i] & 127) << shift;
-		i++;
+  *value |= (size_t)(buffer[i] & 127) << shift;
+  i++;
 
-		return i;
-	}
+  return i;
+}
 
-	/**
-	 * Decode value from the buffer using VByte.
-	 */
-    size_t VByte::decode(const unsigned char *buffer, const unsigned char *maxPtr, uint32_t *value)
-	{
-		*value = 0;
-		int i = 0;
-		int shift = 0;
+/**
+ * Decode value from the buffer using VByte.
+ */
+size_t VByte::decode(const unsigned char *buffer, const unsigned char *maxPtr,
+                     uint32_t *value) {
+  *value = 0;
+  int i = 0;
+  int shift = 0;
 
-		while ((&buffer[i]<=maxPtr) && !(buffer[i] & 0x80) )
-		{
-			if(shift>50) {
-		   		cerr << "VByte.decode(uint32_t) Read too many bytes and still did not find a terminating byte" << endl;
-		   	}
+  while ((&buffer[i] <= maxPtr) && !(buffer[i] & 0x80)) {
+    if (shift > 50) {
+      cerr << "VByte.decode(uint32_t) Read too many bytes and still did not "
+              "find a terminating byte"
+           << endl;
+    }
 
-			*value |= (buffer[i] & 127) << shift;
-			i++;
-			shift+=7;
-		}
+    *value |= (buffer[i] & 127) << shift;
+    i++;
+    shift += 7;
+  }
 
-		*value |= (buffer[i] & 127) << shift;
-		i++;
+  *value |= (buffer[i] & 127) << shift;
+  i++;
 
-		return i;
-	}
+  return i;
+}
 
-	void VByte::encode(ostream &out, uint64_t value)
-	{
-		while( value > 127) {
-			out.put((char)(value & 127));
-			value>>=7;
-		}
-		out.put((char)(value|0x80));
-	}
+void VByte::encode(ostream &out, uint64_t value) {
+  while (value > 127) {
+    out.put((char)(value & 127));
+    value >>= 7;
+  }
+  out.put((char)(value | 0x80));
+}
 
-	uint64_t VByte::decode(istream &in)
-	{
-	    uint64_t out = 0;
-	    int shift=0;
-	    uint64_t readbyte = in.get(); if(!in.good()) throw std::runtime_error("Error reading input");
+uint64_t VByte::decode(istream &in) {
+  uint64_t out = 0;
+  int shift = 0;
+  uint64_t readbyte = in.get();
+  if (!in.good())
+    throw std::runtime_error("Error reading input");
 
-	    while( (readbyte & 0x80)==0) {
-	    	if(shift>50) {
-	    		throw std::runtime_error("VByte.istream() Read too many bytes and still did not find a terminating byte");
-	    	}
-		    out |= (readbyte & 127) << shift;
-		    readbyte = in.get(); if(!in.good()) throw std::runtime_error("Error reading input");
-		    shift+=7;
-	    }
-	    out |= (readbyte & 127) << shift;
-	    return out;
-	}
-};
+  while ((readbyte & 0x80) == 0) {
+    if (shift > 50) {
+      throw std::runtime_error("VByte.istream() Read too many bytes and still "
+                               "did not find a terminating byte");
+    }
+    out |= (readbyte & 127) << shift;
+    readbyte = in.get();
+    if (!in.good())
+      throw std::runtime_error("Error reading input");
+    shift += 7;
+  }
+  out |= (readbyte & 127) << shift;
+  return out;
+}
+}; // namespace csd
