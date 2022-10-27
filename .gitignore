@@ -13,6 +13,9 @@
 *.la
 .dirstamp
 
+# Wasm files
+*.wasm
+
 # Executables
 hdt2rdf
 hdtInfo
