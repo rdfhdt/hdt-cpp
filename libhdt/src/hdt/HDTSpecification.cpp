@@ -63,6 +63,13 @@ const std::string& HDTSpecification::get(const std::string& key) {
 	return map.at(key);
 }
 
+const std::string emptyString = "";
+
+const std::string& HDTSpecification::getOrEmpty(const std::string& key) {
+	if(map.count(key) == 0) return emptyString;
+	return map.at(key);
+}
+
 void HDTSpecification::set(const std::string& key, const std::string& value) {
 	map[key] = value;
 }

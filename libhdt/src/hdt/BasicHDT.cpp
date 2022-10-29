@@ -96,12 +96,8 @@ void BasicHDT::createComponents() {
 
 	// DICTIONARY
 
-	std::string dictType = "";
-	try{
-		dictType = spec.get("dictionary.type");
-	}
-	catch (std::exception& e){
-	}
+	std::string dictType = spec.getOrEmpty("dictionary.type");
+
 
 	if(dictType==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
 		dictionary = new FourSectionDictionary(spec);
@@ -118,11 +114,8 @@ void BasicHDT::createComponents() {
 	}
 
 	// TRIPLES
-	std::string triplesType = "";
-	try{
-		triplesType = spec.get("triples.type");
-	}catch (std::exception& e) {
-	}
+	std::string triplesType = spec.getOrEmpty("triples.type");
+
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		triples = new BitmapTriples(spec);
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
@@ -299,11 +292,8 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		triplesList->stopProcessing(&iListener);
 
 		// SORT & Duplicates
-		string ord = "";
-		try{
-			ord = spec.get("triplesOrder");
-		}catch (std::exception& e){
-		}
+		string ord = spec.getOrEmpty("triplesOrder");
+
 		TripleComponentOrder order = parseOrder(
 				ord.c_str());
 		if (order == Unknown) {
@@ -581,12 +571,8 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 		triplesList->stopProcessing(&iListener);
 
 		// SORT & Duplicates
-		string ord = "";
-		try{
-			ord = spec.get("triplesOrder");
-		}
-		catch (std::exception& e){
-		}
+		string ord = spec.getOrEmpty("triplesOrder");
+
 		TripleComponentOrder order = parseOrder(ord.c_str());
 		if (order == Unknown) {
 			order = SPO;

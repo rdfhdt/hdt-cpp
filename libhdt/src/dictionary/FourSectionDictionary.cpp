@@ -56,10 +56,7 @@ FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksiz
 	objects = new csd::CSD_PFC();
 	shared = new csd::CSD_PFC();
 
-	string blockSizeStr = "";
-	try{
-		blockSizeStr = spec.get("dict.block.size");
-	}catch(exception& e){}
+	string blockSizeStr = spec.getOrEmpty("dict.block.size");
 
 	if(!blockSizeStr.empty() && (blockSizeStr.find_first_not_of("0123456789") == string::npos))
 	{

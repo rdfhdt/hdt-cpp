@@ -44,12 +44,9 @@ namespace hdt {
 #define CHECK_BITMAPTRIPLES_INITIALIZED if(bitmapY==NULL || bitmapZ==NULL){	throw std::runtime_error("Accessing uninitialized BitmapTriples"); }
 
 BitmapTriples::BitmapTriples() : order(SPO) {
-	string typey="";
-	string typez="";
-	try{
-		typey = spec.get("stream.y");
-		typez = spec.get("stream.z");
-	}catch (std::exception& e){}
+	string typey=spec.getOrEmpty("stream.y");
+	string typez=spec.getOrEmpty("stream.z");
+
 	arrayY = IntSequence::getArray(typey);
 	arrayZ = IntSequence::getArray(typez);
 	arrayIndex = NULL;
@@ -61,20 +58,14 @@ BitmapTriples::BitmapTriples() : order(SPO) {
 }
 
 BitmapTriples::BitmapTriples(HDTSpecification &specification) : spec(specification) {
-	std::string orderStr = "";
-	try{
-		orderStr = spec.get("triplesOrder");
-	}catch (std::exception& e){}
+	std::string orderStr = spec.getOrEmpty("triplesOrder");
 
 	order= parseOrder(orderStr.c_str());
 	if(order==Unknown)
 		order = SPO;
-	string typey="";
-	string typez="";
-	try{
-		typey = spec.get("stream.y");
-		typez = spec.get("stream.z");
-	}catch (std::exception& e){}
+	string typey= spec.getOrEmpty("stream.y");
+	string typez= spec.getOrEmpty("stream.z");
+
 	arrayY = IntSequence::getArray(typey);
 	arrayZ = IntSequence::getArray(typez);
 	arrayIndex = NULL;
@@ -852,11 +843,7 @@ size_t BitmapTriples::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progr
     }
 
     size_t numTriples = controlInformation.getUint("numTriples");
-    std::string typeIndex ="";
-    try{
-    	typeIndex = controlInformation.get("stream.index");
-    }
-    catch(exception &e){}
+    std::string typeIndex = spec.getOrEmpty("stream.index");
 
     if(this->getNumberOfElements()!=numTriples) {
     	// FIXME: Force index regeneration instead of error.
