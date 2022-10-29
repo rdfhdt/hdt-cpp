@@ -72,6 +72,13 @@ public:
 	  */
 	const std::string& get(const std::string& key);
 
+
+	/**
+	  * Get the value of a property, or "" if the key is not found.
+	  */
+	const std::string& getOrEmpty(const std::string& key);
+
+
 	/** Set the value of a property */
 	void set(const std::string& key, const std::string& value);
 };
