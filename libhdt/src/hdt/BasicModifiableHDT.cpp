@@ -28,13 +28,10 @@ BasicModifiableHDT::~BasicModifiableHDT() {
 
 void BasicModifiableHDT::createComponents() {
 	#ifndef __EMSCRIPTEN__
-	try{
+	try {
 		std::string dictType = spec.get("dictionary.type");
 		std::string triplesType = spec.get("triples.type");
-	}
-	 catch (std::exception& e)
-	  {
-	  }
+	}catch (std::exception& e){ }
 
 	#endif
 
