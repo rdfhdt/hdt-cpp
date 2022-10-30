@@ -66,8 +66,24 @@ const std::string& HDTSpecification::get(const std::string& key) {
 const std::string emptyString = "";
 
 const std::string& HDTSpecification::getOrEmpty(const std::string& key) {
-	if(map.count(key) == 0) return emptyString;
-	return map.at(key);
+
+	/* Webassembly does not play nice with C++ 
+	
+	https://emscripten.org/docs/porting/exceptions.html
+	https://stackoverflow.com/questions/69608789/c-exception-to-exception-less
+	
+	*/
+	#ifdef __EMSCRIPTEN__
+	auto it = map.find(key);
+	return it == map.end() ? emptyString : it->second;
+
+	#else
+	try {
+		return map.at(key);
+	}catch (std::exception& e) {
+		return emptyString;
+	}
+	#endif
 }
 
 void HDTSpecification::set(const std::string& key, const std::string& value) {
