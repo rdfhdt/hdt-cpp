@@ -57,10 +57,8 @@ LiteralDictionary::LiteralDictionary(HDTSpecification & spec) : blocksize(8) {
 	objectsLiterals = new csd::CSD_FMIndex();
 	shared = new csd::CSD_PFC();
 
-	string blockSizeStr = "";
-	try{
-		blockSizeStr = spec.get("dict.block.size");
-	}catch(exception& e){}
+	string blockSizeStr = spec.getOrEmpty("dict.block.size");
+
 	if (blockSizeStr != "") {
 		blocksize = atoi(blockSizeStr.c_str());
 	}

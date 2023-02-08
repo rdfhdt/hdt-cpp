@@ -157,9 +157,25 @@ void BitSequence375::set(const size_t i, bool val) {
         array = &data[0];
 	}
 	if(val) {
+		#ifdef __EMSCRIPTEN__
+		/* Webassembly size_t differs from the one of
+		other architectures.
+		EDITED BY @lucafabbian, TODO: check  */
+		// fprintf(stderr, "[WARN] Unsafe cast called\n");
+		bitset((uint64_t*) &array[0], i);
+		#else
 		bitset(&array[0], i);
+		#endif
 	} else {
+		#ifdef __EMSCRIPTEN__
+		/* Webassembly size_t differs from the one of
+		other architectures.
+		EDITED BY @lucafabbian,  TODO: check */
+		// fprintf(stderr, "[WARN] Unsafe cast called\n");
+		bitclean((uint64_t*)&array[0], i);
+		#else
 		bitclean(&array[0], i);
+		#endif
 	}
 
 	numbits = i>=numbits ? i+1 : numbits;
@@ -173,7 +189,15 @@ void BitSequence375::append(bool bit) {
 
 bool BitSequence375::access(const size_t i) const
 {
+	#ifdef __EMSCRIPTEN__
+	/* Webassembly size_t differs from the one of
+	other architectures.
+	EDITED BY @lucafabbian, TODO: check */
+	//fprintf(stderr, "[WARN] Unsafe cast called\n");
+	return bitget((uint64_t*)array, i);
+	#else
 	return bitget(array, i);
+	#endif
 }
 
 void BitSequence375::save(ostream & out) const
