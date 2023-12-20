@@ -98,7 +98,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
                 it->skip(offset);
                 offset = 0;
             }
-            catch (const runtime_error error) {
+            catch (const runtime_error&) {
                 /*invalid offset*/
                 interruptSignal = 1;
             }

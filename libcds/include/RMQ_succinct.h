@@ -55,7 +55,7 @@ namespace cds_static
 			void  save(ostream & fp);
 			RMQ_succinct * load(istream & fp);
 
-			~RMQ_succinct();
+			virtual ~RMQ_succinct();
 
 		protected:
 			/* size of array a*/
