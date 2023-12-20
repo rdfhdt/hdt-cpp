@@ -24,9 +24,11 @@
 namespace cds_static
 {
 
-	WaveletMatrix::WaveletMatrix(const Array &symbols2, BitSequenceBuilder * bmb, Mapper * am) : Sequence(n) {
+	WaveletMatrix::WaveletMatrix(const Array &symbols2, BitSequenceBuilder * bmb, Mapper * am) : Sequence(0) {
 		bmb->use();
 		n = symbols2.getLength();
+		this->length = n; // sets Sequence::length (Sequence(0) in initializer)
+
 		uint *symbols = new uint[n];
 		this->am = am;
 		am->use();
@@ -81,8 +83,6 @@ namespace cds_static
 		delete [] _bm;
 		// delete [] oc;
 		bmb->unuse();
-
-		this->length = n;
 	}
 
 	WaveletMatrix::WaveletMatrix(uint * symbols, size_t n, BitSequenceBuilder * bmb, Mapper * am, bool deleteSymbols) : Sequence(n) {

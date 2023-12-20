@@ -54,7 +54,7 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence,
 
   this->type = FMINDEX;
   string element;
-  unsigned char *text;
+  unsigned char *text; // TODO: std::vector<unsigned char>
   uint *bitmap = 0;
   // uint32_t *bitmap = 0;
 
@@ -149,7 +149,7 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence,
     separators = new BitSequenceRG(bitmap, len, 4);
     delete[] bitmap;
   }
-  delete[] text;
+  free(text);
 }
 
 void CSD_FMIndex::build_ssa(unsigned char *text, size_t len,
