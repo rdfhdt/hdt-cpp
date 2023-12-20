@@ -49,7 +49,7 @@ namespace cds_static
 			 **/
 			TextIndexCSA(uchar *text, ulong length, char *build_options);
 
-			~TextIndexCSA();
+			virtual ~TextIndexCSA();
 
 			/* Writes in numocc the number of occurrences of the substring
 			 * pattern[0..length-1] found in the text indexed by index. */

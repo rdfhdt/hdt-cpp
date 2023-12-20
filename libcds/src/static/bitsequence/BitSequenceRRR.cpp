@@ -422,7 +422,7 @@ namespace cds_static
 			ret->create_sampling(ret->sample_rate);
 			return ret;
 		}
-		catch(exception e) {
+		catch(const exception&) {
 			delete ret;
 		}
 		return NULL;
