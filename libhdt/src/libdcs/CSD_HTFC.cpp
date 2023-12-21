@@ -25,6 +25,7 @@
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
 
+#include <string>
 #include "CSD_HTFC.h"
 
 #if HAVE_CDS
@@ -57,8 +58,9 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
   vector<uint> xblocks; // Temporal storage for start positions
 
-  unsigned char *previousStr = NULL, *currentStr = NULL;
-  uint previousLength = 0, currentLength = 0;
+  std::basic_string<unsigned char> previousStr((const unsigned char*)"");
+  unsigned char *currentStr = NULL;
+  uint currentLength = 0;
 
   while (it->hasNext()) {
     currentStr = it->next();
@@ -99,8 +101,8 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
       // Regular string
 
       // Calculating the length of the long common prefix
-      uint delta = longest_common_prefix(previousStr, currentStr,
-                                         previousLength, currentLength);
+      uint delta = longest_common_prefix(previousStr.data(), currentStr,
+                                         previousStr.length(), currentLength);
 
       // cout << "Block: " << nblocks << " Pos: "<< length << endl;
       // cout << previousStr << endl << currentStr << endl << " Delta: " <<
@@ -121,8 +123,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
     // New string processed
     numstrings++;
-    memcpy(previousStr, currentStr, currentLength);
-    previousLength = currentLength;
+    previousStr.assign(currentStr, currentLength);
 
     it->freeStr(currentStr);
     // NOTIFYCOND(listener, "Converting dictionary to HTFC", length,
