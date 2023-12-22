@@ -303,7 +303,7 @@ void TripleListDisk::insert(TripleID &triple)
 
 	//cout << "Insert: " <<&pointer[numTotalTriples] << "* "<< triple << " "<<sizeof(TripleID) << endl;
 
-	memcpy(&arrayTriples[numTotalTriples], &triple, sizeof(TripleID));
+	arrayTriples[numTotalTriples] = triple;
 	numTotalTriples++;
 	numValidTriples++;
 	//cout << "Inserted: "<< numTotalTriples << endl;

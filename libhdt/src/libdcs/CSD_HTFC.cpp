@@ -93,7 +93,8 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
       // The string is explicitly copied to the
       // encoded sequence.
-      strncpy((char *)(textfc + bytesfc), (char *)currentStr, currentLength);
+      strncpy((char *)(textfc + bytesfc), (char *)currentStr, reservedSize - bytesfc);
+      textfc[reservedSize-1] = '\0'; // shouldn't be needed, but make compiler happy
       bytesfc += currentLength;
 
       // cout << nblocks-1 << "," << length << " => " << currentStr << endl;
@@ -113,7 +114,8 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
       // The suffix is copied to the sequence
       strncpy((char *)(textfc + bytesfc), (char *)currentStr + delta,
-              currentLength - delta);
+              reservedSize - bytesfc);
+      textfc[reservedSize-1] = '\0';
       bytesfc += currentLength - delta;
       // cout << nblocks-1 << "," << length << " => " << currentStr << endl;
     }
@@ -333,8 +335,8 @@ void CSD_HTFC::dumpBlock(uint block) {
   uint idInBlock = 0;
 
   // Reading the first string
-  strncpy((char *)string, (char *)(text + pos), slen);
-  string[slen] = '\0';
+  strncpy((char *)string, (char *)(text + pos), maxlength + 1);
+  string[maxlength] = '\0';
   pos += slen;
 
   cout << block * blocksize + idInBlock << " (" << idInBlock << ") => "
@@ -352,7 +354,8 @@ void CSD_HTFC::dumpBlock(uint block) {
 
     // Copying the suffix
     slen = strlen((char *)text + pos) + 1;
-    strncpy((char *)(string + delta), (char *)(text + pos), slen);
+    strncpy((char *)(string + delta), (char *)(text + pos), maxlength + 1 - delta);
+    string[maxlength] = '\0'; // shouldn't be needed, but make compiler happy
 
     cout << block * blocksize + idInBlock << " (" << idInBlock << ") => "
          << string << " Delta=" << delta << " Len=" << slen << endl;

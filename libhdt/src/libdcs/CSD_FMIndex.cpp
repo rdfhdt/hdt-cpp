@@ -99,7 +99,8 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence,
       text =
           (unsigned char *)realloc(text, reservedSize * sizeof(unsigned char));
     }
-    strncpy((char *)(text + total), (char *)currentStr, currentLength);
+    strncpy((char *)(text + total), (char *)currentStr, reservedSize - total);
+    text[reservedSize-1] = '\0'; // shouldn't be needed, but make compiler happy
 
     total += currentLength;
 
@@ -118,7 +119,7 @@ CSD_FMIndex::CSD_FMIndex(hdt::IteratorUCharString *it, bool sparse_bitsequence,
   textFinal = new char[total + 1];
   //	cout<<"testing:total cpy:"<<total<<endl;
   //	cout<<"testing:text:"<<text<<endl;
-  strncpy((char *)(textFinal), (char *)text, total);
+  strncpy((char *)(textFinal), (char *)text, total + 1);
   textFinal[total] = '\0'; // end of the text
   //	cout<<"testing:textFinal:"<<textFinal<<endl;
 
