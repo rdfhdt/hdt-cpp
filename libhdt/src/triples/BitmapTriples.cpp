@@ -204,7 +204,7 @@ struct sort_pred {
 };
 
 // function object
-class PredicateComparator : public std::binary_function<unsigned int,unsigned int,bool>
+class PredicateComparator
 {
 private:
 	IntSequence *array;
