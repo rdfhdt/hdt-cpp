@@ -185,7 +185,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 
 	serd_reader_set_error_sink(reader, hdtserd_on_error, NULL);
 
-	const uint8_t* input=serd_uri_to_path((const uint8_t *)fileName);
+	uint8_t* input=serd_file_uri_parse((const uint8_t *)fileName, NULL);
 
 	if(fileUtil::str_ends_with(fileName,".gz")){
 
@@ -216,6 +216,7 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 
 	serd_env_free(env);
 	serd_node_free(&base);
+        serd_free(input);
 }
 
 }
