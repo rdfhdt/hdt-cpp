@@ -53,8 +53,8 @@ bool testLCP(LCP *s1, LCP *s2, TextIndex *csa){
 
 
 int main(int argc, char *argv[]){
-	char *text;
-	size_t length;
+	char *text = nullptr;
+	size_t length = 0;
 	LCP *lcp_naive=NULL;
 	LCP *lcp=NULL;
 

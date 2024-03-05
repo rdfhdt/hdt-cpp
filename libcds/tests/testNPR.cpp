@@ -71,8 +71,8 @@ bool testNPR(NPR *npr, LCP *lcp, TextIndex *csa,  size_t *naive_nsv, size_t *nai
 
 
 int main(int argc, char *argv[]){
-	char *text;
-	size_t length;
+	char *text = nullptr;
+	size_t length = 0;
 	LCP *lcp = NULL;
 	NPR *npr = NULL;
 
