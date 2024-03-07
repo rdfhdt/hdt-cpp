@@ -57,7 +57,7 @@ stamp-h1
 .deps/
 
 *.hdt
-*.hdt.index
+*.hdt.index*
 *.nq
 *.nt
 *.rdf
