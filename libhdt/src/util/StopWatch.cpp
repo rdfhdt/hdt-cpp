@@ -31,6 +31,7 @@
 #include <sstream>
 
 #include <string.h> // For memcpy()
+#include <cstdint>  // for uint64_t etc
 
 #include "StopWatch.hpp"
 

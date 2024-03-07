@@ -24,9 +24,10 @@
 namespace cds_static
 {
 
-    WaveletTreeNoptrsS::WaveletTreeNoptrsS(const Array &symb, BitSequenceBuilder * bmb, Mapper * am) : Sequence(n) {
+    WaveletTreeNoptrsS::WaveletTreeNoptrsS(const Array &symb, BitSequenceBuilder * bmb, Mapper * am) : Sequence(0) {
         bmb->use();
         this->n=symb.getLength();
+        this->length = this->n; // sets Sequence::length (Sequence(0) in initializer)
         this->am=am;
         bool deleteSymbols = true;
         am->use();
@@ -80,7 +81,7 @@ namespace cds_static
                 _bm[i][j]=0;
         }
 
-        build_level(_bm,new_symb,new_n,occurrences);
+        build_level(_bm,new_symb,new_n);
         bitstring = new BitSequence*[height];
         for(uint i=0;i<height;i++) {
             bitstring[i] = bmb->build(_bm[i],new_n);
@@ -148,7 +149,7 @@ namespace cds_static
                 _bm[i][j]=0;
         }
 
-        build_level(_bm,new_symb,new_n,occurrences);
+        build_level(_bm,new_symb,new_n);
         bitstring = new BitSequence*[height];
         for(uint i=0;i<height;i++) {
             bitstring[i] = bmb->build(_bm[i],new_n);
@@ -328,7 +329,7 @@ namespace cds_static
         return bytesBitstrings+occ->getSize()+ptrs;
     }
 
-    void WaveletTreeNoptrsS::build_level(uint **bm, uint *symbols, uint length, uint *occs) {
+    void WaveletTreeNoptrsS::build_level(uint **bm, uint *symbols, uint length) {
             // for (uint i = 0; i < length; i++)
             //     cout << " " << symbols[i];
             // cout << endl;

@@ -25,6 +25,7 @@
  *   Miguel A. Martinez-Prieto:  migumar2@infor.uva.es
  */
 
+#include <string>
 #include "CSD_HTFC.h"
 
 #if HAVE_CDS
@@ -57,8 +58,9 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
   vector<uint> xblocks; // Temporal storage for start positions
 
-  unsigned char *previousStr = NULL, *currentStr = NULL;
-  uint previousLength = 0, currentLength = 0;
+  std::basic_string<unsigned char> previousStr((const unsigned char*)"");
+  unsigned char *currentStr = NULL;
+  uint currentLength = 0;
 
   while (it->hasNext()) {
     currentStr = it->next();
@@ -91,7 +93,8 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
       // The string is explicitly copied to the
       // encoded sequence.
-      strncpy((char *)(textfc + bytesfc), (char *)currentStr, currentLength);
+      strncpy((char *)(textfc + bytesfc), (char *)currentStr, reservedSize - bytesfc);
+      textfc[reservedSize-1] = '\0'; // shouldn't be needed, but make compiler happy
       bytesfc += currentLength;
 
       // cout << nblocks-1 << "," << length << " => " << currentStr << endl;
@@ -99,8 +102,8 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
       // Regular string
 
       // Calculating the length of the long common prefix
-      uint delta = longest_common_prefix(previousStr, currentStr,
-                                         previousLength, currentLength);
+      uint delta = longest_common_prefix(previousStr.data(), currentStr,
+                                         previousStr.length(), currentLength);
 
       // cout << "Block: " << nblocks << " Pos: "<< length << endl;
       // cout << previousStr << endl << currentStr << endl << " Delta: " <<
@@ -111,7 +114,8 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
       // The suffix is copied to the sequence
       strncpy((char *)(textfc + bytesfc), (char *)currentStr + delta,
-              currentLength - delta);
+              reservedSize - bytesfc);
+      textfc[reservedSize-1] = '\0';
       bytesfc += currentLength - delta;
       // cout << nblocks-1 << "," << length << " => " << currentStr << endl;
     }
@@ -121,8 +125,7 @@ CSD_HTFC::CSD_HTFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
     // New string processed
     numstrings++;
-    memcpy(previousStr, currentStr, currentLength);
-    previousLength = currentLength;
+    previousStr.assign(currentStr, currentLength);
 
     it->freeStr(currentStr);
     // NOTIFYCOND(listener, "Converting dictionary to HTFC", length,
@@ -332,8 +335,8 @@ void CSD_HTFC::dumpBlock(uint block) {
   uint idInBlock = 0;
 
   // Reading the first string
-  strncpy((char *)string, (char *)(text + pos), slen);
-  string[slen] = '\0';
+  strncpy((char *)string, (char *)(text + pos), maxlength + 1);
+  string[maxlength] = '\0';
   pos += slen;
 
   cout << block * blocksize + idInBlock << " (" << idInBlock << ") => "
@@ -351,7 +354,8 @@ void CSD_HTFC::dumpBlock(uint block) {
 
     // Copying the suffix
     slen = strlen((char *)text + pos) + 1;
-    strncpy((char *)(string + delta), (char *)(text + pos), slen);
+    strncpy((char *)(string + delta), (char *)(text + pos), maxlength + 1 - delta);
+    string[maxlength] = '\0'; // shouldn't be needed, but make compiler happy
 
     cout << block * blocksize + idInBlock << " (" << idInBlock << ") => "
          << string << " Delta=" << delta << " Len=" << slen << endl;
