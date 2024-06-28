@@ -81,7 +81,7 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize,
       nblocks++;
 
       // The string is explicitly copied to the encoded sequence.
-      strncpy((char *)(text + bytes), (char *)currentStr, currentLength);
+      strncpy((char *)(text + bytes), (char *)currentStr, reservedSize - bytes);
       bytes += currentLength;
     } else {
       // Regular string
@@ -96,7 +96,7 @@ CSD_PFC::CSD_PFC(hdt::IteratorUCharString *it, uint32_t blocksize,
 
       // The suffix is copied to the sequence
       strncpy((char *)(text + bytes), (char *)currentStr + delta,
-              currentLength - delta);
+              reservedSize - bytes);
       bytes += currentLength - delta;
     }
 
