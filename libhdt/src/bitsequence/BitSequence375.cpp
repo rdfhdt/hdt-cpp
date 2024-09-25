@@ -1,4 +1,5 @@
 /* BitSequence375.cpp
+   Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
    Copyright (C) 2005, Rodrigo Gonzalez, all rights reserved.
 
    New RANK, SELECT, SELECT-NEXT and SPARSE RANK implementations.
@@ -95,6 +96,7 @@ void BitSequence375::buildIndex()
 	//cout << "Blocks: " << numwords << " Super: "<< superblocks.size() << " Size: " << superblocks.size()*8 << endl;
 
 	// Fill them
+	uint64_t x{};
 	while(blockIndex < numwords)
 	{
 		if(!(blockIndex%BLOCKS_PER_SUPER))
@@ -107,7 +109,8 @@ void BitSequence375::buildIndex()
 		}
 
 		blocks[blockIndex] = blockPop;
-		blockPop += popcount64(array[blockIndex]);
+		memcpy(&x, &array[blockIndex], sizeof(size_t));
+		blockPop += popcount64(x);
 		blockIndex++;
 	}
 
@@ -405,7 +408,9 @@ size_t BitSequence375::select1(const size_t x) const
 	countdown -= blocks[blockIdx];
 
 	// Search bit inside block
-	size_t bitpos = wordSelect1(array[blockIdx], countdown);
+	size_t value{};
+	memcpy(&value, &array[blockIdx], sizeof(value));
+	size_t bitpos = wordSelect1(value, countdown);
 
 	return blockIdx * WORDSIZE + bitpos - 1;
 }

@@ -47,7 +47,6 @@ script:
   - ./configure --prefix=$LOCAL CXX=$HDT_CPP
   - make -j2
   # Make and run selected tests. Most tests in HDT are failing
-  - make check -j2 -C libcds || ( cat libcds/tests/test-suite.log && exit -1)
   - make check -j2 -C libhdt || ( cat libhdt/tests/test-suite.log && exit -1)
   # Install
   - make install
@@ -61,10 +60,7 @@ script:
   - test -f $LOCAL/bin/replaceHeader
   - test -f $LOCAL/bin/searchHeader
   - test -f $LOCAL/lib/libhdt.la
-  - test -f $LOCAL/lib/libcds.la
   - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $LOCAL/lib/libhdt.so; fi"
-  - "if [ \"$TRAVIS_OS_NAME\" = \"linux\" ]; then test -L $LOCAL/lib/libcds.so; fi"
   - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $LOCAL/lib/libhdt.dylib; fi"
-  - "if [ \"$TRAVIS_OS_NAME\" = \"osx\" ]; then test -L $LOCAL/lib/libcds.dylib; fi"
   - test -f $LOCAL/lib/pkgconfig/hdt.pc
   - test -f $LOCAL/lib/pkgconfig/cds.pc

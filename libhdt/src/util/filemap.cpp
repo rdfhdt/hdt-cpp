@@ -1,9 +1,10 @@
 /*
  * File: mmap.cpp
- * Last modified: $Date: 2012-09-19 12:02:39 +0100 (mié, 19 sep 2012) $
+ * Last modified: $Date$
  * Revision: $Revision: 278 $
- * Last modified by: $Author: mario.arias $
+ * Last modified by: $Author$
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
@@ -117,7 +118,7 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
 	}
 
 	// Mark as needed so the OS keeps as much as possible in memory
-    madvise((void*)ptr, mappedSize, MADV_WILLNEED);
+    posix_madvise((void*)ptr, mappedSize, POSIX_MADV_WILLNEED);
 
 #endif
 }

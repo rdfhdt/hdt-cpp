@@ -33,7 +33,6 @@ RUN apt update; \
 
 # Copy in libraries and binaries from build stage.
 COPY --from=build \
-        /usr/local/lib/libcds* \
         /usr/local/lib/libhdt* \
         /usr/local/lib/
 COPY --from=build \

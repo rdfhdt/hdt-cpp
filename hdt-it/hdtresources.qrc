@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/images">
-        <file>editreset.png</file>
-        <file>logo-hdt.png</file>
-        <file>loading.gif</file>
-    </qresource>
-</RCC>

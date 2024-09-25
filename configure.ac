@@ -28,16 +28,8 @@ AC_MSG_CHECKING(whether to enable optimizations)
 AC_ARG_ENABLE([optimization],
   AS_HELP_STRING([--enable-optimization],[Build library with optimization parameters [default=yes]]),
   [AC_MSG_RESULT(${enableval})],
-  [CXXFLAGS="${CXXFLAGS} -g -O2 -std=c++11"]
+  [CXXFLAGS="${CXXFLAGS} -g -O2 -std=c++14"]
   [AC_MSG_RESULT(yes)])
-
-AC_MSG_CHECKING(whether to build libcds)
-AC_ARG_ENABLE([libcds],
-  AS_HELP_STRING([--enable-libcds],[Build libcds [default=yes]]),
-  [AC_MSG_RESULT(${enableval})],
-  [enable_cds=yes]
-  [AC_MSG_RESULT(yes)])
-AM_CONDITIONAL([WANTS_LIBCDS], [test x$enable_cds != xno])
 
 # Dependencies
 AC_ARG_WITH([zlib],
@@ -94,8 +86,5 @@ AC_CONFIG_FILES([
   libhdt/Makefile
   libhdt/tools/Makefile
   libhdt/tests/Makefile
-  libcds/cds.pc
-  libcds/Makefile
-  libcds/tests/Makefile
 ])
 AC_OUTPUT

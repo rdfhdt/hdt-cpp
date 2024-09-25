@@ -4,6 +4,7 @@
  * Revision: $Revision$
  * Last modified by: $Author$
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
@@ -55,7 +56,7 @@ public:
 
     virtual void doParse(const char *fileName, const char *baseUri, RDFNotation notation, bool ignoreErrors, RDFCallback *callback)=0;
 
-	static RDFParserCallback *getParserCallback(RDFNotation notation);
+	static RDFParserCallback *getParserCallback(RDFNotation notation, const std::string& bnode_prefix);
 };
 
 class RDFParserPull: public IteratorTripleString {

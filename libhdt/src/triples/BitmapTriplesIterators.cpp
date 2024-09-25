@@ -93,20 +93,42 @@ void BitmapTriplesSearchIterator::findRange()
         // S X X
         if(patY!=0) {
             // S P X
-            try {
-                minY = adjY.find(patX-1, patY);
+            minY = adjY.find(patX-1, patY);
+            if (minY < static_cast<size_t>(-1))
+            {
                 maxY = minY+1;
-                if(patZ!=0) {
+                if(patZ!=0)
+                {
                     // S P O
                     minZ = adjZ.find(minY,patZ);
-                    maxZ = minZ+1;
-                } else {
+                    if (minZ < static_cast<size_t>(-1))
+                    {
+                        maxZ = minZ+1;
+                    }
+                    else
+                    {
+                        // Item not found in list, no results.
+                        minY = minZ = maxY = maxZ = 0;
+                    }
+                } 
+                else
+                {
                     // S P ?
                     minZ = adjZ.find(minY);
-                    maxZ = adjZ.last(minY)+1;
-                    //maxZ = adjZ.findNext(minZ);
+                    if (minZ < static_cast<size_t>(-1))
+                    {
+                        maxZ = adjZ.last(minY)+1;
+                        //maxZ = adjZ.findNext(minZ);
+                    }
+                    else
+                    {
+                        // Item not found in list, no results.
+                        minY = minZ = maxY = maxZ = 0;
+                    }
                 }
-            } catch (std::exception& e) {
+            }
+            else
+            {
                 // Item not found in list, no results.
                 minY = minZ = maxY = maxZ = 0;
             }

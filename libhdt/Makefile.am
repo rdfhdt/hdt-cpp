@@ -162,10 +162,5 @@ $(KYOTO_CFLAGS) $(SERD_CFLAGS) $(ZLIB_CFLAGS) $(EXTRAFLAGS)
 libhdt_la_LDFLAGS = $(SERD_LIBS) $(ZLIB_LIBS) $(KYOTO_LIBS)
 libhdt_la_LIBADD =
 
-if WANTS_LIBCDS
-libhdt_la_CPPFLAGS += -DHAVE_CDS -I$(top_builddir)/libcds/include
-libhdt_la_LIBADD += $(top_builddir)/libcds/libcds.la
-endif
-
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = hdt.pc

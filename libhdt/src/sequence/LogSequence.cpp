@@ -1,9 +1,10 @@
 /*
  * File: LogSequence.cpp
- * Last modified: $Date: 2011-08-21 05:35:30 +0100 (dom, 21 ago 2011) $
+ * Last modified: $Date$
  * Revision: $Revision: 180 $
- * Last modified by: $Author: mario.arias $
+ * Last modified by: $Author$
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
@@ -29,7 +30,7 @@
  *
  */
 
-#ifdef HAVE_CSD
+#ifdef HAVE_CDS
 
 #include <libcdsBasics.h>
 #include <HDTVocabulary.hpp>
@@ -61,7 +62,7 @@ size_t LogSequence::get(size_t position)
 
 void LogSequence::add(IteratorUInt &elements)
 {
-    std::vector<size_t> vector;
+    std::vector<uint> vector;
     size_t max = 0;
 
 	while(elements.hasNext()) {
@@ -69,7 +70,7 @@ void LogSequence::add(IteratorUInt &elements)
 		if(element>((size_t)-1)) {
 			throw std::out_of_range("Error, saving a value out of range");
 		}
-        vector.push_back(element);
+        vector.push_back(static_cast<uint>(element));
 		max = element > max ? element : max;
 	}
 

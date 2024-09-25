@@ -24,7 +24,6 @@ rdf2hdt
 replaceHeader
 libhdt/examples/*
 libhdt/.libs
-libcds/.libs
 
 # Autotools 
 m4/
@@ -66,7 +65,6 @@ stamp-h1
 *.a
 **/examples/*
 **/tests/*
-libcds-v1.0.12/includes
 !**/examples/*.cpp
 !**/tests/*.cpp
 *.o

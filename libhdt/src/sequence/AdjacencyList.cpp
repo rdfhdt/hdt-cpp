@@ -150,7 +150,7 @@ size_t AdjacencyList::binSearch(size_t element, size_t begin, size_t end) {
 		else
 			return mid;
 	}
-	throw std::runtime_error("Not found");
+	return static_cast<size_t>(-1);
 }
 
 size_t AdjacencyList::linSearch(size_t element, size_t begin, size_t end) {

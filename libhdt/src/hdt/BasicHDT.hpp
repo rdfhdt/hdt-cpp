@@ -4,6 +4,10 @@
  * Revision: $Revision$
  * Last modified by: $Author$
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+ * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
+ * All rights reserved.
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -56,8 +60,11 @@ private:
 	void loadTriples(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
 
 	void addDictionaryFromHDT(const char *fileName, ModifiableDictionary *dict, ProgressListener *listener=NULL);
+	void addDictionaryFromHDT(const char* buffer, size_t bufferLen, ModifiableDictionary *dict, ProgressListener *listener=NULL);
 	void loadDictionaryFromHDTs(const char** fileName, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
+	void loadDictionaryFromHDTs(const std::vector<std::pair<const char*,size_t>>& hdt_list, const char* baseUri, ProgressListener* listener=NULL);
 	void loadTriplesFromHDTs(const char** fileNames, size_t numFiles, const char* baseUri, ProgressListener* listener=NULL);
+	void loadTriplesFromHDTs(const std::vector<std::pair<const char*,size_t>>& hdt_list, const char* baseUri, ProgressListener* listener=NULL);
 
 	void fillHeader(const string &baseUri);
 
@@ -97,16 +104,21 @@ public:
 	 * @param input
 	 */
 	void loadFromHDT(const char *fileName, ProgressListener *listener = NULL);
+	void loadFromHDT(const char *buffer, size_t bufferLen, ProgressListener *listener = NULL);
 
 	void loadHeader(const char *fileName, ProgressListener *listener);
 
 	void loadFromSeveralHDT(const char **fileNames, size_t numFiles, string baseUri, ProgressListener *listener=NULL);
+	void loadFromSeveralHDT(
+		const std::vector<std::pair<const char*, size_t>>& buffer_list, 
+		string baseUri, ProgressListener *listener=NULL);
 
     /**
      * Load an HDT from a file, using memory mapping
      * @param input
      */
     void mapHDT(const char *fileName, ProgressListener *listener = NULL);
+    void mapHDT(const char *buffer, size_t bufferLen, ProgressListener *listener = NULL);
 
 	/**
 	 * @param output
@@ -125,6 +137,7 @@ public:
 	void saveToHDT(const char *fileName, ProgressListener *listener = NULL);
 
 	void loadOrCreateIndex(ProgressListener *listener = NULL);
+	void loadOrCreateIndex(const char* indexBuffer, size_t indexBufferLen, ProgressListener *listener = NULL);
 
 	void saveIndex(ProgressListener *listener = NULL);
 

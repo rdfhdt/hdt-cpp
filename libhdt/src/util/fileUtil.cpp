@@ -1,9 +1,10 @@
 /*
  * File: StopWatch.hpp
- * Last modified: $Date: 2011-08-21 05:35:30 +0100 (dom, 21 ago 2011) $
+ * Last modified: $Date$
  * Revision: $Revision: 180 $
- * Last modified by: $Author: mario.arias $
+ * Last modified by: $Author$
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  * Copyright (C) 2012, Mario Arias
  * All rights reserved.
  *
@@ -187,6 +188,7 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 		#ifdef HAVE_LIBZ
 			in = gzStream = new igzstream(fileName);
 		#else
+			close();
 			throw std::runtime_error("Support for GZIP was not compiled in this version. Please Decompress the file before importing it.");
 		#endif
 	}
@@ -206,6 +208,7 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 	if(pipeCommand.length()>0) {
 		pipeCommand.append(fileName);
 		if ((filePipe=popen(pipeCommand.c_str(),"r")) == NULL) {
+			close();
 			cerr << "Error creating pipe for command " << pipeCommand << endl;
 			throw std::runtime_error("popen() failed to create pipe");
 		}
@@ -217,20 +220,52 @@ DecompressStream::DecompressStream(const char *fileName) : in(NULL), filePipe(NU
 
 	if (!in->good())
 	{
+		close();
 		cerr << "Error opening file " << fileName << " for parsing " << endl;
 		throw std::runtime_error("Error opening file for parsing");
 	}
 #endif
 }
 
+DecompressStream::DecompressStream(const char *buffer, size_t len) : in(NULL), filePipe(NULL), fileStream(NULL)
+{
+#ifdef HAVE_LIBZ
+	gzStream = NULL;
+#endif
+
+	in = new memstream(buffer, len);
+
+	if (!in->good())
+	{
+		close();
+		cerr << "Error creating memory stream for parsing " << endl;
+		throw std::runtime_error("Error creating memory stream for parsing");
+	}
+}
+
+DecompressStream::~DecompressStream() {
+	close();
+}
+
 void DecompressStream::close() {
-	if(fileStream) fileStream->close();
+	if(fileStream) {
+		fileStream->close();
+		fileStream = nullptr;
+	}
 #ifndef WIN32
-	if(filePipe) pclose(filePipe);
+	if(filePipe) {
+		pclose(filePipe);
+		filePipe = nullptr;
+	}
 #endif
 #ifdef HAVE_LIBZ
-	if(gzStream) gzStream->close();
+	if(gzStream) {
+		gzStream->close();
+		gzStream = nullptr;
+	}
 #endif
-	delete in;
-	in=NULL;
+	if (in) {
+		delete in;
+		in=NULL;
+	}
 }

@@ -1,9 +1,10 @@
 /*
- * File: HDTEnums.cpp
- * Last modified: $Date: 2012-08-13 23:00:07 +0100 (lun, 13 ago 2012) $
+ * File: hdt2rdf.cpp
+ * Last modified: $Date$
  * Revision: $Revision: 222 $
- * Last modified by: $Author: mario.arias $
+ * Last modified by: $Author$
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
@@ -118,7 +119,7 @@ int main(int argc, char **argv) {
 
 	try {
 		ProgressListener* progress = showProgress ? new StdoutProgressListener() : NULL;
-		HDT *hdt = HDTManager::mapHDT(inputFile.c_str(), progress);
+		auto hdt = HDTManager::mapHDT(inputFile.c_str(), progress);
 
 		if(outputFile!="-") {
 			RDFSerializer *serializer = RDFSerializer::getSerializer(outputFile.c_str(), notation);
@@ -129,7 +130,6 @@ int main(int argc, char **argv) {
 			hdt->saveToRDF(*serializer);
 			delete serializer;
 		}
-		delete hdt;
 		delete progress;
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;

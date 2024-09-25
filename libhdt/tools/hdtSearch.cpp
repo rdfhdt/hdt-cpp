@@ -1,9 +1,9 @@
 /*
- * File: HDTEnums.cpp
- * Last modified: $Date: 2012-08-13 23:00:07 +0100 (lun, 13 ago 2012) $
+ * File: hdtSearch.cpp
+ * Last modified: $Date$
  * Revision: $Revision: 222 $
- * Last modified by: $Author: mario.arias $
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
 
 	try {
 		StdoutProgressListener prog;
-		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &prog);
+		auto hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &prog);
 
 		ostream *out;
 		ofstream outF;
@@ -188,7 +188,7 @@ int main(int argc, char **argv) {
 
 		if(query!="") {
 			// Supplied query, search and exit.
-			iterate(hdt, (char*)query.c_str(), *out, measure, offset);
+			iterate(hdt.get(), (char*)query.c_str(), *out, measure, offset);
 		} else {
 			// No supplied query, show terminal.
 			char line[1024*10];
@@ -207,7 +207,7 @@ int main(int argc, char **argv) {
 					continue;
 				}
 
-				iterate(hdt, line, *out, measure, offset);
+				iterate(hdt.get(), line, *out, measure, offset);
 
 				cerr << ">> ";
 			}
@@ -216,8 +216,6 @@ int main(int argc, char **argv) {
 		if(outputFile!="") {
 			outF.close();
 		}
-
-		delete hdt;
 	} catch (std::exception& e) {
 		cerr << "ERROR: " << e.what() << endl;
 		return 1;

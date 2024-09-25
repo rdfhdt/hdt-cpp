@@ -1,9 +1,10 @@
 /*
  * File: LogSequence2.hpp
- * Last modified: $Date: 2011-08-21 05:35:30 +0100 (dom, 21 ago 2011) $
+ * Last modified: $Date$
  * Revision: $Revision: 180 $
- * Last modified by: $Author: mario.arias $
+ * Last modified by: $Author$
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  * Copyright (C) 2012, Mario Arias, Javier D. Fernandez, Miguel A. Martinez-Prieto
  * All rights reserved.
  *
@@ -75,11 +76,14 @@ private:
 		size_t i=bitPos/W;
 		size_t j=bitPos%W;
 		size_t result;
+		size_t value{};
+		memcpy(&value, &data[i], sizeof(value));
 		if (j+bitsField <= W) {
-			result = (data[i] << (W-j-bitsField)) >> (W-bitsField);
+			result = (value << (W-j-bitsField)) >> (W-bitsField);
 		} else {
-			result = data[i] >> j;
-			result = result | (data[i+1] << ( (W<<1) -j-bitsField)) >> (W-bitsField);
+			result = value >> j;
+			memcpy(&value, &data[i+1], sizeof(value));
+			result = result | (value << ( (W<<1) -j-bitsField)) >> (W-bitsField);
 		}
 		return result;
 	}

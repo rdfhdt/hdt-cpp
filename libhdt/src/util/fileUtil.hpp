@@ -1,9 +1,9 @@
 /*
  * File: StopWatch.hpp
- * Last modified: $Date: 2011-08-21 05:35:30 +0100 (dom, 21 ago 2011) $
+ * Last modified: $Date$
  * Revision: $Revision: 180 $
- * Last modified by: $Author: mario.arias $
  *
+ * Copyright (C) 2024, Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  * Copyright (C) 2012, Mario Arias
  * All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #include "../third/gzstream.h"
 #include "../third/fdstream.hpp"
+#include "../third/memstream.hpp"
 
 #include <HDTListener.hpp>
 
@@ -61,6 +62,8 @@ private:
 
 public:
 	DecompressStream(const char *fileName);
+	DecompressStream(const char *buffer, size_t len);
+	~DecompressStream();
 	std::istream *getStream() {
 		return in;
 	}
