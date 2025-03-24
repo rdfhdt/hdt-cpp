@@ -38,6 +38,7 @@
 #endif
 
 #include <string>
+#include <cstdint>
 #include <iostream>
 
 class StopWatch {
