@@ -20,6 +20,13 @@ dependencies installed:
     Fedora)
   - `brew install autoconf` on macOS/OSX
 
+- [GNU Automake](https://www.gnu.org/software/automake/)
+
+  - `sudo apt install automake` on Debian-based distros (e.g., Ubuntu)
+  - `sudo dnf install automake` on Red Hat-based distros (e.g.,
+    Fedora)
+  - `brew install automake` on macOS/OSX
+
 - [GNU Libtool](https://www.gnu.org/software/libtool/)
 
   - `sudo apt install libtool` on Debian-based distros (e.g., Ubuntu)
